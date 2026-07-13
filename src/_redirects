@@ -1,0 +1,12 @@
+# URL redirects for Circulation Studio
+# See DEPLOYMENT.md for detailed configuration
+
+# Redirect rules will be added here during Phase 9 (if this is a rebuild/migration)
+# Format: /old-url /new-url 301
+
+# Example redirects:
+# /old-page /new-page 301
+# /blog/old-post /blog/new-post 301
+
+# Catch-all for removed pages (if needed)
+# /removed-section/* /contact 301
