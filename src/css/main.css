@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+/* Design tokens: colors, fonts, spacing not locked yet.
+   01_Brand_Identity_Positioning.md flags visual identity
+   (hex codes, typeface) as pending. Fill in once confirmed,
+   don't guess in the meantime. */
+@theme {
+}

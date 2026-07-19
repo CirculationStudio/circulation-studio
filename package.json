@@ -1,0 +1,28 @@
+{
+  "name": "circulation-studio",
+  "version": "1.0.0",
+  "description": "Creative agency website built following the Circulation Studio Web Build Master Roadmap.",
+  "type": "module",
+  "scripts": {
+    "start": "eleventy --serve",
+    "build": "eleventy"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CirculationStudio/circulation-studio.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CirculationStudio/circulation-studio/issues"
+  },
+  "homepage": "https://github.com/CirculationStudio/circulation-studio#readme",
+  "devDependencies": {
+    "@11ty/eleventy": "^3.1.6",
+    "@11ty/eleventy-plugin-vite": "^8.0.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "tailwindcss": "^4.3.3",
+    "vite": "^8.1.5"
+  }
+}
