@@ -9,6 +9,7 @@ _site/
 dist/
 public/
 .cache/
+.11ty-vite/
 
 # Environment variables
 .env
