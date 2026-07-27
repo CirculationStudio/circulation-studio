@@ -1,0 +1,103 @@
+/* Element-level defaults, rewritten from the design system's tokens/base.css.
+   Token names are translated to this repo's namespaced ones (--ink becomes
+   --color-ink, --track-caps becomes --tracking-caps, --measure becomes
+   --container-measure). See DESIGN_SYSTEM.md for the full mapping.
+
+   Wrapped in @layer base so Tailwind utilities always win. Unlayered CSS
+   outranks every layered rule, so without this an h1 element rule would beat
+   a text-h2 utility applied to that same h1. */
+@layer base {
+  body {
+    margin: 0;
+    background: var(--surface-page);
+    color: var(--text-body);
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    line-height: var(--leading-body);
+  }
+
+  /* All display headings are Dual 600, caps, tracked. Until the Dual OTFs are
+     licensed and wired, --font-display falls back to system-ui and these read
+     visibly wrong. That is expected, not a bug. */
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    line-height: var(--leading-heading);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    margin: 0 0 var(--space-16);
+  }
+  h1 { font-size: var(--text-h1); line-height: var(--leading-tight) }
+  h2 { font-size: var(--text-h2) }
+  h3 { font-size: var(--text-h3) }
+
+  h4, h5, h6 {
+    font-family: var(--font-body);
+    font-weight: var(--weight-display);
+    margin: 0 0 var(--space-8);
+  }
+
+  p { margin: 0 0 var(--space-16); max-width: var(--container-measure) }
+
+  /* Inline body links keep a permanent madder underline and darken on hover.
+     This is distinct from the ghost/CTA link, which is .cs-link. */
+  a {
+    color: var(--link);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  a:hover { color: var(--link-hover) }
+
+  /* color-mix keeps this tied to the palette token instead of restating the
+     madder hex at 14 percent. */
+  ::selection { background: color-mix(in srgb, var(--color-madder) 14%, transparent) }
+
+  img { max-width: 100%; display: block }
+
+  strong, b { font-weight: var(--weight-display) }
+
+  /* Alt-glyph device. Rule: up to TWO swaps per headline, each independently
+     justified by meaning (the letterform must reinforce what that specific
+     word means). Zero is fine. Never swap for symmetry or availability.
+     H1/H2 only, never body copy, never buttons. The heading macro enforces
+     this structurally, so reach for that rather than these classes directly. */
+  .alt { font-feature-settings: 'ss01','ss02','ss03','ss07','ss10' }
+  .alt-soft { font-feature-settings: 'ss01' }
+  .alt-bar { font-feature-settings: 'ss07' }
+  .alt-dot { font-feature-settings: 'ss10' }
+  .alt-cut { font-feature-settings: 'ss04' }
+  .alt-stencil { font-feature-settings: 'ss03','ss09' }
+  /* whole line; scope pending sign-off, see design.md section 8 item 2 */
+  .alt-all { font-feature-settings: 'ss01','ss02','ss03','ss07','ss10' }
+
+  .caption, .plate-no {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: var(--text-caption);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  .hairline {
+    border: 0;
+    border-top: 1px solid var(--border-hairline);
+    margin: var(--space-24) 0;
+  }
+  .rule-double {
+    border: 0;
+    border-top: 1px solid var(--border-strong);
+    border-bottom: 1px solid var(--border-strong);
+    height: 3px;
+    margin: var(--space-40) 0;
+  }
+
+  .specimen {
+    background: var(--surface-figure);
+    border: 1px solid var(--border-hairline);
+    padding: var(--space-16);
+  }
+  .specimen img { mix-blend-mode: multiply }
+}

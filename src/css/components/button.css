@@ -1,0 +1,128 @@
+/* Button and CTA link, rewritten from the design system's components.css.
+   Token names translated to this repo's namespaced ones.
+
+   The snap physics lives HERE, in the component, never re-described per page:
+   tracked-out caps pull TIGHT on hover (220ms, slight overshoot), weight jumps
+   400 to 600, secondary fills outline to solid ink. Fast and decisive, never a
+   linear fade. Alt glyphs are never used on buttons, and labels name the
+   destination ("Book a consultation"), never "Learn more".
+
+   @layer components so Tailwind utilities can still override at the call site. */
+@layer components {
+  .cs-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-8);
+    font-family: var(--font-display);
+    font-weight: var(--weight-body);
+    font-size: var(--text-caption);
+    letter-spacing: var(--tracking-btn);
+    /* text-indent cancels the trailing letter-space so the label stays
+       optically centred while the tracking animates */
+    text-indent: var(--tracking-btn);
+    text-transform: uppercase;
+    white-space: nowrap;
+    padding: 13px 28px;
+    border-radius: var(--radius-control);
+    border: 1px solid var(--color-ink);
+    background: transparent;
+    color: var(--color-ink);
+    cursor: pointer;
+    text-decoration: none;
+    /* enumerated, never transition: all, which wrecks INP */
+    transition:
+      letter-spacing var(--dur-snap) var(--ease-snap),
+      text-indent var(--dur-snap) var(--ease-snap),
+      background var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+  .cs-btn:hover {
+    letter-spacing: var(--tracking-btn-tight);
+    text-indent: var(--tracking-btn-tight);
+    font-weight: var(--weight-display);
+  }
+  .cs-btn:active { transform: translateY(1px) }
+
+  /* primary carries the madder accent as a solid fill. White-on-madder is
+     reserved for this and equivalent single-CTA moments, nothing else. */
+  .cs-btn--primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--text-on-accent);
+  }
+  .cs-btn--primary:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+    color: var(--text-on-accent);
+  }
+
+  .cs-btn--secondary { border-color: var(--border-strong); color: var(--color-ink) }
+  .cs-btn--secondary:hover {
+    border-color: var(--color-ink);
+    background: var(--color-ink);
+    color: var(--text-on-deep);
+  }
+
+  /* deep is the variant for use ON an ink pane, not a green button.
+     Button.prompt.md in the design project calls this "leaf green"; that
+     contradicts design.md, which bans green outright. design.md wins. */
+  .cs-btn--deep {
+    border-color: var(--color-paper);
+    color: var(--color-paper);
+    background: transparent;
+  }
+  .cs-btn--deep:hover { background: var(--color-paper); color: var(--color-ink) }
+
+  /* Ghost / CTA text link. Distinct from inline body-copy links, which keep a
+     permanent madder underline (see base/elements.css). Here the underline
+     draws in from the left and the arrow slides right. */
+  .cs-link,
+  .cs-btn--ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-8);
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: var(--text-caption);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--color-ink);
+    background: linear-gradient(currentColor, currentColor) no-repeat left bottom / 0% 1px;
+    border: 0;
+    padding: 2px 0 4px;
+    border-radius: 0;
+    cursor: pointer;
+    text-decoration: none;
+    transition:
+      background-size var(--dur-snap) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+  .cs-link:hover,
+  .cs-btn--ghost:hover { background-size: 100% 1px }
+
+  .cs-link .cs-link__arrow,
+  .cs-btn--ghost .cs-link__arrow { transition: transform var(--dur-snap) var(--ease-snap) }
+  .cs-link:hover .cs-link__arrow,
+  .cs-btn--ghost:hover .cs-link__arrow { transform: translateX(5px) }
+
+  .cs-link--madder { color: var(--color-madder) }
+  .cs-link--madder:hover { color: var(--color-madder-deep) }
+
+  .cs-btn:focus-visible,
+  .cs-link:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  /* The snap is motion. Respect the user's preference, per WCAG and CLAUDE.md. */
+  @media (prefers-reduced-motion: reduce) {
+    .cs-btn,
+    .cs-link,
+    .cs-btn--ghost,
+    .cs-link .cs-link__arrow,
+    .cs-btn--ghost .cs-link__arrow { transition: none }
+    .cs-btn:active { transform: none }
+  }
+}

@@ -1,0 +1,52 @@
+/* Wordmark, set in type per design.md section 9 (LOCKED).
+
+   Configuration: CIRCULATION with the crossbar-less A only (ss01, carried by
+   .alt-soft on that single letter). The O carries NO device anywhere in the
+   wordmark, ever: the isotype's ring owns circular meaning, and any O device
+   reads as a thinner echo beneath it. STUDIO never carries a glyph.
+
+   Activation is per-character only. Never set font-feature-settings on the
+   whole word, because ss01 also carries R, D and O alternates and would swap
+   letters the lockup has explicitly retired.
+
+   Not yet in this repo: the isotype (assets/isotype.png is a placeholder even
+   in the design project, pending the production SVG) and the full lockup set
+   in guidelines/brand-wordmark.html. This is the wordmark-only lockup. */
+@layer components {
+  .cs-wordmark {
+    display: inline-flex;
+    flex-direction: column;
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    text-transform: uppercase;
+    color: var(--color-ink);
+    text-decoration: none;
+    line-height: var(--leading-tight);
+  }
+  .cs-wordmark:hover { color: var(--color-ink) }
+  .cs-wordmark:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 3px;
+  }
+
+  .cs-wordmark__name {
+    font-size: 20px;
+    letter-spacing: var(--tracking-caps);
+  }
+  .cs-wordmark__studio {
+    font-size: 10px;
+    /* .42em, the locked lockup value for STUDIO beneath the name */
+    letter-spacing: .42em;
+    /* the tracking adds a trailing gap; pull it back so the block stays
+       optically flush-left under CIRCULATION */
+    text-indent: .42em;
+    margin-left: -.42em;
+    color: var(--text-muted);
+  }
+
+  /* On an ink pane the wordmark is set in paper. Never redraw the mark and
+     never use a reversed isotype, per design.md section 9. */
+  .cs-wordmark--on-deep { color: var(--color-paper) }
+  .cs-wordmark--on-deep:hover { color: var(--color-paper) }
+  .cs-wordmark--on-deep .cs-wordmark__studio { color: var(--text-on-deep) }
+}

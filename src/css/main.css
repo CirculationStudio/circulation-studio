@@ -8,6 +8,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
+/* Element defaults and component classes. Every @import has to sit above the
+   @theme and :root blocks below, because CSS drops any @import that follows a
+   rule. The imported files reference tokens declared further down, which is
+   fine: custom properties resolve at use time, not at parse time. */
+@import "./base/elements.css";
+@import "./components/button.css";
+@import "./components/card.css";
+@import "./components/wordmark.css";
+@import "./components/longform.css";
+
 /* Design tokens pulled from the Circulation Studio Design System in Claude
    Design (tokens/colors.css, typography.css, layout.css) on 2026-07-27.
    Claude Design is the canonical source. Re-pull rather than hand-editing,
