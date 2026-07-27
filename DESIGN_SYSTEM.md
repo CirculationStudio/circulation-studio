@@ -31,14 +31,55 @@ multiple of 4px, so Tailwind's default scale already emits them exactly
 (`p-2` 8, `p-4` 16, `p-6` 24, `p-10` 40, `p-16` 64, `p-24` 96). Naming them
 numerically in `@theme` would have silently redefined `p-8` to mean 8px.
 
-Still in Claude Design, not here:
+## Fonts
 
-- **Dual OTFs** (`fonts/`, six weights 100 to 600). Licensed files, not in
-  this repo, so `var(--font-display)` falls back to system-ui today. Lora
-  (body) does load, via the Google Fonts import at the top of `main.css`.
-- **`tokens/base.css`**, the element-level defaults (h1 to h6, p, a, the
-  `.alt` glyph classes, `.hairline`, `.specimen`).
-- **`components/core/`**, five React components (Button, Card, Container,
-  Heading, Section). This site is Nunjucks, so these need rewriting as macros
-  in `src/_includes/components/`, not porting.
-- **`guidelines/`**, fifteen reference pages, plus the brand image library.
+**Dual** (CDType / Charles Daoud) is self-hosted under a web license confirmed
+2026-07-27. The six licensed OTFs were converted to woff2 (883KB down to
+275KB, about 69 percent) and live in `src/fonts/`. `src/css/base/fonts.css`
+maps weights 100 to 600 onto `--font-display`.
+
+Not subsetted, deliberately. The alt-glyph device depends on the OpenType
+stylistic sets, and a careless subset drops layout features. All ten sets
+(ss01 to ss10) are verified present in all six weights. Anyone subsetting
+these later must pass the layout features through explicitly.
+
+Fonts are referenced by relative source path, so Vite fingerprints them into
+`/assets/Dual-600-<hash>.woff2`. **Known gap:** `src/_headers` declares
+immutable caching for `/fonts/*`, `/css/*` and `/js/*`, none of which match
+Vite's `/assets/*` output. Separately, `_headers`, `_redirects` and
+`site.webmanifest` are not copied into `_site` at all, so none of them
+currently deploy. Both predate the font work.
+
+**Lora** (body) still loads from Google Fonts via the import at the top of
+`main.css`. It is SIL OFL, so self-hosting it later is permitted.
+
+## Components
+
+`tokens/base.css` is rewritten as `src/css/base/elements.css` (@layer base) and
+`components/components.css` as `src/css/components/*.css` (@layer components).
+The layer wrapping is load-bearing: unlayered CSS outranks every layered rule,
+so without it an element rule would beat a Tailwind utility on the same
+element.
+
+The five React components are rewritten as Nunjucks macros in
+`src/_includes/components/`. Heading's alt-glyph enforcement (cap of two,
+h1/h2 only, letter must fall inside the named word) lives in the `glyphSwaps`
+filter in `eleventy.config.js`.
+
+**Known gap, the alt-glyph floor.** design.md section 9 says the swap holds at
+15px and up and drops to plain type below about 14px. That floor is not
+implemented. `glyphSwaps` takes text, swaps and tag only, with no size input,
+and no CSS rule disables `font-feature-settings` at small sizes. It does not
+bite today: h1 is 56px, h2 is 36px, and the wordmark is 20px, all far above
+the floor. It would bite on a small wordmark lockup. CSS cannot branch on
+computed font-size, so this needs an explicit modifier (a `.cs-wordmark--plain`
+that sets `font-feature-settings: normal`) chosen by the author, not an
+automatic rule.
+
+**Verified against the font binary:** `ss01` substitutes `A` (gid 565) with
+`A.alt` (gid 566), matching design.md section 9 exactly. `ss01` also carries
+D, E, H, J, O and R, which is why activation must stay per-character and never
+word-level.
+
+Still in Claude Design, not here: **`guidelines/`**, fifteen reference pages,
+plus the brand image library and the icon set.

@@ -1,0 +1,70 @@
+/* Dual (CDType / Charles Daoud), the display face. Self-hosted under a web
+   license confirmed 2026-07-27. Converted from the licensed OTFs to woff2,
+   which is roughly 69 percent smaller (883KB down to 275KB across the ramp).
+
+   NOT subsetted, deliberately. The alt-glyph device depends on the stylistic
+   sets, and a careless subset drops OpenType layout features. All ten sets
+   (ss01 to ss10) are verified present in all six weights. If anyone subsets
+   these later, they must pass the layout features through explicitly or the
+   crossbar-less A and every other swap silently stops working.
+
+   Referenced by relative source path so Vite resolves and fingerprints them,
+   emitting /assets/Dual-600-<hash>.woff2. That is the right trade for a font:
+   the filename changes only when the bytes change, so the file can be cached
+   forever without a stale-cache risk.
+
+   Worth knowing: src/_headers declares immutable caching for /fonts/*, which
+   these no longer match. See DESIGN_SYSTEM.md; the header rules need pointing
+   at /assets/* instead, and that gap predates the fonts.
+
+   Declaring all six weights costs nothing at load time: browsers download only
+   the faces actually matched by rendered text. Locked usage is 600 (headings,
+   wordmark, button hover), with 200 for stat values, 300 for pull quotes, 400
+   for buttons at rest and 500 for captions and links. 100 is currently unused
+   and is here for completeness of the ramp.
+
+   These rules sit outside any @layer on purpose. @font-face is not a style
+   rule competing in the cascade, so layering it would add nothing. */
+
+@font-face {
+  font-family: 'Dual';
+  src: url('../../fonts/Dual-100.woff2') format('woff2');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Dual';
+  src: url('../../fonts/Dual-200.woff2') format('woff2');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Dual';
+  src: url('../../fonts/Dual-300.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Dual';
+  src: url('../../fonts/Dual-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Dual';
+  src: url('../../fonts/Dual-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Dual';
+  src: url('../../fonts/Dual-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}

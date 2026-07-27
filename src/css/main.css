@@ -12,6 +12,7 @@
    @theme and :root blocks below, because CSS drops any @import that follows a
    rule. The imported files reference tokens declared further down, which is
    fine: custom properties resolve at use time, not at parse time. */
+@import "./base/fonts.css";
 @import "./base/elements.css";
 @import "./components/button.css";
 @import "./components/card.css";
