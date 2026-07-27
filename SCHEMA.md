@@ -16,24 +16,63 @@ All schema blocks must be validated at https://validator.schema.org/ before depl
 
 [To be completed during Phase 6 after strategy handoff]
 
+### NAP: read it from the data file, never re-type it
+
+**The canonical NAP lives in `src/_data/site.js`, in the `nap` object.** It is
+the single source of truth for the business name, address and phone.
+
+Its keys deliberately use schema.org `PostalAddress` field names, so a JSON-LD
+block maps straight across with no transcription step and no chance of a typo
+drifting the entity apart:
+
+```njk
+"address": {
+  "@type": "PostalAddress",
+  "streetAddress": "{{ site.nap.streetAddress }}",
+  "addressLocality": "{{ site.nap.addressLocality }}",
+  "addressRegion": "{{ site.nap.addressRegion }}",
+  "postalCode": "{{ site.nap.postalCode }}",
+  "addressCountry": "{{ site.nap.addressCountry }}"
+},
+"telephone": "{{ site.nap.telephone }}",
+"email": "{{ site.nap.email }}"
+```
+
+The footer colophon already renders from this object. The Contact page and
+every schema block must do the same, so the visible NAP and the encoded NAP
+cannot disagree. CLAUDE.md requires schema to match visible content exactly,
+and inconsistent NAP is an entity-resolution problem for search engines.
+
+**The address is Laguna Beach, California.** Docs previously carried a San
+Miguel de Allende, Mexico address, including in the schema template below.
+That was stale bleed-over and is wrong. Confirmed 2026-07-27. Do not
+reintroduce it.
+
 ### Home Page
 
 **Schema type:** Organization
+
+Values below are shown resolved for reference. When implementing, reference
+`site.nap` rather than pasting these literals.
 
 ```json
 {
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "Circulation Studio",
-  "description": "Creative agency based in San Miguel de Allende, Mexico",
+  "description": "Creative agency based in Laguna Beach, California",
   "url": "[Website URL]",
   "logo": "[Website URL]/images/logo.svg",
   "address": {
     "@type": "PostalAddress",
-    "addressLocality": "San Miguel de Allende",
-    "addressRegion": "Guanajuato",
-    "addressCountry": "MX"
+    "streetAddress": "1278 Glenneyre St #267",
+    "addressLocality": "Laguna Beach",
+    "addressRegion": "CA",
+    "postalCode": "92651",
+    "addressCountry": "US"
   },
+  "telephone": "(949) 464-7246",
+  "email": "info@circulationstudio.com",
   "sameAs": [
     "[LinkedIn URL]",
     "[Instagram URL]",
@@ -44,8 +83,9 @@ All schema blocks must be validated at https://validator.schema.org/ before depl
     "@type": "Place",
     "address": {
       "@type": "PostalAddress",
-      "addressLocality": "San Miguel de Allende",
-      "addressCountry": "MX"
+      "addressLocality": "Laguna Beach",
+      "addressRegion": "CA",
+      "addressCountry": "US"
     }
   }
 }

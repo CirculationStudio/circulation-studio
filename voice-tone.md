@@ -12,7 +12,7 @@ This file defines the brand's writing voice for AI-assisted content production. 
 [To be completed during Phase 3 - Brand and Design]
 
 Circulation Studio's voice should reflect:
-- Authenticity rooted in San Miguel de Allende
+- Authenticity rooted in Laguna Beach
 - Modern sophistication without pretension
 - Craft and intentionality over volume
 - Human expertise guiding technology
@@ -30,7 +30,7 @@ Circulation Studio's voice should reflect:
 [Define what this means for Circulation Studio]
 
 **Grounded in place**
-San Miguel de Allende is part of our identity, not just a location. Reference it naturally.
+Laguna Beach is part of our identity, not just a location. Reference it naturally.
 
 ## Writing Rules
 
@@ -93,7 +93,9 @@ San Miguel de Allende is part of our identity, not just a location. Reference it
 
 ## Circulation Studio-Specific Context
 
-- Based in San Miguel de Allende, Mexico (this is authentic, not decorative)
+- Based in Laguna Beach, California (this is authentic, not decorative). Canonical
+  NAP lives in `src/_data/site.js`. Earlier drafts said San Miguel de Allende,
+  Mexico; that was stale and is wrong, never reintroduce it
 - Sister agencies: Circulation Dental, Eluvia, La Ventana Gris, Casa Delta
 - Led by Steve Lepore (founder) and Ana (Visual Media Manager)
 - Philosophy: Human taste and judgment guide AI tools, not the other way around

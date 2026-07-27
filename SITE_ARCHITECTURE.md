@@ -63,12 +63,26 @@ Priority pages (highest internal link value):
 
 ## Entity Establishment
 
-Consistent NAP (Name, Address, Phone) across all pages and platforms:
+Consistent NAP (Name, Address, Phone) across all pages and platforms.
+
+**The canonical NAP lives in `src/_data/site.js`, in the `nap` object.** That
+file is the single source of truth. The footer colophon renders from it today;
+the Contact page and every JSON-LD block must do the same rather than
+re-typing the values. Its keys use schema.org `PostalAddress` field names so
+schema maps across directly. See SCHEMA.md.
 
 - **Business name:** Circulation Studio
-- **Address:** San Miguel de Allende, Guanajuato, Mexico
-- **Phone:** [To be confirmed]
-- **Email:** [To be confirmed]
+- **Address:** 1278 Glenneyre St #267, Laguna Beach, CA 92651, US
+- **Phone:** (949) 464-7246
+- **Email:** info@circulationstudio.com
+
+**Location resolved 2026-07-27: Laguna Beach, California is canonical.**
+Earlier docs described the studio as based in San Miguel de Allende,
+Guanajuato, Mexico, including a full Mexico address in the SCHEMA.md
+Organization template and positioning language in voice-tone.md. All of it was
+stale bleed-over and all of it was wrong. Do not reintroduce a Mexico address
+or describe the studio as Mexico-based. If a task appears to call for it, the
+task is working from stale source material.
 
 **sameAs links** (for entity recognition):
 - [Link to LinkedIn]

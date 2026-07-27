@@ -12,11 +12,14 @@
 
 <footer class="cs-colophon">
   <div class="cs-colophon__grid">
+    {# NAP renders from site.nap, the canonical source. Never hardcode it here:
+       the same object feeds the Contact page and the JSON-LD, and they have to
+       agree byte for byte. #}
     <address class="cs-colophon__address">
-      {{ site.address.street }}<br>
-      {{ site.address.cityStateZip }}<br>
-      <a href="{{ site.address.phoneHref }}">{{ site.address.phone }}</a><br>
-      <a href="mailto:{{ site.address.email }}">{{ site.address.email }}</a>
+      {{ site.nap.streetAddress }}<br>
+      {{ site.nap.cityStateZip }}<br>
+      <a href="{{ site.nap.telephoneHref }}">{{ site.nap.telephone }}</a><br>
+      <a href="mailto:{{ site.nap.email }}">{{ site.nap.email }}</a>
     </address>
 
     <p class="cs-colophon__tagline">

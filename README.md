@@ -109,7 +109,7 @@ circulation-studio/
 This site embodies the Circulation Studio "anti-slop" philosophy:
 - Human taste and judgment guide AI tools
 - Distinctive by design, never generic
-- Grounded in place (San Miguel de Allende)
+- Grounded in place (Laguna Beach, California)
 - Clear over clever in communication
 
 ## Reference

@@ -171,6 +171,26 @@ Key principles:
 - Build with the assumption that both humans and AI agents will consume the content
 - Maintain the "anti-slop" standard (distinctive, not generic)
 
+## Business location and NAP
+
+**The canonical NAP lives in `src/_data/site.js`, in the `nap` object.**
+Confirmed 2026-07-27.
+
+- Circulation Studio, 1278 Glenneyre St #267, Laguna Beach, CA 92651, US
+- (949) 464-7246 / info@circulationstudio.com
+
+- NEVER re-type the NAP into a template, a schema block, or a doc. Read it
+  from `site.nap`. The footer already does
+- The `nap` keys use schema.org `PostalAddress` field names, so JSON-LD maps
+  across with no transcription step
+- Visible NAP and encoded NAP must match byte for byte. Inconsistent NAP is an
+  entity-resolution problem for search engines, and this file already requires
+  schema to match visible content exactly
+- **NEVER describe the studio as based in San Miguel de Allende or Mexico.**
+  Earlier docs did, including a full Mexico address in SCHEMA.md's
+  Organization template. It was stale bleed-over and it was wrong. If a task
+  appears to call for it, the task is working from stale source material
+
 ## Language
 
 **This site is English only. Decided 2026-07-27. Settled, not pending.**

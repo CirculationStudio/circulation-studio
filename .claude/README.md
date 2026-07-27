@@ -145,7 +145,7 @@ All agents should reference the Web Build Master Roadmap (in Velu or project doc
 This is the flagship agency site. It embodies the "anti-slop" philosophy:
 - Human taste and judgment guide AI tools
 - Distinctive by design, never generic
-- Grounded in place (San Miguel de Allende)
+- Grounded in place (Laguna Beach, California)
 - Clear over clever in communication
 
 All agents working on this project must maintain these principles.
