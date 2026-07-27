@@ -90,7 +90,7 @@ Automated checks:
 - [ ] All JSON-LD schema blocks validate at validator.schema.org
 - [ ] Organization schema present and correct on homepage
 - [ ] Open Graph tags present and correct
-- [ ] hreflang tags correct for bilingual pages
+- [ ] No hreflang tags present (site is English only, see CLAUDE.md)
 
 ### 6. Broken Links and Assets
 
@@ -167,15 +167,19 @@ Via Cloudflare dashboard:
 - [ ] Cache Rules configured correctly
 - [ ] Tiered Cache enabled
 
-### 11. Bilingual Integrity Check
+### 11. English-Only Check
 
-**Goal:** Ensure both language versions are in sync
+**Goal:** Confirm no bilingual structure has crept back in
 
-- [ ] All English pages have Spanish equivalents
-- [ ] All Spanish pages have English equivalents
-- [ ] hreflang tags correct on all pages
-- [ ] Language switcher works correctly
-- [ ] No broken links between language versions
+The site is English only by decision (2026-07-27). This check exists to catch
+regressions, not to verify translations.
+
+- [ ] No `/es/` routes or Spanish mirror URLs exist
+- [ ] No hreflang tags on any page
+- [ ] No language switcher in navigation or footer
+- [ ] `<html lang>` is `en` on every page
+- [ ] Team bilingual capability copy on Who We Are is INTACT (this is about
+      the people and is meant to stay, see CLAUDE.md)
 
 ## Audit Output Format
 

@@ -21,7 +21,7 @@ This directory contains instructions and playbooks for AI agents working on this
 - SEO and structured data requirements
 - Performance standards
 - Build workflow
-- Bilingual considerations
+- Language policy (English only)
 
 **When to read it:**
 - Claude Code: Before starting any work on this project
@@ -38,7 +38,7 @@ This directory contains instructions and playbooks for AI agents working on this
 - Dependency update guidelines
 - Auto-fix vs. flag-for-review rules
 - Audit report format
-- Bilingual integrity checks
+- English-only regression check
 
 **When to read it:**
 - Chad: Every quarter for scheduled audits
@@ -67,7 +67,7 @@ This directory contains instructions and playbooks for AI agents working on this
    - Reference CLAUDE.md for brand constraints and forbidden patterns
    - Follow code standards and component guidelines
    - Check performance and accessibility requirements
-   - Ensure bilingual integrity
+   - Never introduce bilingual site structure (English only, see CLAUDE.md)
 
 3. **Before completing:**
    - Verify work against CLAUDE.md checklist
@@ -124,7 +124,6 @@ Root documentation (human-authored, agent-referenced)
 - When component patterns are established in Phase 5
 - When new constraints or standards are discovered
 - When brand guidelines change
-- When bilingual structure evolves
 
 ### When to update AUDIT_AGENT.md
 - When new automated checks are available

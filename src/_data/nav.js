@@ -1,8 +1,7 @@
 /* Navigation lives in data, not markup, so it stays editable without touching
    templates. URLs are lowercase, hyphenated, no accents, per CLAUDE.md.
 
-   Placeholder set pending SITE_ARCHITECTURE.md sign-off on the final sitemap.
-   The Spanish counterpart and the language switcher are not built yet. */
+   Final URLs come from SITE_ARCHITECTURE.md. */
 export default {
   primary: [
     { label: "Services", url: "/services/" },

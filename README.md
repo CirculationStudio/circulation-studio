@@ -100,7 +100,9 @@ circulation-studio/
 - Favicon files (favicon.ico, favicon.svg, apple-touch-icon.png) will be added in Phase 7
 - Eleventy and Tailwind configuration will be set up in Phase 4
 - All documentation files contain placeholders that will be filled during the appropriate phases
-- Bilingual (English/Spanish) structure to be implemented
+- The site is English only by decision (2026-07-27). No language switcher, no
+  `/es/` tree, no hreflang. See SITE_ARCHITECTURE.md. This is separate from the
+  team's bilingual capability, which is real and belongs in Who We Are copy.
 
 ## Philosophy
 

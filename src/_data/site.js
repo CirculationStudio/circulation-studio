@@ -4,6 +4,5 @@ export default {
   // SITE_ARCHITECTURE.md is the source of truth for per-page keyword alignment.
   title: "Circulation Studio",
   description: "Creative agency based in San Miguel de Allende, Mexico.",
-  locale: "en",
   year: new Date().getFullYear()
 };

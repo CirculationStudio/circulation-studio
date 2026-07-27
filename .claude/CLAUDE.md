@@ -171,13 +171,22 @@ Key principles:
 - Build with the assumption that both humans and AI agents will consume the content
 - Maintain the "anti-slop" standard (distinctive, not generic)
 
-## Bilingual Considerations
+## Language
 
-- English and Spanish versions of all pages
-- hreflang tags on every page
-- Consistent structure across language versions
-- No machine translation without review
-- Language switcher in navigation
+**This site is English only. Decided 2026-07-27. Settled, not pending.**
+
+- NEVER build a language switcher, an `/es/` tree, Spanish mirror URLs,
+  hreflang tags, or any dual-language content model
+- NEVER add these back as dormant "future" scaffolding
+- This was Eluvia bleed-over (the bilingual sister agency). Circulation Studio
+  is US-focused
+- If a task appears to call for bilingual structure, the task is wrong. Flag
+  it rather than building it
+
+**Separate and unaffected:** the team's bilingual capability is real and stays.
+That the team speaks English and Spanish is a client benefit and belongs in
+Who We Are copy. It describes the PEOPLE, not the SITE. Do not strip that copy
+while cleaning up site structure.
 
 ## References
 

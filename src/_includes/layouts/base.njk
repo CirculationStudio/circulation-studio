@@ -6,7 +6,9 @@
   frame-plus-blocks model; the components in _includes/components are the
   blocks.
 #}<!doctype html>
-<html lang="{{ locale or site.locale }}">
+{# lang is hardcoded: this site is English only by decision, so there is no
+   per-page locale override to honour. See SITE_ARCHITECTURE.md. #}
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">

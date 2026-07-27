@@ -11,7 +11,7 @@ This document is the handoff from strategy to development. It defines the sitema
 ## Tier and Attributes
 
 - **Tier:** Standard (full foundation for agency site)
-- **Bilingual:** Yes (Spanish/English)
+- **Bilingual:** No. English only, decided 2026-07-27. See Language below.
 - **Blog:** Yes (thought leadership and updates)
 - **Booking:** No (contact forms only)
 - **Answer Engine (AEO):** Yes (for AI discoverability)
@@ -33,13 +33,6 @@ Standard agency sitemap structure:
   /blog (Thought leadership)
     /blog/[post-slug] (Individual posts)
   /contact (Get in touch)
-
-Spanish mirrors:
-  /es/servicios
-  /es/trabajo
-  /es/nosotros
-  /es/blog
-  /es/contacto
 ```
 
 ## URL Structure
@@ -82,20 +75,22 @@ Consistent NAP (Name, Address, Phone) across all pages and platforms:
 - [Link to Instagram]
 - [Link to other verified social profiles]
 
-## Bilingual Configuration
+## Language
 
-[Map hreflang and twin-URL structure]
+**This site is English only. Decided 2026-07-27. This is settled, not pending.**
 
-| English URL | Spanish URL | Content |
-|-------------|-------------|---------|
-| / | /es/ | Home |
-| /services | /es/servicios | Services |
-| /work | /es/trabajo | Work |
-| /about | /es/nosotros | About |
-| /blog | /es/blog | Blog |
-| /contact | /es/contacto | Contact |
+Do not build a language switcher, Spanish mirror URLs, an `/es/` tree,
+hreflang tags, or any dual-language content model. Do not reintroduce them as
+"future" scaffolding either. If a task seems to call for bilingual structure,
+the task is wrong, not this decision.
 
-[Complete mapping during Phase 2]
+Why it was in here in the first place: bleed-over from Eluvia, the sister
+agency, which is the bilingual one. Circulation Studio is US-focused.
+
+**Do not confuse this with the team's bilingual capability, which is real and
+stays.** That the team speaks English and Spanish is a client benefit and
+belongs in Who We Are copy. It says something about the PEOPLE, not about the
+SITE. Removing that copy would be the opposite mistake.
 
 ## Migration Considerations (if rebuild)
 
