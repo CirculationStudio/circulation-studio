@@ -1,0 +1,30 @@
+{#
+  Heading: Dual display heading with the alt-glyph device.
+
+  A glyph swap is an explicit per-headline judgment, never automatic. The
+  letterform has to reinforce what that specific word means. Zero swaps is
+  always fine, and swapping for symmetry or because a letter happens to have an
+  alternate is forbidden.
+
+  The glyphSwaps filter (eleventy.config.js) enforces the rules structurally:
+  a hard cap of two, h1/h2 only, and the swapped letter must fall inside the
+  named word. Violations warn at build time and render plain.
+
+  `swaps` takes one object or an array of at most two:
+    swaps={ word: "searching", letter: "e" }
+    swaps=[{ word: "found", letter: "o" }, { word: "built", letter: "u" }]
+
+  Optional per-swap `flavor` picks the stylistic set (alt-soft, alt-bar,
+  alt-dot, alt-cut, alt-stencil), defaulting to the `alt` combo as Heading.jsx
+  does. Which flavor suits a given swap is still pending sign-off in design.md
+  section 8 item 5, so leaving it unset is the safe choice today.
+
+  Usage:
+    {% raw %}{% from "components/heading.njk" import heading %}
+    {{ heading("Your customers are searching.", as="h1",
+               swaps={ word: "searching", letter: "e" }) }}
+    {{ heading("What's included", as="h3") }}{% endraw %}
+#}
+{% macro heading(text, as="h2", swaps=none, class="", id="") %}
+<{{ as }}{% if id %} id="{{ id }}"{% endif %}{% if class %} class="{{ class }}"{% endif %}>{{ text | glyphSwaps(swaps, as) | safe }}</{{ as }}>
+{% endmacro %}

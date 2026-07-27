@@ -1,0 +1,29 @@
+{#
+  Card: one style. No status variants, no badges baked in.
+
+  Passing `href` makes the whole card a link (and the only interactive form,
+  a plain card has no hover state). Body content comes through {% raw %}{% call %}{% endraw %}.
+
+  The title renders as an h3 element at the card's own 18px, deliberately
+  smaller than the h3 step of the locked type scale.
+
+  Usage:
+    {% raw %}{% from "components/card.njk" import card %}
+    {% call card(title="Local SEO", href="/services/local-seo/") %}
+      <p>Body copy.</p>
+    {% endcall %}{% endraw %}
+#}
+{% macro card(title="", href="", class="") %}
+{%- set classes = "cs-card" + (" " + class if class else "") -%}
+{%- if href -%}
+<a class="{{ classes }}" href="{{ href }}">
+  {%- if title %}<h3 class="cs-card__title">{{ title }}</h3>{% endif %}
+  {{ caller() }}
+</a>
+{%- else -%}
+<div class="{{ classes }}">
+  {%- if title %}<h3 class="cs-card__title">{{ title }}</h3>{% endif %}
+  {{ caller() }}
+</div>
+{%- endif -%}
+{% endmacro %}

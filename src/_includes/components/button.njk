@@ -1,0 +1,32 @@
+{#
+  Button: the primary action control.
+
+  Write the label in sentence case, the component sets display caps. Labels
+  name the destination ("Book a consultation"), never generic ("Learn more").
+  Alt glyphs are never used on buttons.
+
+  Variants (design.md section 6, LOCKED set):
+    primary    madder fill, white label. Reserved for the single CTA moment.
+    secondary  outlined, fills to solid ink on hover.
+    ghost      text link, underline draws in from the left.
+    deep       paper outline, for use ON an ink pane (not a green button;
+               Button.prompt.md in the design project is stale on this).
+
+  There are no size variants. The design system has one button size.
+
+  Passing `href` renders an anchor, otherwise a real <button>. `arrow` adds the
+  sliding arrow, which belongs to the ghost treatment.
+
+  Usage:
+    {% raw %}{% from "components/button.njk" import button %}
+    {{ button("Book a discovery call", href="/contact/") }}
+    {{ button("View case study", variant="ghost", href="/work/", arrow=true) }}{% endraw %}
+#}
+{% macro button(label, href="", variant="primary", arrow=false, class="", type="button", ariaLabel="") %}
+{%- set classes = "cs-btn cs-btn--" + variant + (" " + class if class else "") -%}
+{%- if href -%}
+<a class="{{ classes }}" href="{{ href }}"{% if ariaLabel %} aria-label="{{ ariaLabel }}"{% endif %}>{{ label }}{% if arrow %}<span class="cs-link__arrow" aria-hidden="true">&rarr;</span>{% endif %}</a>
+{%- else -%}
+<button class="{{ classes }}" type="{{ type }}"{% if ariaLabel %} aria-label="{{ ariaLabel }}"{% endif %}>{{ label }}{% if arrow %}<span class="cs-link__arrow" aria-hidden="true">&rarr;</span>{% endif %}</button>
+{%- endif -%}
+{% endmacro %}

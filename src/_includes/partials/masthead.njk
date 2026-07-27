@@ -1,0 +1,32 @@
+{#
+  Masthead: shared frame, included by the base layout rather than composed per
+  page. Nav items come from _data so they stay editable without touching markup.
+
+  The wordmark is set in type per design.md section 9: CIRCULATION carries the
+  crossbar-less A only (.alt-soft on that single letter), the O carries no
+  device ever, STUDIO stays plain. The swap is per-character, never a
+  word-level font-feature-settings, because ss01 also carries R, D and O
+  alternates that the lockup has retired.
+#}
+{% from "components/container.njk" import container %}
+
+<header class="border-b border-[var(--border-hairline)]">
+  {% call container() %}
+    <div class="flex items-center justify-between gap-6 py-6">
+      <a class="cs-wordmark" href="/" aria-label="Circulation Studio, home">
+        <span class="cs-wordmark__name">CIRCUL<span class="alt-soft">A</span>TION</span>
+        <span class="cs-wordmark__studio">STUDIO</span>
+      </a>
+
+      <nav aria-label="Primary">
+        <ul class="flex list-none items-center gap-8 p-0 m-0">
+          {% for item in nav.primary %}
+            <li>
+              <a class="cs-link" href="{{ item.url }}">{{ item.label }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </nav>
+    </div>
+  {% endcall %}
+</header>

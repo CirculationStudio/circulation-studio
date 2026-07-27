@@ -1,0 +1,22 @@
+{#
+  Section: owns the macro rhythm. 96px vertical padding (the section-level step
+  of the spacing scale, and the ONLY place 96 is allowed, never
+  component-internal) plus the 1120px container, both applied automatically.
+
+  py-24 is Tailwind's 96px step. max-w-main is --container-main.
+
+  `deep` paints the one ink pane. design.md section 1: MAX ONE deep pane per
+  view. Buttons inside a deep section must use variant="deep", and the wordmark
+  its --on-deep modifier, or they render ink-on-ink and vanish.
+
+  Usage:
+    {% raw %}{% from "components/section.njk" import section %}
+    {% call section(deep=true) %}...{% endcall %}{% endraw %}
+#}
+{% macro section(deep=false, class="", containerClass="", id="", label="") %}
+<section{% if id %} id="{{ id }}"{% endif %}{% if label %} aria-label="{{ label }}"{% endif %} class="py-24{{ " bg-ink text-paper" if deep }}{{ " " + class if class }}">
+  <div class="mx-auto w-full max-w-main px-8{{ " " + containerClass if containerClass }}">
+    {{ caller() }}
+  </div>
+</section>
+{% endmacro %}

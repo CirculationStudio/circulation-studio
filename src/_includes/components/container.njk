@@ -1,0 +1,19 @@
+{#
+  Container: enforces the 1120px measure and the gutter.
+
+  Page rhythm is not something builders re-apply by hand. Reach for section()
+  first, which already applies this; use container() bare only when you need
+  the measure without the 96px vertical rhythm (inside the masthead, say).
+
+  max-w-main is --container-main (1120px). px-8 is Tailwind's 32px step, which
+  is the design system's own container padding.
+
+  Usage:
+    {% raw %}{% from "components/container.njk" import container %}
+    {% call container() %}...{% endcall %}{% endraw %}
+#}
+{% macro container(class="") %}
+<div class="mx-auto w-full max-w-main px-8{{ " " + class if class }}">
+  {{ caller() }}
+</div>
+{% endmacro %}

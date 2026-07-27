@@ -1,0 +1,28 @@
+{#
+  Base layout: the frame every page sits in.
+
+  Pages supply content and front matter only. They never restate the shell, and
+  they never rebuild the masthead or footer. This is the frame half of the
+  frame-plus-blocks model; the components in _includes/components are the
+  blocks.
+#}<!doctype html>
+<html lang="{{ locale or site.locale }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title or site.title }}</title>
+  <meta name="description" content="{{ description or site.description }}">
+  <script type="module" src="/src/js/main.js"></script>
+</head>
+<body>
+  <a class="cs-link sr-only focus:not-sr-only" href="#main">Skip to content</a>
+
+  {% include "partials/masthead.njk" %}
+
+  <main id="main">
+    {{ content | safe }}
+  </main>
+
+  {% include "partials/footer.njk" %}
+</body>
+</html>

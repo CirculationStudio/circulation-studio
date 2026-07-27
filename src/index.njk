@@ -1,12 +1,17 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Circulation Studio</title>
-  <script type="module" src="/src/js/main.js"></script>
-</head>
-<body>
-  <h1 class="text-4xl font-bold text-blue-600">Circulation Studio</h1>
-</body>
-</html>
+---
+layout: layouts/base.njk
+title: Circulation Studio
+permalink: /index.html
+---
+{#
+  Placeholder home page. This exists to wire the frame and prove composition,
+  not as the real home page. Real copy and structure come from
+  SITE_ARCHITECTURE.md and voice-tone.md in a later pass.
+#}
+{% from "components/section.njk" import section %}
+{% from "components/heading.njk" import heading %}
+
+{% call section() %}
+  {{ heading("Circulation Studio", as="h1") }}
+  <p>Placeholder. Page structure is defined in SITE_ARCHITECTURE.md and has not been built yet.</p>
+{% endcall %}

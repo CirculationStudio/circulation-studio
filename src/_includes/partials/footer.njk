@@ -1,0 +1,33 @@
+{#
+  Footer: shared frame, included by the base layout.
+
+  Deliberately not an ink pane. design.md section 1 allows a maximum of one
+  deep pane per view, and spending it on the footer would block using it where
+  it earns its keep. Hairline separation instead.
+#}
+{% from "components/container.njk" import container %}
+
+<footer class="border-t border-[var(--border-hairline)] py-16">
+  {% call container() %}
+    <div class="flex flex-wrap items-start justify-between gap-10">
+      <div>
+        <span class="cs-wordmark">
+          <span class="cs-wordmark__name">CIRCUL<span class="alt-soft">A</span>TION</span>
+          <span class="cs-wordmark__studio">STUDIO</span>
+        </span>
+      </div>
+
+      <nav aria-label="Footer">
+        <ul class="flex list-none flex-wrap items-center gap-8 p-0 m-0">
+          {% for item in nav.primary %}
+            <li><a class="cs-link" href="{{ item.url }}">{{ item.label }}</a></li>
+          {% endfor %}
+        </ul>
+      </nav>
+    </div>
+
+    <p class="caption mt-16 mb-0">
+      &copy; {{ site.year }} {{ site.name }}
+    </p>
+  {% endcall %}
+</footer>
