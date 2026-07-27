@@ -1,8 +1,132 @@
+/* Lora is the body face, pulled from Google Fonts per the design system's
+   fonts.css. Dual (the display face) is licensed OTF and is NOT in this repo
+   yet, so var(--font-display) currently falls back to system-ui. Drop the six
+   Dual-*.otf files into src/fonts/ and add the @font-face rules to finish it.
+
+   This @import stays above the Tailwind one: "@import tailwindcss" expands to
+   real rules at build time, and CSS drops any @import that follows a rule. */
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
-/* Design tokens: colors, fonts, spacing not locked yet.
-   01_Brand_Identity_Positioning.md flags visual identity
-   (hex codes, typeface) as pending. Fill in once confirmed,
-   don't guess in the meantime. */
+/* Design tokens pulled from the Circulation Studio Design System in Claude
+   Design (tokens/colors.css, typography.css, layout.css) on 2026-07-27.
+   Claude Design is the canonical source. Re-pull rather than hand-editing,
+   see DESIGN_SYSTEM.md.
+
+   Split is deliberate: @theme holds tokens whose names map onto a Tailwind v4
+   namespace, so they generate utilities. :root below holds the rest, which
+   stay as plain custom properties for hand-written component CSS. */
 @theme {
+  /* Named palette. Six values, that's the whole system.
+     --color-* generates bg-paper, text-ink, border-mist, and so on.
+     White is omitted, Tailwind's default bg-white is already #FFFFFF. */
+  --color-paper: #F4F5F4;       /* page ground: off-white, faintly cool. Not cream. */
+  --color-mist: #E7E9E8;        /* quiet panels, secondary surfaces */
+  --color-slate: #6B6470;       /* muted text: cool grey with the wordmark's plum cast */
+  --color-ink: #211523;         /* type and solid fills: near-black aubergine, from wordmark #280830 */
+  --color-madder: #8F1D2E;      /* the one accent, modernized from the logo's heritage red #780818 */
+
+  /* Derived shades. Tints of the six only, never new hues. */
+  --color-madder-deep: #701523;
+  --color-ink-press: #160D18;
+
+  /* Type families. --font-* generates font-display and font-body. */
+  --font-display: 'Dual', system-ui, sans-serif;
+  --font-body: 'Lora', Georgia, serif;
+
+  /* Locked type scale. --text-* generates text-h1, text-h2, text-h3, text-caption.
+     text-base is intentionally overridden from Tailwind's 16px to the system's 17px. */
+  --text-h1: 56px;
+  --text-h2: 36px;
+  --text-h3: 24px;
+  --text-base: 17px;
+  --text-caption: 13px;
+
+  /* Rhythm. leading-tight is intentionally overridden from Tailwind's 1.25. */
+  --leading-tight: 1.06;
+  --leading-heading: 1.15;
+  --leading-body: 1.7;
+
+  --tracking-caps: .06em;
+  --tracking-wide: .14em;
+  --tracking-btn: .22em;
+  --tracking-btn-tight: .1em;
+
+  /* Near-square engraved-plate corners everywhere, buttons included.
+     Pill is for label chips only. */
+  --radius-control: 2px;
+  --radius-pill: 999px;
+
+  /* Border-defined surfaces. Shadow only on rare floating layers. */
+  --shadow-float: 0 12px 32px rgba(33, 21, 35, .16);
+
+  /* --container-* generates max-w-main and max-w-measure. */
+  --container-main: 1120px;
+  --container-measure: 66ch;
+}
+
+:root {
+  /* Semantic color aliases. These carry the meaning, the palette above carries
+     the values. Prefer these in component CSS so a palette change propagates.
+     Note: --text-body and --text-muted are COLORS here, while --text-h1 and
+     --text-base in @theme above are FONT SIZES. That naming comes from the
+     design system itself. */
+  --surface-page: var(--color-paper);
+  --surface-card: #FFFFFF;
+  --surface-panel: var(--color-mist);
+  --surface-figure: var(--color-mist);
+  --surface-deep: var(--color-ink);
+
+  --text-body: var(--color-ink);
+  --text-muted: var(--color-slate);
+  --text-faint: rgba(33, 21, 35, .45);
+  --text-on-deep: var(--color-paper);
+  --text-on-accent: #FFFFFF;
+
+  --accent: var(--color-madder);
+  --accent-hover: var(--color-madder-deep);
+  --accent-quiet: rgba(143, 29, 46, .09);
+  --link: var(--color-madder);
+  --link-hover: var(--color-madder-deep);
+  --focus-ring: rgba(143, 29, 46, .45);
+
+  --border-hairline: rgba(33, 21, 35, .14);
+  --border-strong: rgba(33, 21, 35, .34);
+  --border-on-deep: rgba(244, 245, 244, .25);
+
+  /* Spacing. Locked scale, kept out of @theme on purpose: every value is a
+     multiple of 4px, so Tailwind's default scale already emits them exactly
+     (p-2 = 8, p-4 = 16, p-6 = 24, p-10 = 40, p-16 = 64, p-24 = 96). Putting
+     numeric names in @theme would have silently redefined p-8 to mean 8px.
+     96 is SECTION-LEVEL ONLY, never component-internal. */
+  --space-8: 8px;
+  --space-16: 16px;
+  --space-24: 24px;
+  --space-40: 40px;
+  --space-64: 64px;
+  --space-96: 96px;
+
+  /* Weights. Dual ships 100-600. Headings are 600, Lora body is 400.
+     Kept out of @theme because --font-weight-display would collide with the
+     --font-display family above, both generate a "font-display" utility.
+     Ramp is reference-only pending sign-off. */
+  --weight-hair: 100;
+  --weight-thin: 200;
+  --weight-light: 300;
+  --weight-body: 400;
+  --weight-medium: 500;
+  --weight-display: 600;
+
+  /* Motion. CSS transitions only. Fast and decisive, --ease-snap overshoots
+     slightly (the button snap). No animation libraries, no spinners.
+     No transition: all, it wrecks INP. */
+  --dur-fast: 140ms;
+  --dur-snap: 220ms;
+  --ease-out: cubic-bezier(.2, .7, .3, 1);
+  --ease-snap: cubic-bezier(.3, 1.4, .4, 1);
+
+  /* Layout */
+  --grid-gutter: 24px;
+  --z-nav: 100;
+  --z-float: 500;
 }
