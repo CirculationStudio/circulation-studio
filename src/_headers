@@ -1,31 +1,42 @@
 # Security and caching headers for Circulation Studio
 # See DEPLOYMENT.md for detailed configuration
+#
+# Paths here must match the paths the site is SERVED at, not the source tree.
+# Vite fingerprints every asset into /assets/, so the previous /css/*, /js/*,
+# /images/* and /fonts/* rules matched nothing at all.
+#
+# IMPORTANT, this is why Cache-Control is not on /* below:
+# Cloudflare Pages does NOT resolve duplicate headers by specificity. When two
+# matching rules set the same header, it JOINS the values with a comma. A
+# Cache-Control on /* plus another on /assets/* would ship
+# "public, max-age=3600, must-revalidate, public, max-age=31536000, immutable"
+# on every asset, which is ambiguous. So any given Cache-Control must be set by
+# exactly one matching rule, and these path rules must never overlap for it.
 
-# Global security headers
+# Global security headers. Deliberately no Cache-Control here, see above.
 /*
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(), microphone=(), camera=()
 
-# Cache static assets
-/css/*
+# Build output: CSS, JS and fonts, all emitted by Vite with a content hash in
+# the filename. Safe to cache forever, because the filename changes whenever
+# the bytes do. This is the only rule setting Cache-Control on these paths.
+/assets/*
   Cache-Control: public, max-age=31536000, immutable
 
-/js/*
-  Cache-Control: public, max-age=31536000, immutable
-
-/images/*
-  Cache-Control: public, max-age=31536000, immutable
-
-# Cache fonts
-/fonts/*
-  Cache-Control: public, max-age=31536000, immutable
-
-# HTML pages - short cache with revalidation
-/*.html
-  Cache-Control: public, max-age=3600, must-revalidate
-
-# Service worker (if PWA module enabled)
+# Service worker (if PWA module enabled). Unused today, PWA is No in
+# SITE_ARCHITECTURE.md. Kept because a service worker must never be cached.
 /sw.js
   Cache-Control: public, max-age=0, must-revalidate
+
+# HTML pages intentionally carry no Cache-Control rule. Pretty URLs mean the
+# request path is "/" or "/services/", so the only glob that would catch them
+# is /*, which also catches /assets/ and would corrupt the asset value through
+# the comma-join above. Pages therefore fall back to the Cloudflare Pages
+# default for HTML, which revalidates rather than caching hard. That is the
+# safe posture: content edits go live immediately, and the fingerprinted assets
+# they reference are still cached for a year. If an explicit page max-age is
+# ever wanted, it has to be added as non-overlapping rules per page path, not
+# as a second /* rule.

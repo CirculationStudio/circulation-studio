@@ -87,6 +87,28 @@ function glyphSwaps(text, swaps, tag) {
 export default function (eleventyConfig) {
   eleventyConfig.addFilter("glyphSwaps", glyphSwaps);
 
+  /* Deploy-time files. Two separate problems had to be solved to ship these.
+
+     First, they have no template extension, so Eleventy ignores them unless
+     they are copied explicitly.
+
+     Second, and less obvious: copying them straight to the output root is not
+     enough. This plugin renames Eleventy's output to a temp folder, then runs
+     Vite with that as the root and emptyOutDir enabled. Vite emits only the
+     files it knows about, so anything merely sitting in the root is discarded.
+     Passthrough alone silently lost all three.
+
+     Routing them through "public/" fixes it: Vite copies its publicDir
+     (<root>/public by default) to the output root verbatim, no hashing. So
+     these land at _site/_headers, _site/_redirects and
+     _site/site.webmanifest, which is exactly where Cloudflare Pages expects
+     _headers and _redirects. */
+  eleventyConfig.addPassthroughCopy({ "src/_headers": "public/_headers" });
+  eleventyConfig.addPassthroughCopy({ "src/_redirects": "public/_redirects" });
+  eleventyConfig.addPassthroughCopy({
+    "src/site.webmanifest": "public/site.webmanifest"
+  });
+
   eleventyConfig.addPlugin(EleventyVitePlugin, {
     viteOptions: {
       plugins: [tailwindcss()],

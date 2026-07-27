@@ -44,11 +44,41 @@ stylistic sets, and a careless subset drops layout features. All ten sets
 these later must pass the layout features through explicitly.
 
 Fonts are referenced by relative source path, so Vite fingerprints them into
-`/assets/Dual-600-<hash>.woff2`. **Known gap:** `src/_headers` declares
-immutable caching for `/fonts/*`, `/css/*` and `/js/*`, none of which match
-Vite's `/assets/*` output. Separately, `_headers`, `_redirects` and
-`site.webmanifest` are not copied into `_site` at all, so none of them
-currently deploy. Both predate the font work.
+`/assets/Dual-600-<hash>.woff2`, which is cached immutably for a year.
+
+## Deploy pipeline
+
+Two gaps found during the font pass, both now fixed.
+
+`src/_headers` cached `/fonts/*`, `/css/*`, `/js/*` and `/images/*`, none of
+which exist: Vite emits everything to `/assets/*`. The rules now match the
+served paths.
+
+**Cache-Control rules must never overlap.** Cloudflare Pages does not resolve
+duplicate headers by specificity, it JOINS the values with a comma. A
+`Cache-Control` on `/*` plus another on `/assets/*` would ship
+`public, max-age=3600, must-revalidate, public, max-age=31536000, immutable`
+on every asset. So `/*` carries security headers only, and exactly one rule
+sets `Cache-Control` for any given path. HTML pages carry no rule and fall
+back to the Pages default, which revalidates. That is the safe posture:
+content edits go live immediately while fingerprinted assets stay cached.
+
+`_headers`, `_redirects` and `site.webmanifest` were not reaching `_site` at
+all. Two causes: they have no template extension, so Eleventy skips them; and
+the Vite plugin renames Eleventy's output to a temp folder, then rebuilds with
+`emptyOutDir`, discarding anything it does not reference. Plain passthrough
+copy silently lost all three. They are now passed through to `public/`, which
+Vite copies verbatim to the output root.
+
+The manifest's `theme_color` and `background_color` were generic `#000000` and
+`#ffffff`. They are now `--ink` (#211523) and `--paper` (#F4F5F4), per
+design.md section 1, which bans generic black outright.
+
+**Still open:** nothing links the manifest. Without
+`<link rel="manifest" href="/site.webmanifest">` in the document head no
+browser reads it, so the corrected colors have no effect yet. Left undone
+because SITE_ARCHITECTURE.md sets PWA to No, and adding the link enables
+install prompts. One line in `layouts/base.njk` whenever that is wanted.
 
 **Lora** (body) still loads from Google Fonts via the import at the top of
 `main.css`. It is SIL OFL, so self-hosting it later is permitted.
