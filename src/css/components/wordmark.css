@@ -44,6 +44,34 @@
     color: var(--text-muted);
   }
 
+  /* The alt-glyph floor (design.md section 9): the crossbar-less A holds at
+     15px and up, and below about 14px the wordmark renders as plain type with
+     no swap. At that size the alternate stops reading as a deliberate
+     letterform and just looks like a broken A.
+
+     CSS cannot branch on computed font-size, so the floor cannot be automatic.
+     This modifier is the author-chosen mechanism: put it on the wordmark
+     wherever it renders below the floor, and the swap switches off while the
+     markup stays identical.
+
+       <a class="cs-wordmark cs-wordmark--plain" href="/"> ... </a>
+
+     WHEN to apply it: small wordmark lockups, footer micro-marks, favicon and
+     app-icon adjacent contexts, dense UI chrome, anywhere the name is set
+     under roughly 14px. When in doubt, measure the rendered size rather than
+     guessing from context.
+
+     Nothing in the build needs it today. The wordmark is 20px, h1 is 56px and
+     h2 is 36px, all well clear of the floor. This exists so the rule is
+     enforceable the first time something renders small, rather than being
+     rediscovered then. */
+  .cs-wordmark--plain .alt,
+  .cs-wordmark--plain .alt-soft,
+  .cs-wordmark--plain .alt-bar,
+  .cs-wordmark--plain .alt-dot,
+  .cs-wordmark--plain .alt-cut,
+  .cs-wordmark--plain .alt-stencil { font-feature-settings: normal }
+
   /* On an ink pane the wordmark is set in paper. Never redraw the mark and
      never use a reversed isotype, per design.md section 9. */
   .cs-wordmark--on-deep { color: var(--color-paper) }

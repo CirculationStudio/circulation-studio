@@ -66,15 +66,29 @@ The five React components are rewritten as Nunjucks macros in
 h1/h2 only, letter must fall inside the named word) lives in the `glyphSwaps`
 filter in `eleventy.config.js`.
 
-**Known gap, the alt-glyph floor.** design.md section 9 says the swap holds at
-15px and up and drops to plain type below about 14px. That floor is not
-implemented. `glyphSwaps` takes text, swaps and tag only, with no size input,
-and no CSS rule disables `font-feature-settings` at small sizes. It does not
-bite today: h1 is 56px, h2 is 36px, and the wordmark is 20px, all far above
-the floor. It would bite on a small wordmark lockup. CSS cannot branch on
-computed font-size, so this needs an explicit modifier (a `.cs-wordmark--plain`
-that sets `font-feature-settings: normal`) chosen by the author, not an
-automatic rule.
+**The alt-glyph floor.** design.md section 9 says the crossbar-less A holds at
+15px and up and drops to plain type below about 14px, where the alternate
+stops reading as a deliberate letterform and just looks like a broken A.
+
+CSS cannot branch on computed font-size, so the floor cannot be automatic. It
+is an author-chosen modifier, `.cs-wordmark--plain`, which sets
+`font-feature-settings: normal` on every alt class inside the wordmark:
+
+```html
+<a class="cs-wordmark cs-wordmark--plain" href="/"> ... </a>
+```
+
+**When to apply it:** small wordmark lockups, footer micro-marks, favicon and
+app-icon adjacent contexts, dense UI chrome, anywhere the name is set under
+roughly 14px. When in doubt, measure the rendered size rather than inferring
+it from context.
+
+Nothing in the build needs it today. The wordmark is 20px, h1 is 56px, h2 is
+36px, all well clear of the floor. It exists so the rule is enforceable the
+first time something renders small.
+
+Note the filter is still size-blind by design: `glyphSwaps` takes text, swaps
+and tag only. Size is a rendering concern, so it is handled in CSS.
 
 **Verified against the font binary:** `ss01` substitutes `A` (gid 565) with
 `A.alt` (gid 566), matching design.md section 9 exactly. `ss01` also carries
