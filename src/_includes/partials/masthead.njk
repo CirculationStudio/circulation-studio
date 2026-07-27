@@ -1,32 +1,53 @@
 {#
-  Masthead: shared frame, included by the base layout rather than composed per
-  page. Nav items come from _data so they stay editable without touching markup.
+  Editorial masthead: shared frame, included by the base layout rather than
+  composed per page. Content comes from _data/site.js and _data/nav.js.
 
-  The wordmark is set in type per design.md section 9: CIRCULATION carries the
-  crossbar-less A only (.alt-soft on that single letter), the O carries no
-  device ever, STUDIO stays plain. The swap is per-character, never a
-  word-level font-feature-settings, because ss01 also carries R, D and O
-  alternates that the lockup has retired.
+  Three-column rail (location, stacked lockup, booking status) with the nav
+  justified beneath, then a sentinel and the collapsed sticky bar.
+
+  The wordmark A carries the crossbar-less alt-glyph, scoped to that single
+  character. Never word-level font-feature-settings: ss01 also carries D, E, H,
+  J, O and R, which the lockup has retired. The isotype is alt="" because the
+  adjacent text already names the link.
 #}
-{% from "components/container.njk" import container %}
 
-<header class="border-b border-[var(--border-hairline)]">
-  {% call container() %}
-    <div class="flex items-center justify-between gap-6 py-6">
-      <a class="cs-wordmark" href="/" aria-label="Circulation Studio, home">
-        <span class="cs-wordmark__name">CIRCUL<span class="alt-soft">A</span>TION</span>
-        <span class="cs-wordmark__studio">STUDIO</span>
-      </a>
+<header class="cs-masthead">
+  <div class="cs-masthead__rail">
+    <p class="cs-masthead__label cs-masthead__location">{{ site.location }}</p>
 
-      <nav aria-label="Primary">
-        <ul class="flex list-none items-center gap-8 p-0 m-0">
-          {% for item in nav.primary %}
-            <li>
-              <a class="cs-link" href="{{ item.url }}">{{ item.label }}</a>
-            </li>
-          {% endfor %}
-        </ul>
-      </nav>
-    </div>
-  {% endcall %}
+    <a class="cs-wordmark cs-wordmark--stacked" href="/" aria-label="{{ site.name }}, home">
+      <img class="cs-wordmark__icon" src="/images/isotype.png" alt="" width="360" height="360">
+      <span class="cs-wordmark__name">Circul<span class="alt-soft">a</span>tion</span>
+      <span class="cs-wordmark__studio">Studio</span>
+    </a>
+
+    <a class="cs-masthead__label cs-masthead__booking" href="{{ site.booking.url }}">
+      {{ site.booking.label }}
+    </a>
+  </div>
+
+  <nav class="cs-masthead__nav" aria-label="Primary">
+    <ul class="cs-masthead__navlist">
+      {% for item in nav.primary %}
+        <li><a href="{{ item.url }}">{{ item.label }}</a></li>
+      {% endfor %}
+    </ul>
+  </nav>
 </header>
+
+{# Watched by the observer in main.js. Once this leaves the viewport the
+   masthead has scrolled away and the sticky bar reveals. #}
+<div class="cs-masthead__sentinel" data-masthead-sentinel aria-hidden="true"></div>
+
+<div class="cs-stickybar" data-sticky-masthead>
+  <a class="cs-wordmark cs-wordmark--inline" href="/" aria-label="{{ site.name }}, home">
+    <img class="cs-wordmark__icon" src="/images/isotype.png" alt="" width="360" height="360">
+    <span class="cs-wordmark__name">Circul<span class="alt-soft">a</span>tion Studio</span>
+  </a>
+
+  <nav class="cs-stickybar__nav" aria-label="Primary, condensed">
+    {% for item in nav.primary %}
+      <a href="{{ item.url }}">{{ item.label }}</a>
+    {% endfor %}
+  </nav>
+</div>

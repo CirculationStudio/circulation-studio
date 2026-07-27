@@ -1,33 +1,39 @@
 {#
-  Footer: shared frame, included by the base layout.
+  Ink colophon: shared frame, included by the base layout. Content comes from
+  _data/site.js and _data/nav.js.
 
-  Deliberately not an ink pane. design.md section 1 allows a maximum of one
-  deep pane per view, and spending it on the footer would block using it where
-  it earns its keep. Hairline separation instead.
+  This is the one deep pane the frame spends. A page that also composes a deep
+  Section is already at the one-ink-pane-per-view cap from design.md section 1.
+
+  The tagline's O carries the target glyph (.alt-dot). The isotype is not
+  present on this pane, so nothing else is claiming circular meaning and the
+  device is correct here.
 #}
-{% from "components/container.njk" import container %}
 
-<footer class="border-t border-[var(--border-hairline)] py-16">
-  {% call container() %}
-    <div class="flex flex-wrap items-start justify-between gap-10">
-      <div>
-        <span class="cs-wordmark">
-          <span class="cs-wordmark__name">CIRCUL<span class="alt-soft">A</span>TION</span>
-          <span class="cs-wordmark__studio">STUDIO</span>
-        </span>
-      </div>
+<footer class="cs-colophon">
+  <div class="cs-colophon__grid">
+    <address class="cs-colophon__address">
+      {{ site.address.street }}<br>
+      {{ site.address.cityStateZip }}<br>
+      <a href="{{ site.address.phoneHref }}">{{ site.address.phone }}</a><br>
+      <a href="mailto:{{ site.address.email }}">{{ site.address.email }}</a>
+    </address>
 
-      <nav aria-label="Footer">
-        <ul class="flex list-none flex-wrap items-center gap-8 p-0 m-0">
-          {% for item in nav.primary %}
-            <li><a class="cs-link" href="{{ item.url }}">{{ item.label }}</a></li>
-          {% endfor %}
-        </ul>
-      </nav>
-    </div>
-
-    <p class="caption mt-16 mb-0">
-      &copy; {{ site.year }} {{ site.name }}
+    <p class="cs-colophon__tagline">
+      Get Built.<br>Get F<span class="alt-dot">o</span>und.
     </p>
-  {% endcall %}
+
+    <nav aria-label="Footer">
+      <ul class="cs-colophon__nav">
+        {% for item in nav.footer %}
+          <li><a href="{{ item.url }}">{{ item.label }}</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+  </div>
+
+  <div class="cs-colophon__base">
+    <span>&copy; {{ site.year }} {{ site.name }}</span>
+    <span>{{ site.location }}</span>
+  </div>
 </footer>

@@ -1,4 +1,5 @@
-/* Wordmark, set in type per design.md section 9 (LOCKED).
+/* Wordmark, per design.md section 9 (LOCKED) and the locked Header + Footer
+   design.
 
    Configuration: CIRCULATION with the crossbar-less A only (ss01, carried by
    .alt-soft on that single letter). The O carries NO device anywhere in the
@@ -6,18 +7,25 @@
    reads as a thinner echo beneath it. STUDIO never carries a glyph.
 
    Activation is per-character only. Never set font-feature-settings on the
-   whole word, because ss01 also carries R, D and O alternates and would swap
-   letters the lockup has explicitly retired.
+   whole word, because ss01 also carries D, E, H, J, O and R alternates, which
+   the lockup has explicitly retired. Verified against the font binary.
 
-   Not yet in this repo: the isotype (assets/isotype.png is a placeholder even
-   in the design project, pending the production SVG) and the full lockup set
-   in guidelines/brand-wordmark.html. This is the wordmark-only lockup. */
+   The locked proportions are expressed as ratios off a single size variable
+   rather than restated per context, so a lockup cannot drift out of spec:
+
+     icon    3.7x the wordmark size (stacked), 3.0x (inline)
+     STUDIO  0.55x the wordmark size, at .42em tracking
+     gap     -0.15em between icon and wordmark
+
+   Set --cs-wordmark-size and the rest follows. */
 @layer components {
   .cs-wordmark {
+    --cs-wordmark-size: 24px;
+    --cs-wordmark-icon-ratio: 3.7;
+    --cs-wordmark-studio-ratio: .55;
+
     display: inline-flex;
-    flex-direction: column;
     font-family: var(--font-display);
-    font-weight: var(--weight-display);
     text-transform: uppercase;
     color: var(--color-ink);
     text-decoration: none;
@@ -29,20 +37,51 @@
     outline-offset: 3px;
   }
 
+  .cs-wordmark__icon {
+    display: block;
+    width: calc(var(--cs-wordmark-size) * var(--cs-wordmark-icon-ratio));
+    height: auto;
+  }
+
   .cs-wordmark__name {
-    font-size: 20px;
-    letter-spacing: var(--tracking-caps);
+    font-weight: var(--weight-display);
+    font-size: var(--cs-wordmark-size);
+    line-height: 1;
+    letter-spacing: .05em;
+    white-space: nowrap;
   }
+
   .cs-wordmark__studio {
-    font-size: 10px;
-    /* .42em, the locked lockup value for STUDIO beneath the name */
+    font-weight: var(--weight-medium);
+    font-size: calc(var(--cs-wordmark-size) * var(--cs-wordmark-studio-ratio));
+    line-height: 1;
+    /* the tracking adds a trailing gap; the indent compensates so the block
+       stays optically centred rather than sitting left of the name */
     letter-spacing: .42em;
-    /* the tracking adds a trailing gap; pull it back so the block stays
-       optically flush-left under CIRCULATION */
     text-indent: .42em;
-    margin-left: -.42em;
-    color: var(--text-muted);
+    margin-top: calc(var(--cs-wordmark-size) * .125);
   }
+
+  /* Stacked lockup: icon above CIRCULATION over STUDIO, centred. The masthead
+     lockup. */
+  .cs-wordmark--stacked {
+    flex-direction: column;
+    align-items: center;
+  }
+  .cs-wordmark--stacked .cs-wordmark__icon {
+    margin-bottom: calc(var(--cs-wordmark-size) * -.15);
+  }
+
+  /* Inline lockup: icon beside a single-line CIRCULATION STUDIO, at the
+     tighter 3.0x icon ratio. The collapsed sticky bar. */
+  .cs-wordmark--inline {
+    --cs-wordmark-size: 15px;
+    --cs-wordmark-icon-ratio: 3;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-8);
+  }
+  .cs-wordmark--inline .cs-wordmark__icon { transform: translateY(1px) }
 
   /* The alt-glyph floor (design.md section 9): the crossbar-less A holds at
      15px and up, and below about 14px the wordmark renders as plain type with
@@ -61,10 +100,10 @@
      under roughly 14px. When in doubt, measure the rendered size rather than
      guessing from context.
 
-     Nothing in the build needs it today. The wordmark is 20px, h1 is 56px and
-     h2 is 36px, all well clear of the floor. This exists so the rule is
-     enforceable the first time something renders small, rather than being
-     rediscovered then. */
+     Nothing in the frame needs it today. The masthead wordmark is 24px and the
+     sticky bar is 15px, both at or above the floor. STUDIO sits at 13px in the
+     masthead, below the floor, but carries no glyph in the first place, so
+     there is nothing to drop. */
   .cs-wordmark--plain .alt,
   .cs-wordmark--plain .alt-soft,
   .cs-wordmark--plain .alt-bar,
@@ -74,7 +113,6 @@
 
   /* On an ink pane the wordmark is set in paper. Never redraw the mark and
      never use a reversed isotype, per design.md section 9. */
-  .cs-wordmark--on-deep { color: var(--color-paper) }
+  .cs-wordmark--on-deep,
   .cs-wordmark--on-deep:hover { color: var(--color-paper) }
-  .cs-wordmark--on-deep .cs-wordmark__studio { color: var(--text-on-deep) }
 }

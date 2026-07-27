@@ -17,6 +17,8 @@
 @import "./components/button.css";
 @import "./components/card.css";
 @import "./components/wordmark.css";
+@import "./components/masthead.css";
+@import "./components/colophon.css";
 @import "./components/longform.css";
 
 /* Design tokens pulled from the Circulation Studio Design System in Claude
