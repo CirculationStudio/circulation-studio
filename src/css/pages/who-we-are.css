@@ -21,6 +21,11 @@
     text-transform: uppercase;
     color: var(--text-faint);
     margin: 0;
+    /* p inherits max-width 66ch from base/elements.css, which anchors this
+       label to a ~400px box on the left of the container. text-align:center
+       then centres inside THAT box, not across the container, so the eyebrow
+       sat well left of the columns it heads. A label is not prose. */
+    max-width: none;
   }
   .cs-eyebrow--center { text-align: center }
 

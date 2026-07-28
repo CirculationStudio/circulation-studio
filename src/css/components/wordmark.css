@@ -13,9 +13,8 @@
    The locked proportions are expressed as ratios off a single size variable
    rather than restated per context, so a lockup cannot drift out of spec:
 
-     icon    3.7x the wordmark size (stacked), 3.0x (inline)
-     STUDIO  0.55x the wordmark size, at .42em tracking
-     gap     -0.15em between icon and wordmark
+     Every proportion is anchored to the visible CAP HEIGHT, not to font size
+     and not to the design file's px values. See the block below for why.
 
    Set --cs-wordmark-size and the rest follows. */
 @layer components {
@@ -47,6 +46,7 @@
      lockup, normalised to the CIRCULATION cap height:
 
        icon height             3.09x cap  -> --cs-wordmark-icon-ratio
+                                             (now 2.8, see the note below)
        gap icon to wordmark    0.84x cap  -> --cs-wordmark-gap-ratio
        STUDIO cap height       0.50x cap  -> --cs-wordmark-studio-ratio
        gap wordmark to STUDIO  0.69x cap  -> --cs-wordmark-studio-gap-ratio
@@ -62,12 +62,18 @@
      that artwork, and it is why the file's px values could never be copied
      across to an edge-to-edge SVG.
 
+     ICON RATIO IS NOW 2.8, NOT THE MEASURED 3.09. That is a deliberate taste
+     refinement roughly 10 percent below the matched reference, not a
+     correction toward it: the mark read a touch heavy against the wordmark in
+     both lockups. Both lockups share the ratio, so they shrink together and
+     stay proportional to each other.
+
      --cs-wordmark-cap-ratio is a property of Dual and should only change if
      the display face changes. */
   .cs-wordmark {
     --cs-wordmark-size: 24px;
     --cs-wordmark-cap-ratio: .742;
-    --cs-wordmark-icon-ratio: 3.1;
+    --cs-wordmark-icon-ratio: 2.8;
     --cs-wordmark-gap-ratio: .73;
     --cs-wordmark-studio-ratio: .55;
     --cs-wordmark-studio-gap-ratio: .34;
@@ -144,8 +150,6 @@
     );
   }
 
-  /* Inline lockup: icon beside a single-line CIRCULATION STUDIO, at the
-     tighter 3.0x icon ratio. The collapsed sticky bar. */
   /* Inline lockup: icon beside a single-line CIRCULATION STUDIO. It
      deliberately does NOT override --cs-wordmark-icon-ratio. The icon is
      anchored to cap height, so dropping the wordmark to 15px scales the mark
@@ -154,11 +158,29 @@
      measured against font size and needed a manual correction here. */
   .cs-wordmark--inline {
     --cs-wordmark-size: 15px;
+    /* gap in cap heights, so it tracks the lockup at any size. Tight enough
+       that the mark and the name read as one unit rather than as an icon
+       sitting next to some text. */
+    --cs-wordmark-inline-gap-ratio: .55;
     flex-direction: row;
     align-items: center;
-    gap: var(--space-8);
+    gap: calc(
+      var(--cs-wordmark-size) *
+      var(--cs-wordmark-cap-ratio) *
+      var(--cs-wordmark-inline-gap-ratio)
+    );
   }
-  .cs-wordmark--inline .cs-wordmark__icon { transform: translateY(1px) }
+
+  /* Optical centring against the CAP HEIGHT, not the line box.
+     align-items:center aligns to the line box, whose centre sits below the
+     centre of the capitals: Dual's ascent is 750 and descent 250 per 1000 upm,
+     so with line-height 1 the baseline lands at .75em and the cap centre at
+     .75 - .710/2 = .395em, against a line-box centre of .5em. The mark
+     therefore reads .105em low unless corrected. Derived, so it holds at any
+     size. The previous +1px went the wrong way and compounded it. */
+  .cs-wordmark--inline .cs-wordmark__icon {
+    transform: translateY(calc(var(--cs-wordmark-size) * -.105));
+  }
 
   /* The alt-glyph floor (design.md section 9): the crossbar-less A holds at
      15px and up, and below about 14px the wordmark renders as plain type with

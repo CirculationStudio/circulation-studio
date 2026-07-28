@@ -26,23 +26,32 @@
     background: var(--surface-page);
   }
 
+  /* Labels are centred against the full wordmark block (icon, CIRCULATION and
+     STUDIO together), not aligned to its baseline. The grid row is sized by the
+     lockup, so centring here means centring on the lockup. They flank the
+     wordmark, which is what makes this read as a masthead rather than a
+     utility bar. */
   .cs-masthead__rail {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     gap: var(--space-24);
-    align-items: end;
+    align-items: center;
     padding: 28px var(--cs-masthead-gutter) 22px;
   }
 
   /* Both rail labels sit on the display face at caption scale. The location is
      faint and inert; the booking note is madder and is a link. */
+  /* margin:0 matters. The location is a <p> and inherited margin-bottom 16px
+     from base/elements.css, while the booking note is an <a> with none, so the
+     two flanking labels sat 16px apart from each other. A label is not prose. */
   .cs-masthead__label {
     font-family: var(--font-display);
     font-weight: var(--weight-medium);
     font-size: 11px;
     letter-spacing: var(--tracking-wide);
     text-transform: uppercase;
-    padding-bottom: 6px;
+    margin: 0;
+    max-width: none;
   }
   .cs-masthead__location { color: var(--text-faint) }
 
