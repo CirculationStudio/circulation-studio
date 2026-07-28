@@ -75,17 +75,24 @@
     font-size: var(--text-h3);
   }
 
+  /* Services are separated by air, not by rules.
+     The handoff put a hairline above every entry, which chopped each column
+     into equal-weight segments and made the whole band read as noise: with a
+     rule between each of the four entries under Get Found, the dividers
+     competed with the group rule above the header and with each other.
+
+     Only the strong rule above each group header survives, because that one is
+     doing real work, separating the three outcomes from one another. Within a
+     group, proximity does the separating: 8px binds a name to its description,
+     40px sets each pair apart from the next, a 5:1 ratio that groups them
+     without a single line. */
   .cs-services {
     display: flex;
     flex-direction: column;
-    gap: var(--space-16);
+    gap: var(--space-40);
     margin: 0;
     padding: 0;
     list-style: none;
-  }
-  .cs-service {
-    border-top: 1px solid var(--border-hairline);
-    padding-top: 12px;
   }
 
   /* HIERARCHY: the service name is a step ABOVE its description, not level
@@ -104,9 +111,16 @@
     text-transform: uppercase;
     color: var(--color-ink);
   }
+  /* Descriptions drop to 14px against the 17px name, widening the size gap so
+     names can be skimmed and copy dipped into only when wanted.
+
+     Size is the lever here rather than colour: descriptions are already slate,
+     which measures 5.22:1 on paper, only 0.72 above the WCAG AA floor of
+     4.5:1. Lightening them further to increase the contrast between name and
+     description would have failed the contrast requirement instead. */
   .cs-service__desc {
     margin: var(--space-8) 0 0;
-    font-size: 15px;
+    font-size: 14px;
     color: var(--text-muted);
     max-width: none;
   }
