@@ -103,11 +103,12 @@ export default function (eleventyConfig) {
      these land at _site/_headers, _site/_redirects and
      _site/site.webmanifest, which is exactly where Cloudflare Pages expects
      _headers and _redirects. */
-  /* Images go to /images/ so Vite can resolve the absolute src in the built
-     HTML and fingerprint them into /assets/, the same way it picks up the
-     fonts referenced from CSS. Not routed through public/, because publicDir
-     files are copied verbatim and would skip the content hash. */
-  eleventyConfig.addPassthroughCopy({ "src/images": "images" });
+  /* Brand assets stage at /brand/ so Vite can resolve the absolute src in the
+     built HTML and fingerprint them into /assets/, the same way it picks up
+     the fonts referenced from CSS. /brand/ is a build-time staging path only,
+     it does not survive into the output. Not routed through public/, because
+     publicDir files are copied verbatim and would skip the content hash. */
+  eleventyConfig.addPassthroughCopy({ "src/assets": "brand" });
 
   eleventyConfig.addPassthroughCopy({ "src/_headers": "public/_headers" });
   eleventyConfig.addPassthroughCopy({ "src/_redirects": "public/_redirects" });
@@ -118,6 +119,16 @@ export default function (eleventyConfig) {
   eleventyConfig.addPlugin(EleventyVitePlugin, {
     viteOptions: {
       plugins: [tailwindcss()],
+      build: {
+        /* Never inline assets as data URIs. Vite's default inlines anything
+           under 4KB, which caught the 1.4KB brand icon and stamped it into the
+           HTML twice per page (stacked lockup plus sticky bar), about 3.9KB.
+           HTML revalidates rather than caching immutably, so those bytes go
+           over the wire on every page and every revalidation. Emitted as a
+           file instead, it is fingerprinted into /assets/ and served once
+           under the immutable one-year rule in _headers. */
+        assetsInlineLimit: 0
+      },
       resolve: {
         alias: {
           "/src": path.resolve(".", "src")
