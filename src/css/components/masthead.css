@@ -69,7 +69,19 @@
     padding: 0;
     list-style: none;
   }
-  .cs-masthead__nav a {
+  /* Nav hover borrows the plain link-draw language (.cs-link), NOT the button
+     snap. The button is the one signature interaction in the system: tracking
+     tightens, weight jumps, outline fills, 220ms with overshoot. Nav is
+     utility, so it stays deliberately quieter: a hairline that draws in from
+     the left at --dur-fast with a plain ease-out, no overshoot, and the label
+     shifting to madder on the same timing.
+
+     Two things it must never do. No tracking or weight change, which would
+     read as a weak imitation of the button and muddy the signature. And the
+     madder stays a line-weight accent: this is a 1px gradient sized from 0 to
+     100 percent, never a background fill or a pane behind the item. */
+  .cs-masthead__nav a,
+  .cs-stickybar__nav a {
     font-family: var(--font-display);
     font-weight: var(--weight-medium);
     font-size: 12px;
@@ -77,9 +89,20 @@
     text-transform: uppercase;
     color: var(--color-ink);
     text-decoration: none;
-    transition: color var(--dur-fast) var(--ease-out);
+    padding: 4px 0;
+    background-image: linear-gradient(var(--color-madder), var(--color-madder));
+    background-repeat: no-repeat;
+    background-position: left bottom;
+    background-size: 0% 1px;
+    transition:
+      background-size var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
   }
-  .cs-masthead__nav a:hover { color: var(--color-madder) }
+  .cs-masthead__nav a:hover,
+  .cs-stickybar__nav a:hover {
+    color: var(--color-madder);
+    background-size: 100% 1px;
+  }
 
   /* Collapsed sticky state: compact horizontal lockup at the locked 3.0x icon
      ratio, on paper at 92 percent with a blur behind it.
@@ -125,17 +148,9 @@
     gap: 36px;
     margin-left: auto;
   }
-  .cs-stickybar__nav a {
-    font-family: var(--font-display);
-    font-weight: var(--weight-medium);
-    font-size: 12px;
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    color: var(--color-ink);
-    text-decoration: none;
-    transition: color var(--dur-fast) var(--ease-out);
-  }
-  .cs-stickybar__nav a:hover { color: var(--color-madder) }
+  /* Sticky nav links share the hover rule with the masthead nav above.
+     Deliberately not restated here: a later duplicate at equal specificity
+     would win the cascade and silently drop the underline. */
   .cs-stickybar a:focus-visible {
     outline: 2px solid var(--focus-ring);
     outline-offset: 3px;
@@ -149,6 +164,11 @@
     pointer-events: none;
   }
 
+  /* Reduced motion: transitions off everywhere. The nav underline still
+     appears on hover, it just arrives instantly instead of drawing in from
+     the left, which leaves a plain colour-plus-underline state rather than
+     removing the affordance. Same for the sticky bar, which snaps into place
+     rather than sliding. */
   @media (prefers-reduced-motion: reduce) {
     .cs-stickybar,
     .cs-stickybar.is-visible,

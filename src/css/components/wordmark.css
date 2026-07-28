@@ -23,6 +23,7 @@
     --cs-wordmark-size: 24px;
     --cs-wordmark-icon-ratio: 3.7;
     --cs-wordmark-studio-ratio: .55;
+    --cs-wordmark-gap-ratio: .2;
 
     display: inline-flex;
     font-family: var(--font-display);
@@ -68,8 +69,18 @@
     flex-direction: column;
     align-items: center;
   }
+  /* Positive gap, not the design's -0.15em. That negative value assumed an
+     asset with internal whitespace to reclaim: the old placeholder PNG sat on
+     a canvas with padding around the mark, so pulling up merely closed the
+     empty space. The production SVG is tight-cropped, its ink fills 100% of
+     the viewBox on all four edges, so the same negative margin drove the
+     bottom of the crescent into the cap tops of CIRCULATION.
+
+     Derived from --cs-wordmark-size like every other value here, so the
+     lockup stays proportional at any size. Tune --cs-wordmark-gap-ratio if the
+     separation wants adjusting; do not hardcode a pixel gap. */
   .cs-wordmark--stacked .cs-wordmark__icon {
-    margin-bottom: calc(var(--cs-wordmark-size) * -.15);
+    margin-bottom: calc(var(--cs-wordmark-size) * var(--cs-wordmark-gap-ratio));
   }
 
   /* Inline lockup: icon beside a single-line CIRCULATION STUDIO, at the
