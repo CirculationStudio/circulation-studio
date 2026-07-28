@@ -1,0 +1,23 @@
+{#
+  Obfuscated email address.
+
+  The markup carries NO contiguous address and no mailto: href. The user and
+  domain sit in separate data attributes and main.js assembles both the link
+  and the visible text on load, so a scraper reading the raw HTML finds neither
+  a mailto nor a matchable address string.
+
+  Without JS the noscript fallback shows a human-readable "user [at] domain",
+  which a person can act on and a naive harvester will not match. That is a
+  deliberate trade: a real mailto fallback would defeat the whole point.
+
+  Values come from site.nap, which is the single NAP source. The parts are
+  derived from the same `email` field, never typed separately, so the visible
+  address cannot drift from the one that goes into schema.
+
+  Usage:
+    {% raw %}{% from "components/email.njk" import email %}
+    {{ email(site.nap.emailUser, site.nap.emailDomain) }}{% endraw %}
+#}
+{% macro email(user, domain, class="") %}
+<span class="cs-email{{ " " + class if class }}" data-email-user="{{ user }}" data-email-domain="{{ domain }}"><noscript>{{ user }} [at] {{ domain }}</noscript></span>
+{% endmacro %}

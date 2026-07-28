@@ -1,0 +1,65 @@
+/* Form controls.
+
+   PROPOSED component awaiting sign-off, same standing as .cs-close, .cs-rule
+   and .cs-eyebrow. design.md section 6 locks the component set and CLAUDE.md
+   already reserves a Forms section, so this is the shape being proposed rather
+   than an addition made unilaterally.
+
+   Controls take the system's engraved-plate corners (2px, never a pill), a
+   hairline border on the card surface, and the same focus ring as every other
+   interactive element. Labels are display caps at caption scale so they read
+   as labels rather than as prose. */
+@layer components {
+  .cs-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-24);
+  }
+  .cs-form__row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-24);
+  }
+  .cs-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+  .cs-field__label {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 11px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+  .cs-field__optional {
+    color: var(--text-faint);
+    letter-spacing: .1em;
+  }
+
+  .cs-input {
+    background: var(--surface-card);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-control);
+    padding: 12px 14px;
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: var(--leading-body);
+    color: var(--color-ink);
+    width: 100%;
+    /* enumerated, never transition: all */
+    transition: border-color var(--dur-fast) var(--ease-out);
+  }
+  .cs-input:hover { border-color: var(--border-strong) }
+  .cs-input:focus-visible {
+    border-color: var(--border-strong);
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+  textarea.cs-input { resize: vertical }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cs-input { transition: none }
+  }
+}

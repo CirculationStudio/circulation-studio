@@ -1,0 +1,108 @@
+---
+layout: layouts/base.njk
+title: "Contact: start a conversation with Circulation Studio"
+description: "A deliberately small Laguna Beach studio. Tell us about the business and you will hear back from one of us, not a queue."
+permalink: /contact/index.html
+headline: If the timing and fit are right, let’s talk.
+lede: We keep the roster small so senior people do the work.
+note: >-
+  Tell us a little about the business and what you’re after; you’ll hear back
+  from one of us, not a queue.
+fields:
+  - id: name
+    label: Name
+    type: text
+  - id: email
+    label: Email
+    type: email
+---
+{#
+  Contact.
+
+  NAP renders from site.nap, the single source, so it matches the colophon byte
+  for byte. Nothing here is retyped. SCHEMA.md marks this page as the eventual
+  home of the LocalBusiness/Organization JSON-LD, which will read the same
+  object; no schema is written yet, by instruction.
+
+  AVAILABILITY renders from site.booking, the same source the masthead reads,
+  so the two can never state different things. The handoff had the masthead
+  saying "Now booking Q3" while this page's prose said "Booking for Q3 is
+  open", which is two claims to keep in sync by hand. The prose sentence now
+  stops after the roster line and the availability is its own single-sourced
+  element.
+
+  EMAIL is obfuscated: no contiguous address and no mailto: in the markup. See
+  components/email.njk for how, and the note below on the remaining exposure.
+
+  FORM is a static mockup this pass. No action, no backend. main.js blocks the
+  submit so a click cannot silently reload the page and look like a failure.
+  Labels are explicit with for/id rather than wrapping, which is better for
+  assistive tech than the implicit labels in the handoff.
+
+  One deep ink pane per view: the colophon is it. Nothing on this page adds a
+  second.
+#}
+{% from "components/container.njk" import container %}
+{% from "components/section.njk" import section %}
+{% from "components/button.njk" import button %}
+{% from "components/email.njk" import email %}
+
+{% call container(class="pt-24 pb-16") %}
+  <h1 class="cs-contact__headline">{{ headline }}</h1>
+  <p class="cs-contact__lede">{{ lede }}</p>
+  <p class="cs-contact__availability">{{ site.booking.label }}</p>
+{% endcall %}
+
+{% call container(class="pb-24") %}
+  <div class="cs-contact__grid">
+    <form class="cs-form cs-contact__panel" data-form-mockup>
+      <div class="cs-form__row">
+        {% for field in fields %}
+          <p class="cs-field m-0">
+            <label class="cs-field__label" for="field-{{ field.id }}">{{ field.label }}</label>
+            <input class="cs-input" type="{{ field.type }}" id="field-{{ field.id }}" name="{{ field.id }}" autocomplete="{{ "name" if field.id == "name" else "email" }}">
+          </p>
+        {% endfor %}
+      </div>
+
+      <p class="cs-field m-0">
+        <label class="cs-field__label" for="field-company">
+          Company / business <span class="cs-field__optional">· Optional</span>
+        </label>
+        <input class="cs-input" type="text" id="field-company" name="company" autocomplete="organization">
+      </p>
+
+      <p class="cs-field m-0">
+        <label class="cs-field__label" for="field-message">What are you looking for?</label>
+        <textarea class="cs-input" id="field-message" name="message" rows="5"></textarea>
+      </p>
+
+      <div>{{ button("Start the conversation", type="submit") }}</div>
+    </form>
+
+    <div class="cs-contact__panel cs-contact__aside">
+      <p class="cs-eyebrow">The studio</p>
+      {# Single NAP source. Matches the colophon exactly; never retyped. #}
+      <address class="cs-contact__nap">
+        {{ site.nap.streetAddress }}<br>
+        {{ site.nap.cityStateZip }}<br>
+        <a href="{{ site.nap.telephoneHref }}">{{ site.nap.telephone }}</a><br>
+        {{ email(site.nap.emailUser, site.nap.emailDomain) }}
+      </address>
+      <p class="cs-contact__note">{{ note }}</p>
+    </div>
+  </div>
+{% endcall %}
+
+<div class="cs-sowing">
+  <div class="cs-rule cs-rule--sowing cs-rule--sowing-l" aria-hidden="true"></div>
+  <div class="cs-rule cs-rule--sowing cs-rule--sowing-r" aria-hidden="true"></div>
+  {% call container() %}
+    <img class="cs-sowing__figure"
+         src="{{ site.cdn }}cs-img-sowing-landscape.webp"
+         alt="A hand placing a seed into soil, the deliberate start"
+         width="1120" height="520" loading="lazy" decoding="async">
+  {% endcall %}
+</div>
+
+<div class="pb-24" aria-hidden="true"></div>

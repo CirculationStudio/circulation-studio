@@ -1,0 +1,151 @@
+/* Results. Page-scoped, same reasoning as the other pages. */
+@layer components {
+  /* OPENING: figure left, proposition right. */
+  .cs-lead {
+    display: grid;
+    grid-template-columns: 440px 1fr;
+    gap: var(--space-96);
+    align-items: center;
+  }
+  .cs-lead__figure {
+    position: relative;
+    width: 440px;
+    height: 320px;
+  }
+  .cs-lead__figure img {
+    width: 440px;
+    height: 320px;
+    object-fit: cover;
+    display: block;
+  }
+  .cs-rule--lead {
+    top: 100%;
+    left: 219px;
+    height: var(--space-96);
+    border-left: 1px dashed var(--border-hairline);
+  }
+  .cs-lead__headline {
+    margin: 0;
+    font-size: var(--text-h3);
+    line-height: 1.4;
+    max-width: 34ch;
+    text-wrap: pretty;
+  }
+  .cs-lead__lede { margin: var(--space-24) 0 0 }
+
+  /* CASE: narrative left, single figure right. One metric per case, never a
+     dashboard, because the argument is the engagement rather than the number. */
+  .cs-case {
+    border-top: 1px solid var(--border-strong);
+    padding-top: var(--space-24);
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: var(--space-96);
+    align-items: start;
+  }
+  .cs-case__title {
+    margin: 12px 0 0;
+    font-size: var(--text-h3);
+  }
+  .cs-case__challenge {
+    margin: var(--space-16) 0 0;
+    font-size: 15px;
+    color: var(--text-muted);
+    max-width: 52ch;
+  }
+  .cs-case__body {
+    margin: 12px 0 0;
+    font-size: 15px;
+    max-width: 52ch;
+  }
+
+  /* WORK SAMPLES
+     Deliberately a different visual language from the photomontage. The
+     imagery system is full-bleed black and white with a madder bar and survey
+     marks; these are framed, bordered, on a light panel, and carry browser
+     chrome. A reader should never have to wonder whether a work sample is part
+     of the brand's photographic world. It is a document, not a picture.
+
+     Every slot is an explicit placeholder and says so in brackets, matching how
+     the unsupplied metrics are written. Nothing here should read as finished
+     work until real screenshots land. */
+  .cs-sample {
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-control);
+    overflow: hidden;
+    background: var(--surface-card);
+  }
+  .cs-sample__chrome {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface-panel);
+    border-bottom: 1px solid var(--border-hairline);
+    padding: 10px var(--space-16);
+  }
+  .cs-sample__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--color-ink) 20%, transparent);
+  }
+  .cs-sample__url {
+    margin-left: 12px;
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+  .cs-sample__slot {
+    display: grid;
+    place-items: center;
+    height: 520px;
+    background: var(--surface-panel);
+  }
+  .cs-sample__note {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: var(--text-caption);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-faint);
+    max-width: none;
+  }
+
+  /* Bordered card variant, for flat artefacts like brand book spreads that
+     have no browser chrome to sit in. */
+  .cs-samples--pair {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-24);
+  }
+  .cs-sample--card { padding: var(--space-16) }
+  .cs-sample--card .cs-sample__slot { height: 400px }
+
+  /* FRUIT BAND: the payoff image, the tallest figure on the page. */
+  .cs-fruit { position: relative }
+  .cs-fruit__figure {
+    width: 100%;
+    height: 640px;
+    object-fit: cover;
+    display: block;
+  }
+  .cs-rule--fruit {
+    top: 317px;
+    width: calc(50% - 560px);
+    border-top: 1px dashed var(--border-hairline);
+  }
+  .cs-rule--fruit-l { left: 0 }
+  .cs-rule--fruit-r { right: 0 }
+
+  @media (max-width: 1120px) {
+    .cs-rule { display: none }
+    .cs-lead { grid-template-columns: 1fr; gap: var(--space-40) }
+    .cs-lead__figure,
+    .cs-lead__figure img { width: 100%; height: auto }
+    .cs-case { grid-template-columns: 1fr; gap: var(--space-40) }
+    .cs-samples--pair { grid-template-columns: 1fr }
+    .cs-sample__slot { height: 360px }
+    .cs-fruit__figure { height: 420px }
+  }
+}

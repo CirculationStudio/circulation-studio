@@ -1,0 +1,170 @@
+---
+layout: layouts/base.njk
+title: "Results: chosen engagements, shown in depth"
+description: "Representative outcomes from long-term partnerships, chosen deliberately rather than collected, and shown the way we actually work."
+permalink: /results/index.html
+preloadImage: cs-img-shears-landscape.webp
+lead:
+  headline: Chosen results, shown in depth.
+  lede: >-
+    These are representative outcomes from long-term partnerships, chosen
+    deliberately rather than collected. Each is shown the way we actually work:
+    the whole business first, then the channels that move it. If someone sent
+    you here, this page is meant to finish the conversation they started.
+cases:
+  - meta: Hospitality · Long-term partnership
+    title: Ayres Hotels
+    challenge: >-
+      Challenge: an independent hotel group competing with national booking
+      platforms for its own guests.
+    body: "[Approach and outcome narrative to be supplied]"
+    stat:
+      value: "[+XX%]"
+      label: "[Direct bookings, year over year]"
+      source: "[Source and date to be supplied]"
+    sample:
+      kind: browser
+      url: ayreshotels.com
+      note: "[Website screenshot to be supplied]"
+    quote:
+      body: >-
+        They hit deadlines, stay within budgets, and never have scope-creep like
+        a lot of agencies.
+      cite: Jacob W. Tindall, Vice President of Marketing, Ayres Hotels
+  - meta: Local services · Search visibility
+    title: "[Multi-location dental practice]"
+    challenge: "Challenge: invisible in local map results across its newer locations."
+    body: "[Approach and outcome narrative to be supplied]"
+    stat:
+      value: "[XX%]"
+      label: "[Increase in booked appointments]"
+      source: "[Source and date to be supplied]"
+    sample:
+      kind: pair
+      notes:
+        - "[Brand book spread to be supplied]"
+        - "[Brand identity page to be supplied]"
+  - meta: Home services · Reputation
+    title: "[Regional home-services company]"
+    challenge: "Challenge: a strong operation whose review presence said otherwise."
+    body: "[Approach and outcome narrative to be supplied]"
+    stat:
+      value: "[X.X]"
+      label: "[Average rating across platforms]"
+      source: "[Source and date to be supplied]"
+close: >-
+  A few engagements, shown in depth, stand in for the rest. If these look like
+  the outcomes you’re after, booking for Q3 is open.
+---
+{#
+  Results.
+
+  NO INVENTED STATISTICS. Every metric on this page is a bracketed placeholder
+  and is meant to look like one: [+XX%], [XX%], [X.X]. A plausible-looking
+  figure would be a fabricated claim the moment it shipped, and CLAUDE.md puts
+  claims content outside anything auto-generated. Each stat also carries a
+  bracketed source line, because design.md requires stats to be sourced and
+  dated, so an unsourced number cannot quietly pass review.
+
+  The narrative bodies are bracketed placeholders too. The handoff carried
+  lorem ipsum there; bracketed English is used instead so placeholder copy and
+  placeholder numbers read as the same deliberate state rather than one looking
+  like filler and the other like data.
+
+  Ayres Hotels is named, with a real attributed quote. The other two clients
+  are bracketed and anonymous until named permission exists.
+
+  Work samples are framed as documents, not photographs: bordered, on a light
+  panel, with browser chrome where appropriate. That keeps them visually
+  separate from the black and white photomontage system.
+
+  No alt-glyph: no headline here has a swap justified by what the word means.
+#}
+{% from "components/container.njk" import container %}
+{% from "components/section.njk" import section %}
+{% from "components/button.njk" import button %}
+
+{% call section(containerClass="cs-lead") %}
+  <div class="cs-lead__figure">
+    <img src="{{ site.cdn }}cs-img-shears-landscape.webp"
+         alt="Shears, strategic subtraction"
+         width="440" height="320" loading="eager" fetchpriority="high" decoding="async">
+    <div class="cs-rule cs-rule--lead" aria-hidden="true"></div>
+  </div>
+  <div>
+    <h1 class="cs-lead__headline">{{ lead.headline }}</h1>
+    <p class="cs-lead__lede">{{ lead.lede }}</p>
+  </div>
+{% endcall %}
+
+{% for case in cases %}
+  {% call container(class="pb-16") %}
+    <div class="cs-case">
+      <div>
+        <p class="cs-eyebrow">{{ case.meta }}</p>
+        <h2 class="cs-case__title">{{ case.title }}</h2>
+        <p class="cs-case__challenge">{{ case.challenge }}</p>
+        <p class="cs-case__body">{{ case.body }}</p>
+      </div>
+      <div class="cs-stat p-0">
+        <span class="cs-stat__value">{{ case.stat.value }}</span>
+        <span class="cs-stat__label">{{ case.stat.label }}</span>
+        <span class="cs-stat__source">{{ case.stat.source }}</span>
+      </div>
+    </div>
+
+    {% if case.sample %}
+      <div class="mt-16">
+        <p class="cs-eyebrow mb-4">Work sample</p>
+        {% if case.sample.kind == "browser" %}
+          <figure class="cs-sample m-0">
+            <div class="cs-sample__chrome">
+              <span class="cs-sample__dot" aria-hidden="true"></span>
+              <span class="cs-sample__dot" aria-hidden="true"></span>
+              <span class="cs-sample__dot" aria-hidden="true"></span>
+              <span class="cs-sample__url">{{ case.sample.url }}</span>
+            </div>
+            <div class="cs-sample__slot">
+              <p class="cs-sample__note">{{ case.sample.note }}</p>
+            </div>
+          </figure>
+        {% else %}
+          <div class="cs-samples--pair">
+            {% for note in case.sample.notes %}
+              <figure class="cs-sample cs-sample--card m-0">
+                <div class="cs-sample__slot">
+                  <p class="cs-sample__note">{{ note }}</p>
+                </div>
+              </figure>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+  {% endcall %}
+
+  {% if case.quote %}
+    {% call container(narrow=true, class="pb-16") %}
+      <blockquote class="cs-pullquote m-0">
+        {{ case.quote.body }}
+        <cite>{{ case.quote.cite }}</cite>
+      </blockquote>
+    {% endcall %}
+  {% endif %}
+{% endfor %}
+
+<div class="cs-fruit">
+  <div class="cs-rule cs-rule--fruit cs-rule--fruit-l" aria-hidden="true"></div>
+  <div class="cs-rule cs-rule--fruit cs-rule--fruit-r" aria-hidden="true"></div>
+  {% call container() %}
+    <img class="cs-fruit__figure"
+         src="{{ site.cdn }}cs-img-fruit-portrait.webp"
+         alt="Ripe cluster, the payoff of tended growth"
+         width="1120" height="640" loading="lazy" decoding="async">
+  {% endcall %}
+</div>
+
+{% call container(class="cs-close pt-24") %}
+  <p class="cs-close__note">{{ close }}</p>
+  {{ button("Start a conversation", href="/contact/") }}
+{% endcall %}

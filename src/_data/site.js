@@ -62,6 +62,11 @@ export default {
     // E.164 for the tel: href and for schema's telephone field
     telephoneHref: "tel:+19494647246",
     email: "info@circulationstudio.com",
+    /* Split off the address above, never typed separately. The contact page
+       assembles the visible address from these in JS so the markup carries no
+       harvestable mailto string. Schema and the footer still use `email`. */
+    get emailUser() { return this.email.split("@")[0] },
+    get emailDomain() { return this.email.split("@")[1] },
     // Display convenience only, derived from the fields above. Never edit
     // this independently of them.
     cityStateZip: "Laguna Beach, CA 92651"

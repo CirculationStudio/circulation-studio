@@ -1,0 +1,24 @@
+/* Eyebrow: the small display label that heads a block.
+
+   Promoted out of pages/who-we-are.css when Results and Contact both needed
+   it unchanged. Same standing as .cs-close and .cs-rule: a PROPOSED addition
+   to the locked set awaiting sign-off, per design.md section 6, not a
+   decision already taken.
+
+   max-width:none matters. These render as <p>, which inherits max-width 66ch
+   from base/elements.css. On a centred eyebrow that anchors the label to a
+   ~400px box on the left of its container, so text-align:center centres it
+   inside THAT box rather than across the container. A label is not prose. */
+@layer components {
+  .cs-eyebrow {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 11px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin: 0;
+    max-width: none;
+  }
+  .cs-eyebrow--center { text-align: center }
+}
