@@ -13,7 +13,7 @@
     {% call container() %}...{% endcall %}{% endraw %}
 #}
 {% macro container(class="", narrow=false) %}
-<div class="mx-auto w-full {{ "max-w-narrow" if narrow else "max-w-main" }} px-8{{ " " + class if class }}">
+<div class="cs-container{{ " cs-container--narrow" if narrow }}{{ " " + class if class }}">
   {{ caller() }}
 </div>
 {% endmacro %}

@@ -11,8 +11,17 @@
    design's own values and are not on any token scale. They are stated once
    here and never repeated at a call site. */
 @layer components {
-  .cs-masthead {
+  /* Declared at the root, NOT on .cs-masthead, because .cs-stickybar is a
+     SIBLING of the header rather than a descendant. Custom properties inherit
+     down the tree only, so scoping this to .cs-masthead left the sticky bar
+     resolving var(--cs-masthead-gutter) to nothing. That made its padding
+     shorthand invalid, CSS dropped the whole declaration, and the collapsed
+     bar rendered with the wordmark and nav flush against the viewport edges. */
+  :root {
     --cs-masthead-gutter: 40px;
+  }
+
+  .cs-masthead {
     border-bottom: 1px solid var(--border-hairline);
     background: var(--surface-page);
   }

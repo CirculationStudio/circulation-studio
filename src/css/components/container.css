@@ -1,0 +1,27 @@
+/* Container: the layout primitive every page section sits in.
+
+   The width formula is the handoff's exactly:
+
+     width: min(1120px, 100% - 80px)   margin auto   NO padding
+
+   That distinction matters more than it looks. The obvious Tailwind spelling,
+   max-w-main plus px-8, produces a 1120px BOX with 32px of padding on each
+   side, so the content area is 1056px, 64px narrower than the design's. Every
+   absolute offset in the handoff is measured against a 1120px content width,
+   so the narrower box silently pushed all of them out of register. The
+   espalier arc, which is positioned to continue an arc drawn into the
+   photograph itself, visibly failed to meet it.
+
+   The 80px is a viewport gutter, applied by shrinking the element rather than
+   by padding it, which is what keeps the content box at a true 1120px. */
+@layer components {
+  .cs-container {
+    width: min(var(--container-main), 100% - 80px);
+    margin-inline: auto;
+  }
+
+  /* Narrower measure, for pull quotes and long-form. */
+  .cs-container--narrow {
+    width: min(var(--container-narrow), 100% - 80px);
+  }
+}

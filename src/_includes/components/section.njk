@@ -15,7 +15,7 @@
 #}
 {% macro section(deep=false, class="", containerClass="", id="", label="") %}
 <section{% if id %} id="{{ id }}"{% endif %}{% if label %} aria-label="{{ label }}"{% endif %} class="py-24{{ " bg-ink text-paper" if deep }}{{ " " + class if class }}">
-  <div class="mx-auto w-full max-w-main px-8{{ " " + containerClass if containerClass }}">
+  <div class="cs-container{{ " " + containerClass if containerClass }}">
     {{ caller() }}
   </div>
 </section>

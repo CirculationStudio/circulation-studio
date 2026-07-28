@@ -12,6 +12,7 @@
    fine: custom properties resolve at use time, not at parse time. */
 @import "./base/fonts.css";
 @import "./base/elements.css";
+@import "./components/container.css";
 @import "./components/button.css";
 @import "./components/card.css";
 @import "./components/wordmark.css";
