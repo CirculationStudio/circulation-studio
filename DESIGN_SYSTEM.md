@@ -125,5 +125,23 @@ and tag only. Size is a rendering concern, so it is handled in CSS.
 D, E, H, J, O and R, which is why activation must stay per-character and never
 word-level.
 
+### The O device: scoped by adjacency, not banned outright
+
+design.md section 9 retires the O device. Refined 2026-07-27: **the retirement
+is about adjacency to the icon, not about the letter.** The isotype's ring owns
+circular meaning, so an O device competes with it and reads as a thinner echo
+whenever the two share a visual field.
+
+- **Retired** wherever the mark sits next to the icon: the masthead lockup, the
+  sticky lockup, and any headline in the same visual field as the icon. The
+  wordmark itself never carries a device on the O, in any lockup, ever.
+- **Permitted** where the icon is not present: the footer colophon tagline, and
+  the home hero tagline, which sits far enough down the page that the masthead
+  icon is out of view.
+
+Applied per character on that single letter (`.alt-dot`, ss10). Never
+word-level `font-feature-settings`: ss10 would bleed the dot onto other
+letters, and ss01 carries the O and R alternates that stay retired.
+
 Still in Claude Design, not here: **`guidelines/`**, fifteen reference pages,
 plus the brand image library and the icon set.

@@ -29,9 +29,9 @@ services:
      for search. The proposition is the h1 because it describes the page; the
      tagline is display type, not a document heading, and it already repeats in
      the colophon on every page, so it renders as a paragraph.
-  2. No alt-glyph anywhere on this page, per instruction. The handoff carries
-     .alt-dot on the O of "Found" in the hero tagline. The colophon keeps its
-     own swap, since that belongs to the frame rather than to this page.
+  2. The only alt-glyph on this page is the O device on the hero tagline's
+     "Found", matching the colophon. Headlines stay plain: the h1 and both h2s
+     carry no swap.
 #}
 {% from "components/container.njk" import container %}
 {% from "components/section.njk" import section %}
@@ -59,7 +59,12 @@ services:
          loading="eager" fetchpriority="high" decoding="async">
   </div>
 
-  <p class="cs-hero__tagline">Get Built. Get Found.</p>
+  {# The O carries the target device (.alt-dot, ss10), scoped to that single
+     character. Never word-level font-feature-settings: ss10 would bleed the
+     dot onto other letters, and ss01 carries the O and R alternates that stay
+     retired. See the tagline note in DESIGN_SYSTEM.md for why the O device is
+     allowed here but not in the masthead lockup. #}
+  <p class="cs-hero__tagline">Get Built. Get F<span class="alt-dot">o</span>und.</p>
 {% endcall %}
 
 {% call container() %}
