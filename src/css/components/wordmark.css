@@ -19,36 +19,42 @@
 
    Set --cs-wordmark-size and the rest follows. */
 @layer components {
-  /* WHY THERE IS AN INSET FACTOR, read before changing these numbers.
+  /* THE ICON IS SIZED AGAINST CAP HEIGHT, not font size. Read this before
+     changing the numbers, because it is a deliberate departure from how the
+     design states the ratio.
 
-     The locked ratios (3.7 stacked, 3.0 inline) are CANVAS relative: they were
-     authored against the placeholder isotype PNG, whose mark sat inset within
-     a padded canvas. The design set an 89px image box and saw a mark somewhat
-     smaller than 89px, and called that 3.7x.
+     The design's locked ratios (3.7 stacked, 3.0 inline) are CANVAS relative
+     and measured against FONT SIZE. Both halves of that made the mark render
+     far too large here:
 
-     The production SVG is edge to edge. Measured: the circle's diameter equals
-     the full viewBox, 100 percent on all four axes, zero padding. So the same
-     3.7 now yields a full 89px of visible crescent, which is why the mark
-     reads oversized even though the multiplier and its base are both correct.
+     1. Canvas relative. They were authored against the placeholder isotype
+        PNG, whose mark sat inset within a padded canvas, so an 89px image box
+        showed a mark smaller than 89px. The production SVG is edge to edge
+        (measured: the circle's diameter equals the full viewBox, 100 percent
+        on all four axes, zero padding), so the same number yields a full 89px
+        of visible crescent.
+     2. Font size, not cap height. Dual's caps measure 0.742em, read from the
+        font binary, so a 24px wordmark shows only 17.8px of letterform. A
+        3.7x-of-font-size icon is 5.0x the letters you actually see.
 
-     Compounding it, "wordmark size" is the FONT SIZE, not the cap height. Dual
-     caps measure 0.742em, so at a 24px wordmark the visible letters are only
-     17.8px tall and a 3.7x icon is 5.0x the letterforms.
+     The intended lockup has the mark reading at roughly the height of the word
+     beside it. So the icon is anchored to the visible cap height, which is the
+     relationship the eye actually judges, and the anchor holds at any size and
+     against any future asset crop.
 
-     The inset is the asset-level correction: it converts the canvas-relative
-     locked ratio into a visible-mark size. It is deliberately applied to BOTH
-     lockups, because it describes the artwork, not the composition. Anything
-     else drifts the two lockups apart.
+       icon height = size * cap-ratio * icon-ratio
 
-     The exact original padding is unrecoverable (the placeholder PNG is
-     corrupt, its pixel data will not inflate at all), so this factor is a
-     judgement call rather than a measurement. It is the one number here that
-     wants a human eye. Tune this alone; leave the locked ratios reading 3.7
-     and 3.0 so they stay traceable to the spec. */
+     --cs-wordmark-icon-ratio is now a multiple of CAP HEIGHT, not of font
+     size. 1.1 puts the mark just over the height of CIRCULATION. That is the
+     one knob: raise it toward 1.2 for a slightly dominant mark, drop toward
+     1.0 to sit flush with the caps.
+
+     --cs-wordmark-cap-ratio is a property of Dual and should only change if
+     the display face changes. */
   .cs-wordmark {
     --cs-wordmark-size: 24px;
-    --cs-wordmark-icon-ratio: 3.7;
-    --cs-wordmark-icon-inset: .85;
+    --cs-wordmark-cap-ratio: .742;
+    --cs-wordmark-icon-ratio: 1.1;
     --cs-wordmark-studio-ratio: .55;
     --cs-wordmark-gap-ratio: .2;
 
@@ -65,12 +71,14 @@
     outline-offset: 3px;
   }
 
+  /* The mark is square and edge to edge, so width and rendered mark height are
+     the same number. */
   .cs-wordmark__icon {
     display: block;
     width: calc(
       var(--cs-wordmark-size) *
-      var(--cs-wordmark-icon-ratio) *
-      var(--cs-wordmark-icon-inset)
+      var(--cs-wordmark-cap-ratio) *
+      var(--cs-wordmark-icon-ratio)
     );
     height: auto;
   }
@@ -116,9 +124,14 @@
 
   /* Inline lockup: icon beside a single-line CIRCULATION STUDIO, at the
      tighter 3.0x icon ratio. The collapsed sticky bar. */
+  /* Inline lockup: icon beside a single-line CIRCULATION STUDIO. It
+     deliberately does NOT override --cs-wordmark-icon-ratio. The icon is
+     anchored to cap height, so dropping the wordmark to 15px scales the mark
+     with it automatically and both lockups stay proportional by construction.
+     The design's separate 3.0 inline ratio existed only because its 3.7 was
+     measured against font size and needed a manual correction here. */
   .cs-wordmark--inline {
     --cs-wordmark-size: 15px;
-    --cs-wordmark-icon-ratio: 3;
     flex-direction: row;
     align-items: center;
     gap: var(--space-8);
