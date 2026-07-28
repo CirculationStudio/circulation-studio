@@ -51,15 +51,20 @@
     margin: 0;
     max-width: none;
   }
-  .cs-contact__nap a,
-  .cs-email a {
+  /* Scoped to this page's NAP block on purpose. The assembled email link used
+     to be styled through a bare `.cs-email a`, which leaks: the same component
+     now renders inside the ink colophon, where madder measures 1.99:1 against
+     ink and fails AA badly. The email span sits inside .cs-contact__nap here,
+     so this selector already covers it, and in the colophon the link inherits
+     paper from .cs-colophon__address at 16.06:1. Never style .cs-email by
+     itself; style the context it sits in. */
+  .cs-contact__nap a {
     color: var(--color-madder);
     text-decoration: underline;
     text-decoration-thickness: 1px;
     text-underline-offset: 3px;
   }
-  .cs-contact__nap a:hover,
-  .cs-email a:hover { color: var(--color-madder-deep) }
+  .cs-contact__nap a:hover { color: var(--color-madder-deep) }
 
   .cs-contact__note {
     margin: 0;

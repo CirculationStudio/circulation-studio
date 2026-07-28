@@ -9,17 +9,24 @@
   present on this pane, so nothing else is claiming circular meaning and the
   device is correct here.
 #}
+{% from "components/email.njk" import email %}
 
 <footer class="cs-colophon">
   <div class="cs-colophon__grid">
     {# NAP renders from site.nap, the canonical source. Never hardcode it here:
        the same object feeds the Contact page and the JSON-LD, and they have to
-       agree byte for byte. #}
+       agree byte for byte.
+
+       The email uses the obfuscated component. This is the frame, so it is the
+       one that mattered most: while the colophon rendered a plain mailto, the
+       address was harvestable from every page and the obfuscation on Contact
+       protected nothing. The assembled link inherits paper from
+       .cs-colophon__address, never madder, which measures 1.99:1 on ink. #}
     <address class="cs-colophon__address">
       {{ site.nap.streetAddress }}<br>
       {{ site.nap.cityStateZip }}<br>
       <a href="{{ site.nap.telephoneHref }}">{{ site.nap.telephone }}</a><br>
-      <a href="mailto:{{ site.nap.email }}">{{ site.nap.email }}</a>
+      {{ email(site.nap.emailUser, site.nap.emailDomain) }}
     </address>
 
     <p class="cs-colophon__tagline">
