@@ -1,0 +1,186 @@
+---
+layout: layouts/base.njk
+title: "Who we are: the senior team behind Circulation Studio"
+description: "A deliberately small Laguna Beach studio since 2011. You work directly with the senior people who lead your project."
+permalink: /who-we-are/index.html
+opening:
+  headline: You work directly with the people who lead your project.
+  lede: >-
+    Circulation Studio has been a deliberately small Laguna Beach studio since
+    2011. We came to marketing from history, engineering, environmental science,
+    and design, and that range is the point: business runs on relationships,
+    trust, and demonstrated value, not on chasing technology down a rabbit hole
+    nor running every client through the same ringer. Every specialty below is
+    led by a senior person who owns the result.
+team:
+  - name: Steve Lepore
+    specialty: SEO
+    role: Co-Founder & SEO Strategist
+    bio: >-
+      The studio’s lead. Degrees in History and Literary Journalism from UC
+      Irvine give his search work a researcher’s patience and a storyteller’s
+      ear. Reading, camping, ice hockey.
+  - name: Vanessa Pacheco
+    specialty: Design & Social
+    role: Design & Social Media · English / Spanish
+    bio: >-
+      Studied visual merchandising and design in Barcelona, originally from
+      Lima. Digital storytelling that helps brands illustrate their voice, in
+      two languages. Puzzles, plants, interiors.
+  - name: Connor Olson
+    specialty: Paid Ads
+    role: Paid Ads Director
+    bio: >-
+      Mechanical Engineering at Iowa State, applied to paid media: Google Ads,
+      analytics, performance tracking. An engineer’s read on every dollar spent.
+      Reading, hiking, rock climbing.
+  - name: Brian Seymour
+    specialty: Development
+    role: Co-Founder & Development
+    bio: >-
+      A founder who still ships the technical work: web development, databases,
+      code solutions. Environmental Studies at UCSB trained him to think in
+      systems. Hiking, bikes, music.
+  - name: Ana Jaramillo
+    specialty: Brand
+    role: Graphic Designer & Brand Developer · English / Spanish
+    bio: >-
+      A Graphic Design degree plus a UX/UI postgraduate, and more than a decade
+      in brand identity and editorial design, including brand work for
+      international film festivals.
+  - name: Marco Prado
+    specialty: Engineering
+    role: Full-Stack Engineer · English / Spanish
+    bio: >-
+      Five-plus years building web and mobile applications for enterprises and
+      startups, carrying them full cycle from design through deployment.
+testimonial:
+  body: >-
+    We’ve been working with Steve and Connor since the early stages of starting
+    our small business, and they’ve been there every step of the way. Whether it
+    be on-page SEO optimization, keyword research analysis, or building a custom
+    data studio report to empower us to make better content decisions, they’ve
+    guided us in growing our business to where it is today. Compared to other
+    digital content and SEO people I’ve worked with, Steve and Connor don’t
+    upsell you on more social media posts or their best package for getting
+    noticed as quickly as possible. While they helped us identify a number of
+    items to work on for our website in the short term, they aligned perfectly
+    with our objective to create an enduring online presence that has helped us
+    reach a level of consistency in page views and consultations without having
+    to spend too much on paid social ads.
+  cite: Alex Loveless, Executive Director, The Admissions Angle
+origin:
+  - term: Circulation
+    definition: >-
+      How people arrive. Almost no one goes straight to your door; they move
+      through interconnected channels, and we work on all of them.
+  - term: Studio
+    definition: >-
+      A workroom where things get made. Deliberately not a firm, and not a
+      company.
+close: >-
+  Working with us means working with the people on this page. Booking for Q3 is
+  open; if that sounds like the right fit, let’s talk.
+---
+{#
+  Who We Are. Composes the frame and the locked components; copy lives in front
+  matter. Three notes for review:
+
+  1. NO alt-glyph on any headline here. The handoff swaps the A in the "The
+     Team" h2, but design.md section 3 requires each swap to be justified by
+     what that specific word MEANS, and a crossbar-less A says nothing about a
+     team. It was available, not meaningful, so it is dropped.
+
+     The one swap that remains is the A in "Circulation" in the name-origin
+     list. That is not a headline swap: it is the wordmark itself, quoted as
+     the term being defined, and design.md section 9 locks the crossbar-less A
+     into the wordmark in every setting. Rendering it plain there would show a
+     wordmark the brand does not use.
+
+  2. This page carries Alex Loveless's FULL testimonial, the relationship
+     account. The home page carries the short pull quote drawn from it. They
+     are different treatments of the same source and must not be swapped or
+     duplicated.
+
+  3. The bilingual notes in three team members' roles are the team's language
+     capability, which is real and stays. It describes the PEOPLE. It is not a
+     signal that the site should be bilingual; see the language decision in
+     SITE_ARCHITECTURE.md.
+#}
+{% from "components/container.njk" import container %}
+{% from "components/section.njk" import section %}
+{% from "components/button.njk" import button %}
+
+{% call section() %}
+  <h1 class="cs-opening__headline">{{ opening.headline }}</h1>
+  <p class="cs-opening__lede">{{ opening.lede }}</p>
+{% endcall %}
+
+{% call container(class="pb-24") %}
+  <h2 class="cs-teamhead">The Team</h2>
+  <ul class="cs-teamgrid">
+    {% for member in team %}
+      <li class="cs-member">
+        {# Portrait ground stays blank until real photography lands. Adding a
+           `photo` to this member in front matter swaps the image in with no
+           markup change. #}
+        <div class="cs-portrait">
+          {% if member.photo %}
+            <img class="cs-portrait__img"
+                 src="{{ site.cdn }}{{ member.photo }}"
+                 alt="{{ member.name }}, {{ member.role }}"
+                 width="340" height="400" loading="lazy" decoding="async">
+          {% endif %}
+          <span class="cs-portrait__accent" aria-hidden="true"></span>
+        </div>
+        <p class="cs-member__specialty">{{ member.specialty }}</p>
+        <p class="cs-member__name">{{ member.name }}</p>
+        <p class="cs-member__role">{{ member.role }}</p>
+        <p class="cs-member__bio">{{ member.bio }}</p>
+      </li>
+    {% endfor %}
+  </ul>
+{% endcall %}
+
+<div class="cs-graft">
+  <div class="cs-rule cs-rule--graft cs-rule--graft-l" aria-hidden="true"></div>
+  <div class="cs-rule cs-rule--graft cs-rule--graft-r" aria-hidden="true"></div>
+  {% call container(class="relative") %}
+    <img class="cs-graft__figure"
+         src="{{ site.cdn }}cs-img-graft-square.webp"
+         alt="Graft, two stems joined into one stronger stem"
+         width="1120" height="560" loading="lazy" decoding="async">
+    <div class="cs-graft__tick" aria-hidden="true"></div>
+  {% endcall %}
+</div>
+
+{% call container(narrow=true, class="pt-24") %}
+  <p class="cs-eyebrow">In a client’s words</p>
+  <blockquote class="cs-testimonial">
+    <p>{{ testimonial.body }}</p>
+    <cite>{{ testimonial.cite }}</cite>
+  </blockquote>
+{% endcall %}
+
+{% call container(narrow=true, class="py-24") %}
+  <p class="cs-eyebrow cs-eyebrow--center">Why the name</p>
+  <dl class="cs-origin">
+    {% for entry in origin %}
+      <div class="cs-origin__group">
+        <dt class="cs-origin__term">
+          {%- if entry.term == "Circulation" -%}
+            Circul<span class="alt-soft">a</span>tion
+          {%- else -%}
+            {{ entry.term }}
+          {%- endif -%}
+        </dt>
+        <dd class="cs-origin__def">{{ entry.definition }}</dd>
+      </div>
+    {% endfor %}
+  </dl>
+{% endcall %}
+
+{% call container(class="cs-close") %}
+  <p class="cs-close__note">{{ close }}</p>
+  {{ button("Start a conversation", href="/contact/") }}
+{% endcall %}

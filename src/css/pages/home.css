@@ -64,13 +64,8 @@
     white-space: nowrap;
   }
 
-  /* Survey rules: the botanist's-diagram device from the imagery direction,
-     carried into the layout. Decorative only, so they are hidden rather than
-     reflowed once the fixed offsets stop making sense. */
-  .cs-rule {
-    position: absolute;
-    pointer-events: none;
-  }
+  /* Survey rules. The .cs-rule base now lives in components/rule.css; only
+     these page-specific positions stay here. */
   .cs-rule--hero-h {
     top: 320px;
     left: -160px;
@@ -164,25 +159,8 @@
     border-radius: 50%;
   }
 
-  /* QUIET CLOSE */
-  .cs-close {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-40);
-    text-align: center;
-    padding-bottom: var(--space-96);
-  }
-  .cs-close__note {
-    margin: 0;
-    max-width: 44ch;
-    font-family: var(--font-display);
-    font-weight: var(--weight-light);
-    font-size: 20px;
-    line-height: 1.5;
-    letter-spacing: .01em;
-    color: var(--color-ink);
-  }
+  /* The quiet close moved to components/close.css when Who We Are
+     needed the same pattern. */
 
   /* The handoff is drawn at a fixed 1160px minimum and specifies no narrower
      behaviour. Below the container width the fixed offsets stop describing

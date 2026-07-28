@@ -13,6 +13,8 @@
 @import "./base/fonts.css";
 @import "./base/elements.css";
 @import "./components/container.css";
+@import "./components/rule.css";
+@import "./components/close.css";
 @import "./components/button.css";
 @import "./components/card.css";
 @import "./components/wordmark.css";
@@ -20,6 +22,7 @@
 @import "./components/colophon.css";
 @import "./components/longform.css";
 @import "./pages/home.css";
+@import "./pages/who-we-are.css";
 
 /* Design tokens pulled from the Circulation Studio Design System in Claude
    Design (tokens/colors.css, typography.css, layout.css) on 2026-07-27.

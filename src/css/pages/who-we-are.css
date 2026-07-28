@@ -1,0 +1,225 @@
+/* Who We Are. Page-scoped, same reasoning as home.css: design.md locks the
+   component set, so patterns stay here until a second page earns them a
+   promotion. */
+@layer components {
+  /* OPENING */
+  .cs-opening__headline {
+    margin: 0;
+    font-size: var(--text-h3);
+    line-height: 1.4;
+    max-width: 34ch;
+    text-wrap: pretty;
+  }
+  .cs-opening__lede { margin: var(--space-24) 0 0 }
+
+  /* Small display eyebrow, used above the testimonial and the name origin. */
+  .cs-eyebrow {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 11px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin: 0;
+  }
+  .cs-eyebrow--center { text-align: center }
+
+  /* TEAM */
+  .cs-teamhead {
+    margin: 0 0 var(--space-40);
+    border-top: 1px solid var(--border-hairline);
+    padding-top: var(--space-24);
+  }
+  .cs-teamgrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-64) var(--space-40);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cs-member {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /* PORTRAIT TREATMENT
+     The softer complementary treatment, deliberately NOT the survey treatment
+     used on the subject photography. Black and white on a paper ground with a
+     single madder accent, and no annotation lines, dashed measurement marks or
+     grid over the frame. Those devices read as specimen documentation, which
+     is right for a seed or an espalier and wrong for a person's face.
+
+     The accent bar is the one madder element, hung just past the bottom edge
+     so it reads as a margin mark against the portrait rather than a label on
+     it. It is the only place madder appears in this section.
+
+     Portraits are placeholders until the real photography is shot. The ground
+     is deliberately blank rather than carrying a caption or a broken-image
+     frame: an even tone reads as considered negative space, a label reads as
+     scaffolding left in. Adding a `photo` to a member in the page's front
+     matter swaps the real image in with no markup change. */
+  .cs-portrait {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    background: var(--surface-figure);
+  }
+  .cs-portrait__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    /* the B and W conversion, with a touch of contrast so faces keep
+       structure against the paper ground */
+    filter: grayscale(1) contrast(1.04);
+  }
+  .cs-portrait__accent {
+    position: absolute;
+    left: 16px;
+    bottom: -8px;
+    width: 6px;
+    height: 44px;
+    background: var(--color-madder);
+  }
+
+  .cs-member__specialty {
+    margin: var(--space-24) 0 0;
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 11px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  .cs-member__name {
+    margin: var(--space-8) 0 0;
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: var(--text-base);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+  .cs-member__role {
+    margin: 4px 0 0;
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 12px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .cs-member__bio {
+    margin: 12px 0 0;
+    font-size: 15px;
+    max-width: none;
+  }
+
+  /* GRAFT BAND
+     Two stems joined into one stronger stem, the image that carries this
+     page's argument. The survey rule runs out into both margins, and a short
+     dashed tick continues off the lower right corner at the graft angle. */
+  .cs-graft { position: relative }
+  .cs-graft__figure {
+    width: 100%;
+    height: 560px;
+    object-fit: cover;
+    display: block;
+  }
+  .cs-rule--graft {
+    top: 281px;
+    width: calc(50% - 560px);
+    /* solid here, unlike the dashed rules on the home page */
+    border-top: 1px solid var(--border-hairline);
+  }
+  .cs-rule--graft-l { left: 0 }
+  .cs-rule--graft-r { right: 0 }
+  .cs-graft__tick {
+    position: absolute;
+    top: 560px;
+    left: 933px;
+    width: 160px;
+    border-top: 1px dashed var(--border-hairline);
+    transform: rotate(44deg);
+    transform-origin: left top;
+    pointer-events: none;
+  }
+
+  /* TESTIMONIAL
+     The full account, not the pull quote. Set as body copy against a single
+     rule rather than in the display face, because at this length the display
+     face stops being readable. That is why it does not use .cs-pullquote,
+     which is the short-form treatment and lives on the home page. */
+  .cs-testimonial {
+    margin: var(--space-24) 0 0;
+    border: 0;
+    border-left: 1px solid var(--border-strong);
+    padding: var(--space-8) 0 var(--space-8) var(--space-40);
+  }
+  .cs-testimonial p {
+    margin: 0;
+    max-width: none;
+  }
+  .cs-testimonial cite {
+    display: block;
+    font-family: var(--font-display);
+    font-style: normal;
+    font-weight: var(--weight-medium);
+    font-size: 12px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-top: var(--space-24);
+  }
+
+  /* NAME ORIGIN
+     A definition list, because that is what it is. The divider is a border on
+     the second group rather than a spacer element, which keeps the markup to
+     valid dl children. */
+  .cs-origin {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: var(--space-40) 0 0;
+  }
+  .cs-origin__group:first-child { padding-right: 32px }
+  .cs-origin__group:last-child {
+    padding-left: 32px;
+    border-left: 1px solid var(--border-hairline);
+  }
+  .cs-origin__term {
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: var(--text-base);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+  .cs-origin__def {
+    margin: 12px 0 0;
+    font-size: 15px;
+    max-width: none;
+  }
+
+  @media (max-width: 1120px) {
+    .cs-rule,
+    .cs-graft__tick { display: none }
+
+    .cs-teamgrid { grid-template-columns: repeat(2, minmax(0, 1fr)) }
+    .cs-graft__figure { height: 360px }
+  }
+
+  @media (max-width: 720px) {
+    .cs-teamgrid { grid-template-columns: 1fr }
+    .cs-origin { grid-template-columns: 1fr }
+    .cs-origin__group:first-child { padding-right: 0 }
+    .cs-origin__group:last-child {
+      padding-left: 0;
+      border-left: 0;
+      border-top: 1px solid var(--border-hairline);
+      margin-top: var(--space-24);
+      padding-top: var(--space-24);
+    }
+  }
+}

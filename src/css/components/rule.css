@@ -1,0 +1,17 @@
+/* Survey rule: the botanist's-diagram device from the imagery direction,
+   carried out of the photographs and into the layout.
+
+   Only the base behaviour is shared. Every rule's position is measured against
+   a specific composition, so the modifiers stay in the page that owns them
+   (pages/home.css, pages/who-we-are.css). Promoted here when a second page
+   needed the base, same standing as .cs-close: a proposed addition to the
+   locked set, not yet signed off.
+
+   Always decorative. Mark the element aria-hidden and expect it to be dropped
+   at narrow widths, where its fixed offsets stop describing anything real. */
+@layer components {
+  .cs-rule {
+    position: absolute;
+    pointer-events: none;
+  }
+}

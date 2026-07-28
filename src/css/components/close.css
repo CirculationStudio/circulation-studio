@@ -1,0 +1,28 @@
+/* Quiet close: the centred note plus single CTA that ends a page.
+
+   Promoted out of pages/home.css when Who We Are needed the identical
+   pattern. design.md section 6 locks the component set and says anything new
+   must be proposed and signed off rather than invented inline, so this is
+   flagged as a PROPOSED component awaiting that sign-off, not a decision
+   already taken. It earns the promotion by being used twice with no
+   variation; it stays a candidate until someone says otherwise. */
+@layer components {
+  .cs-close {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-40);
+    text-align: center;
+    padding-bottom: var(--space-96);
+  }
+  .cs-close__note {
+    margin: 0;
+    max-width: 44ch;
+    font-family: var(--font-display);
+    font-weight: var(--weight-light);
+    font-size: 20px;
+    line-height: 1.5;
+    letter-spacing: .01em;
+    color: var(--color-ink);
+  }
+}
