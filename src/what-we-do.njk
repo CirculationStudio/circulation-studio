@@ -1,0 +1,135 @@
+---
+layout: layouts/base.njk
+title: "What we do: search everywhere optimization, as senior counsel"
+description: "SEO, Yelp Ads, Google Ads, web design, branding and AI search readiness, worked as one practice by the specialist advising you."
+permalink: /what-we-do/index.html
+intro:
+  headline: Search everywhere optimization, as senior counsel.
+  lede: >-
+    Your customers look for you on Google, on Yelp, and increasingly by asking
+    AI. We work on all of it as one practice, not a menu of disconnected
+    tactics, and the person advising you is the specialist doing the work.
+    Three outcomes organize everything we take on.
+outcomes:
+  - title: Get Found
+    icon: get-found
+    glyph: true
+    services:
+      - name: SEO
+        desc: Visibility across Google, AI-driven results, and local map searches.
+      - name: Yelp Ads
+        desc: "Certified-partner campaigns reaching high-intent local customers."
+        linkText: Visit the Yelp Hub
+        linkUrl: /yelp-hub/
+      - name: Google Ads
+        desc: Performance campaigns with full conversion tracking, traction while SEO builds.
+      - name: Google Business Profile
+        desc: Hands-on local profile optimization and upkeep.
+  - title: Get Built
+    icon: get-built
+    services:
+      - name: Web Design
+        desc: >-
+          Modern, fast, secure sites built for conversion and SEO-readiness, on
+          a static platform with no bloated plugins.
+      - name: Branding
+        desc: Brand identity from visual design to strategic positioning.
+  - title: Stay Ahead
+    icon: stay-ahead
+    services:
+      - name: Reputation Management
+        desc: Reviews generated, answered, and protected across platforms.
+      - name: AI Search Readiness
+        desc: >-
+          Positioning your business to be found and cited as generative AI
+          reshapes how customers discover services.
+statement: >-
+  We consider the whole business before any single channel, and we work as
+  partners, not order-takers. That is the counsel referrals send their friends
+  to.
+close: If any of this is what your business needs next, booking for Q3 is open.
+---
+{#
+  What We Do. Composes the frame and locked components; copy in front matter.
+
+  ALT-GLYPH: exactly one on this page, the O in the "Get Found" group header.
+  It is the earned swap: found means located, and the target device is the mark
+  for a located thing. Per character on that O only, never word-level, since
+  ss10 would bleed the dot onto other letters. "Get Built" and "Stay Ahead"
+  stay plain, and the `glyph` flag in front matter is what gates it, so a new
+  group cannot pick one up by accident.
+
+  HIERARCHY: service names run a step above their descriptions rather than
+  level with them. See the note in the page CSS for what the handoff had.
+
+  No pricing anywhere on this page, by instruction and by CLAUDE.md, which
+  keeps pricing out of generated copy entirely.
+#}
+{% from "components/container.njk" import container %}
+{% from "components/section.njk" import section %}
+{% from "components/button.njk" import button %}
+{% from "components/icon.njk" import icon %}
+
+{% call section(containerClass="cs-intro") %}
+  <div>
+    <h1 class="cs-intro__headline">{{ intro.headline }}</h1>
+    <p class="cs-intro__lede">{{ intro.lede }}</p>
+  </div>
+  <div class="cs-intro__figure">
+    <img src="{{ site.cdn }}cs-img-bee-1-landscape.webp"
+         alt="Bee finding the bloom, reach and being found"
+         width="440" height="320" loading="eager" fetchpriority="high" decoding="async">
+    <div class="cs-rule cs-rule--intro-h" aria-hidden="true"></div>
+    <div class="cs-rule cs-rule--intro-v" aria-hidden="true"></div>
+  </div>
+{% endcall %}
+
+{% call container(class="pb-24") %}
+  <ul class="cs-outcomes">
+    {% for outcome in outcomes %}
+      <li class="cs-outcome">
+        <div class="cs-outcome__head">
+          {{ icon(outcome.icon, size=22) }}
+          <h2 class="cs-outcome__title">
+            {%- if outcome.glyph -%}
+              Get F<span class="alt-dot">o</span>und
+            {%- else -%}
+              {{ outcome.title }}
+            {%- endif -%}
+          </h2>
+        </div>
+        <ul class="cs-services">
+          {% for service in outcome.services %}
+            <li class="cs-service">
+              <p class="cs-service__name">{{ service.name }}</p>
+              <p class="cs-service__desc">
+                {{ service.desc }}
+                {%- if service.linkUrl %} <a href="{{ service.linkUrl }}">{{ service.linkText }}</a>.{% endif %}
+              </p>
+            </li>
+          {% endfor %}
+        </ul>
+      </li>
+    {% endfor %}
+  </ul>
+{% endcall %}
+
+<div class="cs-trellis">
+  <div class="cs-rule cs-rule--trellis cs-rule--trellis-l" aria-hidden="true"></div>
+  <div class="cs-rule cs-rule--trellis cs-rule--trellis-r" aria-hidden="true"></div>
+  {% call container() %}
+    <img class="cs-trellis__figure"
+         src="{{ site.cdn }}cs-img-trellis-1-portrait.webp"
+         alt="Trellis, the built framework growth climbs"
+         width="1120" height="600" loading="lazy" decoding="async">
+  {% endcall %}
+</div>
+
+{% call container(narrow=true, class="cs-statement py-24") %}
+  <p>{{ statement }}</p>
+{% endcall %}
+
+{% call container(class="cs-close") %}
+  <p class="cs-close__note">{{ close }}</p>
+  {{ button("Start a conversation", href="/contact/") }}
+{% endcall %}

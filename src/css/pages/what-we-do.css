@@ -1,0 +1,159 @@
+/* What We Do. Page-scoped, same reasoning as the other pages: design.md locks
+   the component set, so patterns stay here until a second page earns them a
+   promotion. */
+@layer components {
+  /* OPENING: proposition left, figure right, with survey rules running off the
+     figure into the margin and downward. */
+  .cs-intro {
+    display: grid;
+    grid-template-columns: 1fr 440px;
+    gap: var(--space-96);
+    align-items: center;
+  }
+  .cs-intro__headline {
+    margin: 0;
+    font-size: var(--text-h3);
+    line-height: 1.4;
+    max-width: 34ch;
+    text-wrap: pretty;
+  }
+  .cs-intro__lede { margin: var(--space-24) 0 0 }
+
+  .cs-intro__figure {
+    position: relative;
+    width: 440px;
+    height: 320px;
+  }
+  .cs-intro__figure img {
+    width: 440px;
+    height: 320px;
+    object-fit: cover;
+    display: block;
+  }
+  /* Continues out of the frame toward the page edge. */
+  .cs-rule--intro-h {
+    top: 116px;
+    left: 100%;
+    width: 50vw;
+    border-top: 1px dashed var(--border-hairline);
+  }
+  /* Drops below the frame, tying it to the groups underneath. */
+  .cs-rule--intro-v {
+    top: 100%;
+    left: 193px;
+    height: var(--space-96);
+    border-left: 1px solid var(--border-hairline);
+  }
+
+  /* THREE OUTCOME GROUPS
+     Each group is headed by its marker and title over a strong rule, with the
+     services beneath separated by hairlines. Three outcomes, not a menu of
+     tactics, which is why they are grouped rather than listed flat. */
+  .cs-outcomes {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-40);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cs-outcome {
+    border-top: 1px solid var(--border-strong);
+    padding-top: var(--space-24);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-24);
+  }
+  .cs-outcome__head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-ink);
+  }
+  .cs-outcome__title {
+    margin: 0;
+    font-size: var(--text-h3);
+  }
+
+  .cs-services {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-16);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cs-service {
+    border-top: 1px solid var(--border-hairline);
+    padding-top: 12px;
+  }
+
+  /* HIERARCHY: the service name is a step ABOVE its description, not level
+     with it. The handoff set the name at 14px against a 15px description, so
+     the name was literally smaller than the copy it headed and read as part of
+     the paragraph rather than as its label. It now runs at --text-base, a real
+     token and a clear step up, matching how team member names are set on Who
+     We Are. The description also drops to the muted tone, so the two separate
+     on size, weight, case, family and colour at once. */
+  .cs-service__name {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: var(--text-base);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+  .cs-service__desc {
+    margin: var(--space-8) 0 0;
+    font-size: 15px;
+    color: var(--text-muted);
+    max-width: none;
+  }
+  /* Inline body link, per the two named link patterns: a permanent madder
+     underline that darkens on hover. Not the ghost draw-in, which is reserved
+     for standalone CTAs. */
+  .cs-service__desc a {
+    color: var(--color-madder);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  .cs-service__desc a:hover { color: var(--color-madder-deep) }
+
+  /* TRELLIS BAND: the built framework growth climbs. Tallest figure on the
+     site, carrying this page's argument the way the graft does on Who We Are. */
+  .cs-trellis { position: relative }
+  .cs-trellis__figure {
+    width: 100%;
+    height: 600px;
+    object-fit: cover;
+    display: block;
+  }
+  .cs-rule--trellis {
+    top: 252px;
+    width: calc(50% - 560px);
+    border-top: 1px dashed var(--border-hairline);
+  }
+  .cs-rule--trellis-l { left: 0 }
+  .cs-rule--trellis-r { right: 0 }
+
+  /* DIFFERENTIATOR: one centred statement, held to a short measure so it reads
+     as a claim rather than a paragraph. */
+  .cs-statement { text-align: center }
+  .cs-statement p {
+    margin: 0 auto;
+    max-width: 52ch;
+  }
+
+  @media (max-width: 1120px) {
+    .cs-rule { display: none }
+
+    .cs-intro { grid-template-columns: 1fr; gap: var(--space-40) }
+    .cs-intro__figure,
+    .cs-intro__figure img { width: 100%; height: auto }
+
+    .cs-outcomes { grid-template-columns: 1fr; gap: var(--space-64) }
+    .cs-trellis__figure { height: 400px }
+  }
+}

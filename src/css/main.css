@@ -23,6 +23,7 @@
 @import "./components/longform.css";
 @import "./pages/home.css";
 @import "./pages/who-we-are.css";
+@import "./pages/what-we-do.css";
 
 /* Design tokens pulled from the Circulation Studio Design System in Claude
    Design (tokens/colors.css, typography.css, layout.css) on 2026-07-27.

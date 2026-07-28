@@ -50,5 +50,40 @@ export default {
           '<path d="M4 9h16"/>' +
           '<path d="M5 9v12h14V9"/>' +
           '<path d="M10 21v-6h4v6"/>'
+  },
+
+  /* Outcome-group markers for What We Do. All three are materially more
+     conformant than the three above: every coordinate is a whole unit, every
+     shape sits inside the live area, and none carries a fill.
+
+     get-found settles an open question from the earlier set. It builds its
+     frame from `a1 1` arcs, which is rule 4's 1-unit radius applied in
+     practice. That is good evidence rule 4 governs rect-shaped paths and not
+     only literal <rect> elements, which in turn makes the sharp corners on
+     since-2011 above, and on stay-ahead below, genuine deviations rather than
+     open questions. Worth resolving across the set in one pass.
+
+     One naming and semantics flag on get-found: the mark is, visually, the
+     conventional external-link glyph, and design.md's committed eight already
+     include external-link with that exact meaning ("opens elsewhere"). Reusing
+     the form as a group marker for "found" risks teaching two meanings for one
+     shape. Raise it before these are committed. */
+  "get-found": {
+    // frame with an arrow leaving it
+    body: '<path d="M11 5H6a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5"/>' +
+          '<path d="M13 11l8-8"/>' +
+          '<path d="M15 3h6v6"/>'
+  },
+  "get-built": {
+    // drafting pen on its rule
+    body: '<path d="M4 20v-4L15 5l4 4L8 20H4z"/>' +
+          '<path d="M13 7l4 4"/>' +
+          '<path d="M15 20h6"/>'
+  },
+  "stay-ahead": {
+    // document with a turned corner
+    body: '<path d="M6 3h9l4 4v14H6z"/>' +
+          '<path d="M15 3v4h4"/>' +
+          '<path d="M9 12h6M9 16h6"/>'
   }
 };
