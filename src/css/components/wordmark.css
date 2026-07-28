@@ -19,9 +19,36 @@
 
    Set --cs-wordmark-size and the rest follows. */
 @layer components {
+  /* WHY THERE IS AN INSET FACTOR, read before changing these numbers.
+
+     The locked ratios (3.7 stacked, 3.0 inline) are CANVAS relative: they were
+     authored against the placeholder isotype PNG, whose mark sat inset within
+     a padded canvas. The design set an 89px image box and saw a mark somewhat
+     smaller than 89px, and called that 3.7x.
+
+     The production SVG is edge to edge. Measured: the circle's diameter equals
+     the full viewBox, 100 percent on all four axes, zero padding. So the same
+     3.7 now yields a full 89px of visible crescent, which is why the mark
+     reads oversized even though the multiplier and its base are both correct.
+
+     Compounding it, "wordmark size" is the FONT SIZE, not the cap height. Dual
+     caps measure 0.742em, so at a 24px wordmark the visible letters are only
+     17.8px tall and a 3.7x icon is 5.0x the letterforms.
+
+     The inset is the asset-level correction: it converts the canvas-relative
+     locked ratio into a visible-mark size. It is deliberately applied to BOTH
+     lockups, because it describes the artwork, not the composition. Anything
+     else drifts the two lockups apart.
+
+     The exact original padding is unrecoverable (the placeholder PNG is
+     corrupt, its pixel data will not inflate at all), so this factor is a
+     judgement call rather than a measurement. It is the one number here that
+     wants a human eye. Tune this alone; leave the locked ratios reading 3.7
+     and 3.0 so they stay traceable to the spec. */
   .cs-wordmark {
     --cs-wordmark-size: 24px;
     --cs-wordmark-icon-ratio: 3.7;
+    --cs-wordmark-icon-inset: .85;
     --cs-wordmark-studio-ratio: .55;
     --cs-wordmark-gap-ratio: .2;
 
@@ -40,7 +67,11 @@
 
   .cs-wordmark__icon {
     display: block;
-    width: calc(var(--cs-wordmark-size) * var(--cs-wordmark-icon-ratio));
+    width: calc(
+      var(--cs-wordmark-size) *
+      var(--cs-wordmark-icon-ratio) *
+      var(--cs-wordmark-icon-inset)
+    );
     height: auto;
   }
 
