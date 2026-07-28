@@ -12,8 +12,8 @@
     {% raw %}{% from "components/container.njk" import container %}
     {% call container() %}...{% endcall %}{% endraw %}
 #}
-{% macro container(class="") %}
-<div class="mx-auto w-full max-w-main px-8{{ " " + class if class }}">
+{% macro container(class="", narrow=false) %}
+<div class="mx-auto w-full {{ "max-w-narrow" if narrow else "max-w-main" }} px-8{{ " " + class if class }}">
   {{ caller() }}
 </div>
 {% endmacro %}

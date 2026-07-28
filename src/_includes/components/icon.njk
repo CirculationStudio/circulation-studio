@@ -1,0 +1,33 @@
+{#
+  Icon: renders one mark from _data/icons.js.
+
+  The wrapper owns every construction rule from design.md's Iconography
+  section, so geometry is the only thing an icon file supplies:
+
+    24x24 viewBox, geometry inside the 20x20 live area
+    one stroke weight, 2px, never varied
+    stroke currentColor, fill none on the root, single ink
+    butt terminals, miter joins, the typeface's flat endings
+
+  Icons are decorative by default: every current use sits beside a visible
+  text label, so the SVG is hidden from assistive tech and the label carries
+  the meaning. Pass `label` only for an icon that stands alone, which flips it
+  to an img role with an accessible name.
+
+  Size defaults to 20px. design.md requires testing at 16, 20 and 32 before an
+  icon ships, and notes known small-size fallbacks (faq drops its outer ring
+  below 20px, field-note drops its rule line below 16px).
+
+  NEVER import Lucide or any other icon set, and never paste a raw SVG into a
+  page. New icons go in _data/icons.js and get proposed for review first.
+
+  Usage:
+    {% raw %}{% from "components/icon.njk" import icon %}
+    {{ icon("google-partner") }}
+    {{ icon("since-2011", size=32) }}{% endraw %}
+#}
+{% macro icon(name, size=20, label="", class="") %}
+<svg class="cs-icon{{ " " + class if class }}" viewBox="0 0 24 24" width="{{ size }}" height="{{ size }}"
+     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="butt" stroke-linejoin="miter"
+     {%- if label %} role="img" aria-label="{{ label }}"{% else %} aria-hidden="true" focusable="false"{% endif %}>{{ name | iconBody | safe }}</svg>
+{% endmacro %}

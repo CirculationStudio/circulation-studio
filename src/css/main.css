@@ -1,7 +1,5 @@
 /* Lora is the body face, pulled from Google Fonts per the design system's
-   fonts.css. Dual (the display face) is licensed OTF and is NOT in this repo
-   yet, so var(--font-display) currently falls back to system-ui. Drop the six
-   Dual-*.otf files into src/fonts/ and add the @font-face rules to finish it.
+   fonts.css. Dual (the display face) is self-hosted, see base/fonts.css.
 
    This @import stays above the Tailwind one: "@import tailwindcss" expands to
    real rules at build time, and CSS drops any @import that follows a rule. */
@@ -20,6 +18,7 @@
 @import "./components/masthead.css";
 @import "./components/colophon.css";
 @import "./components/longform.css";
+@import "./pages/home.css";
 
 /* Design tokens pulled from the Circulation Studio Design System in Claude
    Design (tokens/colors.css, typography.css, layout.css) on 2026-07-27.
@@ -75,6 +74,8 @@
 
   /* --container-* generates max-w-main and max-w-measure. */
   --container-main: 1120px;
+  /* narrower measure for long-form and pull quotes */
+  --container-narrow: 880px;
   --container-measure: 66ch;
 }
 

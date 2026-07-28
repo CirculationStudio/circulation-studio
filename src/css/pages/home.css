@@ -1,0 +1,208 @@
+/* Home page. Page-scoped because design.md section 6 locks the component set
+   and requires anything new to be proposed and signed off rather than invented
+   inline. Three patterns here are strong candidates for promotion if a second
+   page needs them: the proof band, the survey rules, and the arc. Until then
+   they stay page-level rather than quietly becoming components. */
+@layer components {
+  /* HERO
+     Two-column: proposition left, portrait right, with the display tagline
+     pulled up across both so it overlaps the image. */
+  .cs-hero {
+    position: relative;
+    padding: 80px 0 var(--space-96);
+  }
+  .cs-hero__grid {
+    display: grid;
+    grid-template-columns: 1fr 440px;
+    gap: var(--space-96);
+    align-items: start;
+  }
+  .cs-hero__copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-top: var(--space-24);
+  }
+
+  /* The hero headline runs at the h3 step, not h1's 56px. The 68px tagline
+     below carries the visual weight, so the proposition is set quieter on
+     purpose and given a looser leading than the locked heading rhythm. */
+  .cs-hero__headline {
+    margin: 0;
+    font-size: var(--text-h3);
+    line-height: 1.4;
+    max-width: 30ch;
+    text-wrap: pretty;
+  }
+  .cs-hero__lede {
+    margin: var(--space-24) 0 0;
+    max-width: 46ch;
+  }
+  .cs-hero__cta { margin-top: var(--space-64) }
+
+  .cs-hero__figure {
+    width: 440px;
+    height: 550px;
+    object-fit: cover;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Tagline overlaps the figure, so it needs to sit above it. */
+  .cs-hero__tagline {
+    margin: -76px 0 0 6px;
+    position: relative;
+    z-index: 2;
+    max-width: none;
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 68px;
+    line-height: 1;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--color-ink);
+    white-space: nowrap;
+  }
+
+  /* Survey rules: the botanist's-diagram device from the imagery direction,
+     carried into the layout. Decorative only, so they are hidden rather than
+     reflowed once the fixed offsets stop making sense. */
+  .cs-rule {
+    position: absolute;
+    pointer-events: none;
+  }
+  .cs-rule--hero-h {
+    top: 320px;
+    left: -160px;
+    right: 440px;
+    border-top: 1px dashed var(--border-hairline);
+  }
+  .cs-rule--hero-v {
+    top: -1px;
+    right: 218px;
+    height: 81px;
+    border-left: 1px solid var(--border-hairline);
+  }
+
+  /* PROOF BAND */
+  .cs-proofband {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-24);
+    border-top: 1px solid var(--border-hairline);
+    border-bottom: 1px solid var(--border-hairline);
+    padding: var(--space-24) 0;
+    margin: 0;
+    list-style: none;
+  }
+  .cs-proofband__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-ink);
+  }
+  .cs-proofband__label {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: var(--text-caption);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+  }
+
+  /* WHAT WE DO */
+  .cs-duo {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-96);
+  }
+  .cs-duo__item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-16);
+  }
+  .cs-duo__item h2 { margin: 0; font-size: var(--text-h3) }
+  .cs-duo__item p { margin: 0; max-width: 44ch }
+
+  /* ESPALIER BAND
+     The survey rule continues out into the page margins on both sides, so the
+     band reads as a slice of something wider than the container. */
+  .cs-espalier { position: relative }
+  .cs-espalier__figure {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+  }
+  .cs-rule--espalier {
+    top: 49px;
+    width: calc(50% - 560px);
+    border-top: 1px dashed var(--border-hairline);
+  }
+  .cs-rule--espalier-l { left: 0 }
+  .cs-rule--espalier-r { right: 0 }
+
+  /* A single large arc, clipped to a shallow window so only its crown shows
+     beneath the image. The circle is far larger than its frame on purpose. */
+  .cs-espalier__arc {
+    position: absolute;
+    top: 220px;
+    left: 521px;
+    width: 476px;
+    height: 66px;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .cs-espalier__arc::before {
+    content: "";
+    position: absolute;
+    top: -409px;
+    left: 0;
+    width: 474px;
+    height: 474px;
+    border: 1px solid var(--border-hairline);
+    border-radius: 50%;
+  }
+
+  /* QUIET CLOSE */
+  .cs-close {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-40);
+    text-align: center;
+    padding-bottom: var(--space-96);
+  }
+  .cs-close__note {
+    margin: 0;
+    max-width: 44ch;
+    font-family: var(--font-display);
+    font-weight: var(--weight-light);
+    font-size: 20px;
+    line-height: 1.5;
+    letter-spacing: .01em;
+    color: var(--color-ink);
+  }
+
+  /* The handoff is drawn at a fixed 1160px minimum and specifies no narrower
+     behaviour. Below the container width the fixed offsets stop describing
+     anything real, so the decorative geometry is dropped and the two-column
+     blocks stack. Narrow layouts still want a proper design pass. */
+  @media (max-width: 1120px) {
+    .cs-rule,
+    .cs-espalier__arc { display: none }
+
+    .cs-hero__grid,
+    .cs-duo { grid-template-columns: 1fr; gap: var(--space-40) }
+
+    .cs-hero__figure { width: 100%; height: auto }
+
+    .cs-hero__tagline {
+      margin: var(--space-40) 0 0;
+      font-size: var(--text-h2);
+      white-space: normal;
+    }
+
+    .cs-proofband { flex-direction: column; align-items: flex-start }
+  }
+}

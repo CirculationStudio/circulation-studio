@@ -38,6 +38,12 @@ export default {
   // Shown at the masthead's left rail and on the footer's lower line.
   location: "Laguna Beach, California",
 
+  /* Image CDN base. Images are served from here, never committed to the repo,
+     so the build stays light and art direction can be reissued without a
+     deploy. Reference as {{ site.cdn }}<name>.webp; the CDN holds the WebP
+     conversions of the source JPEGs from the design system's image library. */
+  cdn: "https://cdn.circulationstudio.com/assets/images/",
+
   // Time-sensitive. Shown in madder at the masthead's right rail and links to
   // contact. Update or remove when the booking window changes.
   booking: {

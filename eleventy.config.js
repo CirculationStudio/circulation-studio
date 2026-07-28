@@ -1,6 +1,7 @@
 import path from "node:path";
 import EleventyVitePlugin from "@11ty/eleventy-plugin-vite";
 import tailwindcss from "@tailwindcss/vite";
+import icons from "./src/_data/icons.js";
 
 const HTML_ESCAPES = {
   "&": "&amp;",
@@ -86,6 +87,23 @@ function glyphSwaps(text, swaps, tag) {
 
 export default function (eleventyConfig) {
   eleventyConfig.addFilter("glyphSwaps", glyphSwaps);
+
+  /* Icon geometry lookup. Done as a filter rather than reading the data
+     directly inside the macro, because Nunjucks macros do NOT receive the
+     template context: `icons[name]` is undefined in there, and the macro's
+     own guard then renders nothing at all. That failure is completely silent,
+     which is how three icons went missing from a build that reported success.
+     Here an unknown name warns and is greppable in the output. */
+  eleventyConfig.addFilter("iconBody", (name) => {
+    const shape = icons[name];
+    if (!shape) {
+      console.warn(
+        `[icon] unknown icon "${name}". Known: ${Object.keys(icons).join(", ")}`
+      );
+      return `<!-- unknown icon: ${name} -->`;
+    }
+    return shape.body;
+  });
 
   /* Deploy-time files. Two separate problems had to be solved to ship these.
 

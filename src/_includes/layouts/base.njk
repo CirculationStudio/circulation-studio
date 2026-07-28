@@ -14,6 +14,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ title or site.title }}</title>
   <meta name="description" content="{{ description or site.description }}">
+  {# Images come from the CDN, so warm the connection before the first request. #}
+  <link rel="preconnect" href="https://cdn.circulationstudio.com" crossorigin>
+  {# A page names its LCP image in front matter and it gets preloaded. Without
+     this the hero image is not discovered until the parser reaches it. #}
+  {% if preloadImage %}
+  <link rel="preload" as="image" href="{{ site.cdn }}{{ preloadImage }}" fetchpriority="high">
+  {% endif %}
   <script type="module" src="/src/js/main.js"></script>
 </head>
 <body>

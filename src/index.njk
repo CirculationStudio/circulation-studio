@@ -1,17 +1,115 @@
 ---
 layout: layouts/base.njk
-title: Circulation Studio
+title: "Circulation Studio: get built, get found"
+description: "Your customers check Google, Yelp, and AI before they decide. We help service businesses and brands get found everywhere it happens."
 permalink: /index.html
+preloadImage: cs-img-seed-portrait.webp
+proof:
+  - icon: google-partner
+    label: Google Partner
+  - icon: yelp-certified
+    label: Yelp Ads Certified Partner
+  - icon: since-2011
+    label: Serving service businesses and brands since 2011
+services:
+  - title: Search visibility
+    body: SEO, Yelp Ads, and Google Ads, tuned to where your customers actually look.
+  - title: Presence
+    body: Web design and branding that hold up once you’re found.
 ---
 {#
-  Placeholder home page. This exists to wire the frame and prove composition,
-  not as the real home page. Real copy and structure come from
-  SITE_ARCHITECTURE.md and voice-tone.md in a later pass.
+  Home page. Composes the frame (layouts/base.njk brings the masthead and
+  colophon) and the locked components. Copy lives in front matter so it stays
+  editable without touching markup.
+
+  Two deliberate departures from the handoff, both noted for review:
+
+  1. The handoff sets BOTH the proposition and the "Get Built. Get Found."
+     tagline as h1. Two h1 elements on one page is wrong for assistive tech and
+     for search. The proposition is the h1 because it describes the page; the
+     tagline is display type, not a document heading, and it already repeats in
+     the colophon on every page, so it renders as a paragraph.
+  2. No alt-glyph anywhere on this page, per instruction. The handoff carries
+     .alt-dot on the O of "Found" in the hero tagline. The colophon keeps its
+     own swap, since that belongs to the frame rather than to this page.
 #}
+{% from "components/container.njk" import container %}
 {% from "components/section.njk" import section %}
-{% from "components/heading.njk" import heading %}
+{% from "components/button.njk" import button %}
+{% from "components/icon.njk" import icon %}
+
+{% call container(class="cs-hero") %}
+  <div class="cs-rule cs-rule--hero-h" aria-hidden="true"></div>
+  <div class="cs-rule cs-rule--hero-v" aria-hidden="true"></div>
+
+  <div class="cs-hero__grid">
+    <div class="cs-hero__copy">
+      <h1 class="cs-hero__headline">The web has changed. We’ve been ahead of it since 2011.</h1>
+      <p class="cs-hero__lede">
+        Your customers don’t just Google you, they check Yelp, ask AI, and decide in
+        seconds. We help service businesses and brands get found everywhere it happens.
+      </p>
+      {{ button("See how we work", href="/what-we-do/", class="cs-hero__cta") }}
+    </div>
+
+    <img class="cs-hero__figure"
+         src="{{ site.cdn }}cs-img-seed-portrait.webp"
+         alt="Seed, high-contrast black and white with a single madder bar"
+         width="440" height="550"
+         loading="eager" fetchpriority="high" decoding="async">
+  </div>
+
+  <p class="cs-hero__tagline">Get Built. Get Found.</p>
+{% endcall %}
+
+{% call container() %}
+  <ul class="cs-proofband">
+    {% for item in proof %}
+      <li class="cs-proofband__item">
+        {{ icon(item.icon) }}
+        <span class="cs-proofband__label">{{ item.label }}</span>
+      </li>
+    {% endfor %}
+  </ul>
+{% endcall %}
 
 {% call section() %}
-  {{ heading("Circulation Studio", as="h1") }}
-  <p>Placeholder. Page structure is defined in SITE_ARCHITECTURE.md and has not been built yet.</p>
+  <div class="cs-duo">
+    {% for service in services %}
+      <div class="cs-duo__item">
+        <h2>{{ service.title }}</h2>
+        <p>{{ service.body }}</p>
+      </div>
+    {% endfor %}
+  </div>
+  {{ button("See what we do", href="/what-we-do/", variant="ghost", arrow=true, class="mt-10") }}
+{% endcall %}
+
+<div class="cs-espalier">
+  <div class="cs-rule cs-rule--espalier cs-rule--espalier-l" aria-hidden="true"></div>
+  <div class="cs-rule cs-rule--espalier cs-rule--espalier-r" aria-hidden="true"></div>
+  {% call container(class="relative") %}
+    <img class="cs-espalier__figure"
+         src="{{ site.cdn }}cs-img-espalier-1-landscape.webp"
+         alt="Espalier, growth trained to a deliberate shape"
+         width="1120" height="220"
+         loading="lazy" decoding="async">
+    <div class="cs-espalier__arc" aria-hidden="true"></div>
+  {% endcall %}
+</div>
+
+{% call container(narrow=true, class="py-24") %}
+  <blockquote class="cs-pullquote m-0">
+    Steve and Connor don’t upsell you. They aligned perfectly with our objective to
+    create an enduring online presence.
+    <cite>Alex Loveless, Executive Director, The Admissions Angle</cite>
+  </blockquote>
+{% endcall %}
+
+{% call container(class="cs-close") %}
+  <p class="cs-close__note">
+    We keep the roster small so senior people do the work. Booking for Q3 is open;
+    if the timing is right for your business, let’s talk.
+  </p>
+  {{ button("Start a conversation", href="/contact/") }}
 {% endcall %}
