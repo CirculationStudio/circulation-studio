@@ -37,26 +37,40 @@
         font binary, so a 24px wordmark shows only 17.8px of letterform. A
         3.7x-of-font-size icon is 5.0x the letters you actually see.
 
-     The intended lockup has the mark reading at roughly the height of the word
-     beside it. So the icon is anchored to the visible cap height, which is the
-     relationship the eye actually judges, and the anchor holds at any size and
-     against any future asset crop.
+     So every proportion here is anchored to the visible CAP HEIGHT, which is
+     the relationship the eye actually judges. The anchor holds at any size and
+     against any future change to the artwork's crop.
 
-       icon height = size * cap-ratio * icon-ratio
+       measurement = size * cap-ratio * its own ratio
 
-     --cs-wordmark-icon-ratio is now a multiple of CAP HEIGHT, not of font
-     size. 1.1 puts the mark just over the height of CIRCULATION. That is the
-     one knob: raise it toward 1.2 for a slightly dominant mark, drop toward
-     1.0 to sit flush with the caps.
+     The ratios are measured off the approved reference rendering of the
+     lockup, normalised to the CIRCULATION cap height:
+
+       icon height             3.09x cap  -> --cs-wordmark-icon-ratio
+       gap icon to wordmark    0.84x cap  -> --cs-wordmark-gap-ratio
+       STUDIO cap height       0.50x cap  -> --cs-wordmark-studio-ratio
+       gap wordmark to STUDIO  0.69x cap  -> --cs-wordmark-studio-gap-ratio
+
+     The gap ratios are margins, so they land slightly under their target once
+     the line box adds its own space above the caps. They are tuned against the
+     measured result, not the raw target.
+
+     This also reconciles the design file at last. Its 89px icon box against a
+     24px wordmark implies a mark at 5.0x cap height if taken literally, but at
+     3.1x the numbers agree if the placeholder PNG carried roughly 38 percent
+     internal padding. That is consistent with everything else observed about
+     that artwork, and it is why the file's px values could never be copied
+     across to an edge-to-edge SVG.
 
      --cs-wordmark-cap-ratio is a property of Dual and should only change if
      the display face changes. */
   .cs-wordmark {
     --cs-wordmark-size: 24px;
     --cs-wordmark-cap-ratio: .742;
-    --cs-wordmark-icon-ratio: 1.1;
+    --cs-wordmark-icon-ratio: 3.1;
+    --cs-wordmark-gap-ratio: .73;
     --cs-wordmark-studio-ratio: .55;
-    --cs-wordmark-gap-ratio: .2;
+    --cs-wordmark-studio-gap-ratio: .34;
 
     display: inline-flex;
     font-family: var(--font-display);
@@ -99,7 +113,11 @@
        stays optically centred rather than sitting left of the name */
     letter-spacing: .42em;
     text-indent: .42em;
-    margin-top: calc(var(--cs-wordmark-size) * .125);
+    margin-top: calc(
+      var(--cs-wordmark-size) *
+      var(--cs-wordmark-cap-ratio) *
+      var(--cs-wordmark-studio-gap-ratio)
+    );
   }
 
   /* Stacked lockup: icon above CIRCULATION over STUDIO, centred. The masthead
@@ -119,7 +137,11 @@
      lockup stays proportional at any size. Tune --cs-wordmark-gap-ratio if the
      separation wants adjusting; do not hardcode a pixel gap. */
   .cs-wordmark--stacked .cs-wordmark__icon {
-    margin-bottom: calc(var(--cs-wordmark-size) * var(--cs-wordmark-gap-ratio));
+    margin-bottom: calc(
+      var(--cs-wordmark-size) *
+      var(--cs-wordmark-cap-ratio) *
+      var(--cs-wordmark-gap-ratio)
+    );
   }
 
   /* Inline lockup: icon beside a single-line CIRCULATION STUDIO, at the
