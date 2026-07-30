@@ -23,8 +23,10 @@ Tailwind v4 namespace sit in `@theme` and generate utilities (`bg-paper`,
 `font-display`, `text-h1`, `rounded-control`, `max-w-main`). The rest are
 plain custom properties in `:root` for hand-written component CSS.
 
-Two Tailwind defaults are overridden on purpose: `text-base` is 17px, not
-16px, and `leading-tight` is 1.06, not 1.25.
+Two Tailwind defaults are overridden on purpose: `text-base` is 18px, not
+16px, and `leading-tight` is 1.06, not 1.25. (`text-base` was recorded here as
+17px until 2026-07-30; that was drift from the canonical Component Reference,
+not a local decision.)
 
 Spacing is deliberately not in `@theme`. Every value in the locked scale is a
 multiple of 4px, so Tailwind's default scale already emits them exactly

@@ -57,11 +57,15 @@
   --font-body: 'Lora', Georgia, serif;
 
   /* Locked type scale. --text-* generates text-h1, text-h2, text-h3, text-caption.
-     text-base is intentionally overridden from Tailwind's 16px to the system's 17px. */
+     text-base is intentionally overridden from Tailwind's 16px to the system's 18px.
+
+     18px, not 17px. The repo carried 17 and the canonical Component Reference
+     in Claude Design sets 18; this was drift, not a local decision. Corrected
+     2026-07-30 against tokens/typography.css. */
   --text-h1: 56px;
   --text-h2: 36px;
   --text-h3: 24px;
-  --text-base: 17px;
+  --text-base: 18px;
   --text-caption: 13px;
 
   /* Rhythm. leading-tight is intentionally overridden from Tailwind's 1.25. */
