@@ -35,6 +35,35 @@ export default {
   description: "Creative agency based in Laguna Beach, California.",
   year: new Date().getFullYear(),
 
+  /* Canonical origin, and the base every absolute URL in the JSON-LD is built
+     from. Taken from DEPLOYMENT.md's stated Production URL, not invented.
+
+     DELIBERATELY THE PRODUCTION DOMAIN, NOT THE PREVIEW HOST. DNS has not been
+     cut over yet and review happens on circulation-studio.pages.dev, so the
+     schema currently declares an origin the build is not served from. That is
+     the right way round: schema names the entity's canonical home, and baking
+     a temporary Cloudflare hostname into the Organization's @id would have to
+     be unpicked at cutover, after search engines had already resolved the
+     entity against it. Worth confirming the preview host stays noindexed until
+     the cutover so the two are never both crawlable. */
+  url: "https://circulationstudio.com",
+
+  /* The brand mark, at a STABLE unhashed path. Pages reference the icon
+     through /brand/, which Vite fingerprints into /assets/<name>-<hash>.svg;
+     a JSON-LD string is not an href, so Vite never rewrites it and that path
+     would 404. eleventy.config.js copies this one file through public/ as
+     well, verbatim, so the schema has a URL that survives a rebuild.
+
+     This is the isotype, not the full stacked lockup. It is the only brand
+     artwork in the repo. */
+  logo: "/brand/Circulation-Studio-icon.svg",
+
+  /* Stated in visible copy twice: the home page's proof line ("since 2011")
+     and the Who We Are lede. Both still type the year inline; they should read
+     from here when either is next touched, so there is one source rather than
+     three. */
+  founded: "2011",
+
   // Shown at the masthead's left rail and on the footer's lower line.
   location: "Laguna Beach, California",
 

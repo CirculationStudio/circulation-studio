@@ -1,0 +1,207 @@
+{#
+  JSON-LD graph. One <script> per page, included by the base layout.
+
+  ============================================================
+  EVERY VALUE HERE IS READ, NEVER TYPED.
+  ============================================================
+
+  The NAP comes from site.nap, which is the canonical object the footer
+  colophon and the Contact page already render. That is not a convention, it
+  is the whole point: CLAUDE.md requires schema to match visible content
+  exactly, and a NAP that disagrees with itself across a site is an
+  entity-resolution problem. Because both the visible pane and this block
+  read the same keys, they cannot drift. site.nap's keys were deliberately
+  named for schema.org PostalAddress, so they map across with no transcription
+  step. See SCHEMA.md.
+
+  The visible email is obfuscated (no contiguous address, no mailto, assembled
+  in main.js). This block carries the real one. That is correct and not a
+  contradiction: the obfuscation defends against naive scrapers reading raw
+  HTML, while schema exists to be machine-read by engines that should have it.
+
+  ONE GRAPH, NOT SEVERAL BLOCKS. Every page emits the Organization and WebSite
+  nodes under stable @ids and then references them by @id from the page-level
+  nodes, so an engine crawling five pages reconciles one organization rather
+  than five near-duplicates.
+
+  WHAT IS DELIBERATELY ABSENT, and why. Do not "fill these in" without the
+  underlying fact:
+
+    sameAs        No verified external profile exists anywhere in this repo.
+                  Not GBP, not Yelp, not social. An unverified profile URL is
+                  a claim about identity, and a wrong one splits the entity
+                  instead of consolidating it. Add each ONLY once confirmed.
+    aggregateRating / Review
+                  There is no sourced review data. The two testimonials on the
+                  site are real and attributed but carry no rating and no
+                  source, and self-collected reviews about your own business
+                  are ineligible for review rich results regardless.
+    LocalBusiness The type is Organization, NOT LocalBusiness. LocalBusiness
+                  asserts a place customers visit, and the honest supporting
+                  facts are missing: no opening hours, no geo coordinates, no
+                  verified Google Business Profile, and a "#267" suite line
+                  that reads like a mailbox. Upgrading the @type is a one-line
+                  change once a verified GBP, hours and geo exist; asserting
+                  it now would be inventing a storefront.
+    Results cases The Results page's case studies are still bracketed
+                  placeholders ("[+XX%]", "[Approach and outcome narrative to
+                  be supplied]"). Encoding those would publish fabricated
+                  outcomes. That page gets its page-level nodes only, and the
+                  ItemList lands when the real numbers do.
+#}
+
+{#- The organization. Referenced by @id from every other node, on every page. -#}
+{% set organization = {
+  "@type": "Organization",
+  "@id": site.url + "/#organization",
+  "name": site.nap.name,
+  "url": site.url + "/",
+  "description": site.description,
+  "logo": {
+    "@type": "ImageObject",
+    "@id": site.url + "/#logo",
+    "url": site.url + site.logo,
+    "caption": site.nap.name
+  },
+  "image": { "@id": site.url + "/#logo" },
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": site.nap.streetAddress,
+    "addressLocality": site.nap.addressLocality,
+    "addressRegion": site.nap.addressRegion,
+    "postalCode": site.nap.postalCode,
+    "addressCountry": site.nap.addressCountry
+  },
+  "telephone": site.nap.telephone,
+  "email": site.nap.email,
+  "foundingDate": site.founded,
+  "foundingLocation": {
+    "@type": "Place",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": site.nap.addressLocality,
+      "addressRegion": site.nap.addressRegion,
+      "addressCountry": site.nap.addressCountry
+    }
+  }
+} %}
+
+{% set website = {
+  "@type": "WebSite",
+  "@id": site.url + "/#website",
+  "url": site.url + "/",
+  "name": site.name,
+  "description": site.description,
+  "publisher": { "@id": site.url + "/#organization" },
+  "inLanguage": "en"
+} %}
+
+{%- set pageUrl = site.url + page.url -%}
+
+{#- Breadcrumb label for this page, LOOKED UP from nav.js rather than restated.
+    The nav already holds the short human label for each of these URLs; the
+    front-matter title is a long keyword-aligned string and reads badly in a
+    breadcrumb. Home is not in nav.primary, so it falls back to the site name
+    and the trail is a single crumb. -#}
+{#- Collected into an array rather than assigned to a string, because a plain
+    `set` inside a Nunjucks `for` is scoped to the loop and does not survive
+    it. Mutating an array declared outside does. Same idiom as `graph` below. -#}
+{% set crumbMatch = [] %}
+{% for item in nav.primary %}
+  {% if item.url == page.url %}{% set crumbMatch = (crumbMatch.push(item.label), crumbMatch) %}{% endif %}
+{% endfor %}
+{% set crumbLabel = crumbMatch[0] %}
+
+{% set crumbs = [{
+  "@type": "ListItem",
+  "position": 1,
+  "name": site.name,
+  "item": site.url + "/"
+}] %}
+{% if crumbLabel %}
+  {% set crumbs = (crumbs.push({
+    "@type": "ListItem",
+    "position": 2,
+    "name": crumbLabel,
+    "item": pageUrl
+  }), crumbs) %}
+{% endif %}
+
+{% set breadcrumb = {
+  "@type": "BreadcrumbList",
+  "@id": pageUrl + "#breadcrumb",
+  "itemListElement": crumbs
+} %}
+
+{#- schemaType comes from each page's front matter (AboutPage, ContactPage,
+    CollectionPage), defaulting to WebPage. Kept in front matter rather than
+    derived from the URL here, so a page declares its own kind where the rest
+    of its content lives. -#}
+{% set webpage = {
+  "@type": schemaType or "WebPage",
+  "@id": pageUrl + "#webpage",
+  "url": pageUrl,
+  "name": title or site.title,
+  "description": description or site.description,
+  "isPartOf": { "@id": site.url + "/#website" },
+  "about": { "@id": site.url + "/#organization" },
+  "breadcrumb": { "@id": pageUrl + "#breadcrumb" },
+  "inLanguage": "en"
+} %}
+
+{% set graph = [organization, website, webpage, breadcrumb] %}
+
+{#- Team. Present only on Who We Are, where `team` is in front matter and the
+    same objects render the visible cards, so name and jobTitle match what a
+    reader sees character for character.
+
+    jobTitle carries `role` verbatim, including the " · English / Spanish"
+    suffix three members have. That suffix is a real client-facing fact stated
+    on the visible card, and splitting it into knowsLanguage would mean
+    parsing display copy and emitting a value no reader can see. Verbatim
+    keeps schema and page identical, which is the rule that matters. -#}
+{% if team %}
+  {% for member in team %}
+    {% set graph = (graph.push({
+      "@type": "Person",
+      "@id": pageUrl + "#person-" + loop.index,
+      "name": member.name,
+      "jobTitle": member.role,
+      "description": member.bio,
+      "worksFor": { "@id": site.url + "/#organization" }
+    }), graph) %}
+  {% endfor %}
+{% endif %}
+
+{#- Services. Present only on What We Do, flattened out of the three outcome
+    groups; each service keeps its group in `category` so the page's own
+    structure survives without three levels of nested OfferCatalog. Names and
+    descriptions are the same front-matter strings the page renders. -#}
+{% if outcomes %}
+  {% set serviceItems = [] %}
+  {% for outcome in outcomes %}
+    {% for service in outcome.services %}
+      {% set serviceItems = (serviceItems.push({
+        "@type": "ListItem",
+        "position": serviceItems.length + 1,
+        "item": {
+          "@type": "Service",
+          "name": service.name,
+          "description": service.desc,
+          "category": outcome.title,
+          "provider": { "@id": site.url + "/#organization" }
+        }
+      }), serviceItems) %}
+    {% endfor %}
+  {% endfor %}
+  {% set graph = (graph.push({
+    "@type": "ItemList",
+    "@id": pageUrl + "#services",
+    "name": title,
+    "itemListElement": serviceItems
+  }), graph) %}
+{% endif %}
+
+<script type="application/ld+json">
+{{ { "@context": "https://schema.org", "@graph": graph } | jsonld | safe }}
+</script>

@@ -105,6 +105,39 @@ export default function (eleventyConfig) {
     return shape.body;
   });
 
+  /* JSON-LD serialiser for partials/schema.njk.
+
+     Nunjucks' built-in `dump` is JSON.stringify and nothing else, which is not
+     safe inside a <script> block: any "</script>" appearing in a string value
+     would close the element early and spill the rest of the graph into the
+     document as markup. Escaping every "<" to its JSON unicode form is still
+     valid JSON, parses back to the same string, and makes that impossible.
+
+     Pretty-printed on purpose. Schema is the thing most often read by hand in
+     view-source when an entity is not resolving, and CLAUDE.md asks for output
+     that both humans and agents can read. gzip makes the indentation close to
+     free.
+
+     Undefined and null values are dropped rather than emitted: a key with no
+     value is worse than an absent key, because a validator reports it as a
+     malformed property instead of an incomplete entity. */
+  eleventyConfig.addFilter("jsonld", (value) => {
+    const prune = (node) => {
+      if (Array.isArray(node)) return node.map(prune).filter((v) => v != null);
+      if (node && typeof node === "object") {
+        const out = {};
+        for (const [key, val] of Object.entries(node)) {
+          const cleaned = prune(val);
+          if (cleaned != null && cleaned !== "") out[key] = cleaned;
+        }
+        return Object.keys(out).length ? out : null;
+      }
+      return node;
+    };
+
+    return JSON.stringify(prune(value), null, 2).replace(/</g, "\\u003c");
+  });
+
   /* Deploy-time files. Two separate problems had to be solved to ship these.
 
      First, they have no template extension, so Eleventy ignores them unless
@@ -127,6 +160,20 @@ export default function (eleventyConfig) {
      it does not survive into the output. Not routed through public/, because
      publicDir files are copied verbatim and would skip the content hash. */
   eleventyConfig.addPassthroughCopy({ "src/assets": "brand" });
+
+  /* The same icon again, this time through public/ so it survives verbatim at
+     /brand/Circulation-Studio-icon.svg.
+
+     Not redundant with the line above. That one stages the file for Vite to
+     resolve out of the built HTML and fingerprint into /assets/, which is what
+     the masthead and sticky bar load. A hashed filename is exactly wrong for
+     the Organization's logo: JSON-LD carries a plain string, so Vite never
+     rewrites it, and the URL has to still resolve after a rebuild changes the
+     hash. Costs one extra 1.9KB copy for a logo URL that cannot rot. */
+  eleventyConfig.addPassthroughCopy({
+    "src/assets/Circulation-Studio-icon.svg":
+      "public/brand/Circulation-Studio-icon.svg"
+  });
 
   eleventyConfig.addPassthroughCopy({ "src/_headers": "public/_headers" });
   eleventyConfig.addPassthroughCopy({ "src/_redirects": "public/_redirects" });

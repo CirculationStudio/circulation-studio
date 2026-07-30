@@ -22,6 +22,11 @@
   <link rel="preload" as="image" href="{{ site.cdn }}{{ preloadImage }}" fetchpriority="high">
   {% endif %}
   <script type="module" src="/src/js/main.js"></script>
+
+  {# JSON-LD. Reads site.nap, the same object the colophon renders, so the
+     encoded NAP and the visible NAP cannot disagree. See partials/schema.njk
+     for what is deliberately absent from the graph and why. #}
+  {% include "partials/schema.njk" %}
 </head>
 <body>
   {# Hand-rolled rather than Tailwind's sr-only + focus:not-sr-only pair. That
