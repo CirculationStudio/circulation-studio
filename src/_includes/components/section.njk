@@ -3,7 +3,8 @@
   of the spacing scale, and the ONLY place 96 is allowed, never
   component-internal) plus the 1120px container, both applied automatically.
 
-  py-24 is Tailwind's 96px step. max-w-main is --container-main.
+  py-24 is Tailwind's 96px step. The container it wraps is .cs-container, not
+  max-w-main plus px-8; see components/container.css for why.
 
   `deep` paints the one ink pane. design.md section 1: MAX ONE deep pane per
   view. Buttons inside a deep section must use variant="deep", and the wordmark

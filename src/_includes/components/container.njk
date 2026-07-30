@@ -5,8 +5,8 @@
   first, which already applies this; use container() bare only when you need
   the measure without the 96px vertical rhythm (inside the masthead, say).
 
-  max-w-main is --container-main (1120px). px-8 is Tailwind's 32px step, which
-  is the design system's own container padding.
+  Emits .cs-container, never max-w-main plus px-8. That spelling was rejected
+  and the reason is in components/container.css.
 
   Usage:
     {% raw %}{% from "components/container.njk" import container %}
