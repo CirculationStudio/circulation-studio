@@ -1,0 +1,41 @@
+---
+layout: layouts/base.njk
+---
+{#
+  Article layout: the existing frame, plus a title, a byline and the body.
+  Nothing else. This is step one of the article system and deliberately adds no
+  chrome of its own.
+
+  It chains to layouts/base.njk rather than restating the shell, which is how
+  the five marketing pages already get the masthead, the colophon and the
+  JSON-LD block. Nothing here rebuilds any of that.
+
+  MEASURE. base/elements.css already caps p at 66ch, so paragraphs were at
+  measure before this layout existed. Headings, lists, blockquotes and
+  everything else were NOT: without a wrapper they would run the full 1120px of
+  .cs-container while the paragraphs between them sat at 66ch, which reads as a
+  broken column rather than a narrow one. So the cap belongs on the wrapper.
+
+  max-w-measure is the utility --container-measure already generates, so this
+  introduces no CSS. It also makes p's own 66ch redundant here, harmlessly: the
+  two are the same value, and elements.css still needs its rule for prose that
+  is not inside this layout.
+
+  The <article> element is deliberate rather than reusing the section() macro,
+  which emits <section>. Semantics are the point on a page that is one article.
+#}
+<article class="cs-container max-w-measure py-24">
+  <header>
+    <p class="caption">{{ kind }}</p>
+
+    <h1>{{ title }}</h1>
+
+    {% if deck %}<p>{{ deck }}</p>{% endif %}
+
+    {# author is a KEY per SHORTCODES.md, not a name, and the data file it is
+       meant to resolve against does not exist yet. It renders raw for now. #}
+    <p class="caption">{{ author }}, updated {{ updated }}</p>
+  </header>
+
+  {{ content | safe }}
+</article>

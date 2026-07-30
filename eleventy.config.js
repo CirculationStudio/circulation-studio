@@ -105,6 +105,15 @@ export default function (eleventyConfig) {
     return shape.body;
   });
 
+  /* Articles. Globbed rather than tag-driven, so an article is an article by
+     virtue of where it lives and an author cannot half-enrol one by forgetting
+     a tag. Nothing consumes this collection yet: there is no index page and no
+     related block, both of which are open decisions. It exists so the next
+     step has something to read. */
+  eleventyConfig.addCollection("articles", (collectionApi) =>
+    collectionApi.getFilteredByGlob("src/articles/*.md")
+  );
+
   /* JSON-LD serialiser for partials/schema.njk.
 
      Nunjucks' built-in `dump` is JSON.stringify and nothing else, which is not
