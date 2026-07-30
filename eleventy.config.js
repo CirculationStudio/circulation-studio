@@ -212,6 +212,19 @@ export default function (eleventyConfig) {
   });
 
   return {
+    /* Markdown runs through Nunjucks, not Eleventy's Liquid default.
+
+       Settled by test, not preference. SHORTCODES.md requires named arguments
+       on every shortcode, and {% shortcode value="hello" %} does not merely
+       arrive mangled under Liquid, it fails the build: LiquidJS rejects it at
+       parse time with "invalid syntax at line 1 col 6". Nunjucks passes named
+       arguments through as a keyword object, intact.
+
+       The cost is that markdown bodies are now Nunjucks templates, so {{ and
+       {% in prose are parsed rather than printed. Anywhere an article needs to
+       show those literally, wrap them in {% raw %}. */
+    markdownTemplateEngine: "njk",
+
     dir: {
       input: "src",
       output: "_site"
