@@ -98,6 +98,9 @@ The five React components are rewritten as Nunjucks macros in
 h1/h2 only, letter must fall inside the named word) lives in the `glyphSwaps`
 filter in `eleventy.config.js`.
 
+`SHORTCODES.md` in the repo root holds the shortcode vocabulary contract for
+the article system; both the build and the authoring project reference it.
+
 **The alt-glyph floor.** design.md section 9 says the crossbar-less A holds at
 15px and up and drops to plain type below about 14px, where the alternate
 stops reading as a deliberate letterform and just looks like a broken A.
