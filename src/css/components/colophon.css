@@ -40,6 +40,17 @@
   }
   .cs-colophon__address a:hover { color: var(--color-paper) }
 
+  /* The address is two blocks (postal lines, then the two contact links)
+     rather than one run of <br>s, because the phone turns the contact links
+     into 44px rows with a rule between them and a <br> run gives nothing to
+     size. Every part is display:block, so above the phone breakpoint the four
+     lines stack exactly as a <br> run did. .cs-colophon__mail is the
+     obfuscated email span; the anchor inside it is assembled by main.js. */
+  .cs-colophon__postal,
+  .cs-colophon__contact,
+  .cs-colophon__tel,
+  .cs-colophon__mail { display: block }
+
   /* "Get Built. Get Found." on the display face. The O carries the target
      glyph (.alt-dot, ss10). The icon is not present on the ink pane, so the
      device is allowed here: nothing else is claiming circular meaning. One
@@ -95,6 +106,125 @@
     font-family: var(--font-body);
     font-size: 12px;
     color: color-mix(in srgb, var(--color-paper) 55%, transparent);
+  }
+
+  /* ------------------------------------------------------------------
+     Below the desktop breakpoint.
+
+     Three columns with a centred tagline needs width, so the pane reflows
+     rather than shrinks: the tagline leads, the address follows it, and the
+     link list becomes rows with rules instead of a right-aligned stack. The
+     markup does not change, only placement, so there is no mobile partial.
+
+     Breakpoints match masthead.css: 1120 the desktop floor, 768 the tablet
+     floor. The 30/34px taglines, 52px rows and 12px labels are the design's
+     values and are stated once here.
+
+     Above the phone breakpoint the contact links stay plain text lines, as the
+     design's tablet frame shows. The 44px rows are a phone treatment. */
+  @media (max-width: 1120px) {
+    .cs-colophon { padding: 56px 32px var(--space-24) }
+
+    /* Two columns: tagline over address on the left, links spanning both rows
+       on the right. Explicit placement rather than source order, so the
+       template keeps reading address, tagline, links for the desktop pane. */
+    .cs-colophon__grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 0 var(--space-40);
+      align-items: start;
+    }
+    .cs-colophon__tagline {
+      grid-column: 1;
+      grid-row: 1;
+      text-align: left;
+      font-size: 34px;
+      line-height: 1.18;
+    }
+    .cs-colophon__address {
+      grid-column: 1;
+      grid-row: 2;
+      margin-top: 28px;
+      font-size: 15px;
+      line-height: 1.8;
+    }
+    .cs-colophon__links {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+    }
+
+    /* Rows with rules, not a right-aligned stack. 52px clears the 44px touch
+       floor, which the 12px caps on their own would not. */
+    .cs-colophon__nav {
+      align-items: stretch;
+      gap: 0;
+      border-top: 1px solid var(--border-on-deep);
+    }
+    .cs-colophon__nav a {
+      display: flex;
+      align-items: center;
+      min-height: 52px;
+      border-bottom: 1px solid var(--border-on-deep);
+      font-size: 12px;
+    }
+    .cs-colophon__nav li:last-child a { border-bottom: 0 }
+
+    .cs-colophon__base { margin-top: 48px }
+  }
+
+  @media (max-width: 767px) {
+    .cs-colophon { padding: 44px 20px var(--space-24) }
+
+    /* One column, tagline first. Order rather than a markup change: the
+       desktop pane still reads address, tagline, links in source. */
+    .cs-colophon__grid {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+    .cs-colophon__tagline {
+      grid-column: auto;
+      grid-row: auto;
+      order: -1;
+      font-size: 30px;
+    }
+    .cs-colophon__address {
+      grid-column: auto;
+      grid-row: auto;
+      margin-top: 32px;
+    }
+    .cs-colophon__links {
+      grid-column: auto;
+      grid-row: auto;
+      margin-top: var(--space-24);
+    }
+
+    /* Contact links become touch rows. Full paper rather than the 75 percent
+       the postal lines carry: these are the two things on the pane a phone is
+       most likely to be opened to use. */
+    .cs-colophon__contact { margin-top: var(--space-16) }
+    .cs-colophon__tel,
+    .cs-colophon__mail a {
+      display: flex;
+      align-items: center;
+      min-height: 44px;
+      color: var(--color-paper);
+    }
+    .cs-colophon__tel { border-bottom: 1px solid var(--border-on-deep) }
+
+    /* Two columns of link rows. The rule under the last ROW is dropped, not
+       the last item, which is why this counts back two. nav.footer holds four
+       links; if that ever becomes odd, this wants revisiting. */
+    .cs-colophon__nav {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: var(--space-16);
+    }
+    .cs-colophon__nav li:nth-last-child(-n + 2) a { border-bottom: 0 }
+
+    .cs-colophon__base {
+      flex-direction: column;
+      gap: 4px;
+      margin-top: var(--space-24);
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

@@ -21,6 +21,7 @@
 @import "./components/card.css";
 @import "./components/wordmark.css";
 @import "./components/masthead.css";
+@import "./components/menu.css";
 @import "./components/colophon.css";
 @import "./components/longform.css";
 @import "./pages/home.css";

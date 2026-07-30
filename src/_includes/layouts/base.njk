@@ -24,7 +24,11 @@
   <script type="module" src="/src/js/main.js"></script>
 </head>
 <body>
-  <a class="cs-link sr-only focus:not-sr-only" href="#main">Skip to content</a>
+  {# Hand-rolled rather than Tailwind's sr-only + focus:not-sr-only pair. That
+     pair returns the link to STATIC flow on focus, and below 1120px the bar
+     is fixed and always present, so the focused link landed behind it. See
+     .cs-skip in masthead.css. #}
+  <a class="cs-skip" href="#main">Skip to content</a>
 
   {% include "partials/masthead.njk" %}
 

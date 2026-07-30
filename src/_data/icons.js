@@ -85,5 +85,27 @@ export default {
     body: '<path d="M6 3h9l4 4v14H6z"/>' +
           '<path d="M15 3v4h4"/>' +
           '<path d="M9 12h6M9 16h6"/>'
+  },
+
+  /* Utility marks for the mobile bar. Unlike the six above these are NOT new
+     icons: menu and close are two of the eight design.md already commits, so
+     they need no proposal. Geometry is copied verbatim from the design
+     system's own icon-menu.svg and icon-close.svg rather than redrawn.
+
+     NON-CONFORMANCE, recorded not corrected, same as the block above:
+       close
+         - 5.6, 12.8 and 18.4 are not whole or half units (rule 1). The X is
+           drawn as a true 45 degree cross inset from the live area, which
+           lands on those values by construction. Both strokes sit inside the
+           20x20 live area, so only rule 1 is at issue
+       menu
+         - fully conformant */
+  menu: {
+    // three rules, the masthead's own language at icon scale
+    body: '<path d="M3 6h18M3 12h18M3 18h18"/>'
+  },
+  close: {
+    // 45 degree cross
+    body: '<path d="M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"/>'
   }
 };

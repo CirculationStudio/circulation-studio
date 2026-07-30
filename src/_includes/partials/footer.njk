@@ -22,18 +22,27 @@
        address was harvestable from every page and the obfuscation on Contact
        protected nothing. The assembled link inherits paper from
        .cs-colophon__address, never madder, which measures 1.99:1 on ink. #}
+    {# Postal lines and contact links are split into two blocks rather than
+       run together on <br>s. On the phone the two rows have to become 44px
+       touch targets with a rule between them, and a <br>-separated run gives
+       nothing to size. Both spans are display:block, so the four lines render
+       exactly as before at every width above the phone breakpoint. #}
     <address class="cs-colophon__address">
-      {{ site.nap.streetAddress }}<br>
-      {{ site.nap.cityStateZip }}<br>
-      <a href="{{ site.nap.telephoneHref }}">{{ site.nap.telephone }}</a><br>
-      {{ email(site.nap.emailUser, site.nap.emailDomain) }}
+      <span class="cs-colophon__postal">
+        {{ site.nap.streetAddress }}<br>
+        {{ site.nap.cityStateZip }}
+      </span>
+      <span class="cs-colophon__contact">
+        <a class="cs-colophon__tel" href="{{ site.nap.telephoneHref }}">{{ site.nap.telephone }}</a>
+        {{ email(site.nap.emailUser, site.nap.emailDomain, "cs-colophon__mail") }}
+      </span>
     </address>
 
     <p class="cs-colophon__tagline">
       Get Built.<br>Get F<span class="alt-dot">o</span>und.
     </p>
 
-    <nav aria-label="Footer">
+    <nav class="cs-colophon__links" aria-label="Footer">
       <ul class="cs-colophon__nav">
         {% for item in nav.footer %}
           <li><a href="{{ item.url }}">{{ item.label }}</a></li>

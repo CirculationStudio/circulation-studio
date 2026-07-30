@@ -1,0 +1,167 @@
+/* Mobile menu: the full-pane ink overlay behind the bar's rule icon, from the
+   Mobile Masthead + Footer design.
+
+   INK BUDGET. design.md section 1 caps a view at one deep pane and the
+   colophon already spends it. This does not break that cap: the menu is a
+   transient overlay, not a pane in the page's composition. It is never on
+   screen at the same time as anything it could compete with, because it
+   covers the viewport outright while open.
+
+   Hidden with visibility, not the hidden attribute, so it stays out of the tab
+   order while closed AND the fade still runs. Above 1120 it is display:none
+   outright, which is what keeps a single copy of the four nav items exposed at
+   any one width: the masthead's rail nav is display:none below that breakpoint
+   and this is display:none above it.
+
+   Open and close, the focus trap, Escape and the resize guard are in main.js.
+   Nothing here depends on JS beyond the .is-open class.
+
+   The 64px rows, 22px labels and .09em tracking are the design's own values
+   and are not on any token scale. Stated once here, never at a call site. */
+@layer components {
+  .cs-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-float);
+    flex-direction: column;
+    background: var(--surface-deep);
+    color: var(--text-on-deep);
+    /* A short viewport in landscape can put the foot below the fold. */
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    visibility: hidden;
+    opacity: 0;
+    /* Opacity only, no slide. The pane covers the whole viewport, so a
+       transform reads as the page moving rather than a menu arriving.
+       Visibility is delayed out and immediate in, the same technique the
+       sticky bar uses, so the fade is not cut short on close. */
+    transition:
+      opacity var(--dur-fast) var(--ease-out),
+      visibility 0s linear var(--dur-fast);
+  }
+  .cs-menu.is-open {
+    visibility: visible;
+    opacity: 1;
+    transition:
+      opacity var(--dur-fast) var(--ease-out),
+      visibility 0s;
+  }
+
+  /* Scroll lock. The overlay is fixed, so without this the page underneath
+     scrolls behind it on touch. */
+  body.has-menu-open { overflow: hidden }
+
+  /* Bar row mirrors the closed bar's geometry so the lockup does not jump
+     when the pane opens. Height is the same custom property the bar reads. */
+  .cs-menu__bar {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--cs-bar-height, 60px);
+    padding: 0 var(--space-8) 0 20px;
+    border-bottom: 1px solid var(--border-on-deep);
+  }
+
+  .cs-menu__dismiss {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-paper);
+    cursor: pointer;
+  }
+
+  /* Rows, not a list. The nav is four full-width targets at 64px, which is
+     what carries the "this is the whole navigation" reading on a phone. */
+  .cs-menu__nav {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-8) 20px 0;
+  }
+  .cs-menu__nav a {
+    display: flex;
+    align-items: center;
+    min-height: 64px;
+    border-bottom: 1px solid var(--border-on-deep);
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 22px;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--color-paper);
+    text-decoration: none;
+  }
+  .cs-menu__nav a:last-child { border-bottom: 0 }
+  .cs-menu__nav a:hover { color: color-mix(in srgb, var(--color-paper) 70%, transparent) }
+
+  /* margin-top:auto rather than a spacer element: the foot pins to the bottom
+     on a tall viewport and simply follows the nav on a short one. */
+  .cs-menu__foot {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-16);
+    margin-top: auto;
+    padding: 20px;
+    border-top: 1px solid var(--border-on-deep);
+  }
+
+  .cs-menu__location {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 11px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--color-paper) 55%, transparent);
+  }
+
+  /* Paper type with a madder RULE, never madder type. Madder on ink measures
+     1.99:1, which is the same reason the colophon's assembled mail link
+     inherits paper. The accent survives as a line weight instead. */
+  .cs-menu__booking {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 11px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-paper);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-madder);
+  }
+
+  .cs-menu a:focus-visible,
+  .cs-menu__dismiss:focus-visible {
+    outline: 2px solid var(--color-paper);
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 1120px) {
+    .cs-menu { display: flex }
+    .cs-menu__bar { padding: 0 20px 0 32px }
+    .cs-menu__nav { padding: var(--space-8) 32px 0 }
+    .cs-menu__foot { padding: 20px 32px }
+  }
+
+  @media (max-width: 767px) {
+    .cs-menu__bar { padding: 0 var(--space-8) 0 20px }
+    .cs-menu__nav { padding: var(--space-8) 20px 0 }
+    .cs-menu__foot { padding: 20px }
+  }
+
+  /* The pane still opens and closes, it just arrives at full opacity rather
+     than fading in. Removing the transition, not the state. */
+  @media (prefers-reduced-motion: reduce) {
+    .cs-menu,
+    .cs-menu.is-open { transition: none }
+  }
+}

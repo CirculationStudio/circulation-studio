@@ -9,7 +9,18 @@
   character. Never word-level font-feature-settings: ss01 also carries D, E, H,
   J, O and R, which the lockup has retired. The isotype is alt="" because the
   adjacent text already names the link.
+
+  Below 1120px the rail does not render at all and the sticky bar becomes the
+  masthead: always present, compacting on scroll rather than appearing. The
+  four nav items move into the ink menu pane at the foot of this file, and the
+  location and booking lines move into that pane's foot. See masthead.css for
+  why the collapsed bar was reused rather than a second mobile header built.
+
+  ONE nav list per viewport is exposed to assistive tech: above 1120 the rail
+  nav and the condensed bar nav, below it only the menu's. The hidden ones are
+  display:none, so no width shows two copies of the same four destinations.
 #}
+{% from "components/icon.njk" import icon %}
 
 <header class="cs-masthead">
   <div class="cs-masthead__rail">
@@ -50,4 +61,55 @@
       <a href="{{ item.url }}">{{ item.label }}</a>
     {% endfor %}
   </nav>
+
+  {# Mobile and tablet controls, hidden above 1120px where the nav above
+     carries the same destinations inline. The booking note shows on the
+     tablet only; on the phone it moves into the menu foot with the location,
+     per the design. #}
+  <div class="cs-stickybar__controls">
+    <a class="cs-stickybar__booking" href="{{ site.booking.url }}">{{ site.booking.label }}</a>
+
+    <button class="cs-stickybar__toggle" type="button"
+            data-menu-toggle aria-controls="cs-menu" aria-expanded="false" aria-label="Open menu">
+      {{ icon("menu", 24) }}
+    </button>
+  </div>
+</div>
+
+{# Mobile menu: full-pane ink overlay. Rendered at every width and hidden
+   above 1120px in CSS, so there is one copy of it and no template branch.
+
+   Open and close state, the focus trap and Escape live in main.js. The pane is
+   hidden with visibility, not the hidden attribute, which keeps it out of the
+   tab order while closed and still lets the fade run.
+
+   ALT-GLYPH: the single A here, nothing else. Not the nav labels, not the
+   location, not the booking note. The wordmark carries no icon on this pane,
+   but that does NOT license the O device: DESIGN_SYSTEM.md permits the O only
+   where the mark is absent AND the type is not the wordmark. The wordmark
+   never carries a device on its O, in any lockup. #}
+<div class="cs-menu" id="cs-menu" data-menu>
+  <div class="cs-menu__bar">
+    {# Inert on purpose, matching the design. The closed bar's lockup is the
+       link home; a second one here would put a fifth destination in a
+       four-item menu. #}
+    <span class="cs-wordmark cs-wordmark--inline cs-wordmark--on-deep">
+      <span class="cs-wordmark__name">Circul<span class="alt-soft">a</span>tion Studio</span>
+    </span>
+
+    <button class="cs-menu__dismiss" type="button" data-menu-close aria-label="Close menu">
+      {{ icon("close", 24) }}
+    </button>
+  </div>
+
+  <nav class="cs-menu__nav" aria-label="Primary">
+    {% for item in nav.primary %}
+      <a href="{{ item.url }}">{{ item.label }}</a>
+    {% endfor %}
+  </nav>
+
+  <div class="cs-menu__foot">
+    <span class="cs-menu__location">{{ site.location }}</span>
+    <a class="cs-menu__booking" href="{{ site.booking.url }}">{{ site.booking.label }}</a>
+  </div>
 </div>
