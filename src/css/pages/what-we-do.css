@@ -30,11 +30,33 @@
     object-fit: cover;
     display: block;
   }
-  /* Continues out of the frame toward the page edge. */
+  /* Continues out of the frame toward the page edge, and STOPS there.
+
+     The length is the page gutter, derived from the same formula the container
+     uses, not a width picked to look right at one viewport. It was 50vw, which
+     is unrelated to the space actually available: the figure is the last grid
+     column, so its right edge sits on the container's right edge, and the only
+     room to its right is the gutter. 50vw is half the viewport, which at every
+     width above 1120 overshoots that gutter by exactly 560px (half the
+     container), so the rule pushed the document 560px wider than the viewport
+     and put a horizontal scrollbar on the page.
+
+     container.css sets width: min(--container-main, 100% - 80px), so the gutter
+     is half of whatever the container does not occupy. Stated that way it
+     tracks both regimes: the 40px gutter while the container is still shrinking
+     with the viewport, and the growing gutter once it locks at 1120.
+
+     The sibling rules on this page and the other four (trellis, espalier,
+     graft, fruit, sowing) express the same gutter as calc(50% - 560px), which
+     works because they hang off a FULL-WIDTH relative wrapper where 50% is half
+     the page. This one cannot use that form: it is anchored to the 440px figure
+     so it can meet the image at a measured height, and a percentage here would
+     resolve against 440px. Hence the viewport-relative spelling of the same
+     quantity. */
   .cs-rule--intro-h {
     top: 116px;
     left: 100%;
-    width: 50vw;
+    width: calc((100vw - min(var(--container-main), 100vw - 80px)) / 2);
     border-top: 1px dashed var(--border-hairline);
   }
   /* Drops below the frame, tying it to the groups underneath. */
