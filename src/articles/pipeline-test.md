@@ -6,6 +6,11 @@ author: steve
 updated: 2026-07-30
 ---
 
+{% pane surface="paper" %}
+A paper pane opening the body, so the leading-pane case renders at all. It is
+the first element after the byline.
+{% endpane %}
+
 This file exists to prove that markdown renders through the site frame. It will
 be deleted. The subject is the reading measure, chosen so the fixture
 demonstrates the thing it is testing rather than sitting there as filler.
@@ -101,9 +106,6 @@ measured against the rhythm between two paragraphs outside one.
 
 {% stat value="3.0x", label="the locked inline lockup ratio", source="Design system, 2026" %}
 {% endpane %}
-
-A paragraph between the two panes. It measures the gap below one pane and
-above the next from the same kind of neighbour on both sides.
 
 {% pane surface="madder" %}
 ## A madder pane, the rarest surface
