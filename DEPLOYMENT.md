@@ -1,15 +1,22 @@
 # Deployment
 
 **Project:** Circulation Studio
-**Last updated:** 2026-07-13
+**Last updated:** 2026-07-19
 
 ## Hosting
 
 - **Platform:** Cloudflare Pages
-- **Repository:** github.com/marcopradog/circulation-studio
-- **Production URL:** [To be configured]
+- **Repository:** https://github.com/CirculationStudio/circulation-studio
+- **Preview URL:** https://circulation-studio.pages.dev/
+- **Production URL:** circulationstudio.com
 - **Build command:** `npm run build`
 - **Output directory:** `_site`
+
+## Domain strategy
+
+Building and reviewing fully on the Cloudflare preview URL above before
+switching DNS on circulationstudio.com. Redirect map (see Redirects below)
+needs to be in place before that cutover, not after.
 
 ## Cloudflare Pages Settings
 
@@ -19,44 +26,44 @@
 Build command: npm run build
 Build output directory: _site
 Root directory: /
-Node version: 18 or later
+Node version: 24
 ```
 
 ### Environment Variables
 
-[Add environment variables here if needed]
-
 ```
-# Example:
-# API_KEY=<value>
+NODE_VERSION=24
 ```
 
 ## Cloudflare Performance Settings
 
+**Not yet configured or verified in the dashboard.** The settings below are
+inherited defaults to review, not confirmed live settings.
+
 ### Enabled Features
 
-- **Early Hints:** ON
-- **HTTP/3:** ON
-- **0-RTT:** ON
-- **Brotli:** Automatic
-- **Rocket Loader:** OFF (breaks JS)
+- **Early Hints:** [to verify]
+- **HTTP/3:** [to verify]
+- **0-RTT:** [to verify]
+- **Brotli:** [to verify]
+- **Rocket Loader:** OFF recommended (breaks JS)
 
 ### Cache Configuration
 
-- **Tiered Cache:** Enabled
+- **Tiered Cache:** [to verify]
 - **Cache Rules:** [To be configured based on content types]
 
 ### Speed Optimization
 
-- **Auto Minify:** OFF (minification handled at build time)
+- **Auto Minify:** OFF recommended (minification handled at build time)
 - **Cloudflare Images:** For portfolio images and dynamic image optimization
-- **Speed Observatory:** Enabled for daily performance monitoring
+- **Speed Observatory:** [to verify]
 
 ## Headers
 
-See `src/_headers` for security and caching headers configuration.
-
-Key headers:
+`src/_headers` exists and reaches `_site/_headers`, via the passthrough to
+`public/` recorded in DESIGN_SYSTEM.md under Deploy pipeline. It carries at
+minimum:
 
 ```
 /*
@@ -66,13 +73,12 @@ Key headers:
   Permissions-Policy: geolocation=(), microphone=(), camera=()
 ```
 
-[Add additional headers as needed during Phase 7]
-
 ## Redirects
 
-See `src/_redirects` for URL redirects configuration.
-
-[Configure redirects during Phase 9 if this is a rebuild/migration]
+`src/_redirects` exists and reaches `_site/_redirects` by the same passthrough,
+but carries no rules yet. This is a rebuild of an existing
+indexed site (circulationstudio.com), not a greenfield build. Build the
+old-URL-to-new-URL redirect map before the DNS cutover above, not after.
 
 ## Performance Budget
 
@@ -81,8 +87,6 @@ See `src/_redirects` for URL redirects configuration.
 - **LCP (Largest Contentful Paint):** < 2.5s
 - **INP (Interaction to Next Paint):** < 200ms
 - **CLS (Cumulative Layout Shift):** < 0.1
-
-These are the official Google thresholds as of July 2026.
 
 ### Asset Budget
 
@@ -93,11 +97,14 @@ These are the official Google thresholds as of July 2026.
 
 ## DNS Configuration
 
-[To be configured during launch]
+Not yet configured. Dev/review happens on the Cloudflare preview URL first,
+DNS cutover to circulationstudio.com happens after approval.
 
 - **Domain registrar:** [To be confirmed]
 - **Nameservers:** Point to Cloudflare
-- **Email hosting consideration:** [Confirm where email is hosted before DNS cutover]
+- **Email hosting consideration:** Confirm where Circulation Studio email
+  (general@circulationstudio.com) is hosted before any DNS cutover, so MX
+  records are not disrupted
 
 ## SSL/TLS
 
@@ -105,16 +112,16 @@ Cloudflare automatic SSL/TLS (Full or Full Strict mode)
 
 ## Deployment Process
 
-1. Push to `main` branch triggers automatic deployment
+1. Push to `main` branch triggers automatic deployment, confirmed working 2026-07-19
 2. Cloudflare Pages builds and deploys
 3. Preview deployments created automatically for feature branches
 4. Verify deployment at Cloudflare preview URL before final checks
 
 ## Monitoring
 
-- **Cloudflare Speed Observatory:** Daily scheduled performance tests
-- **Google Search Console:** Monitor indexing and search performance
-- **Google Analytics:** [To be configured]
+- **Cloudflare Speed Observatory:** [to configure]
+- **Google Search Console:** Monitor indexing and search performance through the redirect cutover especially
+- **Google Analytics / GA4:** [To be configured]
 
 ## Rollback Procedure
 
