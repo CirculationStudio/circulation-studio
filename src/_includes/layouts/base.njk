@@ -14,6 +14,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ title or site.title }}</title>
   <meta name="description" content="{{ description or site.description }}">
+
+  {# Self-referencing canonical on every page, from the same absoluteUrl filter
+     partials/schema.njk builds its @id with, so the two cannot name different
+     URLs. Self-referencing is the point: it is not there to resolve a known
+     duplicate, it is there so that a URL reached with a tracking parameter, a
+     trailing-slash variant or through the preview host consolidates onto one
+     address instead of competing with itself. #}
+  <link rel="canonical" href="{{ page.url | absoluteUrl }}">
+
   {# Images come from the CDN, so warm the connection before the first request. #}
   <link rel="preconnect" href="https://cdn.circulationstudio.com" crossorigin>
   {# A page names its LCP image in front matter and it gets preloaded. Without

@@ -96,7 +96,10 @@
   "inLanguage": "en"
 } %}
 
-{%- set pageUrl = site.url + page.url -%}
+{#- Through the absoluteUrl filter, which is also what base.njk emits as the
+    canonical. Same definition, one place, so the URL this graph hangs off and
+    the URL the page declares itself to be cannot drift apart. -#}
+{%- set pageUrl = page.url | absoluteUrl -%}
 
 {#- Breadcrumb label for this page, LOOKED UP from nav.js rather than restated.
     The nav already holds the short human label for each of these URLs; the

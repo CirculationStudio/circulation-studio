@@ -2,6 +2,7 @@ import path from "node:path";
 import EleventyVitePlugin from "@11ty/eleventy-plugin-vite";
 import tailwindcss from "@tailwindcss/vite";
 import icons from "./src/_data/icons.js";
+import site from "./src/_data/site.js";
 
 const HTML_ESCAPES = {
   "&": "&amp;",
@@ -244,6 +245,26 @@ export { PANE_SURFACES, TABLE_KINDS, CALLOUT_LABELS, CHILD_PAIRS };
 
 export default function (eleventyConfig) {
   eleventyConfig.addFilter("glyphSwaps", glyphSwaps);
+
+  /* The absolute URL of a page, and the ONE definition of it.
+     `/who-we-are/` becomes `https://circulationstudio.com/who-we-are/`.
+
+     A filter rather than an expression repeated in two templates, because the
+     canonical link and the JSON-LD @id have to name the same URL and there is
+     no way to notice when two copies of `site.url + page.url` stop agreeing.
+     A self-referencing canonical pointing somewhere the schema does not is the
+     kind of contradiction that resolves against you silently: the crawler
+     believes the canonical and the entity graph hangs off an @id nothing else
+     confirms.
+
+     Both readers now go through here. base.njk emits the canonical, and
+     partials/schema.njk sets `pageUrl` from it.
+
+     site.url is the production origin and deliberately not the preview host,
+     for the reasons recorded on the constant itself in src/_data/site.js. The
+     preview deploy therefore carries a canonical pointing at production, which
+     is correct and is also why it must not be indexed. See src/_data/deploy.js. */
+  eleventyConfig.addFilter("absoluteUrl", (pageUrl) => site.url + pageUrl);
 
   /* Icon geometry lookup. Done as a filter rather than reading the data
      directly inside the macro, because Nunjucks macros do NOT receive the
