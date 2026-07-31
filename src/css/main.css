@@ -25,6 +25,7 @@
 @import "./components/colophon.css";
 @import "./components/longform.css";
 @import "./components/article.css";
+@import "./components/pane.css";
 @import "./pages/home.css";
 @import "./pages/who-we-are.css";
 @import "./pages/what-we-do.css";
@@ -52,6 +53,10 @@
   /* Derived shades. Tints of the six only, never new hues. */
   --color-madder-deep: #701523;
   --color-ink-press: #160D18;
+  /* madder tinted 60% toward paper. Madder itself is 1.99:1 on ink and MUST
+     NOT carry text or a link there; this is the lift that can, at 4.82:1.
+     Accent labels and underlines on an ink surface only, never on paper. */
+  --color-madder-lift: #B7737D;
 
   /* Type families. --font-* generates font-display and font-body. */
   --font-display: 'Dual', system-ui, sans-serif;
@@ -161,6 +166,10 @@
   --border-hairline: rgba(33, 21, 35, .14);
   --border-strong: rgba(33, 21, 35, .34);
   --border-on-deep: rgba(244, 245, 244, .25);
+  /* On a madder pane every value is paper or a paper tint, because ink is
+     1.99:1 there and the accent cannot accent itself. */
+  --text-on-madder: var(--color-paper);
+  --border-on-accent-strong: rgba(244, 245, 244, .5);
 
   /* Spacing. Locked scale, kept out of @theme on purpose: every value is a
      multiple of 4px, so Tailwind's default scale already emits them exactly

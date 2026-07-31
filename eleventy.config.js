@@ -164,6 +164,127 @@ export default function (eleventyConfig) {
     return date.toISOString().slice(0, 10);
   });
 
+  /* pane: the first paired shortcode, and the one that establishes how all
+     eighteen of the others will compose with markdown.
+
+     ============================================================
+     THE BLANK LINES ARE THE MECHANISM. DO NOT REMOVE THEM.
+     ============================================================
+
+     markdownTemplateEngine is njk, so Nunjucks runs first and whatever a
+     shortcode returns is then fed through markdown-it. markdown-it follows
+     CommonMark: a line starting with a block-level tag opens an HTML block,
+     and that block runs raw until a BLANK LINE closes it. So the naive
+     `<div>${content}</div>` leaves everything up to the first blank line
+     unparsed, and everything after it parsed, which is the worst of both.
+     Measured, not assumed: with the naive form the opening paragraph rendered
+     as literal "**bold**, *italic* and a [link](...)" while the list below it
+     came out as a real <ul>. Half the block silently raw.
+
+     Putting a blank line after the opening tags and before the closing tags
+     terminates the HTML block immediately, so the wrapper is raw HTML and
+     everything between is ordinary markdown in the SAME single pass. The same
+     probe then produced <p>, <strong>, <em>, <a> and <li> correctly.
+
+     Why this and not rendering the content through a markdown-it instance
+     inside the shortcode: one pass composes, two passes do not. With a single
+     pass, a shortcode nested inside a pane returns HTML that is blank-line
+     separated in its turn and everything keeps working. Rendering internally
+     would mean an inner shortcode's output gets parsed as markdown a second
+     time, and it would need its own markdown-it whose options could drift
+     from the one Eleventy uses on prose outside a pane.
+
+     THE RULE FOR THE OTHER EIGHTEEN: a paired shortcode returns wrapper tags
+     on their own lines, a blank line either side of the content, and never
+     indents the content, because four leading spaces would make it a code
+     block. */
+  const PANE_SURFACES = new Set(["paper", "ink", "madder"]);
+
+  /* NAMED ARGUMENTS ARRIVE AS ONE KEYWORD OBJECT, not as positional
+     parameters. Nunjucks passes {% pane surface="ink" %} through as
+     { surface: "ink", __keywords: true }, which is the same shape the engine
+     probe in the Liquid-to-Nunjucks change recorded. Declaring the parameter
+     as `surface` instead of reading it off an options object yields the
+     literal string "[object Object]", which is how this was caught: the build
+     warned twice about an unknown surface named "[object Object]".
+
+     Every one of the remaining eighteen shortcodes takes named arguments, so
+     they all read them this way. */
+  eleventyConfig.addPairedShortcode("pane", function (content, options = {}) {
+    const value = (options && options.surface) || "paper";
+
+    if (!PANE_SURFACES.has(value)) {
+      console.warn(
+        `[pane] unknown surface "${value}". Known: ${[...PANE_SURFACES].join(", ")}. Rendering as paper.`
+      );
+    }
+
+    /* paper is the default and carries no modifier: it is the page ground, so
+       the wrapper exists only to hold the column and changes no colour. */
+    const known = PANE_SURFACES.has(value) ? value : "paper";
+    const modifier = known === "paper" ? "" : ` cs-pane--${known}`;
+
+    return `\n<div class="cs-pane${modifier}">\n<div class="cs-pane__inner cs-prose">\n\n${content.trim()}\n\n</div>\n</div>\n`;
+  });
+
+  /* Pane rules from SHORTCODES.md, enforced against the BUILT HTML rather than
+     by counting shortcode calls.
+
+     That distinction is deliberate. Counting calls measures intent; reading
+     the output measures what shipped. A pane emitted from an include, a
+     future block that wraps one, or a page assembled from several sources
+     would all evade a call counter and none of them evade this.
+
+     Warn on a second ink or madder pane, fail the build on a nested pane. The
+     asymmetry is SHORTCODES.md's: a second ink pane is a judgment call that a
+     human should look at, a nested pane is incoherent, since the inner pane's
+     surface would be painted over by the outer one's. */
+  eleventyConfig.addTransform("paneRules", function (content, outputPath) {
+    if (!outputPath || !outputPath.endsWith(".html")) return content;
+    if (!content.includes("cs-pane")) return content;
+
+    const classesOf = (attrs) => {
+      const match = /class\s*=\s*"([^"]*)"/.exec(attrs);
+      return match ? match[1].trim().split(/\s+/) : [];
+    };
+
+    const counts = { ink: 0, madder: 0 };
+    const stack = [];
+    let nested = false;
+
+    // Walk every div tag in order, tracking which ones are panes.
+    for (const tag of content.matchAll(/<div\b([^>]*)>|<\/div\s*>/g)) {
+      if (tag[0].startsWith("</")) {
+        stack.pop();
+        continue;
+      }
+      const classes = classesOf(tag[1]);
+      const isPane = classes.includes("cs-pane");
+      if (isPane) {
+        if (stack.some(Boolean)) nested = true;
+        if (classes.includes("cs-pane--ink")) counts.ink += 1;
+        if (classes.includes("cs-pane--madder")) counts.madder += 1;
+      }
+      stack.push(isPane);
+    }
+
+    if (nested) {
+      throw new Error(
+        `[pane] nested pane in ${outputPath}. Panes do not nest: the inner surface is painted over by the outer one, so the markup does not describe anything renderable. See SHORTCODES.md, Surfaces.`
+      );
+    }
+
+    for (const surface of ["ink", "madder"]) {
+      if (counts[surface] > 1) {
+        console.warn(
+          `[pane] ${counts[surface]} ${surface} panes in ${outputPath}, SHORTCODES.md allows one. The surface stops being an interruption when it repeats.`
+        );
+      }
+    }
+
+    return content;
+  });
+
   /* Articles. Globbed rather than tag-driven, so an article is an article by
      virtue of where it lives and an author cannot half-enrol one by forgetting
      a tag. Nothing consumes this collection yet: there is no index page and no

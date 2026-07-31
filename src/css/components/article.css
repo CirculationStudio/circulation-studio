@@ -14,6 +14,34 @@
    tokens in main.css rather than restated here. Only the variant switching and
    the phone breakpoint live in this file. */
 @layer components {
+  /* THE ARTICLE IS FULL WIDTH AND EACH CHILD CARRIES THE COLUMN.
+
+     It used to be .cs-container capped at measure, a ~738px block centred on
+     the page, and a pane could not have escaped that. Full bleed from inside a
+     centred container needs 100vw, and 100vw counts a classic scrollbar while
+     the container's own percentage does not, which is exactly the overshoot
+     that put a horizontal scrollbar on What We Do. Constraining each child
+     instead of the parent gets a full-width pane with no viewport units
+     anywhere, so it cannot overshoot.
+
+     A grid with a full-bleed column would also work and is the usual answer.
+     It is not used here for one disqualifying reason: GRID ITEMS DO NOT
+     COLLAPSE MARGINS. The whole prose rhythm above depends on collapsing, and
+     a grid would turn every measured gap into the sum of two margins. A plain
+     block container keeps collapsing intact.
+
+     The column width is the same expression the container used, so the text
+     column does not move: min(66ch, 100% - 80px), where 100% is now the page
+     content width rather than the container's. Measured identical at 738px
+     and 310px before and after. */
+  .cs-article {
+    width: 100%;
+  }
+  .cs-article > * {
+    width: min(var(--container-measure), 100% - 80px);
+    margin-inline: auto;
+  }
+
   /* Applies to the title in the header AND to every h2 and h3 markdown emits
      in the body, which is what keeps an authored heading and a frame heading
      on the same scale. */
@@ -99,19 +127,25 @@
      Adjacent margins collapse, so the paragraph's 28px bottom does not add to
      a heading's top: the gap above an h2 is 64px, not 92px. That is intended.
 
-     Scoped to DIRECT CHILDREN, unlike the type scale above, which is
-     deliberately a descendant selector. A heading inside a future block
-     component is still an article heading and wants the article size, but its
-     spacing belongs to that block's container, which is the Reference's model
-     and the reason it needs no top margins of its own. */
-  .cs-article > p {
+     Scoped to DIRECT CHILDREN of a PROSE CONTAINER, unlike the type scale
+     above, which is deliberately a descendant selector. A heading inside a
+     block component is still an article heading and wants the article size,
+     but its spacing belongs to that block's container, which is the
+     Reference's model and the reason it needs no top margins of its own.
+
+     .cs-prose is what marks a container whose direct children ARE prose. The
+     article body carries it, and so does a pane's inner column, because a
+     pane wraps ordinary prose on a different surface rather than being a
+     block with its own internal spacing model. Any future wrapper that holds
+     running prose adds the class; anything with its own layout does not. */
+  .cs-prose > p {
     margin-bottom: 28px;
   }
-  .cs-article > h2 {
+  .cs-prose > h2 {
     margin-top: var(--space-64);
     margin-bottom: var(--space-24);
   }
-  .cs-article > h3 {
+  .cs-prose > h3 {
     margin-top: var(--space-40);
     margin-bottom: var(--space-16);
   }
@@ -125,7 +159,7 @@
      detach it from the prose above. Here there is no prose above. The h2's own
      24px is already the correct "space to my content" value, because an h3
      immediately following IS the h2's content. */
-  .cs-article > h2 + h3 {
+  .cs-prose > h2 + h3 {
     margin-top: var(--space-24);
   }
 
@@ -134,7 +168,9 @@
      article's first child and an opening heading is therefore the second. The
      adjacent-sibling form is the one that fires in practice; :first-child is
      the guard for a body rendered without the header. */
-  .cs-article > :is(h2, h3):first-child,
+  .cs-prose > :first-child {
+    margin-top: 0;
+  }
   .cs-article > header + :is(h2, h3) {
     margin-top: 0;
   }
@@ -151,7 +187,7 @@
      margins will not match prose values, so the variance would widen rather
      than stay within the 4px it is now, and it would be attributed to the
      block rather than to this. */
-  .cs-article > :last-child {
+  .cs-prose > :last-child {
     margin-bottom: 0;
   }
 
@@ -223,8 +259,8 @@
      future block component takes its spacing from that block's container.
      This is also what confines the top margin to the outer list of a nested
      pair. */
-  .cs-article > ul,
-  .cs-article > ol {
+  .cs-prose > ul,
+  .cs-prose > ol {
     margin-top: var(--space-16);
     margin-bottom: 28px;
   }
@@ -237,7 +273,7 @@
      and the pair renders 28 above, 28 below, which is exactly what shipped
      before this rule existed. That is a weaker rhythm, not a broken layout,
      and nothing else depends on it. */
-  .cs-article > p:has(+ ul, + ol) {
+  .cs-prose > p:has(+ ul, + ol) {
     margin-bottom: var(--space-16);
   }
 

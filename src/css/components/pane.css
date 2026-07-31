@@ -1,0 +1,101 @@
+/* Pane: a run of article content on a different surface.
+
+   Emitted by the `pane` paired shortcode. Three registers per SHORTCODES.md,
+   paper (default, no modifier and no colour change), ink and madder.
+
+   SURFACE IS A PROPERTY OF THE PANE, NOT OF THE BLOCKS INSIDE IT. Blocks
+   inherit by descendant selector, which is why component files add
+   `.cs-pane--ink .cs-thing` alongside their existing `--on-deep` modifier
+   rather than requiring an author to tag each block. Nothing of that kind is
+   here yet: cs-stat, cs-pullquote, cs-contentlabel, cs-fnref and cs-footnotes
+   each bring their own pane selectors when they land. This file styles PROSE
+   only, because prose is not a component and has no file of its own to do it.
+
+   FULL BLEED WITH NO VIEWPORT UNITS. The pane spans the article, and the
+   article is now full width with its children individually constrained (see
+   article.css). So `width: 100%` is edge to edge and there is no 100vw to
+   overshoot a scrollbar with.
+
+   The inner column repeats the article's own width expression against the
+   pane's full width, so the two resolve to the same number and the text column
+   does not move when the background does. That is the whole trick: the reader
+   should see the surface change width, never the words.
+
+   CONTRAST, verified upstream and not re-derived here:
+     paper on ink        16.06:1
+     paper 55% on ink     5.62:1
+     madder-lift on ink   4.82:1
+     paper on madder      8.06:1
+     paper 72% on madder  4.84:1
+   Madder on ink and ink on madder are both 1.99:1 and are banned outright,
+   which is why neither surface carries the accent as text anywhere below. */
+@layer components {
+  .cs-article > .cs-pane {
+    width: 100%;
+    margin-inline: 0;
+    /* Sits in the prose flow, so it takes section-level separation above and
+       below. NOT SPECIFIED IN THE BRIEF: 64px is chosen to match the h2 top
+       margin, since a pane interrupts at least as hard as a new section does.
+       The paragraph above collapses into it, so the gap is 64 and not 92. */
+    margin-block: var(--space-64);
+    padding-block: var(--space-64);
+  }
+
+  .cs-pane__inner {
+    width: min(var(--container-measure), 100% - 80px);
+    margin-inline: auto;
+  }
+
+  /* ---- ink ---- */
+  .cs-pane--ink {
+    background: var(--surface-deep);
+    color: var(--text-on-deep);
+  }
+
+  /* Headings and body copy inherit the pane's paper at 16.06:1 and need no
+     rule. Links do: elements.css gives every link madder, which is 1.99:1 on
+     ink and unreadable. The link becomes paper and the accent survives as the
+     UNDERLINE in madder-lift, which is the design system's own on-deep inline
+     link treatment rather than a new invention. */
+  .cs-pane--ink a {
+    color: var(--text-on-deep);
+    text-decoration-color: var(--color-madder-lift);
+  }
+  .cs-pane--ink a:hover {
+    color: var(--text-on-deep);
+    text-decoration-color: var(--color-paper);
+  }
+
+  /* ---- madder ---- */
+  .cs-pane--madder {
+    background: var(--color-madder);
+    color: var(--text-on-madder);
+  }
+
+  /* On madder there is no second colour available: ink is 1.99:1 and the
+     accent cannot accent itself. So the link is paper and the underline is a
+     PAPER TINT, going to full paper on hover. That is the only axis left. */
+  .cs-pane--madder a {
+    color: var(--text-on-madder);
+    text-decoration-color: var(--border-on-accent-strong);
+  }
+  .cs-pane--madder a:hover {
+    color: var(--text-on-madder);
+    text-decoration-color: var(--color-paper);
+  }
+
+  /* The focus ring is madder-based and vanishes on both surfaces. Paper, the
+     same answer the colophon reached on ink. */
+  .cs-pane--ink a:focus-visible,
+  .cs-pane--madder a:focus-visible {
+    outline: 2px solid var(--color-paper);
+    outline-offset: 3px;
+  }
+
+  /* List markers take the surface's text colour through currentColor, so they
+     need no rule. Stated because their absence looks like an omission. */
+
+  @media (prefers-reduced-motion: reduce) {
+    .cs-pane a { transition: none }
+  }
+}
