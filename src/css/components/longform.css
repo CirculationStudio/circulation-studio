@@ -90,18 +90,23 @@
      ground. The modifier stays as the escape hatch for a one-off outside a
      pane, which is why this is a selector-list extension and not a rewrite.
 
-     THE TWO SURFACES DO NOT SHARE A TINT RAMP. On ink the label is muted at
-     .75 and the source faint at .55, which measures 5.62:1. On madder BOTH
-     drop to the .72 tint, because paper at .55 on madder is 3.42:1 and fails.
-     Do not "tidy" these into one ramp.
+     THE TWO SURFACES DO NOT SHARE A TINT RAMP. The source is faint at .55 on
+     ink, which measures 5.62:1, and at .72 on madder, because paper at .55 on
+     madder is 3.42:1 and fails. Do not "tidy" these into one ramp.
+
+     SURFACES CHANGE THE PALETTE, NOT THE HIERARCHY. The value and the label
+     both take full paper on both surfaces, matching paper ground where both
+     measure 16.06:1 and only the source drops. The component has a two-step
+     hierarchy, statement then attribution, and muting the label on a deep
+     surface would add a third step that exists on that surface only, so the
+     same component would read with a different structure depending on where
+     it sits. This file previously muted the label on ink; that was the error.
      ============================================================ */
   .cs-stat--on-deep .cs-stat__value,
-  .cs-pane--ink .cs-stat .cs-stat__value {
-    color: var(--text-on-deep);
-  }
   .cs-stat--on-deep .cs-stat__label,
+  .cs-pane--ink .cs-stat .cs-stat__value,
   .cs-pane--ink .cs-stat .cs-stat__label {
-    color: var(--text-on-deep-muted);
+    color: var(--text-on-deep);
   }
   .cs-stat--on-deep .cs-stat__source,
   .cs-pane--ink .cs-stat .cs-stat__source {
@@ -109,12 +114,12 @@
   }
 
   .cs-stat--on-accent .cs-stat__value,
-  .cs-pane--madder .cs-stat .cs-stat__value {
+  .cs-stat--on-accent .cs-stat__label,
+  .cs-pane--madder .cs-stat .cs-stat__value,
+  .cs-pane--madder .cs-stat .cs-stat__label {
     color: var(--text-on-madder);
   }
-  .cs-stat--on-accent .cs-stat__label,
   .cs-stat--on-accent .cs-stat__source,
-  .cs-pane--madder .cs-stat .cs-stat__label,
   .cs-pane--madder .cs-stat .cs-stat__source {
     color: var(--text-on-madder-muted);
   }
