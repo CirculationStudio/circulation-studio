@@ -17,12 +17,18 @@
  * content removal will trip it, and the correct response is to re-take the
  * baseline deliberately rather than to lower the floor quietly.
  *
- * THE BASELINE IS A PRODUCTION ARTIFACT. It was taken from a built _site served
- * statically, and `eleventy --serve` does not reproduce it: against the dev
- * server all ten hashes differ while every element count lands exactly on its
- * floor, so the DOM is identical and only computed typography moved. Re-take it
- * the same way it is checked, through `npm run verify`, never off the dev
- * server, or the baseline stops describing what ships.
+ * THE BASELINE IS SERVER INDEPENDENT, and it took a diagnosis to make that
+ * true. All ten hashes used to differ against `eleventy --serve` while every
+ * element count landed exactly on its floor, which said the DOM was identical
+ * and only computed typography had moved. It was neither a build difference nor
+ * a rendering difference: the page was being measured too early, once for fonts
+ * that had not registered and once mid transition. readiness.mjs asserts both
+ * preconditions, and the same ten hashes now come back from a production build
+ * and from the dev server.
+ *
+ * Re-take the baseline through `npm run verify` all the same. Not because the
+ * dev server lies, but because the baseline should describe the artifact that
+ * ships.
  *
  * Usage:
  *   node tools/verify/fingerprint.mjs            compare against the baseline
@@ -34,6 +40,7 @@
 import { chromium } from "playwright";
 import { createHash } from "node:crypto";
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { assertReadyToMeasure } from "./readiness.mjs";
 
 const BASE = process.env.VERIFY_BASE || "http://localhost:8899";
 const BASELINE = new URL("./fingerprint.baseline.json", import.meta.url);
@@ -61,7 +68,7 @@ for (const width of WIDTHS) {
   const page = await context.newPage();
   for (const [name, path] of PAGES) {
     await page.goto(BASE + path, { waitUntil: "domcontentloaded" });
-    await page.evaluate(() => document.fonts.ready);
+    await assertReadyToMeasure(page, `${name}@${width}`);
     const rows = await page.evaluate(() =>
       [...document.querySelectorAll("body *")].map((el) => {
         const c = getComputedStyle(el);

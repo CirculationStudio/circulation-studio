@@ -17,6 +17,7 @@
  * VERIFY_BASE, which defaults to the port run.mjs uses.
  */
 import { chromium } from "playwright";
+import { assertReadyToMeasure } from "./readiness.mjs";
 
 const BASE = process.env.VERIFY_BASE || "http://localhost:8899";
 const URL = process.argv[2] || `${BASE}/articles/pipeline-test/`;
@@ -69,8 +70,8 @@ const failures = [];
 for (const width of WIDTHS) {
   const context = await browser.newContext({ viewport: { width, height: 900 } });
   const page = await context.newPage();
-  await page.goto(URL, { waitUntil: "networkidle" });
-  await page.evaluate(() => document.fonts.ready);
+  await page.goto(URL, { waitUntil: "domcontentloaded" });
+  await assertReadyToMeasure(page, `${URL} @${width}`);
 
   const measured = await page.evaluate((expected) => {
     const round = (n) => Math.round(n * 10) / 10;

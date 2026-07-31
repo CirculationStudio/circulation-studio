@@ -125,16 +125,64 @@ a real browser against a real URL. The port lived in three script files and in
 no document, so `npm run verify` died on the first script with
 ERR_CONNECTION_REFUSED and CLAUDE.md's build workflow failed at step one.
 
-**`eleventy --serve` is not a substitute, and this is the sharp edge.** Against
-the dev server all ten fingerprint hashes differ from the committed baseline
-while every element count lands exactly on its floor: same DOM, different
-computed typography. The baseline was taken from a production build, so the run
-has to be one, and a static file server over `_site` is what Cloudflare Pages is
-anyway. Re-take the baseline the same way it is checked, never off the dev
-server, or it stops describing what ships.
+It builds so that verify measures the artifact that ships, and a static file
+server over `_site` is what Cloudflare Pages is. Re-take the fingerprint
+baseline through it for the same reason.
 
 Each script still runs on its own against a server you already have, reading
 `VERIFY_BASE`. That is the loop for working on one check.
+
+### Dev and production render identically, and proving it took a diagnosis
+
+**This matters beyond the tooling: every visual review on this project has been
+done on the dev server, and those reviews were of what ships.**
+
+It did not look that way. All ten fingerprint hashes differed against
+`eleventy --serve` while every element count landed exactly on its floor, which
+says the DOM is identical and only computed typography moved. Three fields
+differed and no others: `color` on 187 elements, `maxWidth` on 38,
+`letterSpacing` on 8. Neither a build difference nor a rendering difference. The
+page was being measured before it had finished becoming itself, for two separate
+reasons.
+
+**`document.fonts.ready` cannot be trusted here, because it succeeds on an empty
+set.** It resolves when every face the document currently knows about has
+settled, so a document that knows about no faces has nothing outstanding and
+reports "loaded" immediately. At the same instant in the same page's life,
+production had 27 faces registered and the dev server had 6, with none of the 21
+Lora faces present, and `document.fonts.status` read "loaded" in both. That is
+the same vacuous pass the three checks exist to prevent, wearing a wait's
+clothing rather than an assertion's.
+
+Production serves a real `<link rel="stylesheet">`, so the stylesheet and the
+Google Fonts sheet it `@import`s are both there before DOMContentLoaded. The dev
+server ships no stylesheet link at all: Vite delivers CSS as a JS module that
+injects a `<style>` element when it evaluates, which is after DOMContentLoaded,
+and the nested `@import` is only discovered then. Lora missing means `ch` resolves
+against Georgia, which is the entire `maxWidth` column: 66ch came out 729.158px
+instead of 737.748px.
+
+**The second reason is a transition, and it is why the colours moved.** Applying
+that injected stylesheet changes computed values on elements that already exist,
+and a changed animatable property with a transition on it animates. On the second
+and later navigations in one browser context, 28 CSSTransitions were running,
+covering color, opacity, transform, visibility, background-color and four border
+colours, against zero in production. The skip link was caught mid interpolation
+reading `rgb(0, 0, 238)`, then `rgb(27, 17, 74)`, then `rgb(32, 21, 40)`, landing
+on its real `rgb(33, 21, 35)` about 150ms later, with the stylesheet unchanged
+throughout at 22 rules. Production never shows this because an element's first
+computed style is already the author's, so there is nothing to animate away from.
+
+`tools/verify/readiness.mjs` asserts both preconditions by name before any
+measurement, and all three checks now return identical results from a production
+build and from `eleventy --serve`.
+
+**It deliberately does not wait on `networkidle`.** That would also have made the
+numbers agree, and it is the wrong instrument: Playwright discourages it, and it
+asserts that the network went quiet, which is not the thing being relied on. What
+is relied on is that the faces are registered and nothing is still moving. Both
+are observable directly, so both are observed, and a failure names which one was
+missing rather than reporting that something was still busy.
 
 Each answers a different question, and the failure mode all three exist to
 prevent is **a check that passes having measured nothing**.

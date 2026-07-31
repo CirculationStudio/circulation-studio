@@ -22,6 +22,7 @@
  */
 import { chromium } from "playwright";
 import { readFileSync } from "node:fs";
+import { assertReadyToMeasure } from "./readiness.mjs";
 
 const BASE = process.env.VERIFY_BASE || "http://localhost:8899";
 const manifest = JSON.parse(
@@ -31,8 +32,8 @@ const manifest = JSON.parse(
 const browser = await chromium.launch();
 const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
 const page = await context.newPage();
-await page.goto(BASE + manifest.url, { waitUntil: "networkidle" });
-await page.evaluate(() => document.fonts.ready);
+await page.goto(BASE + manifest.url, { waitUntil: "domcontentloaded" });
+await assertReadyToMeasure(page, manifest.url);
 
 const counts = await page.evaluate(
   (blocks) =>

@@ -8,15 +8,17 @@
  * in three script files and in no document, so there was nothing to follow
  * either.
  *
- * WHY IT BUILDS RATHER THAN REUSING THE DEV SERVER. `eleventy --serve` and a
- * production build do not render the marketing pages identically. Measured:
- * against the dev server all ten fingerprint hashes differ from the committed
- * baseline while every element count lands exactly on its floor, so the DOM is
- * the same and only computed typography moved. The baseline was taken from a
- * production build, so the run has to be one too. Otherwise the check that
- * exists to prove the marketing pages did not move fails ten out of ten for a
- * reason that has nothing to do with the pages, which is a false alarm loud
- * enough to be ignored, and an ignored check is the same as no check.
+ * WHY IT BUILDS RATHER THAN REUSING THE DEV SERVER. So that verify measures the
+ * artifact that ships, and nothing else.
+ *
+ * It is NOT because the two render differently. They do not. All ten
+ * fingerprint hashes used to differ against `eleventy --serve`, and that was a
+ * measurement race rather than a rendering difference: fonts unregistered and
+ * transitions mid flight at the moment of capture. readiness.mjs asserts both
+ * preconditions, and the three checks now return identical results from either
+ * server. That correction is load bearing, because every visual review on this
+ * project has been done on the dev server, and it means those reviews were of
+ * what ships.
  *
  * The server is deliberately this small. A static file server over _site is
  * what Cloudflare Pages is, so serving the build directory verbatim measures
