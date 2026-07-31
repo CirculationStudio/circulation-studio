@@ -326,44 +326,85 @@ export default function (eleventyConfig) {
     );
   });
 
-  /* faq: child validity, and FAQPage schema merged into the existing graph.
-     Both live here for the same reason, which is worth stating once because
-     the other five parent-child pairs will hit it.
+  /* Every parent-and-child pair, and what a child left on its own turns into.
+     Two exist; the vocabulary has methodology and method, references and ref,
+     glossary and term, beforeyoustart and need, youredone and exit, and metrics
+     and metric still to come. So this is a table of PAIRS rather than the same
+     dozen lines copied per pair, and adding a pair is a row.
+
+     This is not the enumerated tag list the header warns about. A pair is a
+     fact about the vocabulary, which SHORTCODES.md fixes, and not a guess about
+     which element a component happens to wrap itself in. Both halves are still
+     found by their marking, so either can change its wrapper freely.
+
+     `degradesTo` is not decoration. A child on its own renders something that
+     is valid HTML and looks deliberate, which is why this needs a build error
+     rather than a review: the message has to say what the reader would get. */
+  const CHILD_PAIRS = [
+    {
+      child: "cs-qa",
+      parent: "cs-faq",
+      name: "qa",
+      parentName: "faq",
+      wrapper: "{% faq %} ... {% endfaq %}",
+      degradesTo:
+        "a bare details element with no heading and no schema, which reads as " +
+        "an accordion nobody labelled"
+    },
+    {
+      child: "cs-related__item",
+      parent: "cs-related",
+      name: "item",
+      parentName: "related",
+      wrapper: "{% related %} ... {% endrelated %}",
+      degradesTo:
+        "a bare link with no grid, no heading and no main-width breakout, " +
+        "which reads as a stray link someone left in the prose"
+    }
+  ];
+
+  /* Child validity for every pair, and FAQPage schema merged into the existing
+     graph. Both live here for the same reason, which is worth stating once.
 
      WHY THE TRANSFORM AND NOT RENDER TIME. A child cannot check its parent
      while rendering, because Nunjucks runs children first and the parent has
      not executed yet. And a parent cannot read its children as data, because
      it receives their concatenated HTML rather than a list. So the built page
      is the first and only place the relationship exists. It also means the
-     check catches a qa reaching the page by any route, not only a direct call.
+     check catches a child reaching the page by any route, not only a direct
+     call.
 
      The schema is built here for the same reason: the question and answer
      pairs are only recoverable together once the block is assembled. Merging
      into the existing <script type="application/ld+json"> rather than adding a
      second one keeps one graph per page, which is the whole point of the
      @graph in partials/schema.njk. */
-  eleventyConfig.addTransform("faqRules", function (content, outputPath) {
+  eleventyConfig.addTransform("childRules", function (content, outputPath) {
     if (!outputPath || !outputPath.endsWith(".html")) return content;
-    if (!content.includes("cs-qa") && !content.includes("cs-related")) return content;
+    if (!CHILD_PAIRS.some((pair) => content.includes(pair.child))) return content;
 
-    /* Orphan qa, by the same slice-and-scan as the pane checks. Count every
-       qa, then count the ones inside a faq; the difference is the orphans. No
-       tag list, so a faq or a qa can wrap itself in any element. */
-    const allQa = elementsWithClass(content, "cs-qa").length;
-    let inFaq = 0;
-    for (const faq of elementsWithClass(content, "cs-faq")) {
-      const body = sliceElement(content, faq.index, faq.tag);
-      if (body) inFaq += elementsWithClass(body, "cs-qa").length;
-    }
-    const orphans = allQa - inFaq;
+    /* Orphans, by the same slice-and-scan as the pane checks. Count every
+       child, then count the ones inside a parent; the difference is the
+       orphans. No tag list, so either half can wrap itself in any element. */
+    for (const pair of CHILD_PAIRS) {
+      const total = elementsWithClass(content, pair.child).length;
+      if (!total) continue;
 
-    if (orphans) {
-      throw new Error(
-        `[qa] ${orphans} qa block(s) outside a faq in ${outputPath}. ` +
-          `qa is a child shortcode and is only valid inside {% faq %} ... {% endfaq %}. ` +
-          `On its own it renders a bare details element with no heading and no ` +
-          `schema, which reads as an accordion nobody labelled. See SHORTCODES.md.`
-      );
+      let inParent = 0;
+      for (const parent of elementsWithClass(content, pair.parent)) {
+        const body = sliceElement(content, parent.index, parent.tag);
+        if (body) inParent += elementsWithClass(body, pair.child).length;
+      }
+      const orphans = total - inParent;
+
+      if (orphans) {
+        throw new Error(
+          `[${pair.name}] ${orphans} ${pair.name} block(s) outside a ${pair.parentName} ` +
+            `in ${outputPath}. ${pair.name} is a child shortcode and is only valid ` +
+            `inside ${pair.wrapper}. On its own it renders ${pair.degradesTo}. ` +
+            `See SHORTCODES.md.`
+        );
+      }
     }
 
     /* 2. Pull the question and answer pairs back out.
