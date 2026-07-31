@@ -22,6 +22,12 @@
      trailing-slash variant or through the preview host consolidates onto one
      address instead of competing with itself. #}
   <link rel="canonical" href="{{ page.url | absoluteUrl }}">
+{#- Emitted on every deploy that is not the production branch, and on nothing
+    else. The production host carries NO robots meta tag at all, which is the
+    safe shape: there is no state to get stuck in. See src/_data/deploy.js. -#}
+{%- if not deploy.indexable %}
+  <meta name="robots" content="noindex, nofollow">
+{%- endif %}
 
   {# Images come from the CDN, so warm the connection before the first request. #}
   <link rel="preconnect" href="https://cdn.circulationstudio.com" crossorigin>

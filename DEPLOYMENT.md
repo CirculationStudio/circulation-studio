@@ -18,6 +18,37 @@ Building and reviewing fully on the Cloudflare preview URL above before
 switching DNS on circulationstudio.com. Redirect map (see Redirects below)
 needs to be in place before that cutover, not after.
 
+## Indexing
+
+Two origins serve this site. The preview host is publicly reachable and stays
+that way after cutover, because every preview deploy gets its own subdomain.
+Only the production host may be indexed.
+
+**Decided by the build, from `CF_PAGES_BRANCH`, not by a switch anyone flips.**
+A deploy of `main` on Cloudflare Pages is production. Everything else, preview
+branches and local builds alike, is noindex, through both a `robots` meta tag
+and `robots.txt`. Both halves read one value, `deploy.indexable`, so they cannot
+disagree. The logic and the reasoning are in `src/_data/deploy.js`.
+
+**On the production host, nothing is restricted.** No robots meta tag is emitted
+at all and `robots.txt` allows everything. The decision is recomputed from the
+branch name on every build, so there is no state that can get stuck. A
+production build where the branch is unreadable fails the deploy rather than
+falling through to noindex, because a failed deploy is visible and a live site
+quietly carrying noindex is not.
+
+Every build prints which mode it chose, so the Cloudflare build log is the
+record. **After cutover, confirm on the live domain**: view source on
+circulationstudio.com and there should be no `robots` meta tag, and
+circulationstudio.com/robots.txt should read `Allow: /`.
+
+If the production branch is ever renamed, rename `PRODUCTION_BRANCH` in
+`src/_data/deploy.js` with it. That is the one thing here a human keeps in step.
+
+Every page also carries a self-referencing canonical pointing at the production
+origin, built from the same `site.url` the JSON-LD uses, so a preview page names
+production as its real address as well as declining to be indexed.
+
 ## Cloudflare Pages Settings
 
 ### Build Configuration

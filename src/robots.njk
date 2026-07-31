@@ -1,0 +1,40 @@
+---
+permalink: /public/robots.txt
+eleventyExcludeFromCollections: true
+---
+{#-
+  robots.txt, written by the build rather than committed as a static file,
+  because what it must say depends on which deploy this is.
+
+  THE PERMALINK GOES THROUGH public/ ON PURPOSE, and /public/ is not part of
+  the served path. The Vite plugin renames Eleventy's output to a temp folder
+  and rebuilds with emptyOutDir, discarding anything it does not reference, and
+  a plain robots.txt sitting in the output root is exactly that. Vite copies its
+  publicDir verbatim to the output root, so this lands at /robots.txt. Same
+  route _headers, _redirects and site.webmanifest take, and the same reason:
+  passthrough alone silently lost all three. See DESIGN_SYSTEM.md, Deploy
+  pipeline.
+
+  Both halves of the indexing rule read deploy.indexable, so robots.txt and the
+  meta tag in base.njk cannot disagree about the same deploy.
+
+  ONE CAVEAT WORTH KNOWING. Disallow prevents crawling, which prevents a crawler
+  ever seeing the noindex meta tag on those pages. That is the right shape for
+  keeping a preview OUT of an index, and the wrong shape for getting one back
+  out again: a URL already indexed needs to be crawlable so the noindex can be
+  read. If a preview URL ever turns up in results, allow crawling temporarily
+  and let the meta tag do the work.
+-#}
+# robots.txt for Circulation Studio
+{% if deploy.indexable -%}
+# Production deploy. Nothing is restricted.
+User-agent: *
+Allow: /
+{%- else -%}
+# NOT the production deploy ({{ deploy.branch or "local build" }}).
+# This origin serves the same pages as the production host and must not compete
+# with it in an index. Every page here also carries a noindex meta tag and a
+# canonical pointing at production. See src/_data/deploy.js.
+User-agent: *
+Disallow: /
+{%- endif %}
