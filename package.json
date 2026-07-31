@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "start": "eleventy --serve",
-    "build": "eleventy"
+    "build": "eleventy",
+    "verify:sweep": "node tools/verify/sweep.mjs",
+    "verify:fingerprint": "node tools/verify/fingerprint.mjs"
   },
   "repository": {
     "type": "git",
@@ -22,6 +24,7 @@
     "@11ty/eleventy": "^3.1.6",
     "@11ty/eleventy-plugin-vite": "^8.0.0",
     "@tailwindcss/vite": "^4.3.3",
+    "playwright": "^1.62.1",
     "tailwindcss": "^4.3.3",
     "vite": "^8.1.5"
   }
