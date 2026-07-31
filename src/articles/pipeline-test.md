@@ -73,6 +73,16 @@ which is where most of the numbers quoted above eventually trace back to.
 - An h3 closes at 16px, which matches the list's own top margin exactly.
 - The collapse is therefore invisible here, which is the point of measuring it.
 
+A paragraph immediately above a stat, so the gap between prose and a piece of
+self-contained evidence can be measured from a known neighbour.
+
+{% stat value="68%", label="of leads answered in under an hour", source="Client data, Q2 2026" %}
+
+A paragraph below the stat, and above a second one carrying a bracketed value
+that is not publishable yet.
+
+{% stat value="[XX%]", label="increase in booked appointments", source="[Source and date to be supplied]" %}
+
 A paragraph immediately above the ink pane, so the gap between prose and a
 surface change can be measured against a paragraph rather than a list.
 

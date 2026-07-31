@@ -259,6 +259,54 @@ export default function (eleventyConfig) {
     );
   });
 
+  /* stat: a single figure with its label and its source.
+
+     Not paired, so there is no markdown inside it and the three arguments are
+     plain text. They are escaped rather than trusted: a label containing an
+     ampersand would otherwise emit invalid markup, and escaping is cheaper
+     than discovering that in a validator later.
+
+     SOURCE IS REQUIRED AND FAILS THE BUILD. Not a warning. SHORTCODES.md makes
+     the house rule about sourcing mechanical rather than remembered: "any
+     block carrying a number requires a source. Not optional, not defaulted."
+     A warning would let an unsourced number ship, and an unsourced number on a
+     page that exists to be cited is precisely the claim CLAUDE.md forbids. The
+     message names the input file, because a build error with no location is a
+     search rather than a fix.
+
+     BRACKETS PASS THROUGH UNTOUCHED. value="[XX%]" renders as written, because
+     brackets are the agreed signal to a human that a figure is not publishable
+     yet. The build does not validate what is inside them and must not, or the
+     signal stops being usable while a number is still being chased.
+
+     THERE IS NO SURFACE ARGUMENT. Surface is inherited from the enclosing
+     pane, by descendant selector in longform.css. That is the whole point of
+     the pane owning surface: an author cannot leave one block behind on the
+     wrong ground, because there is nothing for them to set.
+
+     Emitted on one line with no blank line inside it, so markdown-it treats
+     the whole div as a single HTML block and passes it through. The leading
+     and trailing newlines keep it out of a surrounding paragraph. */
+  eleventyConfig.addShortcode("stat", function (options = {}) {
+    const { value, label, source } = options || {};
+
+    if (!source || !String(source).trim()) {
+      throw new Error(
+        `[stat] missing required "source" in ${this.page?.inputPath || "unknown file"}. ` +
+          `Every block carrying a number needs one, see SHORTCODES.md. ` +
+          `value=${JSON.stringify(value ?? null)} label=${JSON.stringify(label ?? null)}`
+      );
+    }
+
+    return (
+      `\n<div class="cs-stat">` +
+      `<span class="cs-stat__value">${escapeHtml(value ?? "")}</span>` +
+      `<span class="cs-stat__label">${escapeHtml(label ?? "")}</span>` +
+      `<span class="cs-stat__source">${escapeHtml(source)}</span>` +
+      `</div>\n`
+    );
+  });
+
   /* Pane rules from SHORTCODES.md, enforced against the BUILT HTML rather than
      by counting shortcode calls.
 
