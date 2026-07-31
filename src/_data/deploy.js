@@ -44,6 +44,12 @@
  * things that are not production is open ended and the list of things that are
  * has exactly one member.
  *
+ * THE NOINDEX IS THE META TAG, NOT A robots.txt Disallow. robots.txt allows
+ * crawling on every deploy, so that a crawler can reach a preview page and read
+ * the directive. Disallow would hide the directive rather than enforce it, and
+ * on an already indexed host it would lock the URLs in place. The reasoning is
+ * in src/robots.njk, next to the file it governs.
+ *
  * THE ONE WAY THIS COULD SILENTLY HIDE THE LIVE SITE is a production build
  * where the branch is not readable, which would fall through to noindex. That
  * case throws instead. A failed deploy is visible within minutes; a live site

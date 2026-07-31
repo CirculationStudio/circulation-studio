@@ -26,9 +26,21 @@ Only the production host may be indexed.
 
 **Decided by the build, from `CF_PAGES_BRANCH`, not by a switch anyone flips.**
 A deploy of `main` on Cloudflare Pages is production. Everything else, preview
-branches and local builds alike, is noindex, through both a `robots` meta tag
-and `robots.txt`. Both halves read one value, `deploy.indexable`, so they cannot
-disagree. The logic and the reasoning are in `src/_data/deploy.js`.
+branches and local builds alike, carries a `noindex` meta tag on every page.
+Both `robots.txt` and the meta tag read one value, `deploy.indexable`, so they
+cannot disagree about which deploy this is. The logic and the reasoning are in
+`src/_data/deploy.js`.
+
+**The meta tag does the work, and `robots.txt` allows crawling everywhere,
+including on the preview.** That is deliberate and it is the stronger of the two
+options. `Disallow` prevents crawling, which prevents a crawler ever reading the
+`noindex`, and that is only correct if the host has never been indexed. If it
+has, `Disallow` locks those URLs in the index, because Google cannot recrawl to
+discover the directive, and they persist as bare URLs with no snippet. Allow
+plus `noindex` prevents indexing just as effectively and also clears an existing
+listing, so it is correct in both states. Whether the preview host is currently
+indexed has not been confirmed, which is exactly why the option that works
+either way is the one in place. Recorded in `src/robots.njk`.
 
 **On the production host, nothing is restricted.** No robots meta tag is emitted
 at all and `robots.txt` allows everything. The decision is recomputed from the
@@ -39,8 +51,9 @@ quietly carrying noindex is not.
 
 Every build prints which mode it chose, so the Cloudflare build log is the
 record. **After cutover, confirm on the live domain**: view source on
-circulationstudio.com and there should be no `robots` meta tag, and
-circulationstudio.com/robots.txt should read `Allow: /`.
+circulationstudio.com and there should be no `robots` meta tag. Since
+`robots.txt` reads `Allow: /` on every deploy, it is the meta tag, not
+robots.txt, that tells you which mode a host is in.
 
 If the production branch is ever renamed, rename `PRODUCTION_BRANCH` in
 `src/_data/deploy.js` with it. That is the one thing here a human keeps in step.

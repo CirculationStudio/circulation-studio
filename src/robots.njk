@@ -18,12 +18,24 @@ eleventyExcludeFromCollections: true
   Both halves of the indexing rule read deploy.indexable, so robots.txt and the
   meta tag in base.njk cannot disagree about the same deploy.
 
-  ONE CAVEAT WORTH KNOWING. Disallow prevents crawling, which prevents a crawler
-  ever seeing the noindex meta tag on those pages. That is the right shape for
-  keeping a preview OUT of an index, and the wrong shape for getting one back
-  out again: a URL already indexed needs to be crawlable so the noindex can be
-  read. If a preview URL ever turns up in results, allow crawling temporarily
-  and let the meta tag do the work.
+  WHY THE PREVIEW ALLOWS CRAWLING RATHER THAN DISALLOWING IT. It used to send
+  Disallow: /, and that was the weaker of the two.
+
+  Disallow prevents crawling, which prevents a crawler ever reading the noindex.
+  That is correct only if the host has never been indexed. If it has, Disallow
+  LOCKS THOSE URLS IN THE INDEX: Google cannot recrawl to discover the
+  directive, so the entries persist as bare URLs with no snippet, and the
+  instruction meant to remove them is the thing preventing their removal.
+
+  Allow plus noindex prevents indexing just as effectively, because a crawler
+  that fetches the page reads the directive and drops it, and it also clears an
+  existing listing. It is correct in both states, which is why it is the one to
+  use when the state is unknown.
+
+  Whether this preview host is currently indexed has not been confirmed.
+
+  So the preview's protection is the noindex meta tag on every page, and this
+  file exists to let the crawler reach it.
 -#}
 # robots.txt for Circulation Studio
 {% if deploy.indexable -%}
@@ -33,8 +45,10 @@ Allow: /
 {%- else -%}
 # NOT the production deploy ({{ deploy.branch or "local build" }}).
 # This origin serves the same pages as the production host and must not compete
-# with it in an index. Every page here also carries a noindex meta tag and a
-# canonical pointing at production. See src/_data/deploy.js.
+# with it in an index. Crawling is allowed ON PURPOSE: every page here carries a
+# noindex meta tag, and a crawler has to be able to fetch the page to read it.
+# Disallow would hide the directive rather than enforce it. Pages here also
+# carry a canonical pointing at production. See src/_data/deploy.js.
 User-agent: *
-Disallow: /
+Allow: /
 {%- endif %}
