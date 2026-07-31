@@ -139,6 +139,22 @@
     margin-top: 0;
   }
 
+  /* The other end. The article's 96px bottom padding is the frame's section
+     spacing, and it should be the only thing setting the gap to the footer.
+
+     A trailing margin does not collapse into padding, it ADDS to it, so
+     whatever the author happened to end with was changing the page's bottom
+     spacing: measured at 124px after a list, 124px after a paragraph and 120px
+     after a heading, none of them the 96px the padding declares.
+
+     This matters more once block components can end an article. Their trailing
+     margins will not match prose values, so the variance would widen rather
+     than stay within the 4px it is now, and it would be attributed to the
+     block rather than to this. */
+  .cs-article > :last-child {
+    margin-bottom: 0;
+  }
+
   /* Lists. Tailwind's preflight ships ol,ul,menu{list-style:none} and zeroes
      the padding, which is right for the nav and card lists the marketing pages
      are built from and wrong for prose: a markdown list rendered as unmarked,
