@@ -1,0 +1,67 @@
+/* Callout: a labelled aside in one of four registers, two visual treatments.
+ *
+ * THE SPLIT IS BY WHAT THE LABEL DOES. Note and Tip inform, so they take the
+ * neutral hairline and mist bar. Caveat and Watch out flag a limit or a cost,
+ * so they take the madder edge. That accent is what makes the difference
+ * visible at a glance: a reader skimming knows to slow down before reading the
+ * word. Four labels, two treatments, and adding a fifth label is a design
+ * decision rather than an authoring one, which is why the set is closed in the
+ * shortcode and the build fails on anything else.
+ *
+ * PANE-EXCLUDED. Both registers paint a label bar, and the accented pair
+ * carries a madder border which is 1.99:1 on ink and banned there. Painted
+ * grounds are structural and do not follow a surface, per SHORTCODES.md.
+ *
+ * RADIUS --radius-control, flow spacing the standard 40px symmetric. */
+@layer components {
+  .cs-prose > .cs-callout {
+    margin-block: var(--space-40);
+  }
+
+  .cs-callout {
+    border-radius: var(--radius-control);
+    /* Clips the label bar to the corner radius. */
+    overflow: hidden;
+  }
+
+  .cs-callout__label {
+    margin: 0;
+    padding: 10px 24px;
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 10px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+  }
+
+  .cs-callout__body {
+    padding: 20px 24px;
+  }
+  .cs-callout__body p {
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-body);
+    margin: 0;
+  }
+
+  /* ---- neutral: Note, Tip ---- */
+  .cs-callout--neutral {
+    border: 1px solid var(--border-hairline);
+  }
+  .cs-callout--neutral .cs-callout__label {
+    background: var(--surface-panel);
+    border-bottom: 1px solid var(--border-hairline);
+    color: var(--text-body);
+  }
+
+  /* ---- accented: Caveat, Watch out ---- */
+  .cs-callout--accented {
+    border: 1px solid var(--color-madder);
+  }
+  .cs-callout--accented .cs-callout__label {
+    background: var(--accent-quiet);
+    border-bottom: 1px solid var(--color-madder);
+    color: var(--color-madder);
+  }
+}

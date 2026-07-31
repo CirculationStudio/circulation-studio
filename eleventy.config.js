@@ -791,6 +791,61 @@ export default function (eleventyConfig) {
     );
   });
 
+  /* callout: a labelled aside in one of four registers.
+
+     TWO TREATMENTS, NOT FOUR. Note and Tip inform; Caveat and Watch out flag a
+     limit or a cost. The madder edge on the second pair is what makes that
+     visible at a glance, so a reader skimming knows to slow down without
+     having to read the label first. Four labels, two visual registers, and the
+     split is by what the label DOES rather than by how many labels there are.
+
+     WATCH OUT IS GUIDES ONLY, per SHORTCODES.md. Enforced against the article's
+     own frontmatter kind, which a shortcode can read through this.ctx. Any
+     kind other than "guide" fails the build rather than warning or silently
+     downgrading to Caveat: a downgrade would put a different word in front of
+     a reader than the author wrote, and a warning in a passing build is a
+     warning nobody reads.
+
+     PANE-EXCLUDED. Both registers paint a label bar, mist on one and
+     accent-quiet on the other, and the accented pair also carries a madder
+     border, which is 1.99:1 on ink and banned there outright. */
+  const CALLOUT_LABELS = new Map([
+    ["Note", "neutral"],
+    ["Tip", "neutral"],
+    ["Caveat", "accented"],
+    ["Watch out", "accented"]
+  ]);
+
+  eleventyConfig.addPairedShortcode("callout", function (content, options = {}) {
+    const label = (options && options.label) || "";
+    const where = this.page?.inputPath || "unknown file";
+
+    if (!CALLOUT_LABELS.has(label)) {
+      throw new Error(
+        `[callout] unknown label ${JSON.stringify(label)} in ${where}. ` +
+          `The set is closed: ${[...CALLOUT_LABELS.keys()].map((l) => `"${l}"`).join(", ")}. ` +
+          `A new register is a design decision, not an authoring one. See SHORTCODES.md.`
+      );
+    }
+
+    if (label === "Watch out" && this.ctx?.kind !== "guide") {
+      throw new Error(
+        `[callout] label="Watch out" is guides only, and ${where} has ` +
+          `kind="${this.ctx?.kind ?? "unset"}". Use "Caveat" outside a guide. ` +
+          `See SHORTCODES.md.`
+      );
+    }
+
+    const tone = CALLOUT_LABELS.get(label);
+    return (
+      `\n<aside class="cs-callout cs-callout--${tone}" data-no-pane="label bar ground">\n` +
+      `<p class="cs-callout__label">${escapeHtml(label)}</p>\n` +
+      `<div class="cs-callout__body">\n\n` +
+      `${content.trim()}` +
+      `\n\n</div>\n</aside>\n`
+    );
+  });
+
   /* Pane rules from SHORTCODES.md, enforced against the BUILT HTML rather than
      by counting shortcode calls.
 
@@ -817,10 +872,19 @@ export default function (eleventyConfig) {
     let nested = false;
     const wideInPane = [];
 
-    /* Walks div and figure, the two elements a block wrapper uses, tracking
-       which open elements are panes. If a block ever wraps itself in something
-       else, add the tag here or it becomes invisible to both checks below. */
-    for (const tag of content.matchAll(/<(div|figure)\b([^>]*)>|<\/(?:div|figure)\s*>/g)) {
+    /* Walks every element a block wrapper might use, tracking which open ones
+       are panes.
+
+       THE TAG LIST IS LOAD-BEARING AND HAS ALREADY BITTEN ONCE. It was div and
+       figure only, and callout wraps itself in an aside, so a callout inside a
+       pane was invisible to this walk and the probe that was supposed to fail
+       built cleanly. Any block whose wrapper element is not listed here is
+       exempt from both checks below without anything saying so. Add the tag
+       when a block introduces one; all of these are balanced elements, so the
+       stack stays correct. */
+    for (const tag of content.matchAll(
+      /<(div|figure|aside|section|details|blockquote)\b([^>]*)>|<\/(?:div|figure|aside|section|details|blockquote)\s*>/g
+    )) {
       if (tag[0].startsWith("</")) {
         stack.pop();
         continue;

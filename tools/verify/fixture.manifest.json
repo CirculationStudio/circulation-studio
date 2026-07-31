@@ -66,6 +66,18 @@
     "takeaways item": {
       "selector": ".cs-takeaways li",
       "count": 3
+    },
+    "callout": {
+      "selector": ".cs-callout",
+      "count": 2
+    },
+    "callout neutral": {
+      "selector": ".cs-callout--neutral",
+      "count": 1
+    },
+    "callout accented": {
+      "selector": ".cs-callout--accented",
+      "count": 1
     }
   }
 }

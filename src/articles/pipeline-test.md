@@ -77,6 +77,16 @@ which is where most of the numbers quoted above eventually trace back to.
 A book is not an object with pages. It is a machine for reading.
 {% endpullquote %}
 
+{% callout label="Note" %}
+A neutral callout. Note and Tip inform, so they take the hairline and the mist
+label bar.
+{% endcallout %}
+
+{% callout label="Caveat" %}
+An accented callout. Caveat and Watch out flag a limit or a cost, so the madder
+edge makes that visible before the label is read.
+{% endcallout %}
+
 ## What a list directly under a heading does
 
 - It sits at the heading's own spacing rather than adding its top margin to it.
