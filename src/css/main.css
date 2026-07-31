@@ -152,7 +152,21 @@
 
   --text-body: var(--color-ink);
   --text-muted: var(--color-slate);
-  --text-faint: rgba(33, 21, 35, .45);
+  /* .65, NOT .45. The repo carried .45, which composites to 2.86:1 on paper
+     and 2.80:1 on mist. That fails WCAG AA and fails AA-large as well, and
+     every element using it is set between 11px and 13px, so the large-text
+     exemption does not apply to any of them. .65 measures 5.28:1 on paper and
+     5.05:1 on mist, passing AA on both.
+
+     This is the design system's own value; the repo had drifted. Corrected
+     2026-07-30 against tokens/colors.css, which carries the same note.
+
+     It darkens visible text on all five marketing pages: the masthead
+     location, .caption and .plate-no, the Results and Who We Are labels, the
+     form hint, the eyebrow, the stat source and the footnote markers. That is
+     the point of the change, not a side effect. Every use in the repo is a
+     text colour; none is a border, background or fill. */
+  --text-faint: rgba(33, 21, 35, .65);
   --text-on-deep: var(--color-paper);
   --text-on-accent: #FFFFFF;
 
