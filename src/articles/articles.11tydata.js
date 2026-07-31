@@ -18,6 +18,18 @@
    That has not come up, and a deck and a description doing different jobs is a
    content decision worth making deliberately rather than by accident. */
 export default {
+  /* Every file in this directory is an article, so every file gets the article
+     layout and no file declares it.
+
+     Frontmatter is authored by an external system, so each key removed from it
+     is one less thing that system can get wrong, and `layout` is the worst
+     candidate to leave exposed: it is a path into _includes that an author has
+     no way to validate, it means nothing editorially, and a typo in it fails
+     the build rather than degrading. Location already says "this is an
+     article", which is the same reason the collection is globbed rather than
+     tagged. */
+  layout: "layouts/article.njk",
+
   eleventyComputed: {
     description: (data) => data.deck
   }

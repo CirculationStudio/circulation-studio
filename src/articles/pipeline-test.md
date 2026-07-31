@@ -1,5 +1,4 @@
 ---
-layout: layouts/article.njk
 title: Why a narrow column is easier to read
 deck: A test fixture for the markdown pipeline, written about the thing it is testing.
 kind: essay
