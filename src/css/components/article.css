@@ -69,6 +69,46 @@
     font-size: var(--text-deck);
   }
 
+  /* Lists. Tailwind's preflight ships ol,ul,menu{list-style:none} and zeroes
+     the padding, which is right for the nav and card lists the marketing pages
+     are built from and wrong for prose: a markdown list rendered as unmarked,
+     unindented lines that ran straight into the paragraph after it, with no
+     way for a reader to tell a list was there at all.
+
+     Restored under .cs-article only. The five marketing pages keep the reset,
+     because every list on them is a layout structure wearing a ul.
+
+     MARKER TREATMENT IS NOT INVENTED, but it is DERIVED. Neither the design
+     system's tokens/base.css nor its components.css specifies prose lists at
+     all; the only list in the entire system is .cs-footnotes, whose marker is
+     set in the display face at medium weight in faint ink. That is the house
+     language for a marker, so prose follows it. The 24px indent is the one
+     value with no precedent, and it is taken off the locked spacing scale
+     rather than eyeballed. Worth confirming against the Reference's
+     key-takeaways and before-you-start blocks. */
+  .cs-article ul,
+  .cs-article ol {
+    margin: 0 0 var(--space-16);
+    padding-left: var(--space-24);
+  }
+  .cs-article ul { list-style: disc }
+  .cs-article ol { list-style: decimal }
+
+  /* Nested lists sit tighter: the outer list already spent the bottom margin. */
+  .cs-article li > ul,
+  .cs-article li > ol {
+    margin-bottom: 0;
+  }
+
+  .cs-article li {
+    margin-bottom: var(--space-8);
+  }
+  .cs-article li::marker {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    color: var(--text-faint);
+  }
+
   @media (max-width: 767px) {
     .cs-article h1 { font-size: var(--text-article-h1-phone) }
     .cs-article--compact h1 { font-size: var(--text-article-h1-compact-phone) }
