@@ -736,15 +736,35 @@ export default function (eleventyConfig) {
      Emitted on one line with no blank line inside it, so markdown-it treats
      the whole div as a single HTML block and passes it through. The leading
      and trailing newlines keep it out of a surrounding paragraph. */
+  /* ALL THREE ARGUMENTS ARE REQUIRED, and each fails for its own reason rather
+     than for "it was in the list". The reason goes into the build error,
+     because a rule stated without its cause is one someone will work around.
+
+     source was always enforced. value and label were not, and the block
+     rendered an empty span for either, which is the worst available outcome:
+     a stat with no figure is a labelled nothing, and a figure with no label is
+     an unexplained number sitting at measure width looking authoritative.
+     Neither degrades visibly enough for a reviewer to catch. */
+  const STAT_ARGUMENTS = [
+    ["value", "A stat with no figure is a heading with nothing under it"],
+    ["label", "A figure with no label is an unexplained number, and the label is what makes it a claim rather than a decoration"],
+    ["source", "Every block carrying a number needs one. This is the house rule about sourcing made mechanical rather than remembered"]
+  ];
+
   eleventyConfig.addShortcode("stat", function (options = {}) {
     const { value, label, source } = options || {};
+    const given = { value, label, source };
 
-    if (!source || !String(source).trim()) {
-      throw new Error(
-        `[stat] missing required "source" in ${this.page?.inputPath || "unknown file"}. ` +
-          `Every block carrying a number needs one, see SHORTCODES.md. ` +
-          `value=${JSON.stringify(value ?? null)} label=${JSON.stringify(label ?? null)}`
-      );
+    for (const [name, why] of STAT_ARGUMENTS) {
+      if (!given[name] || !String(given[name]).trim()) {
+        throw new Error(
+          `[stat] missing required "${name}" in ${this.page?.inputPath || "unknown file"}. ` +
+            `${why}. See SHORTCODES.md. ` +
+            `value=${JSON.stringify(value ?? null)} ` +
+            `label=${JSON.stringify(label ?? null)} ` +
+            `source=${JSON.stringify(source ?? null)}`
+        );
+      }
     }
 
     return (

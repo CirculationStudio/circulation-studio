@@ -199,7 +199,7 @@ Reading the tables:
 | `pane` | LIVE | `surface` | bleed | P | Surface is a property of the pane, never of a block. See Surfaces |
 | `takeaways` | LIVE | `title` | measure | P | Default title "The short version" |
 | `toc` | PLANNED | `title` | measure | | Auto-built from h2. Default title "In this report" |
-| `stat` | LIVE | `value` `label` **`source`** | measure | | |
+| `stat` | LIVE | **`value`** **`label`** **`source`** | measure | | All three required. A stat with no figure is a labelled nothing, and a figure with no label is an unexplained number |
 | `chart` | PLANNED | `title` **`source`** `caption` | main | P | Content is a markdown table of label/value rows |
 | `table` | LIVE | `caption` **`source`** `kind` | main | P | `source` is required for `kind="data"` only, and `data` is the default, so a forgotten `kind` fails for a missing source. Content is a markdown table |
 | `pullquote` | LIVE | `attribution` | measure | P | Fills the reading column, see note below |
