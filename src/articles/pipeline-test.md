@@ -68,6 +68,11 @@ which is where most of the numbers quoted above eventually trace back to.
 - Adjacent margins collapse, so the larger of the two wins.
 - This case exists in the fixture only so the collapse can be measured.
 
+### The same under a smaller heading
+
+- An h3 closes at 16px, which matches the list's own top margin exactly.
+- The collapse is therefore invisible here, which is the point of measuring it.
+
 ## Where this leaves the fixture
 
 If you are reading this inside the site frame, with a masthead above and a

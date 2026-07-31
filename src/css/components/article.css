@@ -172,14 +172,23 @@
      from the section that just ended.
 
      A list binds UPWARD. It completes a thought the preceding paragraph
-     started, usually one that ends in a colon, so it takes LESS space above
-     than below. Tight above keeps the list attached to the sentence that
-     introduces it. The larger gap underneath is what separates the finished
-     list from the next idea.
+     started, usually one that ends in a colon. But note HOW that binding is
+     achieved, because the obvious way does not work:
 
-     So 16 above and 28 below, the mirror of the heading's proportion rather
-     than a copy of it. The Reference's one list carrying a top margin uses
-     20px, tighter than its own 28px paragraph spacing, for the same reason.
+     MARGINS COLLAPSE TO THE LARGER VALUE, SO A LIST CANNOT BIND UPWARD BY
+     OPENING TIGHTER. A 16px top margin against a paragraph's 28px bottom
+     margin collapses to 28 and the list's value is simply discarded. The
+     binding comes from the paragraph closing tighter instead: a paragraph that
+     introduces a list ends 16px above it rather than 28px, which is the
+     :has() rule below.
+
+     The list keeps its own 16px top margin because it is not redundant. It
+     covers whatever precedes a list that closes tighter still, and it is the
+     value that shows when the neighbour has none.
+
+     Below the list stays 28px, separating a finished list from the next idea.
+     The Reference's one list carrying a top margin uses 20px, tighter than its
+     own 28px paragraph spacing, for the same reason.
 
      Direct children only, matching the heading rhythm above: a list inside a
      future block component takes its spacing from that block's container.
@@ -189,6 +198,18 @@
   .cs-article > ol {
     margin-top: var(--space-16);
     margin-bottom: 28px;
+  }
+
+  /* The other half of the upward binding, and the half that actually does the
+     work. A paragraph introducing a list closes at 16px instead of 28px, so
+     the collapsed gap above the list is 16 rather than 28.
+
+     DEGRADES CLEANLY. Where :has() is unsupported the paragraph keeps its 28px
+     and the pair renders 28 above, 28 below, which is exactly what shipped
+     before this rule existed. That is a weaker rhythm, not a broken layout,
+     and nothing else depends on it. */
+  .cs-article > p:has(+ ul, + ol) {
+    margin-bottom: var(--space-16);
   }
 
   @media (max-width: 767px) {
