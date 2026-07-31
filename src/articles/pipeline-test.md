@@ -73,6 +73,9 @@ which is where most of the numbers quoted above eventually trace back to.
 - An h3 closes at 16px, which matches the list's own top margin exactly.
 - The collapse is therefore invisible here, which is the point of measuring it.
 
+A paragraph immediately above the ink pane, so the gap between prose and a
+surface change can be measured against a paragraph rather than a list.
+
 {% pane surface="ink" %}
 ## An ink pane, with markdown inside it
 
@@ -87,6 +90,9 @@ measured against the rhythm between two paragraphs outside one.
 - A second item, to confirm markers survive the surface change.
 {% endpane %}
 
+A paragraph between the two panes. It measures the gap below one pane and
+above the next from the same kind of neighbour on both sides.
+
 {% pane surface="madder" %}
 ## A madder pane, the rarest surface
 
@@ -100,6 +106,8 @@ A second paragraph on madder, again so the internal rhythm can be measured.
 - A list item on madder.
 - A second item.
 {% endpane %}
+
+A paragraph immediately below the madder pane, closing the pair of joints.
 
 ## Case one, first of two stacked headings
 

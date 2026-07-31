@@ -30,14 +30,40 @@
    Madder on ink and ink on madder are both 1.99:1 and are banned outright,
    which is why neither surface carries the accent as text anywhere below. */
 @layer components {
+  /* Structural: the pane escapes the column its siblings are held to.
+     .cs-article > * constrains every child to the measure; this puts the pane
+     back to full width. Vertical rhythm is separate, below. */
   .cs-article > .cs-pane {
     width: 100%;
     margin-inline: 0;
-    /* Sits in the prose flow, so it takes section-level separation above and
-       below. NOT SPECIFIED IN THE BRIEF: 64px is chosen to match the h2 top
-       margin, since a pane interrupts at least as hard as a new section does.
-       The paragraph above collapses into it, so the gap is 64 and not 92. */
-    margin-block: var(--space-64);
+  }
+
+  /* FLOW SPACING, and the reasoning governs every block that follows this one.
+
+     A heading binds DOWNWARD: it opens the section under it, so it takes more
+     space above than below, 64/24.
+
+     A list binds UPWARD: it completes the sentence that introduces it, so it
+     takes less space above than below, 16/28.
+
+     A PANE BINDS TO NEITHER. It is a self-contained surface change that
+     belongs to no neighbour, so its spacing is symmetric. Nothing outside it
+     is completed by it and nothing outside it is introduced by it.
+
+     64px is on the locked scale and matches the h2 top margin, which makes a
+     pane and a section heading comparable breaks in the page.
+
+     Adjacent margins collapse, so a paragraph's 28px bottom does not add:
+     the gap is 64, not 92. Measured both sides. */
+  .cs-prose > .cs-pane {
+    margin-top: var(--space-64);
+    margin-bottom: var(--space-64);
+  }
+
+  /* Internal padding is untouched by the flow margins above: padding does not
+     collapse, so the distance from the pane's edge to its first line stays 64
+     whatever the neighbours do. */
+  .cs-pane {
     padding-block: var(--space-64);
   }
 
