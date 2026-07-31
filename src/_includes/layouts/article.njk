@@ -38,7 +38,7 @@ layout: layouts/base.njk
 
     {# author is a KEY per SHORTCODES.md, not a name, and the data file it is
        meant to resolve against does not exist yet. It renders raw for now. #}
-    <p class="caption">{{ author }}, updated {{ updated }}</p>
+    <p class="caption">{{ author }}, updated {{ updated | calendarDate }}</p>
   </header>
 
   {{ content | safe }}

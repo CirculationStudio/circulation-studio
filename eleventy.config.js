@@ -105,6 +105,41 @@ export default function (eleventyConfig) {
     return shape.body;
   });
 
+  /* Frontmatter dates, rendered as a calendar date.
+
+     THE TIMEZONE PART IS THE WHOLE POINT. YAML parses an unquoted 2026-07-30
+     into a JS Date at UTC midnight. Anything that then reads it with local
+     getters, including Date.prototype.toString, resolves that instant into the
+     build machine's zone, and every timezone west of UTC lands on the previous
+     day. The byline was rendering "Wed Jul 29 2026" for a date written as the
+     30th, on a machine at GMT-0600.
+
+     `updated: 2026-07-30` is a calendar date, not a timestamp. Nobody is
+     asserting an instant. So this reads UTC parts only, via timeZone: "UTC",
+     which pins the rendered day to the day that was typed no matter where the
+     build runs.
+
+     Strings are accepted too, in case a date is ever quoted in frontmatter,
+     and anything unparseable passes through untouched rather than rendering
+     "Invalid Date" into a page. */
+  eleventyConfig.addFilter("calendarDate", (value) => {
+    if (!value) return "";
+
+    const date =
+      value instanceof Date
+        ? value
+        : new Date(`${String(value).slice(0, 10)}T00:00:00Z`);
+
+    if (Number.isNaN(date.getTime())) return String(value);
+
+    return date.toLocaleDateString("en-US", {
+      timeZone: "UTC",
+      month: "long",
+      day: "numeric",
+      year: "numeric"
+    });
+  });
+
   /* Articles. Globbed rather than tag-driven, so an article is an article by
      virtue of where it lives and an author cannot half-enrol one by forgetting
      a tag. Nothing consumes this collection yet: there is no index page and no
