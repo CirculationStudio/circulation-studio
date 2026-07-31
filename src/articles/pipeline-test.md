@@ -73,9 +73,41 @@ which is where most of the numbers quoted above eventually trace back to.
 - An h3 closes at 16px, which matches the list's own top margin exactly.
 - The collapse is therefore invisible here, which is the point of measuring it.
 
+## Case one, first of two stacked headings
+
+## Case one, second of two stacked headings
+
+The two headings above have nothing at all between them, which is the joint
+this case exists to measure.
+
+## Case two, a heading with a subhead directly under it
+
+### Case two, the subhead with no paragraph above it
+
+The h3 above follows the h2 immediately, with no prose separating them.
+
+This is a full paragraph, deliberately run to several lines of the measure so
+that the comparison below is made against a paragraph with real height rather
+than against another fragment. It says nothing worth reading and exists only to
+occupy the space a normal paragraph occupies.
+
+Case three, one line.
+
+That short line sits between two full paragraphs. This is the second of them,
+and it also runs to more than a single line so the joint above and the joint
+below the short line can be measured against the same kind of neighbour.
+
 ## Where this leaves the fixture
 
 If you are reading this inside the site frame, with a masthead above and a
 colophon below, the pipeline works. If the headings above run wider than these
 paragraphs, the measure is not being applied to the whole column and only the
 paragraph rule is doing any work.
+
+## Cases at the end of the body
+
+- Case four: this list is the last element in the body once the heading below
+  is removed for measurement.
+- Nothing else follows it.
+
+## Case five, an h2 as the last element in the body

@@ -116,6 +116,19 @@
     margin-bottom: var(--space-16);
   }
 
+  /* An h3 directly under an h2, with nothing between them, is a STACKED PAIR
+     rather than two sections, and it should not open at full section distance.
+
+     Left alone it does: the h2's 24px bottom collapses with the h3's 40px top
+     and the pair sits 40px apart, measured. 40px is the space an h3 takes when
+     it opens a section after prose, and the whole point of that value is to
+     detach it from the prose above. Here there is no prose above. The h2's own
+     24px is already the correct "space to my content" value, because an h3
+     immediately following IS the h2's content. */
+  .cs-article > h2 + h3 {
+    margin-top: var(--space-24);
+  }
+
   /* A heading opening the body must not push itself off the byline. Both forms
      are needed: :first-child alone never matches, because <header> is the
      article's first child and an opening heading is therefore the second. The
