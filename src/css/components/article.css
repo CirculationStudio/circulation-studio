@@ -72,6 +72,60 @@
     font-size: var(--text-deck);
   }
 
+  /* PROSE RHYTHM.
+
+     ============================================================
+     THE TOP MARGINS ARE AN ARTICLE-PROSE ADDITION.
+     THEY HAVE NO COMPONENT REFERENCE COUNTERPART.
+     ============================================================
+
+     Do not "reconcile" them with the Reference later and find them missing.
+     The Reference gives every heading margin-top 0, and that is right for the
+     thing it describes: its headings open blocks that sit in their own
+     containers, and the container supplies the space above. Continuous
+     markdown prose has no container between one section and the next, so
+     nothing supplies it, and an h2 inherited 16px above and 16px below. Equal
+     space on both sides makes a heading read as floating between two
+     paragraphs rather than introducing the one under it.
+
+     The ratio is the fix, not the absolute values: roughly 2.5:1 above to
+     below, so the heading binds to the text it opens and detaches from the
+     text it follows. 64/24 on h2 and 40/16 on h3, all four off the locked
+     spacing scale.
+
+     28px on the paragraph is the Reference's own value and is the one number
+     here NOT on that scale, which is why it is a literal.
+
+     Adjacent margins collapse, so the paragraph's 28px bottom does not add to
+     a heading's top: the gap above an h2 is 64px, not 92px. That is intended.
+
+     Scoped to DIRECT CHILDREN, unlike the type scale above, which is
+     deliberately a descendant selector. A heading inside a future block
+     component is still an article heading and wants the article size, but its
+     spacing belongs to that block's container, which is the Reference's model
+     and the reason it needs no top margins of its own. */
+  .cs-article > p {
+    margin-bottom: 28px;
+  }
+  .cs-article > h2 {
+    margin-top: var(--space-64);
+    margin-bottom: var(--space-24);
+  }
+  .cs-article > h3 {
+    margin-top: var(--space-40);
+    margin-bottom: var(--space-16);
+  }
+
+  /* A heading opening the body must not push itself off the byline. Both forms
+     are needed: :first-child alone never matches, because <header> is the
+     article's first child and an opening heading is therefore the second. The
+     adjacent-sibling form is the one that fires in practice; :first-child is
+     the guard for a body rendered without the header. */
+  .cs-article > :is(h2, h3):first-child,
+  .cs-article > header + :is(h2, h3) {
+    margin-top: 0;
+  }
+
   /* Lists. Tailwind's preflight ships ol,ul,menu{list-style:none} and zeroes
      the padding, which is right for the nav and card lists the marketing pages
      are built from and wrong for prose: a markdown list rendered as unmarked,
