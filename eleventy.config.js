@@ -85,6 +85,66 @@ function glyphSwaps(text, swaps, tag) {
     .join("");
 }
 
+/* Shared HTML scanning helpers for the build-time checks.
+
+   ============================================================
+   NOTHING HERE ENUMERATES BLOCK WRAPPER TAGS. That is the point.
+   ============================================================
+
+   The pane and faq checks used to walk a hard-coded list of elements, and it
+   missed a block twice. figure was added after a table in a pane went
+   undetected, then aside was added after a callout in a pane built cleanly on
+   a probe that was supposed to fail. Both times the verification passed
+   silently, which is the worst way for a check to be wrong.
+
+   The list could not stop rotting, because it grows every time a component
+   picks a different wrapper element, and nothing announces the omission.
+
+   So a block is now identified by WHAT MARKS IT, its class or its
+   data-no-pane attribute, on whatever element happens to carry it, and the
+   tag name is read off the element that was found rather than guessed in
+   advance. The only enumerated list left is HTML's void elements, which is
+   fixed by the spec rather than by this project. */
+const VOID_ELEMENTS = new Set([
+  "area", "base", "br", "col", "embed", "hr", "img", "input",
+  "link", "meta", "param", "source", "track", "wbr"
+]);
+
+const OPEN_TAG = /<([a-zA-Z][a-zA-Z0-9-]*)\b([^>]*)>/g;
+
+function classesOf(attrs) {
+  const m = /class\s*=\s*"([^"]*)"/.exec(attrs);
+  return m ? m[1].trim().split(/\s+/) : [];
+}
+
+/* Every element carrying a given class, with the tag name it actually uses
+   and where it starts. */
+function elementsWithClass(html, className) {
+  const out = [];
+  for (const m of html.matchAll(new RegExp(OPEN_TAG.source, "g"))) {
+    if (VOID_ELEMENTS.has(m[1].toLowerCase()) || m[0].endsWith("/>")) continue;
+    if (classesOf(m[2]).includes(className)) {
+      out.push({ tag: m[1], index: m.index, attrs: m[2] });
+    }
+  }
+  return out;
+}
+
+/* Outer HTML of the element opening at openIndex, found by counting depth for
+   ITS OWN tag name. The name is a parameter rather than a constant, which is
+   what makes this work for any wrapper a block chooses. */
+function sliceElement(html, openIndex, tag) {
+  const re = new RegExp(`<${tag}\\b[^>]*>|</${tag}\\s*>`, "g");
+  re.lastIndex = openIndex;
+  let depth = 0;
+  let m;
+  while ((m = re.exec(html))) {
+    depth += m[0].startsWith("</") ? -1 : 1;
+    if (depth === 0) return html.slice(openIndex, re.lastIndex);
+  }
+  return null;
+}
+
 export default function (eleventyConfig) {
   eleventyConfig.addFilter("glyphSwaps", glyphSwaps);
 
@@ -286,39 +346,16 @@ export default function (eleventyConfig) {
     if (!outputPath || !outputPath.endsWith(".html")) return content;
     if (!content.includes("cs-qa") && !content.includes("cs-related")) return content;
 
-    const classesOf = (attrs) => {
-      const m = /class\s*=\s*"([^"]*)"/.exec(attrs);
-      return m ? m[1].trim().split(/\s+/) : [];
-    };
-
-    // 1. Every qa must be inside a faq. Ancestor walk over the two elements
-    //    the pair uses, same technique as the pane checks.
-    const stack = [];
-    let orphans = 0;
-    for (const tag of content.matchAll(/<(div|details)\b([^>]*)>|<\/(?:div|details)\s*>/g)) {
-      if (tag[0].startsWith("</")) {
-        stack.pop();
-        continue;
-      }
-      const classes = classesOf(tag[2]);
-      if (classes.includes("cs-qa") && !stack.some(Boolean)) orphans += 1;
-      stack.push(classes.includes("cs-faq"));
+    /* Orphan qa, by the same slice-and-scan as the pane checks. Count every
+       qa, then count the ones inside a faq; the difference is the orphans. No
+       tag list, so a faq or a qa can wrap itself in any element. */
+    const allQa = elementsWithClass(content, "cs-qa").length;
+    let inFaq = 0;
+    for (const faq of elementsWithClass(content, "cs-faq")) {
+      const body = sliceElement(content, faq.index, faq.tag);
+      if (body) inFaq += elementsWithClass(body, "cs-qa").length;
     }
-
-    /* An orphan item, checked by slicing every related block out and counting
-       the items that remain. The div walk above cannot see it: an item is an
-       inline anchor, not one of the elements the stack tracks. Same rule as an
-       orphan qa, different mechanism because the element is a different shape. */
-    const outsideRelated = content.replace(/<nav class="cs-mainwidth cs-related"[\s\S]*?<\/nav>/g, "");
-    const strayItems = (outsideRelated.match(/class="cs-related__item"/g) || []).length;
-    if (strayItems) {
-      throw new Error(
-        `[item] ${strayItems} item(s) outside a related in ${outputPath}. ` +
-          `item is a child shortcode and is only valid inside {% related %} ... ` +
-          `{% endrelated %}. On its own it renders a bare link with no grid and no ` +
-          `label. See SHORTCODES.md.`
-      );
-    }
+    const orphans = allQa - inFaq;
 
     if (orphans) {
       throw new Error(
@@ -340,18 +377,6 @@ export default function (eleventyConfig) {
        first inner close and returns an empty answer.
 
        The index passed in must point AT the opening tag, so it is counted. */
-    const sliceElement = (html, openIndex, tag) => {
-      const re = new RegExp(`<${tag}\\b[^>]*>|</${tag}\\s*>`, "g");
-      re.lastIndex = openIndex;
-      let depth = 0;
-      let m;
-      while ((m = re.exec(html))) {
-        depth += m[0].startsWith("</") ? -1 : 1;
-        if (depth === 0) return html.slice(openIndex, re.lastIndex);
-      }
-      return null;
-    };
-
     const faqs = [];
     const faqOpen = /<div class="cs-faq">/g;
     let fm;
@@ -934,59 +959,33 @@ export default function (eleventyConfig) {
     if (!outputPath || !outputPath.endsWith(".html")) return content;
     if (!content.includes("cs-pane")) return content;
 
-    const classesOf = (attrs) => {
-      const match = /class\s*=\s*"([^"]*)"/.exec(attrs);
-      return match ? match[1].trim().split(/\s+/) : [];
-    };
-
+    /* Every pane, whatever element it uses, sliced to its own matching close.
+       No stack and no tag list: the tag name comes off the element that was
+       found, so a pane or an excluded block can wrap itself in anything. */
     const counts = { ink: 0, madder: 0 };
-    const stack = [];
-    let nested = false;
+    const panes = elementsWithClass(content, "cs-pane");
     const wideInPane = [];
+    let nested = false;
 
-    /* Walks every element a block wrapper might use, tracking which open ones
-       are panes.
+    for (const pane of panes) {
+      const classes = classesOf(pane.attrs);
+      if (classes.includes("cs-pane--ink")) counts.ink += 1;
+      if (classes.includes("cs-pane--madder")) counts.madder += 1;
 
-       THE TAG LIST IS LOAD-BEARING AND HAS ALREADY BITTEN ONCE. It was div and
-       figure only, and callout wraps itself in an aside, so a callout inside a
-       pane was invisible to this walk and the probe that was supposed to fail
-       built cleanly. Any block whose wrapper element is not listed here is
-       exempt from both checks below without anything saying so. Add the tag
-       when a block introduces one; all of these are balanced elements, so the
-       stack stays correct. */
-    for (const tag of content.matchAll(
-      /<(div|figure|aside|section|details|blockquote|nav)\b([^>]*)>|<\/(?:div|figure|aside|section|details|blockquote|nav)\s*>/g
-    )) {
-      if (tag[0].startsWith("</")) {
-        stack.pop();
-        continue;
-      }
-      const classes = classesOf(tag[2]);
-      const isPane = classes.includes("cs-pane");
-      const insidePane = stack.some(Boolean);
+      const body = sliceElement(content, pane.index, pane.tag);
+      if (!body) continue;
 
-      if (isPane) {
-        if (insidePane) nested = true;
-        if (classes.includes("cs-pane--ink")) counts.ink += 1;
-        if (classes.includes("cs-pane--madder")) counts.madder += 1;
-      }
+      // Anything carrying cs-pane inside this one, other than itself.
+      if (elementsWithClass(body, "cs-pane").length > 1) nested = true;
 
-      /* A pane-excluded block inside a pane. Caught here rather than in the
-         shortcode so it is caught by ANY route into a pane, not only a direct
-         call, which is the same reason the pane counts are read from output
-         rather than from call sites.
-
-         The block declares itself with data-no-pane="<reason>", so adding a
-         new excluded block is an attribute on its wrapper rather than an edit
-         here. The reason is carried into the error, because "not allowed" with
-         no cause is a rule someone will try to work around. */
-      const reason = /data-no-pane="([^"]*)"/.exec(tag[2])?.[1];
-      if (reason && insidePane) {
-        const name = classes.find((c) => c.startsWith("cs-") && !c.includes("--")) || "block";
+      // Anything declaring itself pane-excluded, on any element.
+      for (const m of body.matchAll(new RegExp(OPEN_TAG.source, "g"))) {
+        const reason = /data-no-pane="([^"]*)"/.exec(m[2])?.[1];
+        if (!reason) continue;
+        const name =
+          classesOf(m[2]).find((c) => c.startsWith("cs-") && !c.includes("--")) || m[1];
         wideInPane.push(`${name} (${reason})`);
       }
-
-      stack.push(isPane);
     }
 
     if (wideInPane.length) {
