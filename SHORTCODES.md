@@ -68,6 +68,16 @@ Making the pane authoritative makes that state unreachable.
 
 This is additive. Nine component families are affected: button, card, content label, footnote ref, footnotes, inline link, link, pull-quote, stat. It is a selector list extension, not a rewrite, and the modifier classes remain available as an escape hatch for a one-off component outside a pane.
 
+### The shape those selectors take
+
+Established by `stat`, the first family to use it. The remaining eight copy this rather than each inventing one.
+
+- **The modifier class and the pane-descendant selector are listed together**, never one replacing the other.
+- **Properties are grouped by hierarchy step, not one rule per property.** In `stat` the value and the label share a rule because they are one step, statement; the source has its own because it is the other, attribution.
+- **Surface selectors live with their component, never in a shared surface file.**
+
+The reason for the last one: `.cs-pane--ink .cs-stat` describes how a stat behaves, not how ink behaves. It belongs to the component.
+
 ### Pane rules, enforced in the build
 
 - `surface="paper"` is the default and needs no pane at all.
@@ -75,6 +85,7 @@ This is additive. Nine component families are affected: button, card, content la
 - **At most one `madder` pane per page.** Build warns on a second.
 - Panes do not nest. Build fails on a nested pane.
 - On `madder`, nothing carries ink or madder. Everything is paper. Enforced by CSS, not by the author.
+- **A pane must be a top-level element in the article body.** It cannot sit inside a list item, a blockquote, or any other markdown block. The build wraps prose in a column and a pane closes that column before emitting itself, so a pane written inside another block makes markdown-it end the enclosing element early. The pane then renders correctly, as valid HTML, but it lands *after* the list or quote rather than inside it. This is an authoring rule and not a build check, because nothing in the output is malformed: a misplaced pane is indistinguishable from a correctly placed one once rendered.
 
 Verified ratios, already confirmed and not to be re-derived:
 
