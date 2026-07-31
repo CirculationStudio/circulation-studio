@@ -98,6 +98,8 @@ measured against the rhythm between two paragraphs outside one.
 
 - A list item inside the pane.
 - A second item, to confirm markers survive the surface change.
+
+{% stat value="3.0x", label="the locked inline lockup ratio", source="Design system, 2026" %}
 {% endpane %}
 
 A paragraph between the two panes. It measures the gap below one pane and
@@ -115,6 +117,8 @@ A second paragraph on madder, again so the internal rhythm can be measured.
 
 - A list item on madder.
 - A second item.
+
+{% stat value="8.06:1", label="paper on madder, the only pairing available here", source="Verified contrast table, 2026" %}
 {% endpane %}
 
 A paragraph immediately below the madder pane, closing the pair of joints.

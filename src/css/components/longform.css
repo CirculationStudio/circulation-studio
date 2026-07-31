@@ -61,8 +61,63 @@
   }
   .cs-stat__label { font-size: 15px; color: var(--text-body) }
   /* source and date, always: "Yelp internal data, 2024". Never an unsourced
-     number. See CLAUDE.md on claims content. */
+     number. See CLAUDE.md on claims content. The shortcode fails the build
+     without one, so this is enforced rather than merely documented. */
   .cs-stat__source { font-size: 12px; color: var(--text-faint) }
+
+  /* FLOW SPACING. Symmetric, 40px, for the same reason a pane is symmetric at
+     64: a stat is self-contained evidence belonging to neither neighbour. It
+     does not complete the sentence above it the way a list does, and it does
+     not introduce the paragraph below it the way a heading does. One step down
+     the locked scale from the pane, because it is a much smaller interruption.
+
+     The 16px internal padding stays and is separate: padding does not
+     collapse, so the visible gap to the first ink is the 40 plus that 16. */
+  .cs-prose > .cs-stat {
+    margin-top: var(--space-40);
+    margin-bottom: var(--space-40);
+  }
+
+  /* ============================================================
+     SURFACE INHERITANCE. This is the pattern SHORTCODES.md specifies, and it
+     is the first component to use it, so it sets the shape for the other
+     eight families.
+
+     The modifier class and the descendant selector are listed TOGETHER, never
+     one replacing the other. The descendant selector is what makes surface a
+     property of the pane: an author writes {% pane surface="ink" %} once and
+     every block inside inherits, so a block cannot be left behind on the wrong
+     ground. The modifier stays as the escape hatch for a one-off outside a
+     pane, which is why this is a selector-list extension and not a rewrite.
+
+     THE TWO SURFACES DO NOT SHARE A TINT RAMP. On ink the label is muted at
+     .75 and the source faint at .55, which measures 5.62:1. On madder BOTH
+     drop to the .72 tint, because paper at .55 on madder is 3.42:1 and fails.
+     Do not "tidy" these into one ramp.
+     ============================================================ */
+  .cs-stat--on-deep .cs-stat__value,
+  .cs-pane--ink .cs-stat .cs-stat__value {
+    color: var(--text-on-deep);
+  }
+  .cs-stat--on-deep .cs-stat__label,
+  .cs-pane--ink .cs-stat .cs-stat__label {
+    color: var(--text-on-deep-muted);
+  }
+  .cs-stat--on-deep .cs-stat__source,
+  .cs-pane--ink .cs-stat .cs-stat__source {
+    color: var(--text-on-deep-faint);
+  }
+
+  .cs-stat--on-accent .cs-stat__value,
+  .cs-pane--madder .cs-stat .cs-stat__value {
+    color: var(--text-on-madder);
+  }
+  .cs-stat--on-accent .cs-stat__label,
+  .cs-stat--on-accent .cs-stat__source,
+  .cs-pane--madder .cs-stat .cs-stat__label,
+  .cs-pane--madder .cs-stat .cs-stat__source {
+    color: var(--text-on-madder-muted);
+  }
 
   .cs-fnref {
     font-family: var(--font-display);
