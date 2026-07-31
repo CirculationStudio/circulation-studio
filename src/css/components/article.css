@@ -154,17 +154,41 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-8);
-    margin: 0 0 var(--space-16);
+    /* Zero here, rhythm added below for top-level lists only. A nested list
+       therefore inherits no margin at all and closes up against the item that
+       introduces it, which is what keeps a two-level list reading as one
+       structure rather than two. */
+    margin: 0;
     padding-left: 20px;
   }
   .cs-article ul { list-style: disc }
   .cs-article ol { list-style: decimal }
 
-  /* A nested list closes up against the item that introduces it: the gap on
-     the parent list has already separated them. */
-  .cs-article li > ul,
-  .cs-article li > ol {
-    margin-bottom: 0;
+  /* LIST RHYTHM, and it is deliberately NOT the 28/28 that would match the
+     paragraph, nor the 2.5:1 that headings take. It is the inverse shape.
+
+     A heading binds DOWNWARD. It opens the section that follows, so it takes
+     more space above than below, and the big gap above is what detaches it
+     from the section that just ended.
+
+     A list binds UPWARD. It completes a thought the preceding paragraph
+     started, usually one that ends in a colon, so it takes LESS space above
+     than below. Tight above keeps the list attached to the sentence that
+     introduces it. The larger gap underneath is what separates the finished
+     list from the next idea.
+
+     So 16 above and 28 below, the mirror of the heading's proportion rather
+     than a copy of it. The Reference's one list carrying a top margin uses
+     20px, tighter than its own 28px paragraph spacing, for the same reason.
+
+     Direct children only, matching the heading rhythm above: a list inside a
+     future block component takes its spacing from that block's container.
+     This is also what confines the top margin to the outer list of a nested
+     pair. */
+  .cs-article > ul,
+  .cs-article > ol {
+    margin-top: var(--space-16);
+    margin-bottom: 28px;
   }
 
   @media (max-width: 767px) {

@@ -42,7 +42,10 @@ A few things follow from holding a column to measure:
 - Headings sit on the same column as the prose beneath them, so the page reads
   as one thing rather than two.
 - Lists inherit the same width, which keeps a run of short items from spreading
-  into the margin.
+  into the margin. That holds for nested lists too:
+    - An inner list stays on the same column edge.
+    - It closes up against the item that introduces it rather than opening a
+      gap of its own.
 
 The last one is worth stating plainly. A list that runs wider than the
 paragraphs around it looks like a mistake even when every individual line is
@@ -58,6 +61,12 @@ the column while the prose stays put.
 For more on the underlying research, the classic starting point is Bringhurst's
 [Elements of Typographic Style](https://en.wikipedia.org/wiki/The_Elements_of_Typographic_Style),
 which is where most of the numbers quoted above eventually trace back to.
+
+## What a list directly under a heading does
+
+- It sits at the heading's own spacing rather than adding its top margin to it.
+- Adjacent margins collapse, so the larger of the two wins.
+- This case exists in the fixture only so the collapse can be measured.
 
 ## Where this leaves the fixture
 
