@@ -123,18 +123,19 @@ Verified ratios, already confirmed and not to be re-derived:
 
 ## Widths
 
-Four widths exist. Three are tokens, one is the absence of a container.
+Three widths exist. Two are tokens, one is the absence of a container.
 
 | Name | Token | Value | Used for |
 |---|---|---|---|
 | measure | `--container-measure` | 66ch | Body prose, the reading column |
-| narrow | `--container-narrow` | 880px | Pull quotes, statements, emphasis |
 | main | `--container-main` | 1120px | Tables, figures, charts, metric rows |
 | bleed | none | full | Panes, hero imagery |
 
-**Width is a property of the block, not an author choice.** A data table is always main. A data table is always main. The authoring project does not get a `width` argument, because width is part of what the block *is*, and letting it be set per instance is how a system stops being a system.
+**Width is a property of the block, not an author choice.** A data table is always main. The authoring project does not get a `width` argument, because width is part of what the block *is*, and letting it be set per instance is how a system stops being a system.
 
-The one exception is `image`, which takes `width="measure|narrow|main|bleed"` because in-article imagery legitimately varies by intent.
+The one exception is `image`, which takes `width="measure|main|bleed"` because in-article imagery legitimately varies by intent.
+
+**`narrow` is gone from this table, and `--container-narrow` is not.** No article block uses 880px. `pullquote` was the block the width existed for and it turned out to be measure, read off the Reference's own `max-width: none`. The token stays because it is live on four marketing pages, carrying pull quotes and statements there, so it is a marketing-page width rather than an article one. A block that wants it should add the row back with evidence, the way the pullquote correction was made: a value from the Reference or from the implementation, not an assumption.
 
 Each block's width is declared in the table below and is not overridable.
 
@@ -247,7 +248,7 @@ The build fails on a marker with no note, a note with no marker, or a duplicate 
 
 | Shortcode | Args | Width | P | Notes |
 |---|---|---|---|---|
-| `epigraph` | `attribution` | narrow | P | |
+| `epigraph` | `attribution` | UNVERIFIED | P | Assumed narrow. `pullquote` carried the same assumption and turned out to be measure |
 | `callout` | `label` | measure | P | Closed set, see below |
 | `glossary` | `title` | measure | P | |
 |   `term` | `word` | | P | Content is the definition |
@@ -283,4 +284,4 @@ The personal `aside` is not a callout. Callouts are informational and carry a la
 
 - The `image` block is the only one with an author-set width. Watch whether that stays justified once real articles exist.
 - `related` needs a cluster taxonomy that does not exist yet. Until it does, `related` requires explicit items.
-- The Component Reference has no `container-narrow` counterpart, so pull quote and epigraph widths are set here from repo evidence rather than from the reference. Confirm visually once components are built.
+- The Component Reference has no `container-narrow` counterpart. `pullquote` is settled at measure, from the Reference's own `max-width: none`. `epigraph` is still unverified and inherits the same suspicion: check the Reference before building it rather than assuming narrow.
