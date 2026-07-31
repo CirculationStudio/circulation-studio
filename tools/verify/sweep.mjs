@@ -20,7 +20,7 @@ import { chromium } from "playwright";
 import { assertReadyToMeasure } from "./readiness.mjs";
 
 const BASE = process.env.VERIFY_BASE || "http://localhost:8899";
-const URL = process.argv[2] || `${BASE}/articles/pipeline-test/`;
+const URL = process.argv[2] || `${BASE}/library/pipeline-test/`;
 const WIDTHS = [390, 1440, 2560];
 
 /* Every type the sweep claims to cover. `min` is the number of matches below

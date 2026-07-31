@@ -1083,13 +1083,29 @@ export default function (eleventyConfig) {
     return content;
   });
 
-  /* Articles. Globbed rather than tag-driven, so an article is an article by
-     virtue of where it lives and an author cannot half-enrol one by forgetting
-     a tag. Nothing consumes this collection yet: there is no index page and no
-     related block, both of which are open decisions. It exists so the next
-     step has something to read. */
-  eleventyConfig.addCollection("articles", (collectionApi) =>
-    collectionApi.getFilteredByGlob("src/articles/*.md")
+  /* The two article tiers, at /yelp/<slug>/ and /library/<slug>/.
+     Permalinks and layout come from each directory's 11tydata.js, and the
+     reasoning for all of it is in tools/eleventy/article-directory-data.js.
+
+     Globbed rather than tag-driven, so an article belongs to a tier by virtue
+     of where it lives and nobody can half enrol one by forgetting a tag. Same
+     rule the retired `articles` collection used, applied twice.
+
+     TWO COLLECTIONS, AND NO THIRD ONE FOR "EVERYTHING". The hub will list its
+     own spokes from `collections.yelp`. The sitemap wants every URL on the
+     site, which is not the union of these two: it is those plus the five
+     marketing pages plus whatever comes later. Eleventy already maintains
+     exactly that as `collections.all`, so a third collection here would be a
+     narrower answer to the sitemap's question and a second thing to keep in
+     step. A template that genuinely wants both tiers and nothing else writes
+     `collections.yelp.concat(collections.library)`, which is one expression
+     and cannot fall out of date. */
+  eleventyConfig.addCollection("yelp", (collectionApi) =>
+    collectionApi.getFilteredByGlob("src/yelp/*.md")
+  );
+
+  eleventyConfig.addCollection("library", (collectionApi) =>
+    collectionApi.getFilteredByGlob("src/library/*.md")
   );
 
   /* JSON-LD serialiser for partials/schema.njk.

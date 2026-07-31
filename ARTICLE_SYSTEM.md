@@ -240,10 +240,15 @@ Not decided. Do not resolve any of these silently.
   rather than from `tokens/*.css`. They are invisible to the token
   reconciliation, which is how `--text-article-h3` sat at a wrong holding value
   for several commits.
-- **Article URLs are temporary.** `/articles/pipeline-test/` is Eleventy's
-  default permalink. No scheme, no redirects, no index page.
+- ~~**Article URLs are temporary.**~~ **Decided.** Two tiers, one flat segment
+  each: `/yelp/<slug>/` for Yelp Hub spokes and `/library/<slug>/` for
+  everything else. Membership follows location, permalinks come from each
+  directory's `11tydata.js`, and cluster membership is carried by internal
+  linking and schema rather than by the path, so reorganising a content map
+  never becomes a redirect. `/yelp/` itself is the hub page and is not built
+  yet. The migration redirect map is still to be collected, see `src/_redirects`.
 - **`epigraph` width is UNVERIFIED.** It carries the assumption `pullquote`
   carried, and that one was wrong. See SHORTCODES.md.
-- **`src/articles/pipeline-test.md` is a disposable fixture**, not content. It
+- **`src/library/pipeline-test.md` is a disposable fixture**, not content. It
   exists to exercise every block and joint. Delete it when real articles land,
   and delete the manifest counts with it.

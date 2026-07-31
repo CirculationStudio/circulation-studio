@@ -163,7 +163,7 @@ readingtime: 18
 dropcap: true           # once per piece, at the open only
 reviewed: 2026-07
 nextreview: 2027-01
-changelog: /articles/.../changes/
+changelog: /library/.../changes/
 cluster: measurement    # drives the related block
 ---
 ```

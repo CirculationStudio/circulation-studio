@@ -14,8 +14,8 @@ export default {
   /* Footer colophon links. Deliberately no social links and no credential
      badges, per the locked design. */
   footer: [
-    { label: "Articles", url: "/articles/" },
-    { label: "Yelp Hub", url: "/yelp-hub/" },
+    { label: "Library", url: "/library/" },
+    { label: "Yelp Hub", url: "/yelp/" },
     { label: "Privacy Policy", url: "/privacy-policy/" },
     { label: "Accessibility Statement", url: "/accessibility-statement/" }
   ]

@@ -272,7 +272,7 @@ paragraph rule is doing any work.
 ## Case five, an h2 as the last element in the body
 
 {% related title="Related" %}
-{% item kind="Field Note", title="How the measure was chosen", url="/articles/measure/" %}
-{% item kind="Guide", title="Writing for answer engines", url="/articles/aeo/" %}
-{% item kind="Whitepaper", title="The Yelp Ads benchmark", url="/articles/yelp-benchmark/" %}
+{% item kind="Field Note", title="How the measure was chosen", url="/library/measure/" %}
+{% item kind="Guide", title="Writing for answer engines", url="/library/aeo/" %}
+{% item kind="Whitepaper", title="The Yelp Ads benchmark", url="/yelp/yelp-benchmark/" %}
 {% endrelated %}
