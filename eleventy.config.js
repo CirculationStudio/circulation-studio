@@ -756,6 +756,24 @@ export default function (eleventyConfig) {
     );
   });
 
+  /* pullquote. The CSS already exists in longform.css and is untouched.
+
+     THE ATTRIBUTION SITS IN A FOOTER, and that is a composition requirement
+     rather than a semantic preference. markdown-it only treats a line as raw
+     HTML if it starts a block-level tag or is a tag alone on its line.
+     `<cite>Attribution</cite>` is neither, so it would be parsed as a
+     paragraph and would swallow the `</blockquote>` on the line after it,
+     breaking the element. `<footer>` is a block tag, so it opens an HTML block
+     that runs to the blank line and carries the closing tag with it. It is
+     also the standard attribution pattern, so the fix costs nothing. */
+  eleventyConfig.addPairedShortcode("pullquote", function (content, options = {}) {
+    const attribution = (options && options.attribution) || "";
+    const cite = attribution
+      ? `<footer><cite>${escapeHtml(attribution)}</cite></footer>\n`
+      : "";
+    return `\n<blockquote class="cs-pullquote">\n\n${content.trim()}\n\n${cite}</blockquote>\n`;
+  });
+
   /* Pane rules from SHORTCODES.md, enforced against the BUILT HTML rather than
      by counting shortcode calls.
 

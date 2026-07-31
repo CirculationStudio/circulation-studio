@@ -46,6 +46,36 @@
     margin-top: var(--space-16);
   }
 
+  /* ============================================================
+     PULLQUOTE SURFACES. Borders and text only, so it inherits cleanly, and
+     both variants are the Reference's own rather than additions.
+
+     The two deep surfaces take the STRONG border tint, .45 on ink and .5 on
+     madder, not the hairline the faq uses. A pull quote is bracketed by its
+     rules; they are the component rather than a divider inside it.
+     ============================================================ */
+  .cs-pullquote--on-deep,
+  .cs-pane--ink .cs-pullquote {
+    border-top-color: var(--border-on-deep-strong);
+    border-bottom-color: var(--border-on-deep-strong);
+    color: var(--text-on-deep);
+  }
+  .cs-pullquote--on-deep cite,
+  .cs-pane--ink .cs-pullquote cite {
+    color: var(--text-on-deep-faint);
+  }
+
+  .cs-pullquote--on-accent,
+  .cs-pane--madder .cs-pullquote {
+    border-top-color: var(--border-on-accent-strong);
+    border-bottom-color: var(--border-on-accent-strong);
+    color: var(--text-on-madder);
+  }
+  .cs-pullquote--on-accent cite,
+  .cs-pane--madder .cs-pullquote cite {
+    color: var(--text-on-madder-muted);
+  }
+
   .cs-stat {
     display: flex;
     flex-direction: column;

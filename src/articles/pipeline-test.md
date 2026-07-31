@@ -67,6 +67,10 @@ For more on the underlying research, the classic starting point is Bringhurst's
 [Elements of Typographic Style](https://en.wikipedia.org/wiki/The_Elements_of_Typographic_Style),
 which is where most of the numbers quoted above eventually trace back to.
 
+{% pullquote attribution="Robert Bringhurst" %}
+A book is not an object with pages. It is a machine for reading.
+{% endpullquote %}
+
 ## What a list directly under a heading does
 
 - It sits at the heading's own spacing rather than adding its top margin to it.
@@ -106,6 +110,11 @@ measured against the rhythm between two paragraphs outside one.
 
 {% stat value="3.0x", label="the locked inline lockup ratio", source="Design system, 2026" %}
 
+{% pullquote attribution="On an ink pane" %}
+The rules bracket the quote, so they take the strong tint rather than a
+hairline.
+{% endpullquote %}
+
 {% faq title="On ink" %}
 {% qa q="Do the hairlines follow the surface?" %}
 They do. Every colour this block has is a border or text, and a descendant
@@ -133,6 +142,10 @@ A second paragraph on madder, again so the internal rhythm can be measured.{% fn
 - A second item.
 
 {% stat value="8.06:1", label="paper on madder, the only pairing available here", source="Verified contrast table, 2026" %}
+
+{% pullquote attribution="On a madder pane" %}
+Everything here is paper or a paper tint, the borders included.
+{% endpullquote %}
 
 {% faq title="On madder" %}
 {% qa q="Does the border tint differ from ink?" %}

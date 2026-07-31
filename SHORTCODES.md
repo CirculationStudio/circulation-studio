@@ -132,11 +132,13 @@ Four widths exist. Three are tokens, one is the absence of a container.
 | main | `--container-main` | 1120px | Tables, figures, charts, metric rows |
 | bleed | none | full | Panes, hero imagery |
 
-**Width is a property of the block, not an author choice.** A pull quote is always narrow. A data table is always main. The authoring project does not get a `width` argument, because width is part of what the block *is*, and letting it be set per instance is how a system stops being a system.
+**Width is a property of the block, not an author choice.** A data table is always main. A data table is always main. The authoring project does not get a `width` argument, because width is part of what the block *is*, and letting it be set per instance is how a system stops being a system.
 
 The one exception is `image`, which takes `width="measure|narrow|main|bleed"` because in-article imagery legitimately varies by intent.
 
 Each block's width is declared in the table below and is not overridable.
+
+**Correction, `pullquote` is measure and not narrow.** The vocabulary said narrow. The Component Reference's own CSS sets `max-width: none` on `.cs-pullquote`, which means it fills whatever column contains it, and in an article that column is the measure. Nothing in the Reference gives it an 880px cap. Corrected against the implementation rather than the table.
 
 ---
 
@@ -188,7 +190,7 @@ Paired shortcodes are marked P. Child shortcodes are indented under their parent
 | `stat` | `value` `label` `source` | measure | | `source` required |
 | `chart` | `title` `source` `caption` | main | P | Content is a markdown table of label/value rows |
 | `table` | `caption` `source` `kind` | main | P | `kind="comparison"` or `kind="data"`, defaults to `data`. `source` required for `data` only. Content is a markdown table |
-| `pullquote` | `attribution` | narrow | P | |
+| `pullquote` | `attribution` | measure | P | Fills the reading column, see note below |
 | `screenshot` | `src` `alt` `caption` | main | | Unretouched captures only |
 | `image` | `src` `alt` `caption` `width` | varies | | Only block with author-set width |
 | `aside` | `author` `label` | measure | P | Personal voice. Keeps its madder edge bar |
