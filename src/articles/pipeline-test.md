@@ -11,6 +11,12 @@ A paper pane opening the body, so the leading-pane case renders at all. It is
 the first element after the byline.
 {% endpane %}
 
+{% takeaways %}
+- The default title is "The short version" and needs no argument.
+- Its mist ground has no deep counterpart, so it cannot go inside a pane.
+- The build enforces that rather than trusting an author to remember.
+{% endtakeaways %}
+
 This file exists to prove that markdown renders through the site frame. It will
 be deleted. The subject is the reading measure, chosen so the fixture
 demonstrates the thing it is testing rather than sitting there as filler.

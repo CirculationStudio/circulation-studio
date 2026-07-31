@@ -1,0 +1,57 @@
+/* Takeaways: a summary panel, usually opening a long piece.
+ *
+ * PANE-EXCLUDED, and the reason is the one recorded in SHORTCODES.md rather
+ * than a preference. Its ground is mist, and a painted background is
+ * structural: no descendant selector maps it the way one maps text and
+ * borders, so on an ink pane the panel would stay light while everything
+ * around it went dark. The Reference gives mist no deep counterpart, so there
+ * is nothing to map it to. The shortcode declares data-no-pane and the build
+ * enforces it.
+ *
+ * RADIUS is --radius-control, the same call as table and faq.
+ *
+ * Values are the Reference's. Flow spacing is the standard 40px symmetric: a
+ * summary belongs to neither neighbour. */
+@layer components {
+  .cs-prose > .cs-takeaways {
+    margin-block: var(--space-40);
+  }
+
+  .cs-takeaways {
+    background: var(--surface-panel);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-control);
+    padding: 32px;
+  }
+
+  .cs-takeaways__title {
+    /* Set here rather than inherited from .cs-article h2, because this is a
+       panel label at 14px rather than a section heading at 22px. */
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 14px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text-body);
+    margin: 0 0 var(--space-16);
+  }
+
+  .cs-takeaways ul,
+  .cs-takeaways ol {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0;
+    padding-left: 20px;
+  }
+  .cs-takeaways ul { list-style: disc }
+  .cs-takeaways ol { list-style: decimal }
+
+  .cs-takeaways li {
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-body);
+    margin: 0;
+  }
+}

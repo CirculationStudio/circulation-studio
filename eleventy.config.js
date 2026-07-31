@@ -631,7 +631,7 @@ export default function (eleventyConfig) {
        line may appear between the closing scroll div and the reopened
        column. */
     return outsideColumn(
-      `<figure class="cs-mainwidth cs-table cs-table--${kind}">\n<div class="cs-table__scroll">\n\n` +
+      `<figure class="cs-mainwidth cs-table cs-table--${kind}" data-no-pane="main width">\n<div class="cs-table__scroll">\n\n` +
         `${content.trim()}` +
         `\n\n</div>\n${figcaption}\n</figure>`
     );
@@ -774,6 +774,23 @@ export default function (eleventyConfig) {
     return `\n<blockquote class="cs-pullquote">\n\n${content.trim()}\n\n${cite}</blockquote>\n`;
   });
 
+  /* takeaways: the panel that opens a long piece with its own summary.
+
+     PANE-EXCLUDED. Its ground is mist, and mist has no deep counterpart in the
+     Reference. That is the "paints something" test from SHORTCODES.md: a
+     descendant selector cannot map a painted background the way it maps text
+     and borders, so the panel would keep its light ground on an ink pane. It
+     declares itself with data-no-pane and the transform enforces it. */
+  eleventyConfig.addPairedShortcode("takeaways", function (content, options = {}) {
+    const title = (options && options.title) || "The short version";
+    return (
+      `\n<div class="cs-takeaways" data-no-pane="mist ground">\n` +
+      `<h2 class="cs-takeaways__title">${escapeHtml(title)}</h2>\n\n` +
+      `${content.trim()}` +
+      `\n\n</div>\n`
+    );
+  });
+
   /* Pane rules from SHORTCODES.md, enforced against the BUILT HTML rather than
      by counting shortcode calls.
 
@@ -818,12 +835,19 @@ export default function (eleventyConfig) {
         if (classes.includes("cs-pane--madder")) counts.madder += 1;
       }
 
-      /* A main-width block inside a pane. Caught here rather than in the
+      /* A pane-excluded block inside a pane. Caught here rather than in the
          shortcode so it is caught by ANY route into a pane, not only a direct
          call, which is the same reason the pane counts are read from output
-         rather than from call sites. */
-      if (classes.includes("cs-mainwidth") && insidePane) {
-        wideInPane.push(classes.filter((c) => c !== "cs-mainwidth").join(".") || "cs-mainwidth");
+         rather than from call sites.
+
+         The block declares itself with data-no-pane="<reason>", so adding a
+         new excluded block is an attribute on its wrapper rather than an edit
+         here. The reason is carried into the error, because "not allowed" with
+         no cause is a rule someone will try to work around. */
+      const reason = /data-no-pane="([^"]*)"/.exec(tag[2])?.[1];
+      if (reason && insidePane) {
+        const name = classes.find((c) => c.startsWith("cs-") && !c.includes("--")) || "block";
+        wideInPane.push(`${name} (${reason})`);
       }
 
       stack.push(isPane);
@@ -831,12 +855,12 @@ export default function (eleventyConfig) {
 
     if (wideInPane.length) {
       throw new Error(
-        `[pane] main-width block inside a pane in ${outputPath}: ${wideInPane.join(", ")}. ` +
-          `A pane contains reading-column content only. Blocks at --container-main ` +
-          `(table, chart, figure, metrics, screenshot, related) cannot go inside one. ` +
-          `Rendered, it escapes the pane's inner column entirely: it takes no width ` +
-          `constraint and its painted colours do not follow the surface, so a mist ` +
-          `table header lands on ink at 1.12:1. See SHORTCODES.md, Surfaces.`
+        `[pane] pane-excluded block inside a pane in ${outputPath}: ${wideInPane.join(", ")}. ` +
+          `A pane contains reading-column content only. Two things disqualify a block: ` +
+          `a width wider than the measure, which escapes the pane's inner column and ` +
+          `takes no constraint at all; and a painted ground, which is structural and ` +
+          `does not follow the surface, so a mist panel lands on ink at 1.12:1. ` +
+          `See SHORTCODES.md, Surfaces.`
       );
     }
 

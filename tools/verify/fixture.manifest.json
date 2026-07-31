@@ -58,6 +58,14 @@
     "pullquote cite": {
       "selector": ".cs-pullquote cite",
       "count": 3
+    },
+    "takeaways": {
+      "selector": ".cs-takeaways",
+      "count": 1
+    },
+    "takeaways item": {
+      "selector": ".cs-takeaways li",
+      "count": 3
     }
   }
 }
