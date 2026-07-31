@@ -130,6 +130,24 @@ function elementsWithClass(html, className) {
   return out;
 }
 
+/* Inner HTML of the first element carrying a class, or null if there is none.
+   Marking in, content out, with the tag name never named by the caller.
+
+   The open tag is stripped by matching one element name, whatever it turned out
+   to be, and the close by matching the last one. Trimmed, because every emitter
+   in this file pads block content with newlines and a schema value should not
+   carry them. */
+function innerWithClass(html, className) {
+  const [element] = elementsWithClass(html, className);
+  if (!element) return null;
+  const outer = sliceElement(html, element.index, element.tag);
+  if (outer == null) return null;
+  return outer
+    .replace(/^<[a-zA-Z][a-zA-Z0-9-]*\b[^>]*>/, "")
+    .replace(/<\/[a-zA-Z][a-zA-Z0-9-]*\s*>$/, "")
+    .trim();
+}
+
 /* Outer HTML of the element opening at openIndex, found by counting depth for
    ITS OWN tag name. The name is a parameter rather than a constant, which is
    what makes this work for any wrapper a block chooses. */
@@ -407,39 +425,47 @@ export default function (eleventyConfig) {
       }
     }
 
-    /* 2. Pull the question and answer pairs back out.
+    /* 2. Pull the question and answer pairs back out, on the same two helpers
+       the orphan count and paneRules use.
 
-       Both the faq block and each answer are sliced by COUNTING DIV DEPTH from
-       their own opening tag, never by a lazy regex. Two reasons, both of which
-       bit on the first attempt: a lazy match on the faq stops at the next faq
+       IT USED TO HARDCODE THE MARKUP, and that was the last place in this file
+       that did. It opened on /<div class="cs-faq">/g, sliced with a literal
+       "div", and found the question and the answer by their exact opening
+       tags. Three of those four need the class attribute to be EXACTLY
+       "cs-faq", so adding one more class to the wrapper, or moving faq to a
+       section element, stopped the schema emitting. With no error: the orphan
+       count above would still pass, the page would still build, and the
+       FAQPage nodes would simply not be there. That is the silent pass the
+       header of this file was rewritten to get rid of, sitting thirty lines
+       under the comment explaining it.
+
+       Depth counting still matters and is now inside sliceElement, which takes
+       the tag name off the element it found. Both reasons it was there
+       originally still bite: a lazy match on the faq stops at the next faq
        rather than at its own close, so a page with three of them produced two
-       nodes covering the wrong spans; and an answer may legitimately contain
-       divs of its own, a stat for instance, so a non-greedy match ends at the
-       first inner close and returns an empty answer.
+       nodes covering the wrong spans, and an answer may legitimately contain
+       elements of its own, a stat for instance, so a non-greedy match ends at
+       the first inner close and returns an empty answer.
 
-       The index passed in must point AT the opening tag, so it is counted. */
+       Nesting a qa inside its own faq is what makes this correct without a
+       lastIndex dance: each faq is sliced to its own close, and the qa pairs
+       are read out of that slice. */
     const faqs = [];
-    const faqOpen = /<div class="cs-faq">/g;
-    let fm;
-    while ((fm = faqOpen.exec(content))) {
-      const body = sliceElement(content, fm.index, "div");
-      if (!body) break;
-      faqOpen.lastIndex = fm.index + body.length;
+    for (const faq of elementsWithClass(content, "cs-faq")) {
+      const body = sliceElement(content, faq.index, faq.tag);
+      if (!body) continue;
 
-      const title = /<h2 class="cs-faq__title">([\s\S]*?)<\/h2>/.exec(body)?.[1] || "";
       const pairs = [];
-      const qaRe = /<summary class="cs-qa__q">([\s\S]*?)<\/summary>/g;
-      let qm;
-      while ((qm = qaRe.exec(body))) {
-        const answerAt = body.indexOf('<div class="cs-qa__a', qm.index);
-        if (answerAt < 0) continue;
-        const outer = sliceElement(body, answerAt, "div") || "";
-        pairs.push({
-          q: qm[1],
-          a: outer.replace(/^<div\b[^>]*>/, "").replace(/<\/div\s*>$/, "").trim()
-        });
+      for (const qa of elementsWithClass(body, "cs-qa")) {
+        const qaBody = sliceElement(body, qa.index, qa.tag);
+        if (!qaBody) continue;
+        const q = innerWithClass(qaBody, "cs-qa__q");
+        const a = innerWithClass(qaBody, "cs-qa__a");
+        if (q === null || a === null) continue;
+        pairs.push({ q, a });
       }
-      if (pairs.length) faqs.push({ title, pairs });
+
+      if (pairs.length) faqs.push({ title: innerWithClass(body, "cs-faq__title") || "", pairs });
     }
 
     if (!faqs.length) return content;
