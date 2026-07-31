@@ -42,7 +42,12 @@ layout: layouts/base.njk
        obviously wrong and greppable, whereas a blank byline reads as an
        article nobody wrote and could ship unnoticed. #}
     {%- set byline = authors[author] -%}
-    <p class="caption">{{ byline.name if byline else author }}, updated {{ updated | calendarDate }}</p>
+    {# The date is emitted twice on purpose: the visible string for a reader,
+       and the machine date in datetime= for an answer engine deciding whether
+       this piece is current. Both filters read UTC parts, so the two can never
+       disagree by a day. #}
+    <p class="caption">{{ byline.name if byline else author }}, updated
+      <time datetime="{{ updated | isoDate }}">{{ updated | calendarDate }}</time></p>
   </header>
 
   {{ content | safe }}

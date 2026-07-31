@@ -140,6 +140,30 @@ export default function (eleventyConfig) {
     });
   });
 
+  /* The same date as YYYY-MM-DD, for a <time datetime> attribute.
+
+     This is the half an answer engine actually reads. A rendered "July 30,
+     2026" is for a person; the machine date is what a crawler uses to decide
+     whether a piece is current, and getting it wrong by a day is worse than
+     omitting it. So it shares the calendar-date treatment above exactly: UTC
+     parts only, never local, or the same timezone slip that was printing the
+     29th would reappear in the attribute while the visible text read the 30th,
+     which is the one failure mode nobody would notice by looking.
+
+     toISOString is already UTC, so the date half of it is the calendar date. */
+  eleventyConfig.addFilter("isoDate", (value) => {
+    if (!value) return "";
+
+    const date =
+      value instanceof Date
+        ? value
+        : new Date(`${String(value).slice(0, 10)}T00:00:00Z`);
+
+    if (Number.isNaN(date.getTime())) return "";
+
+    return date.toISOString().slice(0, 10);
+  });
+
   /* Articles. Globbed rather than tag-driven, so an article is an article by
      virtue of where it lives and an author cannot half-enrol one by forgetting
      a tag. Nothing consumes this collection yet: there is no index page and no
