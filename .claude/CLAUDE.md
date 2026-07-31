@@ -142,12 +142,13 @@ Key principles:
    - SITE_ARCHITECTURE.md for content strategy
    - SCHEMA.md for structured data requirements
    - voice-tone.md for copy guidelines
+   - SHORTCODES.md and ARTICLE_SYSTEM.md before touching the article system
 
 2. Make changes following all constraints above
 
 3. Verify accessibility, performance, and brand compliance
 
-4. Test build: `npm run build`
+4. Test build: `npm run build`, then `npm run verify` if the article system was touched
 
 5. Check preview deployment before considering complete
 
