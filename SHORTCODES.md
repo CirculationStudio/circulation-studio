@@ -21,7 +21,9 @@ Source of truth for the visual design remains the Claude Design Component Refere
 
 **Names are lowercase, single word, no hyphens.** `pullquote`, not `pull-quote` or `pullQuote`. Hyphens invite the authoring project to guess.
 
-**Arguments are named, never positional.** `{% stat value="..." label="..." %}`, never `{% stat "..." "..." %}`. Positional arguments break the moment an argument is optional.
+**Arguments are named, never positional.** `{% stat value="...", label="..." %}`, never `{% stat "..." "..." %}`. Positional arguments break the moment an argument is optional.
+
+**Named arguments are comma separated.** Nunjucks requires it: `{% stat value="68%", label="...", source="..." %}`. Space separation fails the build with a parse error. This applies to paired shortcodes too; the pane escaped it only because it takes a single argument.
 
 **Paired shortcodes wrap content.** `{% takeaways %}` ... `{% endtakeaways %}`. The content between is markdown and gets rendered as markdown.
 
@@ -45,7 +47,7 @@ Three registers: `paper` (default), `ink` (dramatic), `madder` (rarest).
 {% pane surface="ink" %}
 Body copy here.
 
-{% stat value="[XX min]" label="median first response" source="..." %}
+{% stat value="[XX min]", label="median first response", source="..." %}
 {% endpane %}
 ```
 
