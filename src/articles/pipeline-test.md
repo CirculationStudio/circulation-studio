@@ -105,6 +105,13 @@ measured against the rhythm between two paragraphs outside one.
 - A second item, to confirm markers survive the surface change.
 
 {% stat value="3.0x", label="the locked inline lockup ratio", source="Design system, 2026" %}
+
+{% table kind="comparison", number="3", caption="A main-width table inside a full-bleed pane. Out of scope, present so the composition can be looked at." %}
+| Block | Width outside a pane | Width inside one |
+| --- | --- | --- |
+| Prose | Measure | Measure |
+| Table | Main | To be decided |
+{% endtable %}
 {% endpane %}
 
 {% pane surface="madder" %}
@@ -124,6 +131,29 @@ A second paragraph on madder, again so the internal rhythm can be measured.
 {% endpane %}
 
 A paragraph immediately below the madder pane, closing the pair of joints.
+
+## Tables
+
+A comparison table, qualitative and carrying no numbers, so it needs no source.
+
+{% table kind="comparison", number="1", caption="How the two surfaces differ in what they can carry." %}
+| Property | Ink | Madder |
+| --- | --- | --- |
+| Body copy | Paper at 16.06:1 | Paper at 8.06:1 |
+| Accent available | Madder-lift, underlines only | None, paper tints only |
+| Frequency | One per page | One per page, rarer still |
+{% endtable %}
+
+A data table, carrying numbers, so the build refuses it without a source.
+
+{% table kind="data", number="2", caption="Measured contrast, article surfaces.", source="Verified contrast table, 2026" %}
+| Pairing | Ratio | Passes |
+| --- | --- | --- |
+| Paper on ink | 16.06:1 | AA and AAA |
+| Paper 55% on ink | 5.62:1 | AA |
+| Paper on madder | 8.06:1 | AA and AAA |
+| Paper 72% on madder | 4.84:1 | AA |
+{% endtable %}
 
 ## Case one, first of two stacked headings
 

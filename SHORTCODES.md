@@ -27,7 +27,9 @@ Source of truth for the visual design remains the Claude Design Component Refere
 
 **Paired shortcodes wrap content.** `{% takeaways %}` ... `{% endtakeaways %}`. The content between is markdown and gets rendered as markdown.
 
-**Any block carrying a number requires a `source`.** Not optional, not defaulted. `stat`, `chart`, `figure`, `metrics`, and `table` all fail the build without one. This is the house rule about sourcing made mechanical rather than remembered.
+**Any block carrying a number requires a `source`.** Not optional, not defaulted. `stat`, `chart`, `figure` and `metrics` all fail the build without one. This is the house rule about sourcing made mechanical rather than remembered.
+
+`table` is conditional on its `kind`, because the rule is about numbers and not about blocks. `kind="data"` fails the build without a source. `kind="comparison"` is qualitative, often carries no number at all, and a source there would be an empty ritual. `kind` defaults to `data`, the stricter of the two, so a forgotten `kind` fails for a missing source rather than silently opting out of the rule.
 
 **Unverified values stay bracketed.** `value="[XX%]"` renders as written. The build does not validate bracket contents. Brackets are the signal to a human that this is not publishable yet, exactly as the Component Reference uses them.
 
@@ -171,7 +173,7 @@ Paired shortcodes are marked P. Child shortcodes are indented under their parent
 | `toc` | `title` | measure | | Auto-built from h2. Default title "In this report" |
 | `stat` | `value` `label` `source` | measure | | `source` required |
 | `chart` | `title` `source` `caption` `number` | main | P | Content is a markdown table of label/value rows |
-| `table` | `caption` `number` `source` `kind` | main | P | `kind="comparison"` or `kind="data"`. Content is a markdown table |
+| `table` | `caption` `number` `source` `kind` | main | P | `kind="comparison"` or `kind="data"`, defaults to `data`. `source` required for `data` only. Content is a markdown table |
 | `pullquote` | `attribution` | narrow | P | |
 | `screenshot` | `src` `alt` `caption` `number` | main | | Unretouched captures only |
 | `image` | `src` `alt` `caption` `width` | varies | | Only block with author-set width |

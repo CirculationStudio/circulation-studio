@@ -1,0 +1,146 @@
+/* Table block: a markdown table at main width, in a bordered figure.
+ *
+ * FIRST BLOCK TO LEAVE THE READING COLUMN, so the width mechanism here is the
+ * one chart, figure, metrics, screenshot and related will inherit.
+ *
+ * .cs-mainwidth is the generic half and is deliberately not named for tables.
+ * The shortcode lifts the figure out of .cs-article__column via the shared
+ * outsideColumn helper, so it lands as a direct child of the full-width
+ * article; this class then holds it to --container-main and centres it. The
+ * expression is the article column's own, with a different token, so a main
+ * block and a measure block share one gutter and stay concentric.
+ *
+ * No 100vw anywhere: it counts a classic scrollbar and overshoots, which is
+ * what put a horizontal scrollbar on What We Do. No grid or flex wrapper
+ * around prose either, because those break the margin collapsing the whole
+ * prose rhythm depends on.
+ *
+ * RADIUS. The Component Reference draws this figure at 8px inline. It is NOT
+ * used here, and that is a deliberate departure recorded rather than hidden.
+ * The token set has exactly two radii, --radius-control at 2px and
+ * --radius-pill, and main.css states the rule as "near-square engraved-plate
+ * corners everywhere, buttons included". 8px would be a third value with no
+ * token and no rule behind it, appearing on one block. This uses
+ * --radius-control. If 8px is intended it needs a token and an amendment to
+ * the "everywhere" rule, not a one-off literal.
+ *
+ * Everything else is the Reference's, not invented: hairline border, mist
+ * header row, 11px tracked caps for th, 14px body copy for td, and the
+ * uppercase first column on comparison tables only. */
+@layer components {
+  .cs-article > .cs-mainwidth {
+    width: min(var(--container-main), 100% - 80px);
+    margin-inline: auto;
+  }
+
+  /* Same reasoning as the stat, at the same value: a table is self-contained
+     evidence belonging to neither neighbour, so its spacing is symmetric. */
+  .cs-article > .cs-table {
+    margin-block: var(--space-40);
+  }
+  /* A table ending the article contributes no bottom margin, so the article's
+     padding alone sets the gap to the footer. Same trap as the pane: a generic
+     rule in article.css would tie on specificity and lose on import order. */
+  .cs-article > .cs-table:last-child {
+    margin-bottom: 0;
+  }
+
+  .cs-table {
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-control);
+    /* Clips the table's corners to the figure's radius, and is what makes the
+       inner scroller's overflow read as belonging to the frame. */
+    overflow: hidden;
+  }
+
+  .cs-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .cs-table thead {
+    background: var(--surface-panel);
+  }
+
+  .cs-table th {
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: 14px 20px;
+    text-align: left;
+  }
+
+  .cs-table td {
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-body);
+    /* Padding is not stated in the Reference for td. It matches th, because a
+       column whose header and cells inset differently reads as misaligned. */
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border-hairline);
+  }
+  /* The figure's own border already closes the block, so the last row's rule
+     would double it. */
+  .cs-table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  /* COMPARISON ONLY. The first column of a comparison table is a row label,
+     which is why it takes the display face. NEVER apply this to kind="data",
+     where the first column may be a number and would be set in caps at 12px
+     in slate, which is both wrong and hard to read. */
+  .cs-table--comparison tbody td:first-child {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 12px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  /* NOT SPECIFIED IN THE REFERENCE, which gave no caption treatment. Built
+     from conventions already in the system rather than invented: the number
+     takes the tracked-caps label style used elsewhere, the caption takes muted
+     body copy, and the source takes the same faint register it has on a stat. */
+  .cs-table__caption {
+    padding: 14px 20px;
+    border-top: 1px solid var(--border-hairline);
+    font-family: var(--font-body);
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+  .cs-table__number {
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text-body);
+    margin-right: var(--space-8);
+  }
+  .cs-table__source {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+
+  /* PHONE. The table stops shrinking and scrolls instead, because a data table
+     squeezed under about 560px stops being readable before it stops fitting.
+     The scroller is the inner div so the figure's border and radius stay put
+     and the overflow reads as inside the frame rather than as the page
+     breaking. The document itself never scrolls sideways. */
+  @media (max-width: 767px) {
+    .cs-table__scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .cs-table table {
+      min-width: 560px;
+    }
+  }
+}

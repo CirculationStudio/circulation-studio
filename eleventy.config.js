@@ -198,6 +198,24 @@ export default function (eleventyConfig) {
      on their own lines, a blank line either side of the content, and never
      indents the content, because four leading spaces would make it a code
      block. */
+  /* Lifts a block OUT of the prose column and back in again.
+
+     layouts/article.njk wraps the body in .cs-article__column, which is what
+     establishes the reading measure once in the body face. A block wider than
+     that measure cannot live inside it, and the only pure-CSS way out of a
+     centred wrapper is 100vw, which counts a classic scrollbar and overshoots.
+     Closing the column, emitting the block as a direct child of the full-width
+     article, and reopening the column gets any width with no viewport unit.
+
+     Established by pane, generalised here because table needs the same thing
+     and chart, figure, metrics, screenshot and related all will. The block
+     sets its own width; this only decides where in the tree it sits.
+
+     Tag counts stay balanced: the layout opens one column and closes one, and
+     every call here closes exactly one and opens exactly one. */
+  const outsideColumn = (html) =>
+    `\n</div>\n${html}\n<div class="cs-article__column cs-prose">\n`;
+
   const PANE_SURFACES = new Set(["paper", "ink", "madder"]);
 
   /* NAMED ARGUMENTS ARRIVE AS ONE KEYWORD OBJECT, not as positional
@@ -241,10 +259,10 @@ export default function (eleventyConfig) {
        A pane at the very end of an article leaves an empty column behind it.
        The stripEmptyColumns transform removes it, because an empty block would
        otherwise sit between the pane and the article's bottom padding. */
-    return (
-      `\n</div>\n<div class="cs-pane${modifier}">\n<div class="cs-pane__inner cs-prose">\n\n` +
-      `${content.trim()}` +
-      `\n\n</div>\n</div>\n<div class="cs-article__column cs-prose">\n`
+    return outsideColumn(
+      `<div class="cs-pane${modifier}">\n<div class="cs-pane__inner cs-prose">\n\n` +
+        `${content.trim()}` +
+        `\n\n</div>\n</div>`
     );
   });
 
@@ -304,6 +322,65 @@ export default function (eleventyConfig) {
       `<span class="cs-stat__label">${escapeHtml(label ?? "")}</span>` +
       `<span class="cs-stat__source">${escapeHtml(source)}</span>` +
       `</div>\n`
+    );
+  });
+
+  /* table: a markdown table at MAIN width, the first block to leave the
+     reading column.
+
+     WIDTH. It sits at --container-main, not at the 66ch measure, so it goes
+     through outsideColumn like a pane does and then constrains itself with
+     .cs-mainwidth. That class is deliberately generic rather than named for
+     tables: chart, figure, metrics, screenshot and related all need exactly
+     this and should reuse it rather than each inventing a breakout.
+
+     SOURCE IS CONDITIONAL, which corrects SHORTCODES.md's blanket rule.
+     kind="data" carries numbers and fails the build without a source.
+     kind="comparison" is qualitative in the Reference, often carries no
+     number at all, and a source would be an empty ritual.
+
+     kind DEFAULTS TO "data", the stricter of the two. A forgotten kind then
+     fails for a missing source rather than silently opting out of the house
+     rule, which is the right way round for a default to be wrong. */
+  const TABLE_KINDS = new Set(["comparison", "data"]);
+
+  eleventyConfig.addPairedShortcode("table", function (content, options = {}) {
+    const { caption, number, source } = options || {};
+    const kind = (options && options.kind) || "data";
+
+    if (!TABLE_KINDS.has(kind)) {
+      throw new Error(
+        `[table] unknown kind "${kind}" in ${this.page?.inputPath || "unknown file"}. ` +
+          `Known: ${[...TABLE_KINDS].join(", ")}. See SHORTCODES.md.`
+      );
+    }
+
+    if (kind === "data" && (!source || !String(source).trim())) {
+      throw new Error(
+        `[table] kind="data" requires a "source" in ${this.page?.inputPath || "unknown file"}. ` +
+          `A table of numbers is a block carrying numbers, see SHORTCODES.md. ` +
+          `Use kind="comparison" for a qualitative table, where source is optional. ` +
+          `caption=${JSON.stringify(caption ?? null)}`
+      );
+    }
+
+    const parts = [];
+    if (number) parts.push(`<span class="cs-table__number">Table ${escapeHtml(number)}</span>`);
+    if (caption) parts.push(`<span class="cs-table__text">${escapeHtml(caption)}</span>`);
+    if (source) parts.push(`<span class="cs-table__source">${escapeHtml(source)}</span>`);
+    const figcaption = parts.length
+      ? `<figcaption class="cs-table__caption">${parts.join("")}</figcaption>`
+      : "";
+
+    /* Blank lines around the content only, exactly as the pane does, so
+       markdown-it parses the markdown table and passes the wrapper through.
+       Everything after the content is one unbroken HTML block, so no blank
+       line may appear between the closing scroll div and the reopened
+       column. */
+    return outsideColumn(
+      `<figure class="cs-mainwidth cs-table cs-table--${kind}">\n<div class="cs-table__scroll">\n\n` +
+        `${content.trim()}` +
+        `\n\n</div>\n${figcaption}\n</figure>`
     );
   });
 

@@ -38,7 +38,12 @@ const EXPECTED = [
   { label: "pane inner",    selector: ".cs-pane__inner",                   min: 2, column: true },
   { label: "pane p",        selector: ".cs-pane__inner > p",               min: 2, column: true },
   { label: "pane h2",       selector: ".cs-pane__inner > h2",              min: 1, column: true },
-  { label: "pane stat",     selector: ".cs-pane__inner > .cs-stat",        min: 2, column: true }
+  { label: "pane stat",     selector: ".cs-pane__inner > .cs-stat",        min: 2, column: true },
+  /* Main width, deliberately NOT on the prose left edge. Measured and reported
+     but excluded from the alignment assertion, and checked separately below
+     for its own symmetry. */
+  { label: "table",         selector: ".cs-article > .cs-table",           min: 2, column: false },
+  { label: "table caption", selector: ".cs-article > .cs-table > .cs-table__caption", min: 2, column: false }
 ];
 
 const browser = await chromium.launch();
@@ -92,7 +97,23 @@ for (const width of WIDTHS) {
     failures.push(`@${width}: ${edges.length} different left edges in the prose column: ${edges.join(", ")}`);
   }
 
-  // 3. The document itself never scrolls sideways.
+  // 3. A main-width block is centred: equal gutter each side, and wider than
+  //    the prose column without ever exceeding the page.
+  const proseLeft = edges[0];
+  for (const box of measured.find((m) => m.label === "table")?.boxes || []) {
+    const rightGutter = Math.round((docWidth.clientWidth - box.right) * 10) / 10;
+    if (Math.abs(box.left - rightGutter) > 1) {
+      failures.push(`@${width} table: gutters not symmetric, left ${box.left} vs right ${rightGutter}`);
+    }
+    if (box.left > proseLeft) {
+      failures.push(`@${width} table: left ${box.left} is inside the prose edge ${proseLeft}, so it is not breaking out`);
+    }
+    if (box.right > docWidth.clientWidth + 1) {
+      failures.push(`@${width} table: right edge ${box.right} exceeds the page ${docWidth.clientWidth}`);
+    }
+  }
+
+  // 4. The document itself never scrolls sideways.
   if (docWidth.scrollWidth !== docWidth.clientWidth) {
     failures.push(`@${width}: horizontal scroll, scrollWidth ${docWidth.scrollWidth} vs clientWidth ${docWidth.clientWidth}`);
   }
