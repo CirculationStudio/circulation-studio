@@ -180,34 +180,46 @@ cluster: measurement    # drives the related block
 
 ## The vocabulary
 
-Paired shortcodes are marked P. Child shortcodes are indented under their parent and are only valid inside it.
+**Only LIVE shortcodes may be used in articles.** A PLANNED row describes intended behaviour and is not implemented. Reaching for one does not degrade, it fails the build: an unknown Nunjucks tag throws at parse time. Roughly forty are designed here and thirteen exist, so the distinction is most of the table.
+
+PLANNED rows are not deletable. They are the vocabulary design and the roadmap, and they are what stops the same block being reinvented under a different name later.
+
+Reading the tables:
+
+- **Status** is LIVE or PLANNED, and `tools/verify/contract.js` asserts it in both directions. A LIVE row that is not registered fails, and a registered shortcode that is missing or marked PLANNED fails.
+- **A bold argument is required** and the build fails without it. A plain one is optional. This is also checked against the implementation, by omitting each argument in turn and seeing whether the build objects.
+- **Paired shortcodes are marked P.** The content between the tags is markdown.
+- **Child shortcodes are indented** under their parent and are only valid inside it. The build catches orphans in the output.
+- Arguments belonging to a closed set are listed under Closed sets below.
 
 ### Article
 
-| Shortcode | Args | Width | P | Notes |
-|---|---|---|---|---|
-| `takeaways` | `title` | measure | P | Default title "The short version" |
-| `toc` | `title` | measure | | Auto-built from h2. Default title "In this report" |
-| `stat` | `value` `label` `source` | measure | | `source` required |
-| `chart` | `title` `source` `caption` | main | P | Content is a markdown table of label/value rows |
-| `table` | `caption` `source` `kind` | main | P | `kind="comparison"` or `kind="data"`, defaults to `data`. `source` required for `data` only. Content is a markdown table |
-| `pullquote` | `attribution` | measure | P | Fills the reading column, see note below |
-| `screenshot` | `src` `alt` `caption` | main | | Unretouched captures only |
-| `image` | `src` `alt` `caption` `width` | varies | | Only block with author-set width |
-| `aside` | `author` `label` | measure | P | Personal voice. Keeps its madder edge bar |
-| `tool` | `name` `description` `url` `label` | measure | | Default label "Open the tool" |
-| `faq` | `title` | measure | P | |
-|   `qa` | `q` | | P | Content is the answer |
-| `newsletter` | `copy` `label` | measure | | Default label "Get the notes" |
-| `signednote` | `author` | measure | P | Uses author key, renders signature |
-| `footnotes` | | measure | P | Contains `note` children |
-|   `note` | `id` | | P | Content is the note. Numbered automatically |
-| `related` | `title` | main | P | Contains `item` children. See the note below |
-|   `item` | `kind` `title` `url` | | | All three required |
+| Shortcode | Status | Args | Width | P | Notes |
+|---|---|---|---|---|---|
+| `pane` | LIVE | `surface` | bleed | P | Surface is a property of the pane, never of a block. See Surfaces |
+| `takeaways` | LIVE | `title` | measure | P | Default title "The short version" |
+| `toc` | PLANNED | `title` | measure | | Auto-built from h2. Default title "In this report" |
+| `stat` | LIVE | `value` `label` **`source`** | measure | | |
+| `chart` | PLANNED | `title` **`source`** `caption` | main | P | Content is a markdown table of label/value rows |
+| `table` | LIVE | `caption` **`source`** `kind` | main | P | `source` is required for `kind="data"` only, and `data` is the default, so a forgotten `kind` fails for a missing source. Content is a markdown table |
+| `pullquote` | LIVE | `attribution` | measure | P | Fills the reading column, see note below |
+| `screenshot` | PLANNED | `src` `alt` `caption` | main | | Unretouched captures only |
+| `image` | PLANNED | `src` `alt` `caption` `width` | varies | | Only block with author-set width |
+| `aside` | PLANNED | `author` `label` | measure | P | Personal voice. Keeps its madder edge bar |
+| `tool` | PLANNED | `name` `description` `url` `label` | measure | | Default label "Open the tool" |
+| `faq` | LIVE | `title` | measure | P | |
+|   `qa` | LIVE | **`q`** | | P | Content is the answer |
+| `newsletter` | PLANNED | `copy` `label` | measure | | Default label "Get the notes" |
+| `signednote` | PLANNED | `author` | measure | P | Uses author key, renders signature |
+| `footnotes` | LIVE | | measure | P | Contains `note` children |
+|   `note` | LIVE | **`id`** | | P | Content is the note. Numbered automatically |
+| `fn` | LIVE | **`id`** | inline | | The only inline shortcode. Places a footnote marker in running prose |
+| `related` | LIVE | `title` | main | P | Contains `item` children. See the note below |
+|   `item` | LIVE | **`kind`** **`title`** **`url`** | | | All three required |
 
 **`related` items are explicit for now.** The entry above described `related` as pulling from a `cluster` frontmatter taxonomy. That taxonomy does not exist: no article declares a cluster, there is no index to query, and nothing maps a cluster to a set of articles. Building the mechanism before the taxonomy would mean inventing both, so each item is written out with its own `kind`, `title` and `url`. When clusters exist, `related` gains a `cluster` argument and the explicit form stays as the override.
 
-**Inline:** `{% fn id="bringhurst" %}` places a footnote marker in running prose. The only inline shortcode in the vocabulary.
+**Inline:** `{% fn id="bringhurst" %}` places a footnote marker in running prose. The only inline shortcode in the vocabulary, and the reason it takes no blank lines around it: a blank line closes an HTML block, and a marker separated by one would be lifted out of its paragraph.
 
 **Footnotes are named, never numbered, and the build assigns every number.** A marker carries an `id` and the matching `{% note id="..." %}` carries the same one. Markers are numbered by order of appearance in the page, the notes are sorted to match, and each is linked to the other in both directions.
 
@@ -217,41 +229,41 @@ The build fails on a marker with no note, a note with no marker, or a duplicate 
 
 ### Guide
 
-| Shortcode | Args | Width | P | Notes |
-|---|---|---|---|---|
-| `beforeyoustart` | `time` | measure | P | `time` is prose, "About 30 minutes" |
-|   `need` | | | P | Content is a markdown list |
-|   `goodtoknow` | | | P | |
-| `step` | `n` `title` `src` `alt` `caption` | measure | P | Content is the instruction |
-| `youredone` | `title` | measure | P | Default title "You're done" |
-|   `exit` | `kind` `label` `url` | | | `kind="guide" | "tool" | "us"` |
+| Shortcode | Status | Args | Width | P | Notes |
+|---|---|---|---|---|---|
+| `beforeyoustart` | PLANNED | `time` | measure | P | `time` is prose, "About 30 minutes" |
+|   `need` | PLANNED | | | P | Content is a markdown list |
+|   `goodtoknow` | PLANNED | | | P | |
+| `step` | PLANNED | `n` `title` `src` `alt` `caption` | measure | P | Content is the instruction |
+| `youredone` | PLANNED | `title` | measure | P | Default title "You're done" |
+|   `exit` | PLANNED | **`kind`** **`label`** **`url`** | | | `kind` is a closed set, see below |
 
 ### Whitepaper
 
-| Shortcode | Args | Width | P | Notes |
-|---|---|---|---|---|
-| `execsummary` | `title` | measure | P | Default title "Executive summary" |
-| `methodology` | `title` | measure | P | |
-|   `method` | `label` | | P | Sample, Collection, Normalization, Limitations |
-| `figure` | `caption` `source` | main | P | `source` required. Numbered automatically |
-| `references` | `title` | measure | P | |
-|   `ref` | | | P | One per source, numbered automatically |
+| Shortcode | Status | Args | Width | P | Notes |
+|---|---|---|---|---|---|
+| `execsummary` | PLANNED | `title` | measure | P | Default title "Executive summary" |
+| `methodology` | PLANNED | `title` | measure | P | |
+|   `method` | PLANNED | `label` | | P | Sample, Collection, Normalization, Limitations |
+| `figure` | PLANNED | `caption` **`source`** | main | P | Numbered automatically |
+| `references` | PLANNED | `title` | measure | P | |
+|   `ref` | PLANNED | | | P | One per source, numbered automatically |
 
 ### Data
 
-| Shortcode | Args | Width | P | Notes |
-|---|---|---|---|---|
-| `metrics` | `title` `subtitle` `source` | main | P | `source` required |
-|   `metric` | `value` `label` | | | |
+| Shortcode | Status | Args | Width | P | Notes |
+|---|---|---|---|---|---|
+| `metrics` | PLANNED | `title` `subtitle` **`source`** | main | P | |
+|   `metric` | PLANNED | `value` `label` | | | |
 
 ### Editorial and utility
 
-| Shortcode | Args | Width | P | Notes |
-|---|---|---|---|---|
-| `epigraph` | `attribution` | UNVERIFIED | P | Assumed narrow. `pullquote` carried the same assumption and turned out to be measure |
-| `callout` | `label` | measure | P | Closed set, see below |
-| `glossary` | `title` | measure | P | |
-|   `term` | `word` | | P | Content is the definition |
+| Shortcode | Status | Args | Width | P | Notes |
+|---|---|---|---|---|---|
+| `epigraph` | PLANNED | `attribution` | UNVERIFIED | P | Assumed narrow. `pullquote` carried the same assumption and turned out to be measure |
+| `callout` | LIVE | **`label`** | measure | P | Closed set, see below |
+| `glossary` | PLANNED | `title` | measure | P | |
+|   `term` | PLANNED | `word` | | P | Content is the definition |
 
 **`callout` labels are a closed set of four.** The build rejects anything else.
 
@@ -265,6 +277,22 @@ The build fails on a marker with no note, a note with no marker, or a duplicate 
 `Watch out` is restricted to guides because in an article there is no action to get wrong.
 
 The personal `aside` is not a callout. Callouts are informational and carry a label bar. Asides are a named human speaking and carry a madder edge bar. Keeping them separate is the reason both read as deliberate.
+
+### Closed sets
+
+Every argument whose value comes from a fixed list, gathered so both sides can be compared against one place rather than against prose scattered through the file. `tools/verify/contract.js` checks each LIVE row against the set the build actually enforces, values and default alike.
+
+| Shortcode | Argument | Status | Values | Default |
+|---|---|---|---|---|
+| `pane` | `surface` | LIVE | `paper`, `ink`, `madder` | `paper` |
+| `table` | `kind` | LIVE | `comparison`, `data` | `data` |
+| `callout` | `label` | LIVE | `Note`, `Tip`, `Caveat`, `Watch out` | |
+| `image` | `width` | PLANNED | `measure`, `main`, `bleed` | |
+| `exit` | `kind` | PLANNED | `guide`, `tool`, `us` | |
+
+A PLANNED row has nothing to compare against yet and is reported as pending rather than checked. It becomes enforced the moment its shortcode goes LIVE, which is the point of writing it down now: the set is the design, and building the block later should not be the moment it gets invented.
+
+An unknown value fails the build everywhere except `pane`, which warns and renders paper. That asymmetry is deliberate and predates this table: a misspelled surface still produces a readable page, while a misspelled callout label or table kind would silently change what the block means.
 
 ---
 
