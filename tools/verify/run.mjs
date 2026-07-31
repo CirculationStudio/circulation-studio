@@ -1,7 +1,7 @@
 /* The verify runner: build, serve, check, tear down.
  *
- * WHY THIS EXISTS. All three checks drive a real browser against a real URL,
- * and nothing started the server they need. `npm run verify` died on the first
+ * WHY THIS EXISTS. Three of the four checks drive a real browser against a real
+ * URL, and nothing started the server they need. `npm run verify` died on the first
  * script with ERR_CONNECTION_REFUSED, which reads as a broken article system
  * rather than as a missing precondition. CLAUDE.md's build workflow says to run
  * it, so following the documented workflow failed on step one. The port lived
@@ -26,12 +26,13 @@
  * not acquire one to start a server.
  *
  * Usage:
- *   npm run verify                 build, serve, run all three, tear down
+ *   npm run verify                 contract, then build, serve, run the three
+ *                                  browser checks, tear down
  *   VERIFY_PORT=9001 npm run verify
  *
- * The three scripts remain runnable on their own against a server you are
+ * The browser scripts remain runnable on their own against a server you are
  * already running, which is the loop for working on one check. They read
- * VERIFY_BASE, and this passes it in.
+ * VERIFY_BASE, and this passes it in. contract.js needs neither.
  */
 import { spawn } from "node:child_process";
 import { createServer } from "node:http";
@@ -42,7 +43,11 @@ import path from "node:path";
 const PORT = Number(process.env.VERIFY_PORT || 8899);
 const BASE = `http://localhost:${PORT}`;
 const ROOT = fileURLToPath(new URL("../../_site/", import.meta.url));
-const CHECKS = ["manifest.mjs", "sweep.mjs", "fingerprint.mjs"];
+
+/* Static checks read files and need neither a build nor a server, so they run
+   first and a mismatch fails the run before a browser is started. */
+const STATIC_CHECKS = ["contract.js"];
+const BROWSER_CHECKS = ["manifest.mjs", "sweep.mjs", "fingerprint.mjs"];
 
 const TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -125,26 +130,36 @@ function listen() {
   });
 }
 
+const runCheck = (name, env) =>
+  run(process.execPath, [fileURLToPath(new URL(`./${name}`, import.meta.url))], env);
+
+for (const check of STATIC_CHECKS) {
+  try {
+    await runCheck(check);
+  } catch (err) {
+    console.error(`\n[verify] FAILED: ${err.message}`);
+    process.exit(1);
+  }
+}
+
 /* A build failure and a port collision are preconditions, not check results.
    They report the same way a failed check does rather than as an unhandled
    rejection with a stack trace through node internals, because the reader needs
    to know which of the two happened and nothing else. */
 try {
-  console.log(`[verify] building`);
+  console.log(`\n[verify] building`);
   await run("npm", ["run", "build"]);
   await listen();
 } catch (err) {
-  console.error(`\n[verify] FAILED before any check ran: ${err.message}`);
+  console.error(`\n[verify] FAILED before any browser check ran: ${err.message}`);
   process.exit(1);
 }
 console.log(`[verify] serving _site at ${BASE}\n`);
 
 let failure = null;
 try {
-  for (const check of CHECKS) {
-    await run(process.execPath, [fileURLToPath(new URL(`./${check}`, import.meta.url))], {
-      VERIFY_BASE: BASE
-    });
+  for (const check of BROWSER_CHECKS) {
+    await runCheck(check, { VERIFY_BASE: BASE });
   }
 } catch (err) {
   failure = err;
@@ -162,4 +177,7 @@ if (failure) {
   console.error(`\n[verify] FAILED: ${failure.message}`);
   process.exit(1);
 }
-console.log(`\n[verify] all three checks passed against the production build.`);
+console.log(
+  `\n[verify] all ${STATIC_CHECKS.length + BROWSER_CHECKS.length} checks passed, ` +
+    `the last three against the production build.`
+);

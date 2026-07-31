@@ -113,12 +113,16 @@ That is safe today only because every block that can reach that state is
 pane-excluded and fails the build. A future block needing to break out from
 *inside* a pane would need the helper to know its context. It does not.
 
-## 6. The verify run, and the three scripts
+## 6. The verify run, and the four scripts
 
-`npm run verify` is self-contained: it builds, serves `_site` statically on
-**port 8899**, runs all three checks against it, and tears the server down. It
-stops at the first failure and exits non-zero on any of them, including a failed
-build or a port already in use. `VERIFY_PORT` moves the port.
+`npm run verify` is self-contained: it runs the contract check, then builds,
+serves `_site` statically on **port 8899**, runs the three browser checks
+against it, and tears the server down. It stops at the first failure and exits
+non-zero on any of them, including a failed build or a port already in use.
+`VERIFY_PORT` moves the port.
+
+The contract check is first because it needs neither a build nor a server, and a
+spec mismatch should not wait for a browser to start.
 
 **It needs a server, and for a long time nothing started one.** The checks drive
 a real browser against a real URL. The port lived in three script files and in
@@ -199,6 +203,14 @@ prevent is **a check that passes having measured nothing**.
 - **`verify:fingerprint`** asks *did the five marketing pages move*. Typography
   hashes against a committed baseline, with a per-page element floor checked
   before any hash is trusted, because two empty pages hash identically.
+- **`verify:contract`** asks *do SHORTCODES.md and the build still agree*. Both
+  directions, on names, arguments, required flags, pairing, parentage and closed
+  sets. It exists because the spec fails silently where the build fails loudly:
+  the authoring project is a language model writing markdown against that file
+  and gets no feedback at all, so drift only surfaces as a rejected build nobody
+  is watching. It reads the build by running the config against a recording stub
+  and calling each shortcode with a Proxy, rather than by parsing source, so it
+  cannot hold a stale copy of what it checks.
 
 Screenshot comparison is not a substitute. Results has lazy CDN images and two
 captures of the same build differ.

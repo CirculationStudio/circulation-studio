@@ -163,6 +163,85 @@ function sliceElement(html, openIndex, tag) {
   return null;
 }
 
+/* ============================================================
+   THE CONTRACT. Exported, because tools/verify/contract.js compares these
+   against SHORTCODES.md.
+   ============================================================
+
+   These four are the parts of the vocabulary that are data rather than code:
+   the closed sets, and the parent-and-child pairs. They sit at module scope so
+   the checker can import them. A checker that restated them would be a second
+   model of the same facts, and the drift between two models is exactly what it
+   was written to catch.
+
+   Each is used a few hundred lines below by the shortcode it governs, and the
+   reasoning for each is in the comment above that shortcode. */
+
+const PANE_SURFACES = new Set(["paper", "ink", "madder"]);
+
+const TABLE_KINDS = new Set(["comparison", "data"]);
+
+const CALLOUT_LABELS = new Map([
+  ["Note", "neutral"],
+  ["Tip", "neutral"],
+  ["Caveat", "accented"],
+  ["Watch out", "accented"]
+]);
+
+/* Every parent-and-child pair, and what a child left on its own turns into.
+   Three exist; the vocabulary has methodology and method, references and ref,
+   glossary and term, beforeyoustart and need, youredone and exit, and metrics
+   and metric still to come. So this is a table of PAIRS rather than the same
+   dozen lines copied per pair, and adding a pair is a row.
+
+   This is not the enumerated tag list the header warns about. A pair is a fact
+   about the vocabulary, which SHORTCODES.md fixes, and not a guess about which
+   element a component happens to wrap itself in. Both halves are still found by
+   their marking, so either can change its wrapper freely.
+
+   `degradesTo` is not decoration. A child on its own renders something that is
+   valid HTML and looks deliberate, which is why this needs a build error rather
+   than a review: the message has to say what the reader would get. */
+const CHILD_PAIRS = [
+  {
+    child: "cs-qa",
+    parent: "cs-faq",
+    name: "qa",
+    parentName: "faq",
+    wrapper: "{% faq %} ... {% endfaq %}",
+    degradesTo:
+      "a bare details element with no heading and no schema, which reads as " +
+      "an accordion nobody labelled"
+  },
+  {
+    child: "cs-related__item",
+    parent: "cs-related",
+    name: "item",
+    parentName: "related",
+    wrapper: "{% related %} ... {% endrelated %}",
+    degradesTo:
+      "a bare link with no grid, no heading and no main-width breakout, " +
+      "which reads as a stray link someone left in the prose"
+  },
+  {
+    /* The numbering transform pairs a note with its marker and fails on either
+       half missing, which is a different question from whether the note is
+       inside the list. A note outside `footnotes` still has a marker, so it
+       passed that check, and the transform then copied it into the rebuilt list
+       while leaving the original where it was. */
+    child: "cs-footnote",
+    parent: "cs-footnotes",
+    name: "note",
+    parentName: "footnotes",
+    wrapper: "{% footnotes %} ... {% endfootnotes %}",
+    degradesTo:
+      "a loose list item outside any list, which the numbering transform then " +
+      "copies into the real list, so the note renders twice"
+  }
+];
+
+export { PANE_SURFACES, TABLE_KINDS, CALLOUT_LABELS, CHILD_PAIRS };
+
 export default function (eleventyConfig) {
   eleventyConfig.addFilter("glyphSwaps", glyphSwaps);
 
@@ -294,8 +373,6 @@ export default function (eleventyConfig) {
   const outsideColumn = (html) =>
     `\n</div>\n${html}\n<div class="cs-article__column cs-prose">\n`;
 
-  const PANE_SURFACES = new Set(["paper", "ink", "madder"]);
-
   /* NAMED ARGUMENTS ARRIVE AS ONE KEYWORD OBJECT, not as positional
      parameters. Nunjucks passes {% pane surface="ink" %} through as
      { surface: "ink", __keywords: true }, which is the same shape the engine
@@ -358,29 +435,6 @@ export default function (eleventyConfig) {
      `degradesTo` is not decoration. A child on its own renders something that
      is valid HTML and looks deliberate, which is why this needs a build error
      rather than a review: the message has to say what the reader would get. */
-  const CHILD_PAIRS = [
-    {
-      child: "cs-qa",
-      parent: "cs-faq",
-      name: "qa",
-      parentName: "faq",
-      wrapper: "{% faq %} ... {% endfaq %}",
-      degradesTo:
-        "a bare details element with no heading and no schema, which reads as " +
-        "an accordion nobody labelled"
-    },
-    {
-      child: "cs-related__item",
-      parent: "cs-related",
-      name: "item",
-      parentName: "related",
-      wrapper: "{% related %} ... {% endrelated %}",
-      degradesTo:
-        "a bare link with no grid, no heading and no main-width breakout, " +
-        "which reads as a stray link someone left in the prose"
-    }
-  ];
-
   /* Child validity for every pair, and FAQPage schema merged into the existing
      graph. Both live here for the same reason, which is worth stating once.
 
@@ -698,8 +752,6 @@ export default function (eleventyConfig) {
      kind DEFAULTS TO "data", the stricter of the two. A forgotten kind then
      fails for a missing source rather than silently opting out of the house
      rule, which is the right way round for a default to be wrong. */
-  const TABLE_KINDS = new Set(["comparison", "data"]);
-
   eleventyConfig.addPairedShortcode("table", function (content, options = {}) {
     const { caption, source } = options || {};
     const kind = (options && options.kind) || "data";
@@ -916,13 +968,6 @@ export default function (eleventyConfig) {
      PANE-EXCLUDED. Both registers paint a label bar, mist on one and
      accent-quiet on the other, and the accented pair also carries a madder
      border, which is 1.99:1 on ink and banned there outright. */
-  const CALLOUT_LABELS = new Map([
-    ["Note", "neutral"],
-    ["Tip", "neutral"],
-    ["Caveat", "accented"],
-    ["Watch out", "accented"]
-  ]);
-
   eleventyConfig.addPairedShortcode("callout", function (content, options = {}) {
     const label = (options && options.label) || "";
     const where = this.page?.inputPath || "unknown file";
