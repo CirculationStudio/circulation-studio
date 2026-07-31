@@ -80,11 +80,13 @@
      breakpoint. The variant is chosen by the `header` frontmatter field:
      standard and feature share the base, compact and cover have their own.
 
-     --text-article-h3 IS NOT IN THE REFERENCE. It gives no article h3 size,
-     and inheriting the marketing 24px would put h3 ABOVE h2 at 22px, which is
-     visibly wrong. 19px is a holding value: clearly under h2, clearly over
-     18px body, still distinguished by case, weight and tracking. Needs
-     confirming against the Reference. */
+     h3 IS SMALLER THAN THE BODY COPY IT HEADS, 16px against 18px, and that is
+     correct rather than something to fix later. It is the Reference's value
+     for guide step titles and FAQ questions. The hierarchy is carried by the
+     uppercase display face at .08em tracking, not by size: a subhead does not
+     have to be larger than the prose to read as one when it differs in face,
+     case and rhythm. The 22px h3 instances elsewhere in that file are a later
+     addition and are not evidence. */
   --text-article-h1: 40px;
   --text-article-h1-phone: 28px;
   --text-article-h1-compact: 28px;
@@ -92,7 +94,7 @@
   --text-article-cover: 44px;
   --text-article-cover-phone: 30px;
   --text-article-h2: 22px;
-  --text-article-h3: 19px;
+  --text-article-h3: 16px;
   --text-deck: 19px;
   --text-deck-phone: 17px;
 
@@ -106,9 +108,12 @@
   --leading-article-compact: 1.2;
 
   --tracking-caps: .06em;
-  /* Article h1 only. Article h2 wants .06em, which --tracking-caps already is,
-     so it reuses that rather than restating the value. */
+  /* Article headings. h2 wants .06em, which --tracking-caps already is, so it
+     reuses that rather than restating the value. h3 is tracked wider than
+     anything above it precisely because it is the smallest: the extra rhythm
+     is what makes 16px read as a subhead beside 18px prose. */
   --tracking-article-h1: .04em;
+  --tracking-article-h3: .08em;
   --tracking-wide: .14em;
   --tracking-btn: .22em;
   --tracking-btn-tight: .1em;

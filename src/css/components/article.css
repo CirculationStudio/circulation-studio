@@ -40,11 +40,14 @@
     letter-spacing: var(--tracking-caps);
   }
 
-  /* Not in the Reference. See the note on --text-article-h3 in main.css:
-     inheriting the marketing 24px would put h3 above h2. */
+  /* Deliberately SMALLER than the 18px prose beneath it. The Reference sets
+     guide step titles and FAQ questions at 16px/.08em, and the wide tracking
+     on the uppercase display face is what carries the hierarchy. Do not
+     "correct" this upward on the assumption that a heading must out-size its
+     body copy. */
   .cs-article h3 {
     font-size: var(--text-article-h3);
-    letter-spacing: var(--tracking-caps);
+    letter-spacing: var(--tracking-article-h3);
   }
 
   /* Variants come from the `header` frontmatter field, which the layout emits
