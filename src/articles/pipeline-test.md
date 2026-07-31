@@ -106,12 +106,6 @@ measured against the rhythm between two paragraphs outside one.
 
 {% stat value="3.0x", label="the locked inline lockup ratio", source="Design system, 2026" %}
 
-{% table kind="comparison", number="3", caption="A main-width table inside a full-bleed pane. Out of scope, present so the composition can be looked at." %}
-| Block | Width outside a pane | Width inside one |
-| --- | --- | --- |
-| Prose | Measure | Measure |
-| Table | Main | To be decided |
-{% endtable %}
 {% endpane %}
 
 {% pane surface="madder" %}

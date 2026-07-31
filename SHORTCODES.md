@@ -80,6 +80,14 @@ Established by `stat`, the first family to use it. The remaining eight copy this
 
 The reason for the last one: `.cs-pane--ink .cs-stat` describes how a stat behaves, not how ink behaves. It belongs to the component.
 
+### Which blocks can inherit a surface at all
+
+Blocks styled **only in text colour** inherit a surface through descendant selectors, because `.cs-pane--ink .cs-stat` reaches every colour the component has.
+
+Blocks that **paint something**, a background, a border, a fill, are surface-blind: those colours are structural and do not follow the pane. A table keeps its mist header row and its hairline border on an ink ground, which is how paper text lands on mist at 1.12:1.
+
+Any block that paints therefore needs explicit surface variants or must be excluded from panes. Affects `table`, `chart`, `figure`, `callout`, `faq`, `tool` and the whitepaper cover. This is the distinction that predicts which blocks are safe inside a pane, and it should be settled per block before the block is built rather than discovered afterwards.
+
 ### Pane rules, enforced in the build
 
 - `surface="paper"` is the default and needs no pane at all.
@@ -87,6 +95,10 @@ The reason for the last one: `.cs-pane--ink .cs-stat` describes how a stat behav
 - **At most one `madder` pane per page.** Build warns on a second.
 - Panes do not nest. Build fails on a nested pane.
 - On `madder`, nothing carries ink or madder. Everything is paper. Enforced by CSS, not by the author.
+- **A pane contains reading-column content only.** Blocks that sit at `--container-main` (`table`, `chart`, `figure`, `metrics`, `screenshot`, `related`) cannot go inside one and fail the build.
+
+  Two reasons. The Component Reference specifies only measure-width components on ink and madder: heading, prose, inline link, buttons, source line, content label, stat, pull-quote. It gives no deep surface treatment for a table header, a figure border or a chart ground, so any would be invented. And a pane is at most one per page, reserved for the single most important moment, which is not where reference material belongs.
+
 - **A pane must be a top-level element in the article body.** It cannot sit inside a list item, a blockquote, or any other markdown block. The build wraps prose in a column and a pane closes that column before emitting itself, so a pane written inside another block makes markdown-it end the enclosing element early. The pane then renders correctly, as valid HTML, but it lands *after* the list or quote rather than inside it. This is an authoring rule and not a build check, because nothing in the output is malformed: a misplaced pane is indistinguishable from a correctly placed one once rendered.
 
 Verified ratios, already confirmed and not to be re-derived:

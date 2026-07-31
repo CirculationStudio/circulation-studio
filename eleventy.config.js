@@ -408,21 +408,46 @@ export default function (eleventyConfig) {
     const counts = { ink: 0, madder: 0 };
     const stack = [];
     let nested = false;
+    const wideInPane = [];
 
-    // Walk every div tag in order, tracking which ones are panes.
-    for (const tag of content.matchAll(/<div\b([^>]*)>|<\/div\s*>/g)) {
+    /* Walks div and figure, the two elements a block wrapper uses, tracking
+       which open elements are panes. If a block ever wraps itself in something
+       else, add the tag here or it becomes invisible to both checks below. */
+    for (const tag of content.matchAll(/<(div|figure)\b([^>]*)>|<\/(?:div|figure)\s*>/g)) {
       if (tag[0].startsWith("</")) {
         stack.pop();
         continue;
       }
-      const classes = classesOf(tag[1]);
+      const classes = classesOf(tag[2]);
       const isPane = classes.includes("cs-pane");
+      const insidePane = stack.some(Boolean);
+
       if (isPane) {
-        if (stack.some(Boolean)) nested = true;
+        if (insidePane) nested = true;
         if (classes.includes("cs-pane--ink")) counts.ink += 1;
         if (classes.includes("cs-pane--madder")) counts.madder += 1;
       }
+
+      /* A main-width block inside a pane. Caught here rather than in the
+         shortcode so it is caught by ANY route into a pane, not only a direct
+         call, which is the same reason the pane counts are read from output
+         rather than from call sites. */
+      if (classes.includes("cs-mainwidth") && insidePane) {
+        wideInPane.push(classes.filter((c) => c !== "cs-mainwidth").join(".") || "cs-mainwidth");
+      }
+
       stack.push(isPane);
+    }
+
+    if (wideInPane.length) {
+      throw new Error(
+        `[pane] main-width block inside a pane in ${outputPath}: ${wideInPane.join(", ")}. ` +
+          `A pane contains reading-column content only. Blocks at --container-main ` +
+          `(table, chart, figure, metrics, screenshot, related) cannot go inside one. ` +
+          `Rendered, it escapes the pane's inner column entirely: it takes no width ` +
+          `constraint and its painted colours do not follow the surface, so a mist ` +
+          `table header lands on ink at 1.12:1. See SHORTCODES.md, Surfaces.`
+      );
     }
 
     if (nested) {
