@@ -1,0 +1,151 @@
+/* FAQ block: a titled run of details/summary pairs at reading measure.
+ *
+ * details and summary per the Component Reference, native rather than a
+ * scripted accordion. The summary is focusable and operable by keyboard with
+ * no JS, its text is its accessible name, and the answer stays in the DOM when
+ * collapsed, which is what lets the FAQPage schema be read out of the built
+ * HTML and keeps the text findable in the page.
+ *
+ * WIDTH: measure. This block does not break out, so it is an ordinary child of
+ * whatever prose container holds it and needs no width rule at all.
+ *
+ * SURFACE: faq CAN inherit a deep surface, unlike table, because it paints
+ * nothing. Its only colours are hairlines and text, both of which a descendant
+ * selector reaches. See the surface block at the bottom.
+ *
+ * RADIUS: --radius-control, not the Reference's 8px, the same call made on the
+ * table and for the same reason. The token set has exactly two radii and
+ * main.css states the rule as near-square corners everywhere. The Reference
+ * draws 8px on every panel block, so this is systemic rather than a one-off:
+ * it is a design system question, not a build one, and until it is answered
+ * the repo's own rule wins. */
+@layer components {
+  /* Same 40px symmetric spacing as stat and table, and for the same reason: a
+     block of reference material belongs to neither neighbour. Works in the
+     article column and inside a pane's inner column, because both are
+     .cs-prose. */
+  .cs-prose > .cs-faq {
+    margin-block: var(--space-40);
+  }
+
+  .cs-faq {
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-control);
+  }
+
+  .cs-faq__title {
+    /* Size and tracking come from .cs-article h2. Only the spacing is set
+       here, because the title is not a direct child of a prose container and
+       takes none of the prose rhythm. */
+    margin: 0;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-hairline);
+  }
+
+  .cs-qa {
+    border-bottom: 1px solid var(--border-hairline);
+  }
+  /* The block's own border closes the last row. */
+  .cs-faq .cs-qa:last-child {
+    border-bottom: 0;
+  }
+
+  .cs-qa__q {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-16);
+    padding: 16px 20px;
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--text-body);
+    cursor: pointer;
+    /* 44px minimum target: 16px padding either side of a 1.5 line box on 16px
+       type is 24 + 32. */
+    min-height: 44px;
+    box-sizing: border-box;
+  }
+  /* The default triangle is replaced, not removed: the marker below is the
+     affordance and it has to stay visible. */
+  .cs-qa__q::-webkit-details-marker { display: none }
+  .cs-qa__q { list-style: none }
+  .cs-qa__q::marker { content: "" }
+
+  /* Plus when closed, minus when open. Drawn from two gradients rather than
+     set as a glyph, so it takes currentColor and works on every surface
+     without a second rule.
+
+     THE VERTICAL STROKE IS REMOVED ON OPEN, NOT ROTATED. A plus is symmetric
+     under a 90 degree rotation, so rotating it produces an identical plus and
+     the control gives no state feedback at all. That was the first attempt and
+     it looked like it worked until the open state was screenshotted. */
+  .cs-qa__q::after {
+    content: "";
+    flex: none;
+    width: 11px;
+    height: 11px;
+    background:
+      linear-gradient(currentColor, currentColor) center/100% 1px no-repeat,
+      linear-gradient(currentColor, currentColor) center/1px 100% no-repeat;
+    transition: background-size var(--dur-fast) var(--ease-out);
+  }
+  .cs-qa[open] .cs-qa__q::after {
+    background:
+      linear-gradient(currentColor, currentColor) center/100% 1px no-repeat,
+      linear-gradient(currentColor, currentColor) center/1px 0 no-repeat;
+  }
+
+  .cs-qa__q:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: -2px;
+  }
+
+  .cs-qa__a {
+    padding: 0 20px 20px;
+    font-size: 16px;
+  }
+
+  /* ============================================================
+     SURFACE INHERITANCE, following the convention stat established: modifier
+     and pane-descendant listed together, grouped by hierarchy step rather than
+     one rule per property.
+
+     faq qualifies because every colour it has is a hairline or text, and a
+     descendant selector reaches both. A table does not qualify, because its
+     mist header row is a painted ground that no descendant selector is
+     mapping. That is the distinction recorded in SHORTCODES.md.
+
+     The two deep surfaces take different border tints for the same reason
+     their text tints differ: they are not one ramp.
+     ============================================================ */
+  .cs-faq--on-deep,
+  .cs-faq--on-deep .cs-faq__title,
+  .cs-faq--on-deep .cs-qa,
+  .cs-pane--ink .cs-faq,
+  .cs-pane--ink .cs-faq .cs-faq__title,
+  .cs-pane--ink .cs-faq .cs-qa {
+    border-color: var(--border-on-deep);
+  }
+  .cs-faq--on-deep .cs-qa__q,
+  .cs-pane--ink .cs-faq .cs-qa__q {
+    color: var(--text-on-deep);
+  }
+
+  .cs-faq--on-accent,
+  .cs-faq--on-accent .cs-faq__title,
+  .cs-faq--on-accent .cs-qa,
+  .cs-pane--madder .cs-faq,
+  .cs-pane--madder .cs-faq .cs-faq__title,
+  .cs-pane--madder .cs-faq .cs-qa {
+    border-color: var(--border-on-accent);
+  }
+  .cs-faq--on-accent .cs-qa__q,
+  .cs-pane--madder .cs-faq .cs-qa__q {
+    color: var(--text-on-madder);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cs-qa__q::after { transition: none }
+  }
+}

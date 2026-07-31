@@ -42,6 +42,11 @@ const EXPECTED = [
   /* Main width, deliberately NOT on the prose left edge. Measured and reported
      but excluded from the alignment assertion, and checked separately below
      for its own symmetry. */
+  { label: "faq",           selector: ".cs-article__column > .cs-faq",     min: 1, column: true },
+  { label: "faq title",     selector: ".cs-faq > .cs-faq__title",          min: 3, column: false },
+  { label: "qa",            selector: ".cs-faq > .cs-qa",                  min: 6, column: false },
+  { label: "qa summary",    selector: ".cs-qa > .cs-qa__q",                min: 6, column: false },
+  { label: "pane faq",      selector: ".cs-pane__inner > .cs-faq",         min: 2, column: true },
   { label: "table",         selector: ".cs-article > .cs-table",           min: 2, column: false },
   { label: "table caption", selector: ".cs-article > .cs-table > .cs-table__caption", min: 2, column: false }
 ];

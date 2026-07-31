@@ -86,7 +86,7 @@ Blocks styled **only in text colour** inherit a surface through descendant selec
 
 Blocks that **paint something**, a background, a border, a fill, are surface-blind: those colours are structural and do not follow the pane. A table keeps its mist header row and its hairline border on an ink ground, which is how paper text lands on mist at 1.12:1.
 
-Any block that paints therefore needs explicit surface variants or must be excluded from panes. Affects `table`, `chart`, `figure`, `callout`, `faq`, `tool` and the whitepaper cover. This is the distinction that predicts which blocks are safe inside a pane, and it should be settled per block before the block is built rather than discovered afterwards.
+Any block that paints therefore needs explicit surface variants or must be excluded from panes. Affects `table`, `chart`, `figure`, `callout`, `tool` and the whitepaper cover. `faq` was on this list and has come off it: it draws hairlines and text and nothing else, so descendant selectors reach every colour it has and it inherits a surface correctly. Settled by building it. This is the distinction that predicts which blocks are safe inside a pane, and it should be settled per block before the block is built rather than discovered afterwards.
 
 ### Pane rules, enforced in the build
 

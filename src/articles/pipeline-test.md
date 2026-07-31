@@ -106,6 +106,17 @@ measured against the rhythm between two paragraphs outside one.
 
 {% stat value="3.0x", label="the locked inline lockup ratio", source="Design system, 2026" %}
 
+{% faq title="On ink" %}
+{% qa q="Do the hairlines follow the surface?" %}
+They do. Every colour this block has is a border or text, and a descendant
+selector reaches both.
+{% endqa %}
+{% qa q="Why can a table not do the same?" %}
+A table paints a mist header row. That ground is structural and no descendant
+selector is mapping it, so it stays light on a dark pane.
+{% endqa %}
+{% endfaq %}
+
 {% endpane %}
 
 {% pane surface="madder" %}
@@ -122,6 +133,12 @@ A second paragraph on madder, again so the internal rhythm can be measured.
 - A second item.
 
 {% stat value="8.06:1", label="paper on madder, the only pairing available here", source="Verified contrast table, 2026" %}
+
+{% faq title="On madder" %}
+{% qa q="Does the border tint differ from ink?" %}
+Yes. The two deep surfaces are not one ramp, for borders the same as for text.
+{% endqa %}
+{% endfaq %}
 {% endpane %}
 
 A paragraph immediately below the madder pane, closing the pair of joints.
@@ -148,6 +165,21 @@ A data table, carrying numbers, so the build refuses it without a source.
 | Paper on madder | 8.06:1 | AA and AAA |
 | Paper 72% on madder | 4.84:1 | AA |
 {% endtable %}
+
+{% faq title="Common questions" %}
+{% qa q="Does the answer stay in the HTML when the row is collapsed?" %}
+Yes. `details` keeps its contents in the DOM, which is what lets the FAQPage
+schema be read out of the built page and keeps the text findable.
+{% endqa %}
+{% qa q="Is the summary operable without a mouse?" %}
+Yes, natively. `summary` is focusable and toggles on Enter and Space with no
+JavaScript, and its text is its accessible name.
+{% endqa %}
+{% qa q="What happens to a qa written outside a faq?" %}
+The build fails. The relationship is only visible in the built HTML, because
+Nunjucks renders children before parents, so the check runs there.
+{% endqa %}
+{% endfaq %}
 
 ## Case one, first of two stacked headings
 

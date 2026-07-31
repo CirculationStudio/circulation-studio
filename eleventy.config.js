@@ -266,6 +266,140 @@ export default function (eleventyConfig) {
     );
   });
 
+  /* faq: child validity, and FAQPage schema merged into the existing graph.
+     Both live here for the same reason, which is worth stating once because
+     the other five parent-child pairs will hit it.
+
+     WHY THE TRANSFORM AND NOT RENDER TIME. A child cannot check its parent
+     while rendering, because Nunjucks runs children first and the parent has
+     not executed yet. And a parent cannot read its children as data, because
+     it receives their concatenated HTML rather than a list. So the built page
+     is the first and only place the relationship exists. It also means the
+     check catches a qa reaching the page by any route, not only a direct call.
+
+     The schema is built here for the same reason: the question and answer
+     pairs are only recoverable together once the block is assembled. Merging
+     into the existing <script type="application/ld+json"> rather than adding a
+     second one keeps one graph per page, which is the whole point of the
+     @graph in partials/schema.njk. */
+  eleventyConfig.addTransform("faqRules", function (content, outputPath) {
+    if (!outputPath || !outputPath.endsWith(".html")) return content;
+    if (!content.includes("cs-qa")) return content;
+
+    const classesOf = (attrs) => {
+      const m = /class\s*=\s*"([^"]*)"/.exec(attrs);
+      return m ? m[1].trim().split(/\s+/) : [];
+    };
+
+    // 1. Every qa must be inside a faq. Ancestor walk over the two elements
+    //    the pair uses, same technique as the pane checks.
+    const stack = [];
+    let orphans = 0;
+    for (const tag of content.matchAll(/<(div|details)\b([^>]*)>|<\/(?:div|details)\s*>/g)) {
+      if (tag[0].startsWith("</")) {
+        stack.pop();
+        continue;
+      }
+      const classes = classesOf(tag[2]);
+      if (classes.includes("cs-qa") && !stack.some(Boolean)) orphans += 1;
+      stack.push(classes.includes("cs-faq"));
+    }
+
+    if (orphans) {
+      throw new Error(
+        `[qa] ${orphans} qa block(s) outside a faq in ${outputPath}. ` +
+          `qa is a child shortcode and is only valid inside {% faq %} ... {% endfaq %}. ` +
+          `On its own it renders a bare details element with no heading and no ` +
+          `schema, which reads as an accordion nobody labelled. See SHORTCODES.md.`
+      );
+    }
+
+    /* 2. Pull the question and answer pairs back out.
+
+       Both the faq block and each answer are sliced by COUNTING DIV DEPTH from
+       their own opening tag, never by a lazy regex. Two reasons, both of which
+       bit on the first attempt: a lazy match on the faq stops at the next faq
+       rather than at its own close, so a page with three of them produced two
+       nodes covering the wrong spans; and an answer may legitimately contain
+       divs of its own, a stat for instance, so a non-greedy match ends at the
+       first inner close and returns an empty answer.
+
+       The index passed in must point AT the opening tag, so it is counted. */
+    const sliceElement = (html, openIndex, tag) => {
+      const re = new RegExp(`<${tag}\\b[^>]*>|</${tag}\\s*>`, "g");
+      re.lastIndex = openIndex;
+      let depth = 0;
+      let m;
+      while ((m = re.exec(html))) {
+        depth += m[0].startsWith("</") ? -1 : 1;
+        if (depth === 0) return html.slice(openIndex, re.lastIndex);
+      }
+      return null;
+    };
+
+    const faqs = [];
+    const faqOpen = /<div class="cs-faq">/g;
+    let fm;
+    while ((fm = faqOpen.exec(content))) {
+      const body = sliceElement(content, fm.index, "div");
+      if (!body) break;
+      faqOpen.lastIndex = fm.index + body.length;
+
+      const title = /<h2 class="cs-faq__title">([\s\S]*?)<\/h2>/.exec(body)?.[1] || "";
+      const pairs = [];
+      const qaRe = /<summary class="cs-qa__q">([\s\S]*?)<\/summary>/g;
+      let qm;
+      while ((qm = qaRe.exec(body))) {
+        const answerAt = body.indexOf('<div class="cs-qa__a', qm.index);
+        if (answerAt < 0) continue;
+        const outer = sliceElement(body, answerAt, "div") || "";
+        pairs.push({
+          q: qm[1],
+          a: outer.replace(/^<div\b[^>]*>/, "").replace(/<\/div\s*>$/, "").trim()
+        });
+      }
+      if (pairs.length) faqs.push({ title, pairs });
+    }
+
+    if (!faqs.length) return content;
+
+    // 3. Merge FAQPage nodes into the one graph the page already carries.
+    const scriptRe = /(<script type="application\/ld\+json">)([\s\S]*?)(<\/script>)/;
+    const found = scriptRe.exec(content);
+    if (!found) return content;
+
+    let graph;
+    try {
+      graph = JSON.parse(found[2]);
+    } catch {
+      console.warn(`[faq] could not parse the JSON-LD in ${outputPath}, schema not merged.`);
+      return content;
+    }
+
+    const decode = (s) =>
+      s.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"')
+       .replace(/&#39;/g, "'").replace(/&amp;/g, "&");
+    const pageNode = graph["@graph"]?.find((n) => String(n["@id"] || "").endsWith("#webpage"));
+    const base = pageNode?.["@id"]?.replace("#webpage", "") || "";
+
+    faqs.forEach((faq, i) => {
+      graph["@graph"].push({
+        "@type": "FAQPage",
+        "@id": `${base}#faq-${i + 1}`,
+        name: decode(faq.title) || undefined,
+        isPartOf: pageNode ? { "@id": pageNode["@id"] } : undefined,
+        mainEntity: faq.pairs.map((p) => ({
+          "@type": "Question",
+          name: decode(p.q),
+          acceptedAnswer: { "@type": "Answer", text: p.a }
+        }))
+      });
+    });
+
+    const serialised = JSON.stringify(graph, null, 2).replace(/</g, "\\u003c");
+    return content.replace(scriptRe, `$1\n${serialised}\n$3`);
+  });
+
   /* Removes the empty prose column a trailing pane leaves behind. Structural
      cleanup of the close-and-reopen above, kept separate from paneRules
      because that transform enforces a contract and this one tidies markup. */
@@ -382,6 +516,64 @@ export default function (eleventyConfig) {
         `${content.trim()}` +
         `\n\n</div>\n${figcaption}\n</figure>`
     );
+  });
+
+  /* faq and qa: the FIRST parent-and-child pair, and the pattern methodology,
+     references, metrics, glossary, beforeyoustart and youredone all copy.
+
+     ============================================================
+     CHILDREN RENDER BEFORE PARENTS. That single fact shapes everything.
+     ============================================================
+
+     Nunjucks evaluates inside out, so by the time {% faq %} runs, every
+     {% qa %} inside it has already returned a finished HTML string, and faq
+     receives that string as its content. A parent therefore CANNOT pass
+     anything down to its children, cannot validate them as they render, and
+     cannot see them as data. It only ever sees their output.
+
+     Three consequences the other five pairs inherit:
+
+     1. A child emits complete, self-contained markup. It cannot rely on the
+        parent to close, wrap or fix anything.
+     2. A parent wraps a string. It does not compose a list of children,
+        because there is no list, only concatenated HTML.
+     3. Anything that needs to know the parent-child RELATIONSHIP happens in
+        the output transform, not at render time, because that relationship
+        does not exist yet while either shortcode is running.
+
+     Point 3 is why a stray {% qa %} is caught in faqRules below rather than
+     here. At the moment qa runs there is nothing to ask: the enclosing faq has
+     not executed and may not exist. The built HTML is the first place the
+     relationship is visible at all. */
+  eleventyConfig.addPairedShortcode("qa", function (content, options = {}) {
+    const question = (options && options.q) || "";
+
+    if (!String(question).trim()) {
+      throw new Error(
+        `[qa] missing required "q" in ${this.page?.inputPath || "unknown file"}. ` +
+          `A question with no text is not answerable. See SHORTCODES.md.`
+      );
+    }
+
+    /* details/summary per the Component Reference. The answer stays in the
+       DOM when collapsed, which is what lets the FAQPage schema be read out
+       of the built HTML and what keeps the text findable. */
+    return (
+      `\n<details class="cs-qa">\n` +
+      `<summary class="cs-qa__q">${escapeHtml(question)}</summary>\n` +
+      `<div class="cs-qa__a cs-prose">\n\n` +
+      `${content.trim()}` +
+      `\n\n</div>\n</details>\n`
+    );
+  });
+
+  eleventyConfig.addPairedShortcode("faq", function (content, options = {}) {
+    const title = (options && options.title) || "";
+    const heading = title
+      ? `<h2 class="cs-faq__title">${escapeHtml(title)}</h2>\n`
+      : "";
+
+    return `\n<div class="cs-faq">\n${heading}\n${content.trim()}\n\n</div>\n`;
   });
 
   /* Pane rules from SHORTCODES.md, enforced against the BUILT HTML rather than
