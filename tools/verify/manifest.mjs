@@ -16,6 +16,9 @@
  * Counts are exact on purpose, so a duplicated block fails too.
  *
  * Usage: node tools/verify/manifest.mjs
+ *
+ * Needs a server. `npm run verify` starts one; on its own it expects one at
+ * VERIFY_BASE, which defaults to the port run.mjs uses.
  */
 import { chromium } from "playwright";
 import { readFileSync } from "node:fs";

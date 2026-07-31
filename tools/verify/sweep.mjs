@@ -12,10 +12,14 @@
  * were found AND they agreed, never just the second half.
  *
  * Usage: node tools/verify/sweep.mjs [url]
+ *
+ * Needs a server. `npm run verify` starts one; on its own it expects one at
+ * VERIFY_BASE, which defaults to the port run.mjs uses.
  */
 import { chromium } from "playwright";
 
-const URL = process.argv[2] || "http://localhost:8899/articles/pipeline-test/";
+const BASE = process.env.VERIFY_BASE || "http://localhost:8899";
+const URL = process.argv[2] || `${BASE}/articles/pipeline-test/`;
 const WIDTHS = [390, 1440, 2560];
 
 /* Every type the sweep claims to cover. `min` is the number of matches below

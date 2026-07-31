@@ -113,11 +113,31 @@ That is safe today only because every block that can reach that state is
 pane-excluded and fails the build. A future block needing to break out from
 *inside* a pane would need the helper to know its context. It does not.
 
-## 6. The three verify scripts
+## 6. The verify run, and the three scripts
 
-`npm run verify` runs all three. Each answers a different question, and the
-failure mode all three exist to prevent is **a check that passes having
-measured nothing**.
+`npm run verify` is self-contained: it builds, serves `_site` statically on
+**port 8899**, runs all three checks against it, and tears the server down. It
+stops at the first failure and exits non-zero on any of them, including a failed
+build or a port already in use. `VERIFY_PORT` moves the port.
+
+**It needs a server, and for a long time nothing started one.** The checks drive
+a real browser against a real URL. The port lived in three script files and in
+no document, so `npm run verify` died on the first script with
+ERR_CONNECTION_REFUSED and CLAUDE.md's build workflow failed at step one.
+
+**`eleventy --serve` is not a substitute, and this is the sharp edge.** Against
+the dev server all ten fingerprint hashes differ from the committed baseline
+while every element count lands exactly on its floor: same DOM, different
+computed typography. The baseline was taken from a production build, so the run
+has to be one, and a static file server over `_site` is what Cloudflare Pages is
+anyway. Re-take the baseline the same way it is checked, never off the dev
+server, or it stops describing what ships.
+
+Each script still runs on its own against a server you already have, reading
+`VERIFY_BASE`. That is the loop for working on one check.
+
+Each answers a different question, and the failure mode all three exist to
+prevent is **a check that passes having measured nothing**.
 
 - **`verify:manifest`** asks *did exactly what we declared render*. Exact counts
   from `tools/verify/fixture.manifest.json`. It exists because the fixture

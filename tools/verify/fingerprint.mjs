@@ -17,9 +17,19 @@
  * content removal will trip it, and the correct response is to re-take the
  * baseline deliberately rather than to lower the floor quietly.
  *
+ * THE BASELINE IS A PRODUCTION ARTIFACT. It was taken from a built _site served
+ * statically, and `eleventy --serve` does not reproduce it: against the dev
+ * server all ten hashes differ while every element count lands exactly on its
+ * floor, so the DOM is identical and only computed typography moved. Re-take it
+ * the same way it is checked, through `npm run verify`, never off the dev
+ * server, or the baseline stops describing what ships.
+ *
  * Usage:
  *   node tools/verify/fingerprint.mjs            compare against the baseline
  *   node tools/verify/fingerprint.mjs --write    re-take the baseline
+ *
+ * Needs a server. `npm run verify` starts one; on its own it expects one at
+ * VERIFY_BASE, which defaults to the port run.mjs uses.
  */
 import { chromium } from "playwright";
 import { createHash } from "node:crypto";

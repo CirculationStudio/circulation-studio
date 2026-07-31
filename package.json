@@ -9,7 +9,7 @@
     "verify:sweep": "node tools/verify/sweep.mjs",
     "verify:fingerprint": "node tools/verify/fingerprint.mjs",
     "verify:manifest": "node tools/verify/manifest.mjs",
-    "verify": "npm run verify:manifest && npm run verify:sweep && npm run verify:fingerprint"
+    "verify": "node tools/verify/run.mjs"
   },
   "repository": {
     "type": "git",
