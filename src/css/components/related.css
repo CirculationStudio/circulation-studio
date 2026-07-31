@@ -1,0 +1,90 @@
+/* Related: a labelled grid of links to other pieces.
+ *
+ * WIDTH is --container-main, reusing .cs-mainwidth from table rather than
+ * restating the expression. That class is the shared main-width primitive and
+ * this is the second block to use it, which is what it was made generic for.
+ *
+ * PANE-EXCLUDED for width, the same reason as table: it escapes the pane's
+ * inner column and takes no constraint at all. Declared with data-no-pane.
+ *
+ * ITEMS ARE EXPLICIT. The cluster taxonomy SHORTCODES.md describes does not
+ * exist yet, so each item is written out. See the vocabulary entry.
+ *
+ * Values are the Reference's. Flow spacing is the standard 40px symmetric. */
+@layer components {
+  .cs-article > .cs-related {
+    margin-block: var(--space-40);
+  }
+  /* Same trailing-margin rule as the pane and the table, and the same reason:
+     a generic rule in article.css ties on specificity and loses on import
+     order. */
+  .cs-article > .cs-related:last-child {
+    margin-bottom: 0;
+  }
+
+  .cs-related__label {
+    margin: 0;
+    padding-top: var(--space-16);
+    border-top: 1px solid var(--border-strong);
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 11px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  .cs-related__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-40);
+    margin-top: var(--space-24);
+  }
+
+  .cs-related__item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .cs-related__kind {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 10px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  .cs-related__title {
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 15px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--text-body);
+    /* The one interaction: the title draws to madder, matching the nav link
+       language rather than inventing a card hover. */
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .cs-related__item:hover .cs-related__title { color: var(--color-madder) }
+  .cs-related__item:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 3px;
+  }
+
+  /* Three columns need width the phone does not have, and a three-item row at
+     310px would give each item about 70px. */
+  @media (max-width: 767px) {
+    .cs-related__grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-24);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cs-related__title { transition: none }
+  }
+}

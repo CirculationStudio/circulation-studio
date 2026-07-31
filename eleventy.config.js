@@ -284,7 +284,7 @@ export default function (eleventyConfig) {
      @graph in partials/schema.njk. */
   eleventyConfig.addTransform("faqRules", function (content, outputPath) {
     if (!outputPath || !outputPath.endsWith(".html")) return content;
-    if (!content.includes("cs-qa")) return content;
+    if (!content.includes("cs-qa") && !content.includes("cs-related")) return content;
 
     const classesOf = (attrs) => {
       const m = /class\s*=\s*"([^"]*)"/.exec(attrs);
@@ -303,6 +303,21 @@ export default function (eleventyConfig) {
       const classes = classesOf(tag[2]);
       if (classes.includes("cs-qa") && !stack.some(Boolean)) orphans += 1;
       stack.push(classes.includes("cs-faq"));
+    }
+
+    /* An orphan item, checked by slicing every related block out and counting
+       the items that remain. The div walk above cannot see it: an item is an
+       inline anchor, not one of the elements the stack tracks. Same rule as an
+       orphan qa, different mechanism because the element is a different shape. */
+    const outsideRelated = content.replace(/<nav class="cs-mainwidth cs-related"[\s\S]*?<\/nav>/g, "");
+    const strayItems = (outsideRelated.match(/class="cs-related__item"/g) || []).length;
+    if (strayItems) {
+      throw new Error(
+        `[item] ${strayItems} item(s) outside a related in ${outputPath}. ` +
+          `item is a child shortcode and is only valid inside {% related %} ... ` +
+          `{% endrelated %}. On its own it renders a bare link with no grid and no ` +
+          `label. See SHORTCODES.md.`
+      );
     }
 
     if (orphans) {
@@ -846,6 +861,63 @@ export default function (eleventyConfig) {
     );
   });
 
+  /* related and item: the second parent-and-child pair, following faq exactly.
+
+     ITEMS ARE EXPLICIT FOR NOW. SHORTCODES.md describes related as pulling
+     from a `cluster` frontmatter taxonomy. That taxonomy does not exist: no
+     article declares a cluster, there is no index to query, and nothing maps
+     a cluster to a set of articles. Building the mechanism before the taxonomy
+     would mean inventing both. So each item is written out, and the vocabulary
+     records that this is the interim state rather than the design.
+
+     PANE-EXCLUDED for width: it sits at --container-main and reuses
+     .cs-mainwidth from table, so the same escape and the same exclusion. */
+  eleventyConfig.addShortcode("item", function (options = {}) {
+    const { kind, title, url } = options || {};
+    const where = this.page?.inputPath || "unknown file";
+
+    for (const [name, value] of [["kind", kind], ["title", title], ["url", url]]) {
+      if (!value || !String(value).trim()) {
+        throw new Error(
+          `[item] missing required "${name}" in ${where}. ` +
+            `An item needs all three: kind, title and url. See SHORTCODES.md.`
+        );
+      }
+    }
+
+    /* NO SURROUNDING NEWLINES, which is the inverse of the blank-line rule a
+       block-level shortcode follows. A blank line CLOSES an HTML block, and
+       `<a>` is inline, so an item separated from its neighbours by a blank line
+       does not continue the grid's HTML block: markdown-it starts a paragraph
+       and wraps it. Measured, not guessed: with leading and trailing newlines
+       the first item rendered correctly inside the grid and the second and
+       third each came out inside a <p>.
+
+       So a block-level child pads itself with blank lines and an inline child
+       must not. */
+    return (
+      `<a class="cs-related__item" href="${escapeHtml(url)}">` +
+      `<span class="cs-related__kind">${escapeHtml(kind)}</span>` +
+      `<span class="cs-related__title">${escapeHtml(title)}</span>` +
+      `</a>`
+    );
+  });
+
+  eleventyConfig.addPairedShortcode("related", function (content, options = {}) {
+    const title = (options && options.title) || "Related";
+    /* Through outsideColumn, like table. .cs-mainwidth only resolves against
+       the full-width article, so a main-width block left inside the prose
+       column silently renders at the measure instead: the grid came out 219px
+       per column rather than 347px, and nothing failed. The sweep caught it
+       because .cs-article > .cs-related matched nothing. */
+    return outsideColumn(
+      `<nav class="cs-mainwidth cs-related" data-no-pane="main width" ` +
+      `aria-labelledby="cs-related-heading">\n` +
+      `<h2 class="cs-related__label" id="cs-related-heading">${escapeHtml(title)}</h2>\n` +
+      `<div class="cs-related__grid">\n${content.trim()}\n</div>\n</nav>`
+    );
+  });
+
   /* Pane rules from SHORTCODES.md, enforced against the BUILT HTML rather than
      by counting shortcode calls.
 
@@ -883,7 +955,7 @@ export default function (eleventyConfig) {
        when a block introduces one; all of these are balanced elements, so the
        stack stays correct. */
     for (const tag of content.matchAll(
-      /<(div|figure|aside|section|details|blockquote)\b([^>]*)>|<\/(?:div|figure|aside|section|details|blockquote)\s*>/g
+      /<(div|figure|aside|section|details|blockquote|nav)\b([^>]*)>|<\/(?:div|figure|aside|section|details|blockquote|nav)\s*>/g
     )) {
       if (tag[0].startsWith("</")) {
         stack.pop();

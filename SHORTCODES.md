@@ -201,7 +201,10 @@ Paired shortcodes are marked P. Child shortcodes are indented under their parent
 | `signednote` | `author` | measure | P | Uses author key, renders signature |
 | `footnotes` | | measure | P | Contains `note` children |
 |   `note` | `id` | | P | Content is the note. Numbered automatically |
-| `related` | `cluster` `title` | main | | Pulls from `cluster` frontmatter if omitted |
+| `related` | `title` | main | P | Contains `item` children. See the note below |
+|   `item` | `kind` `title` `url` | | | All three required |
+
+**`related` items are explicit for now.** The entry above described `related` as pulling from a `cluster` frontmatter taxonomy. That taxonomy does not exist: no article declares a cluster, there is no index to query, and nothing maps a cluster to a set of articles. Building the mechanism before the taxonomy would mean inventing both, so each item is written out with its own `kind`, `title` and `url`. When clusters exist, `related` gains a `cluster` argument and the explicit form stays as the override.
 
 **Inline:** `{% fn id="bringhurst" %}` places a footnote marker in running prose. The only inline shortcode in the vocabulary.
 

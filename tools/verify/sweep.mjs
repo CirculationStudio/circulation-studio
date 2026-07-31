@@ -48,6 +48,8 @@ const EXPECTED = [
   { label: "qa summary",    selector: ".cs-qa > .cs-qa__q",                min: 6, column: false },
   { label: "pane faq",      selector: ".cs-pane__inner > .cs-faq",         min: 2, column: true },
   { label: "callout",       selector: ".cs-article__column > .cs-callout",  min: 2, column: true },
+  { label: "related",       selector: ".cs-article > .cs-related",         min: 1, column: false },
+  { label: "related item",  selector: ".cs-related__item",                 min: 3, column: false },
   { label: "takeaways",     selector: ".cs-article__column > .cs-takeaways", min: 1, column: true },
   { label: "pullquote",     selector: ".cs-pullquote",                     min: 3, column: true },
   { label: "footnotes",     selector: ".cs-article__column > .cs-footnotes", min: 1, column: true },

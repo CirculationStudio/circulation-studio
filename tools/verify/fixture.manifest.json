@@ -78,6 +78,14 @@
     "callout accented": {
       "selector": ".cs-callout--accented",
       "count": 1
+    },
+    "related": {
+      "selector": ".cs-related",
+      "count": 1
+    },
+    "related item": {
+      "selector": ".cs-related__item",
+      "count": 3
     }
   }
 }
