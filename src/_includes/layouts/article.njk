@@ -24,13 +24,17 @@ layout: layouts/base.njk
   The <article> element is deliberate rather than reusing the section() macro,
   which emits <section>. Semantics are the point on a page that is one article.
 #}
-<article class="cs-container max-w-measure py-24">
+{#- The `header` field picks the title treatment (SHORTCODES.md: standard,
+    feature, compact, cover, glyph). standard and feature share the base scale,
+    so only compact and cover have rules; an unset field falls through to the
+    base, which is what a piece with no opinion should get. -#}
+<article class="cs-article cs-container max-w-measure py-24{{ " cs-article--" + header if header }}">
   <header>
     <p class="caption">{{ kind }}</p>
 
     <h1>{{ title }}</h1>
 
-    {% if deck %}<p>{{ deck }}</p>{% endif %}
+    {% if deck %}<p class="cs-article__deck">{{ deck }}</p>{% endif %}
 
     {# author is a KEY per SHORTCODES.md, not a name, and the data file it is
        meant to resolve against does not exist yet. It renders raw for now. #}

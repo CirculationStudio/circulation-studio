@@ -1,0 +1,78 @@
+/* Article prose.
+
+   Everything here is scoped under .cs-article, which only layouts/article.njk
+   emits. The five marketing pages never carry that class, so they keep the
+   locked 56/36/24 scale from base/elements.css untouched. That scoping is the
+   whole point of the file: articles need a different scale, not a replacement
+   for the site's.
+
+   UPPERCASE STAYS. base/elements.css sets text-transform on h1, h2 and h3 site
+   wide and nothing here removes it. Article headings are smaller than the
+   marketing ones, not different in voice.
+
+   Sizes, tracking and line heights are the Component Reference's, expressed as
+   tokens in main.css rather than restated here. Only the variant switching and
+   the phone breakpoint live in this file. */
+@layer components {
+  /* Applies to the title in the header AND to every h2 and h3 markdown emits
+     in the body, which is what keeps an authored heading and a frame heading
+     on the same scale. */
+  .cs-article h1,
+  .cs-article h2,
+  .cs-article h3 {
+    /* Balances the last line rather than leaving one short word stranded.
+       Headings are short enough that the browser's cost limit is never a
+       concern here. */
+    text-wrap: pretty;
+  }
+
+  /* Standard and feature share this. elements.css gives h1 --leading-tight
+     (1.06), which is a display value for a 56px page opener; an article title
+     wants the 1.15 the Reference specifies, so it is restated. */
+  .cs-article h1 {
+    font-size: var(--text-article-h1);
+    line-height: var(--leading-heading);
+    letter-spacing: var(--tracking-article-h1);
+  }
+
+  .cs-article h2 {
+    font-size: var(--text-article-h2);
+    letter-spacing: var(--tracking-caps);
+  }
+
+  /* Not in the Reference. See the note on --text-article-h3 in main.css:
+     inheriting the marketing 24px would put h3 above h2. */
+  .cs-article h3 {
+    font-size: var(--text-article-h3);
+    letter-spacing: var(--tracking-caps);
+  }
+
+  /* Variants come from the `header` frontmatter field, which the layout emits
+     as a modifier. standard and feature intentionally have no rule: they are
+     the base above. */
+  .cs-article--compact h1 {
+    font-size: var(--text-article-h1-compact);
+    line-height: var(--leading-article-compact);
+  }
+
+  /* The whitepaper cover treatment. The 20ch cap is the Reference's and is the
+     one place an article heading is held to a measure of its own: a cover
+     title is set large enough that the 66ch column would let it run to four or
+     five words a line and stop reading as a cover. */
+  .cs-article--cover h1 {
+    font-size: var(--text-article-cover);
+    line-height: var(--leading-article-cover);
+    max-width: 20ch;
+  }
+
+  .cs-article__deck {
+    font-size: var(--text-deck);
+  }
+
+  @media (max-width: 767px) {
+    .cs-article h1 { font-size: var(--text-article-h1-phone) }
+    .cs-article--compact h1 { font-size: var(--text-article-h1-compact-phone) }
+    .cs-article--cover h1 { font-size: var(--text-article-cover-phone) }
+    .cs-article__deck { font-size: var(--text-deck-phone) }
+  }
+}

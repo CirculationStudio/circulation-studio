@@ -24,6 +24,7 @@
 @import "./components/menu.css";
 @import "./components/colophon.css";
 @import "./components/longform.css";
+@import "./components/article.css";
 @import "./pages/home.css";
 @import "./pages/who-we-are.css";
 @import "./pages/what-we-do.css";
@@ -68,12 +69,46 @@
   --text-base: 18px;
   --text-caption: 13px;
 
+  /* Article type scale, from the Component Reference. SEPARATE from the locked
+     marketing scale above, on purpose: a 56px h1 is a page-opening statement,
+     an article title is the first line of something you are about to read, and
+     an article h2 has to sit inside a 66ch column beside 18px body copy rather
+     than head a full-width section. Nothing here touches the five marketing
+     pages, which keep 56/36/24.
+
+     Phone values are the Reference's own, applied at the frame's 767 phone
+     breakpoint. The variant is chosen by the `header` frontmatter field:
+     standard and feature share the base, compact and cover have their own.
+
+     --text-article-h3 IS NOT IN THE REFERENCE. It gives no article h3 size,
+     and inheriting the marketing 24px would put h3 ABOVE h2 at 22px, which is
+     visibly wrong. 19px is a holding value: clearly under h2, clearly over
+     18px body, still distinguished by case, weight and tracking. Needs
+     confirming against the Reference. */
+  --text-article-h1: 40px;
+  --text-article-h1-phone: 28px;
+  --text-article-h1-compact: 28px;
+  --text-article-h1-compact-phone: 22px;
+  --text-article-cover: 44px;
+  --text-article-cover-phone: 30px;
+  --text-article-h2: 22px;
+  --text-article-h3: 19px;
+  --text-deck: 19px;
+  --text-deck-phone: 17px;
+
   /* Rhythm. leading-tight is intentionally overridden from Tailwind's 1.25. */
   --leading-tight: 1.06;
   --leading-heading: 1.15;
   --leading-body: 1.7;
+  /* Article headings. h1 reuses --leading-heading, which is already the 1.15
+     the Reference asks for; only the two that differ get their own token. */
+  --leading-article-cover: 1.12;
+  --leading-article-compact: 1.2;
 
   --tracking-caps: .06em;
+  /* Article h1 only. Article h2 wants .06em, which --tracking-caps already is,
+     so it reuses that rather than restating the value. */
+  --tracking-article-h1: .04em;
   --tracking-wide: .14em;
   --tracking-btn: .22em;
   --tracking-btn-tight: .1em;
