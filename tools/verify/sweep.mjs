@@ -47,6 +47,9 @@ const EXPECTED = [
   { label: "qa",            selector: ".cs-faq > .cs-qa",                  min: 6, column: false },
   { label: "qa summary",    selector: ".cs-qa > .cs-qa__q",                min: 6, column: false },
   { label: "pane faq",      selector: ".cs-pane__inner > .cs-faq",         min: 2, column: true },
+  { label: "footnotes",     selector: ".cs-article__column > .cs-footnotes", min: 1, column: true },
+  { label: "footnote li",   selector: ".cs-footnotes li",                  min: 5, column: false },
+  { label: "fn marker",     selector: "a.cs-fnref",                        min: 5, column: false },
   { label: "table",         selector: ".cs-article > .cs-table",           min: 2, column: false },
   { label: "table caption", selector: ".cs-article > .cs-table > .cs-table__caption", min: 2, column: false }
 ];

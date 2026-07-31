@@ -1,0 +1,19 @@
+{
+  "_why": "The fixture has silently lost a block three times. Twice a markdown edit matched nothing and did nothing, and the build stayed green because a missing block looks exactly like a block that was never asked for. Only an unrelated count caught the last one. These are EXACT counts, not minimums, so a fixture that loses a block fails loudly and so does one that gains a duplicate.",
+  "_updating": "Changing the fixture means changing this file in the same commit. That is the point: the count becomes a deliberate statement rather than whatever happened to render.",
+  "url": "/articles/pipeline-test/",
+  "blocks": {
+    "pane": { "selector": ".cs-pane", "count": 3 },
+    "pane ink": { "selector": ".cs-pane--ink", "count": 1 },
+    "pane madder": { "selector": ".cs-pane--madder", "count": 1 },
+    "stat": { "selector": ".cs-stat", "count": 4 },
+    "table": { "selector": ".cs-table", "count": 2 },
+    "table comparison": { "selector": ".cs-table--comparison", "count": 1 },
+    "table data": { "selector": ".cs-table--data", "count": 1 },
+    "faq": { "selector": ".cs-faq", "count": 3 },
+    "qa": { "selector": ".cs-qa", "count": 6 },
+    "footnote marker": { "selector": ".cs-fnref", "count": 5 },
+    "footnote note": { "selector": ".cs-footnotes li", "count": 5 },
+    "footnotes block": { "selector": ".cs-footnotes", "count": 1 }
+  }
+}

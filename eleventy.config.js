@@ -400,6 +400,121 @@ export default function (eleventyConfig) {
     return content.replace(scriptRe, `$1\n${serialised}\n$3`);
   });
 
+  /* Numbering, in the built HTML where document order is finally knowable.
+     Footnotes first, then captions.
+
+     ORDER OF APPEARANCE, NOT ORDER OF DECLARATION. Markers are numbered by
+     where they occur in the page, and the notes are then SORTED to match. An
+     author can write the notes in any order, including a different one from
+     the prose, and the output is still correct. That is the whole reason for
+     naming rather than numbering.
+
+     Because it reads the built page, a marker inside a pane numbers correctly
+     relative to markers outside it, which no render-time counter could manage:
+     a pane's contents render before the prose that follows it, but appear
+     after the prose that precedes it. */
+  eleventyConfig.addTransform("numbering", function (content, outputPath) {
+    if (!outputPath || !outputPath.endsWith(".html")) return content;
+
+    const where = outputPath;
+
+    /* ---- footnotes ---- */
+    if (content.includes("cs-fnref") || content.includes("cs-footnote")) {
+      const markerRe = /<a class="cs-fnref" data-fn="([^"]*)" href="#"><\/a>/g;
+      const order = [];
+      const seenMarker = new Set();
+      for (const m of content.matchAll(markerRe)) {
+        if (seenMarker.has(m[1])) {
+          throw new Error(
+            `[fn] duplicate marker id "${m[1]}" in ${where}. ` +
+              `An id names one note and is referenced once. See SHORTCODES.md.`
+          );
+        }
+        seenMarker.add(m[1]);
+        order.push(m[1]);
+      }
+
+      const noteRe = /<li class="cs-footnote" data-note="([^"]*)">([\s\S]*?)<\/li>/g;
+      const notes = new Map();
+      for (const m of content.matchAll(noteRe)) {
+        if (notes.has(m[1])) {
+          throw new Error(
+            `[note] duplicate note id "${m[1]}" in ${where}. See SHORTCODES.md.`
+          );
+        }
+        notes.set(m[1], m[2]);
+      }
+
+      const orphanMarkers = order.filter((id) => !notes.has(id));
+      const orphanNotes = [...notes.keys()].filter((id) => !order.includes(id));
+
+      if (orphanMarkers.length) {
+        throw new Error(
+          `[fn] marker with no note in ${where}: ${orphanMarkers.map((i) => `"${i}"`).join(", ")}. ` +
+            `Every {% fn %} needs a {% note %} with the same id. See SHORTCODES.md.`
+        );
+      }
+      if (orphanNotes.length) {
+        throw new Error(
+          `[note] note with no marker in ${where}: ${orphanNotes.map((i) => `"${i}"`).join(", ")}. ` +
+            `An unreferenced note is invisible to a reader and has no number to take. ` +
+            `See SHORTCODES.md.`
+        );
+      }
+
+      if (order.length) {
+        const number = new Map(order.map((id, i) => [id, i + 1]));
+
+        // Markers: real number, real href, and a name that is not bare "1".
+        content = content.replace(markerRe, (_, id) => {
+          const n = number.get(id);
+          return (
+            `<a class="cs-fnref" id="fnref-${id}" href="#fn-${id}" ` +
+            `role="doc-noteref" aria-label="Note ${n}">${n}</a>`
+          );
+        });
+
+        // Notes: sorted into marker order, numbered to match, linked back.
+        const rebuilt = order
+          .map((id) => {
+            const n = number.get(id);
+            return (
+              `<li class="cs-footnote" id="fn-${id}" role="doc-endnote" value="${n}">` +
+              `${notes.get(id).trim()}` +
+              ` <a class="cs-footnote__back" href="#fnref-${id}" aria-label="Back to note ${n} in the text">&#8617;</a>` +
+              `</li>`
+            );
+          })
+          .join("\n");
+
+        // Replace the whole list body in one go, so declaration order is gone.
+        content = content.replace(
+          /(<ol aria-labelledby="cs-footnotes-heading">)[\s\S]*?(<\/ol>)/,
+          (_, open, close) => `${open}\n${rebuilt}\n${close}`
+        );
+      }
+    }
+
+    /* ---- caption numbering ----
+
+       ONE SEQUENCE PER BLOCK TYPE, not one shared sequence. A document mixing
+       tables and figures gets Table 1, Table 2 and Figure 1, Figure 2, rather
+       than Table 1 then Figure 2. The label is what a reader searches for, so
+       the number has to be unique within its label rather than within the
+       page. Each counts in document order of its own kind. */
+    const counters = { table: 0, figure: 0 };
+    content = content.replace(
+      /<span class="cs-table__number" data-autonumber="(table|figure)"><\/span>/g,
+      (_, kind) => {
+        counters[kind] += 1;
+        const label = kind === "table" ? "Table" : "Figure";
+        return `<span class="cs-table__number">${label} ${counters[kind]}</span>`;
+      }
+    );
+
+    return content;
+  });
+
   /* Removes the empty prose column a trailing pane leaves behind. Structural
      cleanup of the close-and-reopen above, kept separate from paneRules
      because that transform enforces a contract and this one tidies markup. */
@@ -479,7 +594,7 @@ export default function (eleventyConfig) {
   const TABLE_KINDS = new Set(["comparison", "data"]);
 
   eleventyConfig.addPairedShortcode("table", function (content, options = {}) {
-    const { caption, number, source } = options || {};
+    const { caption, source } = options || {};
     const kind = (options && options.kind) || "data";
 
     if (!TABLE_KINDS.has(kind)) {
@@ -498,8 +613,12 @@ export default function (eleventyConfig) {
       );
     }
 
+    /* The number is a placeholder the numbering transform fills. An author
+       cannot write one: inserting a table mid-document would renumber every
+       table after it, which is the edit most likely to be got wrong and least
+       likely to be noticed. */
     const parts = [];
-    if (number) parts.push(`<span class="cs-table__number">Table ${escapeHtml(number)}</span>`);
+    parts.push(`<span class="cs-table__number" data-autonumber="table"></span>`);
     if (caption) parts.push(`<span class="cs-table__text">${escapeHtml(caption)}</span>`);
     if (source) parts.push(`<span class="cs-table__source">${escapeHtml(source)}</span>`);
     const figcaption = parts.length
@@ -574,6 +693,67 @@ export default function (eleventyConfig) {
       : "";
 
     return `\n<div class="cs-faq">\n${heading}\n${content.trim()}\n\n</div>\n`;
+  });
+
+  /* fn, footnotes and note: named references, numbered by the transform.
+
+     ============================================================
+     NUMBERS CANNOT BE AUTHORED. They are not a style choice.
+     ============================================================
+
+     Two independent reasons, and either alone would settle it.
+
+     A shortcode cannot know its own position. A parent receives a finished
+     string rather than a list of children, so nothing at render time can count
+     what came before it, and a marker in running prose has no parent at all.
+
+     And an explicit number makes inserting a footnote mid-document a renumber
+     of everything after it. That is precisely the operation an authoring
+     language model will get wrong, silently, and the failure looks like
+     correct output.
+
+     So the author writes an id and the transform assigns every number. Same
+     applies to table and figure captions, which now number themselves. */
+  eleventyConfig.addShortcode("fn", function (options = {}) {
+    const id = (options && options.id) || "";
+    if (!String(id).trim()) {
+      throw new Error(
+        `[fn] missing required "id" in ${this.page?.inputPath || "unknown file"}. ` +
+          `A marker references a note by name, never by number. See SHORTCODES.md.`
+      );
+    }
+    /* Emitted with the number left blank. The transform fills the text, the
+       href, the id and the accessible name once document order is known. */
+    return `<a class="cs-fnref" data-fn="${escapeHtml(id)}" href="#"></a>`;
+  });
+
+  eleventyConfig.addPairedShortcode("note", function (content, options = {}) {
+    const id = (options && options.id) || "";
+    if (!String(id).trim()) {
+      throw new Error(
+        `[note] missing required "id" in ${this.page?.inputPath || "unknown file"}. ` +
+          `See SHORTCODES.md.`
+      );
+    }
+    return `\n<li class="cs-footnote" data-note="${escapeHtml(id)}">\n\n${content.trim()}\n\n</li>\n`;
+  });
+
+  eleventyConfig.addPairedShortcode("footnotes", function (content) {
+    /* The list is ORDERED but its order comes from the transform, which sorts
+       the notes into marker order. What the author wrote is irrelevant, which
+       is the point: they cannot get it wrong.
+
+       The heading is visually hidden rather than absent. A bare list of
+       numbered fragments at the end of an article is meaningless to anyone not
+       seeing the layout, and a visible "Notes" heading would be redundant
+       beside the rule and the type change that already announce the block. */
+    return (
+      `\n<div class="cs-footnotes">\n` +
+      `<h2 class="sr-only" id="cs-footnotes-heading">Notes and references</h2>\n` +
+      `<ol aria-labelledby="cs-footnotes-heading">\n\n` +
+      `${content.trim()}` +
+      `\n\n</ol>\n</div>\n`
+    );
   });
 
   /* Pane rules from SHORTCODES.md, enforced against the BUILT HTML rather than

@@ -20,7 +20,7 @@ demonstrates the thing it is testing rather than sitting there as filler.
 Measure is the width of a column of text, counted in characters rather than
 pixels. Pixels are the wrong unit for it, because a column that reads well at
 one type size reads badly at another. Counting characters holds the
-relationship steady no matter what the type does.
+relationship steady no matter what the type does.{% fn id="bringhurst" %}
 
 The number most typographers land on sits somewhere between sixty and
 seventy-five characters per line. Below that the eye returns to the left margin
@@ -36,7 +36,7 @@ jump to find the start of the next. That jump is the least accurate movement in
 the whole process, and its accuracy falls off as the line gets longer.
 
 A narrow column shortens the jump. It also gives the eye a stronger vertical
-edge to aim at, because the left margin is closer to where the eye already was.
+edge to aim at, because the left margin is closer to where the eye already was.{% fn id="saccade" %}
 
 ## What this looks like in practice
 
@@ -96,7 +96,7 @@ surface change can be measured against a paragraph rather than a list.
 
 This paragraph is inside the pane and carries **bold**, *italic* and a
 [link to the design system](https://example.com/design) so the composition can
-be checked rather than assumed.
+be checked rather than assumed.{% fn id="inkpane" %}
 
 A second paragraph, so the rhythm between two paragraphs inside a pane can be
 measured against the rhythm between two paragraphs outside one.
@@ -127,7 +127,7 @@ carries madder, because both are 1.99:1 against this background. That includes
 this [link](https://example.com/madder), which keeps its colour and moves its
 underline instead.
 
-A second paragraph on madder, again so the internal rhythm can be measured.
+A second paragraph on madder, again so the internal rhythm can be measured.{% fn id="madderpane" %}
 
 - A list item on madder.
 - A second item.
@@ -141,13 +141,13 @@ Yes. The two deep surfaces are not one ramp, for borders the same as for text.
 {% endfaq %}
 {% endpane %}
 
-A paragraph immediately below the madder pane, closing the pair of joints.
+A paragraph immediately below the madder pane, closing the pair of joints.{% fn id="afterpane" %}
 
 ## Tables
 
 A comparison table, qualitative and carrying no numbers, so it needs no source.
 
-{% table kind="comparison", number="1", caption="How the two surfaces differ in what they can carry." %}
+{% table kind="comparison", caption="How the two surfaces differ in what they can carry." %}
 | Property | Ink | Madder |
 | --- | --- | --- |
 | Body copy | Paper at 16.06:1 | Paper at 8.06:1 |
@@ -157,7 +157,7 @@ A comparison table, qualitative and carrying no numbers, so it needs no source.
 
 A data table, carrying numbers, so the build refuses it without a source.
 
-{% table kind="data", number="2", caption="Measured contrast, article surfaces.", source="Verified contrast table, 2026" %}
+{% table kind="data", caption="Measured contrast, article surfaces.", source="Verified contrast table, 2026" %}
 | Pairing | Ratio | Passes |
 | --- | --- | --- |
 | Paper on ink | 16.06:1 | AA and AAA |
@@ -180,6 +180,28 @@ The build fails. The relationship is only visible in the built HTML, because
 Nunjucks renders children before parents, so the check runs there.
 {% endqa %}
 {% endfaq %}
+
+{% footnotes %}
+{% note id="afterpane" %}
+Declared first, referenced last. If this renders as note 5 the transform is
+sorting by marker order rather than by the order they were written.
+{% endnote %}
+{% note id="saccade" %}
+On the return sweep, see any standard treatment of saccadic eye movement in
+reading research.
+{% endnote %}
+{% note id="madderpane" %}
+Referenced from inside the madder pane, which appears after the ink pane in the
+document.
+{% endnote %}
+{% note id="bringhurst" %}
+Bringhurst, *The Elements of Typographic Style*, 4th ed.
+{% endnote %}
+{% note id="inkpane" %}
+Referenced from inside the ink pane. A render-time counter could not number
+this correctly relative to the prose around it.
+{% endnote %}
+{% endfootnotes %}
 
 ## Case one, first of two stacked headings
 

@@ -37,6 +37,8 @@ Source of truth for the visual design remains the Claude Design Component Refere
 
 **No shortcode sets its own surface.** See Surfaces below.
 
+**No shortcode sets its own number.** Table, figure, chart, screenshot and footnote numbers are assigned by the build in document order, for the same reason as footnotes above: a block cannot know its own position, and hand-written numbers make a mid-document insertion a silent renumbering job. Each label counts in its own sequence, so a document mixing them reads Table 1, Table 2 alongside Figure 1, Figure 2 rather than sharing one run.
+
 ---
 
 ## Surfaces
@@ -184,10 +186,10 @@ Paired shortcodes are marked P. Child shortcodes are indented under their parent
 | `takeaways` | `title` | measure | P | Default title "The short version" |
 | `toc` | `title` | measure | | Auto-built from h2. Default title "In this report" |
 | `stat` | `value` `label` `source` | measure | | `source` required |
-| `chart` | `title` `source` `caption` `number` | main | P | Content is a markdown table of label/value rows |
-| `table` | `caption` `number` `source` `kind` | main | P | `kind="comparison"` or `kind="data"`, defaults to `data`. `source` required for `data` only. Content is a markdown table |
+| `chart` | `title` `source` `caption` | main | P | Content is a markdown table of label/value rows |
+| `table` | `caption` `source` `kind` | main | P | `kind="comparison"` or `kind="data"`, defaults to `data`. `source` required for `data` only. Content is a markdown table |
 | `pullquote` | `attribution` | narrow | P | |
-| `screenshot` | `src` `alt` `caption` `number` | main | | Unretouched captures only |
+| `screenshot` | `src` `alt` `caption` | main | | Unretouched captures only |
 | `image` | `src` `alt` `caption` `width` | varies | | Only block with author-set width |
 | `aside` | `author` `label` | measure | P | Personal voice. Keeps its madder edge bar |
 | `tool` | `name` `description` `url` `label` | measure | | Default label "Open the tool" |
@@ -195,10 +197,17 @@ Paired shortcodes are marked P. Child shortcodes are indented under their parent
 |   `qa` | `q` | | P | Content is the answer |
 | `newsletter` | `copy` `label` | measure | | Default label "Get the notes" |
 | `signednote` | `author` | measure | P | Uses author key, renders signature |
-| `footnotes` | | measure | P | |
+| `footnotes` | | measure | P | Contains `note` children |
+|   `note` | `id` | | P | Content is the note. Numbered automatically |
 | `related` | `cluster` `title` | main | | Pulls from `cluster` frontmatter if omitted |
 
-**Inline:** `{% fn n="1" %}` places a footnote marker in running prose. The only inline shortcode in the vocabulary.
+**Inline:** `{% fn id="bringhurst" %}` places a footnote marker in running prose. The only inline shortcode in the vocabulary.
+
+**Footnotes are named, never numbered, and the build assigns every number.** A marker carries an `id` and the matching `{% note id="..." %}` carries the same one. Markers are numbered by order of appearance in the page, the notes are sorted to match, and each is linked to the other in both directions.
+
+Two reasons, either sufficient. A shortcode cannot know its own position: a parent receives a finished string rather than a list of children, and a marker in running prose has no parent at all. And an explicit number turns inserting a footnote mid-document into a renumber of everything after it, which is the edit an authoring language model will most reliably get wrong and least reliably notice.
+
+The build fails on a marker with no note, a note with no marker, or a duplicate id.
 
 ### Guide
 
@@ -218,7 +227,7 @@ Paired shortcodes are marked P. Child shortcodes are indented under their parent
 | `execsummary` | `title` | measure | P | Default title "Executive summary" |
 | `methodology` | `title` | measure | P | |
 |   `method` | `label` | | P | Sample, Collection, Normalization, Limitations |
-| `figure` | `number` `caption` `source` | main | P | `source` required |
+| `figure` | `caption` `source` | main | P | `source` required. Numbered automatically |
 | `references` | `title` | measure | P | |
 |   `ref` | | | P | One per source, numbered automatically |
 
