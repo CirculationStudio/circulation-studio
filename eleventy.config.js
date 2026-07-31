@@ -224,7 +224,39 @@ export default function (eleventyConfig) {
     const known = PANE_SURFACES.has(value) ? value : "paper";
     const modifier = known === "paper" ? "" : ` cs-pane--${known}`;
 
-    return `\n<div class="cs-pane${modifier}">\n<div class="cs-pane__inner cs-prose">\n\n${content.trim()}\n\n</div>\n</div>\n`;
+    /* THE PANE CLOSES THE PROSE COLUMN AND REOPENS IT AFTERWARDS.
+
+       layouts/article.njk wraps the body in .cs-article__column, which is what
+       establishes the reading measure once in the body face. A pane has to be
+       full bleed, so it cannot live inside that column, and the only way out
+       of a centred wrapper in pure CSS is 100vw, which counts a classic
+       scrollbar and overshoots. Closing the wrapper, emitting the pane as a
+       direct child of the full-width article, and reopening the wrapper gets
+       the pane to the page edges with no viewport unit anywhere.
+
+       Tag counts stay balanced: the layout opens one column and closes one,
+       and every pane closes exactly one and opens exactly one. Panes cannot
+       nest, which the build enforces, so the pairing cannot come apart.
+
+       A pane at the very end of an article leaves an empty column behind it.
+       The stripEmptyColumns transform removes it, because an empty block would
+       otherwise sit between the pane and the article's bottom padding. */
+    return (
+      `\n</div>\n<div class="cs-pane${modifier}">\n<div class="cs-pane__inner cs-prose">\n\n` +
+      `${content.trim()}` +
+      `\n\n</div>\n</div>\n<div class="cs-article__column cs-prose">\n`
+    );
+  });
+
+  /* Removes the empty prose column a trailing pane leaves behind. Structural
+     cleanup of the close-and-reopen above, kept separate from paneRules
+     because that transform enforces a contract and this one tidies markup. */
+  eleventyConfig.addTransform("stripEmptyColumns", function (content, outputPath) {
+    if (!outputPath || !outputPath.endsWith(".html")) return content;
+    return content.replace(
+      /<div class="cs-article__column cs-prose">\s*<\/div>/g,
+      ""
+    );
   });
 
   /* Pane rules from SHORTCODES.md, enforced against the BUILT HTML rather than

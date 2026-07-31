@@ -14,30 +14,43 @@
    tokens in main.css rather than restated here. Only the variant switching and
    the phone breakpoint live in this file. */
 @layer components {
-  /* THE ARTICLE IS FULL WIDTH AND EACH CHILD CARRIES THE COLUMN.
+  /* THE ARTICLE IS FULL WIDTH. The column lives on .cs-article__column below,
+     and a pane is a direct child of the article, OUTSIDE that column, which is
+     how it reaches the page edges.
 
-     It used to be .cs-container capped at measure, a ~738px block centred on
-     the page, and a pane could not have escaped that. Full bleed from inside a
-     centred container needs 100vw, and 100vw counts a classic scrollbar while
-     the container's own percentage does not, which is exactly the overshoot
-     that put a horizontal scrollbar on What We Do. Constraining each child
-     instead of the parent gets a full-width pane with no viewport units
-     anywhere, so it cannot overshoot.
+     Full bleed from inside a centred wrapper would need 100vw, and 100vw
+     counts a classic scrollbar while a percentage does not, which is exactly
+     the overshoot that put a horizontal scrollbar on What We Do. Here the pane
+     is simply width:100% of a full-width parent, so there is no viewport unit
+     to overshoot with.
 
-     A grid with a full-bleed column would also work and is the usual answer.
-     It is not used here for one disqualifying reason: GRID ITEMS DO NOT
-     COLLAPSE MARGINS. The whole prose rhythm above depends on collapsing, and
-     a grid would turn every measured gap into the sum of two margins. A plain
-     block container keeps collapsing intact.
-
-     The column width is the same expression the container used, so the text
-     column does not move: min(66ch, 100% - 80px), where 100% is now the page
-     content width rather than the container's. Measured identical at 738px
-     and 310px before and after. */
+     A grid with a full-bleed column is the usual answer and is rejected for
+     one disqualifying reason: GRID ITEMS DO NOT COLLAPSE MARGINS. The whole
+     prose rhythm depends on collapsing, and a grid would turn every measured
+     gap into the sum of two margins. Plain blocks throughout. */
   .cs-article {
     width: 100%;
   }
-  .cs-article > * {
+
+  /* THE COLUMN IS ESTABLISHED ONCE, HERE, AND NOWHERE ELSE.
+
+     It was previously set per child, which was the regression: ch is
+     font-relative, so 66ch resolved separately against every element's own
+     font and each one then centred at its own width. Measured at 1440,
+     paragraphs 737.73px wide starting at 351, h2 1030.91px starting at 205,
+     h3 749.75px starting at 345, and lists pinned to 0 because the list rule's
+     `margin: 0` shorthand out-specified the auto centring. Four left edges for
+     one column, and the error grows with the viewport.
+
+     This div inherits the body face, so 66ch resolves once in Lora 18px and
+     every descendant simply fills the result whatever font it is set in. It is
+     the same thing .cs-pane__inner already did, which is why prose inside a
+     pane was correct while prose outside it was not.
+
+     A plain block, deliberately. No overflow, no flex, no grid, no
+     containment, so it does not open a block formatting context and the prose
+     rhythm's margin collapsing passes through it untouched. */
+  .cs-article__column {
     width: min(var(--container-measure), 100% - 80px);
     margin-inline: auto;
   }
@@ -171,7 +184,7 @@
   .cs-prose > :first-child {
     margin-top: 0;
   }
-  .cs-article > header + :is(h2, h3) {
+  .cs-prose > header + :is(h2, h3) {
     margin-top: 0;
   }
 
@@ -190,6 +203,14 @@
   .cs-prose > :last-child {
     margin-bottom: 0;
   }
+
+  /* INVARIANT FOR EVERY BLOCK THAT ENDS AN ARTICLE: it contributes no bottom
+     margin, so the article's 96px padding is the only thing setting the gap to
+     the footer. The rule above covers prose. A block component that is a child
+     of .cs-article rather than of a prose column has to handle its own case,
+     because a generic `.cs-article > :last-child` here would sit at the same
+     specificity as that component's own margin rule and lose to it on import
+     order. See .cs-pane:last-child in pane.css for the worked example. */
 
   /* Lists. Tailwind's preflight ships ol,ul,menu{list-style:none} and zeroes
      the padding, which is right for the nav and card lists the marketing pages

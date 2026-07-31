@@ -11,15 +11,17 @@
    each bring their own pane selectors when they land. This file styles PROSE
    only, because prose is not a component and has no file of its own to do it.
 
-   FULL BLEED WITH NO VIEWPORT UNITS. The pane spans the article, and the
-   article is now full width with its children individually constrained (see
-   article.css). So `width: 100%` is edge to edge and there is no 100vw to
-   overshoot a scrollbar with.
+   FULL BLEED WITH NO VIEWPORT UNITS. The pane sits outside
+   .cs-article__column as a direct child of the full-width article, so
+   `width: 100%` is edge to edge and there is no 100vw to overshoot a scrollbar
+   with. The shortcode achieves that by closing the column before the pane and
+   reopening it after.
 
-   The inner column repeats the article's own width expression against the
-   pane's full width, so the two resolve to the same number and the text column
-   does not move when the background does. That is the whole trick: the reader
-   should see the surface change width, never the words.
+   The inner column repeats the article column's own width expression against
+   the pane's full width, and both resolve in the body face, so the two land on
+   the same number and the text column does not move when the background does.
+   That is the whole trick: the reader should see the surface change width,
+   never the words.
 
    CONTRAST, verified upstream and not re-derived here:
      paper on ink        16.06:1
@@ -30,9 +32,11 @@
    Madder on ink and ink on madder are both 1.99:1 and are banned outright,
    which is why neither surface carries the accent as text anywhere below. */
 @layer components {
-  /* Structural: the pane escapes the column its siblings are held to.
-     .cs-article > * constrains every child to the measure; this puts the pane
-     back to full width. Vertical rhythm is separate, below. */
+  /* Structural. The pane is a direct child of the full-width article and sits
+     OUTSIDE .cs-article__column, so width:100% is edge to edge with no
+     viewport unit involved. The pane shortcode closes the column before
+     emitting the pane and reopens it after, which is what puts it here.
+     Vertical rhythm is separate, below. */
   .cs-article > .cs-pane {
     width: 100%;
     margin-inline: 0;
@@ -55,9 +59,19 @@
 
      Adjacent margins collapse, so a paragraph's 28px bottom does not add:
      the gap is 64, not 92. Measured both sides. */
-  .cs-prose > .cs-pane {
+  .cs-article > .cs-pane {
     margin-top: var(--space-64);
     margin-bottom: var(--space-64);
+  }
+
+  /* A pane ending the article contributes no bottom margin, so the article's
+     96px padding alone sets the gap to the footer. Measured without this: 160px,
+     the 64 flow margin stacked on the 96 padding, because padding does not
+     collapse a margin away. It lives here rather than as a generic
+     .cs-article > :last-child in article.css, which would tie on specificity
+     with the rule directly above and lose to it on import order. */
+  .cs-article > .cs-pane:last-child {
+    margin-bottom: 0;
   }
 
   /* Internal padding is untouched by the flow margins above: padding does not
