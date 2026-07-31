@@ -1,12 +1,62 @@
 # URL redirects for Circulation Studio
-# See DEPLOYMENT.md for detailed configuration
+# See DEPLOYMENT.md for detailed configuration.
+#
+# Cloudflare Pages reads this file from the output root. It reaches _site
+# through the passthrough to public/, recorded in DESIGN_SYSTEM.md under Deploy
+# pipeline. Plain passthrough copy silently lost it, so if a rule stops working
+# check that _site/_redirects still exists before debugging the rule.
+#
+# FORMAT
+#   <from>  <to>  <status>
+#
+# from    the old path, starting with /. May end in /* to match a subtree, and
+#         a :placeholder captures one segment for reuse in <to>.
+# to      the new path or a full URL.
+# status  301 for a permanent move, which is what a migration wants. 302 only
+#         for something genuinely temporary. 200 rewrites without changing the
+#         address bar and is not what a migration wants.
+#
+# Rules are evaluated top to bottom and the FIRST match wins, so the specific
+# ones go above the wildcards. A trailing /* rule placed too high swallows every
+# specific rule underneath it.
 
-# Redirect rules will be added here during Phase 9 (if this is a rebuild/migration)
-# Format: /old-url /new-url 301
 
-# Example redirects:
-# /old-page /new-page 301
-# /blog/old-post /blog/new-post 301
-
-# Catch-all for removed pages (if needed)
-# /removed-section/* /contact 301
+# ============================================================
+# MIGRATION MAP, NOT YET COLLECTED. Nothing below this line is live.
+# ============================================================
+#
+# This is a rebuild of an existing indexed site, so the old URLs already have
+# links and rankings pointing at them. Every one that does not land somewhere
+# deliberate becomes a 404 that used to be a page.
+#
+# THE OLD URLS HAVE TO BE COLLECTED FROM THE LIVE SITE FIRST, and none are
+# written here because inventing them would be worse than leaving it empty: a
+# wrong rule looks exactly like a right one and nothing in the build can tell
+# the difference. Collect them from the live circulationstudio.com, from Search
+# Console's indexed pages, from the existing sitemap.xml, and from analytics for
+# anything still receiving traffic. Then map each one by hand.
+#
+# THIS MUST BE DONE BEFORE THE DNS CUTOVER described in DEPLOYMENT.md, not
+# after. Between cutover and the map landing, every old URL is a 404 being
+# served to real visitors and to crawlers that will act on it.
+#
+# The new structure the map points into is two tiers, one flat segment each:
+#
+#   /yelp/<slug>/      Yelp Hub spokes
+#   /library/<slug>/   everything else
+#
+# Worked example, in the form the real rules will take. Commented out because it
+# is illustrative and the real slug is not known yet:
+#
+#   /blog/yelp-ads-cost  /yelp/what-yelp-ads-cost/  301
+#
+# reading: the old post at /blog/yelp-ads-cost moved permanently to the Yelp Hub
+# spoke at /yelp/what-yelp-ads-cost/.
+#
+# A subtree whose pieces have no individual destination goes to the tier it
+# belonged to rather than to the home page, because a reader who asked for one
+# article is better served by the shelf it sat on than by the front door:
+#
+#   /blog/*  /library/  301
+#
+# That rule goes LAST once real rules exist, or it will swallow them.
