@@ -1,0 +1,95 @@
+---
+layout: layouts/base.njk
+title: "The Yelp Hub: a working library on Yelp advertising"
+description: "A maintained library on Yelp advertising for service businesses, from a Yelp Ads Certified Partner. What we learn managing real campaigns, written down."
+permalink: /yelp/index.html
+
+# The hub's own figure. Page-level keys, the same two an article card uses, so
+# there is one convention for a feature image rather than one per slot.
+# A bare filename resolved through site.cdn: see src/_data/site.js.
+image: cs-img-trellis-1-portrait.webp
+imagealt: A trellis, structure built before growth
+imagecaption: Structure first, then growth
+preloadImage: cs-img-trellis-1-portrait.webp
+
+# The hub's own currency, not any article's. Nothing recomputes this: it says
+# when a person last read the page for accuracy, which no build step can know.
+reviewed: July 2026
+
+intro:
+  eyebrow: About the program
+  headlineBefore: A working library on
+  headlineAccent: Yelp advertising
+  headlineAfter: for service businesses.
+  lede: >-
+    The Yelp Hub is a purposeful knowledge resource on Yelp advertising, built
+    and maintained by Circulation Studio, a Yelp Ads Certified Partner since
+    the program began. What we learn managing real campaigns gets written down
+    here so you can check our thinking. Read it, cite it, or bring it to your
+    next budget conversation.
+  currency: >-
+    Added to as the work produces something worth writing down, rather than on
+    a schedule.
+  building: >-
+    Calculators and estimators are in the build phase and will be listed here
+    when the first one ships.
+---
+{% from "components/container.njk" import container %}
+
+{#
+  The Yelp Hub landing page.
+
+  NOT AN ARTICLE, and deliberately outside src/yelp/. That directory's
+  11tydata.js makes every file in it an article: article layout, /yelp/<slug>/
+  permalink. The hub is neither, so it sits at src root like the five
+  marketing pages and declares its own permalink, exactly as what-we-do.njk
+  does. Keeping it out also keeps collections.yelp honest, since that
+  collection is the hub's own data source and a hub listing itself would be a
+  loop.
+
+  PAGE RHYTHM IS 96px BETWEEN SECTIONS, not the section() macro's 96 top plus
+  96 bottom, which would put 192 between them. That is the comp's rhythm and
+  the comp is the authority on spacing. It is declared once as
+  .cs-hub-section rather than written per section, so the rhythm is still in
+  one place. See yelp-hub.css, which records the conflict with design.md
+  section 4.
+#}
+
+{% call container(class="cs-hub-crumbs") %}
+  <nav aria-label="Breadcrumb">
+    <ol class="cs-hub-crumbs__list">
+      <li><a href="/">Home</a></li>
+      <li aria-current="page">Yelp Hub</li>
+    </ol>
+  </nav>
+{% endcall %}
+
+{% call container(class="cs-hub-intro cs-hub-section cs-hub-section--first") %}
+  <div>
+    <p class="cs-eyebrow">{{ intro.eyebrow }}</p>
+
+    <h1 class="cs-hub-intro__headline">
+      {{ intro.headlineBefore }} <span class="cs-hub-intro__accent">{{ intro.headlineAccent }}</span> {{ intro.headlineAfter }}
+    </h1>
+
+    <p class="cs-hub-intro__lede">{{ intro.lede }}</p>
+
+    {#- The currency line carries the review date beside it, because a claim
+        about how current a library is means nothing without the date it was
+        last checked. -#}
+    <p class="cs-hub-intro__currency">{{ intro.currency }} Last reviewed {{ reviewed }}.</p>
+
+    <p class="cs-hub-intro__building">{{ intro.building }}</p>
+  </div>
+
+  {#- The figure is decorative in the sense that the page reads without it,
+      but it carries meaning per design.md section 10, so it takes real alt
+      text rather than an empty attribute. Width and height are the slot's,
+      not the file's: the card owns its dimensions. -#}
+  <figure class="cs-hub-intro__figure">
+    <img src="{{ site.cdn }}{{ image }}"
+         alt="{{ imagealt }}"
+         width="240" height="340" loading="eager" fetchpriority="high" decoding="async">
+    <figcaption class="cs-eyebrow">{{ imagecaption }}</figcaption>
+  </figure>
+{% endcall %}

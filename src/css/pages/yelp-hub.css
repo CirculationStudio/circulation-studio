@@ -1,0 +1,169 @@
+/* Yelp Hub. Page-scoped, same reasoning as the other pages.
+ *
+ * EVERY COLOUR HERE IS A TOKEN. The comp names its tokens with the upstream
+ * spellings (--paper, --ink, --madder, --slate, --white, --mist) and this repo
+ * uses the local ones (--color-paper, --surface-deep, --accent, --text-muted,
+ * --surface-card, --surface-panel). The rename is the same hand step
+ * ARTICLE_SYSTEM.md section 8 records for every sync, and nothing checks it.
+ * All nineteen tokens the comp reaches for exist here; none had to be
+ * invented, which is the first comp that has been true of.
+ *
+ * PAGE RHYTHM, AND A CONFLICT WORTH KNOWING ABOUT. The comp puts 96px between
+ * sections. The section() macro puts 96 above AND below, so two adjacent
+ * sections sit 192 apart, and design.md section 4 LOCKED says the Section
+ * component applies rhythm automatically and to never rebuild page rhythm by
+ * hand. Those cannot both be honoured. The comp was followed, because it is
+ * the authority on spacing and 192 is visibly not what it draws, and the
+ * rhythm is declared ONCE below rather than written per section, which is what
+ * that rule is actually protecting against. Flagged rather than settled.
+ *
+ * SIZES BELOW 15px ARE px, not tokens, matching what the other four page
+ * stylesheets already do. The type scale tokens stop at --text-caption (13px)
+ * and the article scale is article-scoped; a marketing page's 9, 10, 11 and
+ * 12px labels have never had tokens and inventing four here would be a design
+ * system change made sideways.
+ */
+@layer components {
+
+  /* ---- page rhythm ---- */
+
+  /* One 96px step between sections. Declared here so the page has a rhythm
+     rather than each section carrying its own padding. */
+  .cs-hub-section { padding-bottom: var(--space-96) }
+
+  /* The first section opens against the breadcrumb rather than the masthead,
+     so it takes the top step too. The comp closes the intro at 56px, tighter
+     than the 96 between later sections, because the figure's caption already
+     reads as a closing edge. 56 is not on the spacing scale; it is the one
+     value on this page that is not, and it is the comp's. */
+  .cs-hub-section--first { padding-top: var(--space-96); padding-bottom: 56px }
+
+  /* ---- breadcrumb ---- */
+
+  /* SHORTCODES.md lists breadcrumb as frame, rendered by the layout. No layout
+     renders one yet, so it is built here and should move to the frame when a
+     second page needs it, the way .cs-eyebrow and .cs-close were promoted. */
+  .cs-hub-crumbs {
+    border-bottom: 1px solid var(--border-hairline);
+    padding: 12px 0;
+  }
+  .cs-hub-crumbs__list {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cs-hub-crumbs__list li {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 11px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  /* The separator is a generated slash rather than markup, so it cannot be
+     read out by a screen reader as content between two links. */
+  .cs-hub-crumbs__list li + li::before {
+    content: "/";
+    font-family: var(--font-body);
+    letter-spacing: 0;
+    margin-right: 12px;
+  }
+  .cs-hub-crumbs__list li[aria-current] {
+    font-weight: var(--weight-display);
+    color: var(--color-ink);
+  }
+  .cs-hub-crumbs__list a { color: var(--text-faint); text-decoration: none }
+  .cs-hub-crumbs__list a:hover { color: var(--accent) }
+
+  /* ---- intro: proposition left, figure right ---- */
+
+  .cs-hub-intro {
+    display: grid;
+    grid-template-columns: 1fr 240px;
+    gap: var(--space-96);
+    align-items: start;
+  }
+
+  /* 24px uppercase Dual at --tracking-caps is --text-h3 exactly, which is what
+     .cs-lead__headline on Results already uses. Same scale, same reason: this
+     is a page proposition, not a section heading. */
+  .cs-hub-intro__headline {
+    margin: var(--space-16) 0 0;
+    font-size: var(--text-h3);
+    line-height: 1.4;
+    max-width: 34ch;
+    text-wrap: pretty;
+  }
+  .cs-hub-intro__accent { color: var(--accent) }
+
+  /* THE COMP DRAWS THIS AT 17px AND IT IS SET AT 18. design.md section 2 is
+     LOCKED at 18px and names 17 by number as drift that was corrected in this
+     build on 2026-07-30 and promoted upstream on 2026-08-01. A comp drawing
+     the superseded value is the Component Reference problem again, one artefact
+     down: the comp was drawn before the correction landed and nothing syncs it.
+     --text-base, not 17px. */
+  .cs-hub-intro__lede {
+    margin: var(--space-24) 0 0;
+    font-size: var(--text-base);
+    max-width: var(--container-measure);
+  }
+
+  /* Currency. Italic against the lede's roman, which is the only place on this
+     page italic is used, and it earns it: this sentence is about the document
+     rather than about Yelp. */
+  .cs-hub-intro__currency {
+    margin: 28px 0 0;
+    border-top: 1px solid var(--border-hairline);
+    padding-top: 14px;
+    font-style: italic;
+    font-size: 16px;
+    max-width: 60ch;
+  }
+  .cs-hub-intro__building {
+    margin: 10px 0 0;
+    font-size: 13px;
+    color: var(--text-faint);
+    max-width: var(--container-measure);
+  }
+
+  .cs-hub-intro__figure {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: var(--space-8);
+  }
+  .cs-hub-intro__figure img {
+    width: 100%;
+    height: 340px;
+    object-fit: cover;
+    display: block;
+  }
+  /* The caption is a figcaption rather than a p, so it does not inherit the
+     66ch cap from base/elements.css and needs no max-width:none. It carries
+     .cs-eyebrow for the type, which is the same label treatment the rest of
+     the page uses. 10px rather than the eyebrow's 11 is the comp's; it reads
+     as a caption under a figure rather than a label over a block. */
+  .cs-hub-intro__figure figcaption { font-size: 10px }
+
+  /* ---- phone ---- */
+
+  /* The comp's breakpoint is 1120px, the container width, so the page reflows
+     the moment it can no longer hold its own measure rather than at a device
+     size. */
+  @media (max-width: 1120px) {
+    .cs-hub-section--first { padding-top: 36px; padding-bottom: 56px }
+    .cs-hub-intro {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 32px;
+    }
+    .cs-hub-intro__headline { font-size: 21px; line-height: 1.42; max-width: 26ch }
+    .cs-hub-intro__lede { font-size: 16px; max-width: 100% }
+    .cs-hub-intro__figure { padding-top: 0 }
+    .cs-hub-intro__figure img { height: min(58vw, 300px) }
+    .cs-hub-intro__currency { font-size: 15px; margin-top: 22px }
+  }
+}
