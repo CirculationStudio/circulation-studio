@@ -81,7 +81,7 @@ for (const fixture of manifest.pages) {
   }
   }
 
-  /* ---- signature typography ----
+  /* ---- signature type and layout ----
 
      Reads only the properties an entry declares, so a block that cares about
      its label's size and nothing else says so and is not held to values it
@@ -104,14 +104,24 @@ for (const fixture of manifest.pages) {
             letterSpacing: c.letterSpacing,
             fontStyle: c.fontStyle,
             textTransform: c.textTransform,
-            color: c.color
+            color: c.color,
+            /* Layout, for the blocks whose identity is a shape rather than a
+               size: a bar that must span, a list whose markers must fit its
+               padding, a grid that must have the columns it claims. */
+            maxWidth: c.maxWidth,
+            padding: c.padding,
+            paddingLeft: c.paddingLeft,
+            marginTop: c.marginTop,
+            rowGap: c.rowGap,
+            gridTemplateColumns: c.gridTemplateColumns,
+            overflowX: c.overflowX
           }
         };
       }),
-    fixture.typography ?? []
+    fixture.signature ?? []
   );
 
-  for (const [i, entry] of (fixture.typography ?? []).entries()) {
+  for (const [i, entry] of (fixture.signature ?? []).entries()) {
     const got = type[i];
     const want = { ...entry.expect, ...(entry.expectAt?.[String(width)] ?? {}) };
 
@@ -155,9 +165,9 @@ await browser.close();
    the whole point of this pass and exactly the shape of the two defects it was
    written for. */
 if (!asserted) {
-  console.error("MANIFEST FAILED: no typography values were asserted at all.");
+  console.error("MANIFEST FAILED: no signature values were asserted at all.");
   console.error("  The declarations were dropped or the key was renamed, and the");
-  console.error("  type pass went green having measured nothing.");
+  console.error("  pass went green having measured nothing.");
   process.exit(1);
 }
 
@@ -168,6 +178,6 @@ if (failures.length) {
 }
 console.log(
   `\nMANIFEST MATCHED. ${declared} block types at their declared counts, and ` +
-    `${asserted} typography values across ${manifest.pages.length} fixture page(s) ` +
+    `${asserted} signature values across ${manifest.pages.length} fixture page(s) ` +
     `at ${WIDTHS.join(" and ")}.`
 );

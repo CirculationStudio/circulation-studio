@@ -191,9 +191,11 @@ missing rather than reporting that something was still busy.
 Each answers a different question, and the failure mode all three exist to
 prevent is **a check that passes having measured nothing**.
 
-- **`verify:manifest`** asks *did exactly what we declared render, and is it
-  the size it claims*. Exact counts from `tools/verify/fixture.manifest.json`,
-  plus each block's signature typography measured at 1440 and 390. It exists
+- **`verify:manifest`** asks *did exactly what we declared render, is it the
+  size it claims, and is it the shape it claims*. Exact counts from
+  `tools/verify/fixture.manifest.json`, plus each block's signature type and
+  layout measured at 1440 and 390. See section 9 for the class of defect the
+  layout half exists for. It exists
   because the fixture silently lost a block three times: a markdown edit that
   matched nothing is indistinguishable from a block nobody asked for. Change the
   fixture, change the manifest, same commit.
@@ -252,7 +254,51 @@ systemic rather than a one-off, which makes it a design system question rather
 than a build one. Recorded in `table.css` and `faq.css`. If 8px is adopted it
 needs a token and an amendment to that rule, not a literal per component.
 
-## 9. Open questions
+## 9. Prose rules are scoped, and component elements neutralize the base
+
+Four defects in a row came from one shape: a rule written for prose reaching
+into a component and outranking the component's own rule. None of them failed a
+check, because the block still rendered, still counted and still sat on the left
+edge. Two rules, both learned the expensive way.
+
+**A prose rule is scoped to a direct child of `.cs-prose`.** Not to
+`.cs-article`, which is one class plus one type and therefore beats any
+component's single-class rule. This bit three times:
+
+- `.cs-article h2` outranked six blocks' labels, so takeaways, faq, related,
+  execsummary, methodology and references all rendered their labels at the 22px
+  section scale. takeaways.css carried a comment explaining that it is a panel
+  label at 14px, and that comment had never been true.
+- `.cs-article ul, .cs-article ol` outranked `.cs-references__list`, which
+  declared gap 12px and padding-left 24px and rendered 8px and 20px. Two-digit
+  markers then did not fit the padding and reference 10 sat flush to the column
+  edge.
+- The same rule was the reason the footnotes list looked right: it was borrowing
+  prose values. When the rule was scoped, longform.css had to state them.
+
+A nested list inside a prose list is still prose, which is why the selector is
+`.cs-prose > :is(ul, ol) :is(ul, ol)` and not just the direct child.
+
+**A component element that renders as a prose tag but is not prose must
+neutralize the base rules.** `base/elements.css` gives every `p` a
+`max-width: 66ch`, and `ch` resolves against the element's OWN font, so a label
+at 10px is capped at 468.6px rather than at a reading measure. On
+`.cs-callout__label`, which paints a bar across its block, that left the bar at
+63% of the callout with bare paper beside it. `max-width: none`, the call
+`eyebrow.css` documents and `pullquote` makes.
+
+Audited: of 55 non-prose elements across the site that render as `p`, `li`,
+`ol`, `ul` or a heading, 13 inherit that cap and exactly one paints a ground.
+The other 12 are text where a measure cap is harmless. Inheriting it is still
+fragile, because the value depends on a font size the component may change.
+
+**Both classes are now asserted.** The fixture manifest declares each block's
+signature type and layout, so a rule that loses to a broader selector fails the
+manifest instead of waiting for someone to look at the right block at the right
+width. The callout bar was invisible below 469px of block width; the assertion
+catches it at 390 where the eye cannot.
+
+## 10. Open questions
 
 Not decided. Do not resolve any of these silently.
 

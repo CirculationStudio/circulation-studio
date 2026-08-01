@@ -143,7 +143,7 @@
           "count": 2
         }
       },
-      "typography": [
+      "signature": [
         {
           "name": "takeaways label",
           "selector": ".cs-takeaways__title",
@@ -422,6 +422,109 @@
             "fontWeight": "400",
             "fontFamily": "Lora"
           }
+        },
+        {
+          "name": "callout label box",
+          "selector": ".cs-callout__label",
+          "source": "identity: a painted bar must span its block",
+          "expect": {
+            "maxWidth": "none",
+            "padding": "10px 24px"
+          }
+        },
+        {
+          "name": "references list box",
+          "selector": ".cs-references__list",
+          "source": "Component Reference",
+          "expect": {
+            "paddingLeft": "24px",
+            "rowGap": "12px"
+          }
+        },
+        {
+          "name": "takeaways list box",
+          "selector": ".cs-takeaways ul",
+          "source": "Component Reference",
+          "expect": {
+            "paddingLeft": "20px",
+            "rowGap": "10px"
+          }
+        },
+        {
+          "name": "execsummary list box",
+          "selector": ".cs-execsummary ol",
+          "source": "Component Reference",
+          "expect": {
+            "paddingLeft": "20px",
+            "rowGap": "10px",
+            "marginTop": "20px"
+          }
+        },
+        {
+          "name": "footnotes list box",
+          "selector": ".cs-footnotes ol",
+          "source": "repo decision: stated when the prose list rule was scoped",
+          "expect": {
+            "paddingLeft": "20px",
+            "rowGap": "8px"
+          }
+        },
+        {
+          "name": "prose list box",
+          "selector": ".cs-article__column > ul",
+          "source": "repo decision: the prose list rhythm",
+          "expect": {
+            "paddingLeft": "20px",
+            "rowGap": "8px",
+            "marginTop": "16px"
+          }
+        },
+        {
+          "name": "pullquote box",
+          "selector": ".cs-pullquote",
+          "source": "Component Reference",
+          "expect": {
+            "maxWidth": "none",
+            "padding": "24px 0px"
+          }
+        },
+        {
+          "name": "methodology bar box",
+          "selector": ".cs-methodology__title",
+          "source": "Component Reference",
+          "expect": {
+            "padding": "16px 28px"
+          }
+        },
+        {
+          "name": "method row grid",
+          "selector": ".cs-method",
+          "source": "Component Reference",
+          "expect": {},
+          "expectAt": {
+            "1440": {
+              "gridTemplateColumns": "170px 485.734px",
+              "rowGap": "24px"
+            },
+            "390": {
+              "gridTemplateColumns": "252px",
+              "rowGap": "8px"
+            }
+          }
+        },
+        {
+          "name": "table scroll",
+          "selector": ".cs-table__scroll",
+          "source": "identity: the table scrolls, the document does not",
+          "expect": {},
+          "expectAt": {
+            "1440": {
+              "overflowX": "visible"
+            },
+            "390": {
+              "overflowX": "auto"
+            }
+          }
         }
       ]
     },
@@ -457,7 +560,7 @@
           "count": 0
         }
       },
-      "typography": [
+      "signature": [
         {
           "name": "cover kind",
           "selector": ".cs-cover__kind",
@@ -538,9 +641,42 @@
             "fontWeight": "400",
             "fontFamily": "Lora"
           }
+        },
+        {
+          "name": "cover panel box",
+          "selector": ".cs-cover",
+          "source": "Component Reference",
+          "expect": {
+            "rowGap": "40px"
+          },
+          "expectAt": {
+            "1440": {
+              "padding": "64px 56px"
+            },
+            "390": {
+              "padding": "40px 24px"
+            }
+          }
+        },
+        {
+          "name": "cover meta grid",
+          "selector": ".cs-cover__meta",
+          "source": "Component Reference",
+          "expect": {
+            "padding": "20px 0px 0px",
+            "rowGap": "24px"
+          },
+          "expectAt": {
+            "1440": {
+              "gridTemplateColumns": "191.906px 191.906px 191.906px"
+            },
+            "390": {
+              "gridTemplateColumns": "260px"
+            }
+          }
         }
       ]
     }
   ],
-  "_typography": "Each block declares the computed values that would be wrong if its stylesheet never shipped or its rule lost to a broader selector. Both of those happened and all four scripts stayed green, because a block that renders, counts and aligns can still be the wrong size. DECLARED HERE, NOT READ BACK FROM THE CSS: comparing a computed value to the rule that produced it proves only that the browser works. `source` records where each value came from. `expect` holds values asserted at every width; `expectAt` holds the ones that differ by width."
+  "_signature": "Each block declares the computed values that would be wrong if its stylesheet never shipped, or its rule lost to a broader selector, or its box stopped being the shape that makes it readable as itself. Type AND layout, because three defects in a row were invisible to every other check: a block that renders, counts and aligns can still be the wrong size, the wrong width, or spaced wrong. DECLARED HERE, NOT READ BACK FROM THE CSS: comparing a computed value to the rule that produced it proves only that the browser works. `source` records where each value came from. `expect` holds values asserted at every width; `expectAt` holds the ones that differ by width."
 }
