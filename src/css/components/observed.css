@@ -1,0 +1,77 @@
+/* Observed: marks a claim as a field observation from client work.
+ *
+ * ============================================================
+ * NEW VOCABULARY. THERE IS NO COMPONENT REFERENCE COUNTERPART.
+ * ============================================================
+ *
+ * The Reference has no marker for this and no treatment to copy, so every value
+ * below is derived from a convention this repo already keeps rather than
+ * invented. Do not later "reconcile" it with the Reference and find it missing.
+ *
+ * WHAT IT IS FOR. The whitepaper it was built for rests its credibility on
+ * saying which claims are sourced and which are ours. Filings and research are
+ * cited in prose and carry no marker. A claim that comes from work we did with
+ * clients cannot be cited, so it is labelled instead. One marker for one class
+ * of claim: there is deliberately no three-value set, because two of the three
+ * values would never be used and a set nobody uses is a set that rots.
+ *
+ * WHAT EACH VALUE IS DERIVED FROM:
+ *
+ * Display face, uppercase, tracked wide. That is the house label idiom, shared
+ * by every label in the system: takeaways, callout, related, methodology,
+ * references. It reads as an annotation about the text rather than as text.
+ *
+ * --weight-medium, not the --weight-display those labels use. The 600 weight
+ * belongs to a label ON a box. This sits inside a sentence, and matching the
+ * footnote marker's 500 keeps the two inline marks in the same register.
+ *
+ * Sized in em, not px, so it tracks whatever it is sitting in. .cs-fnref does
+ * the same for the same reason: an inline mark in 15px list copy and one in
+ * 18px prose should look like the same mark.
+ *
+ * --text-muted, and NOT madder. This is the one value chosen by exclusion:
+ * madder is the accent, and in running prose it already means a link or a
+ * footnote marker. A madder marker here would read as clickable, which is the
+ * one thing the brief says it must not. Slate is the token this repo already
+ * uses for text that is present but subordinate.
+ *
+ * Baseline aligned, not superscript. Superscript is the footnote marker's
+ * signature, and this is not a reference to somewhere else. It is a property of
+ * the sentence it sits in.
+ *
+ * nowrap, because a two-word uppercase label broken across a line break stops
+ * reading as one mark.
+ *
+ * MACHINE READABLE, via data-provenance. A parser can find every field
+ * observation on the page without reading the styling. Whether it reaches
+ * schema is a separate decision and is not made here.
+ *
+ * INHERITS SURFACES. Text colour and nothing else, so both deep grounds map. */
+@layer components {
+  .cs-observed {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: .7em;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    /* Stated rather than assumed. It is a span, so it inherits nothing from a
+       link, but the whole point of the mark is that it is not one. */
+    text-decoration: none;
+    white-space: nowrap;
+    margin-left: .35em;
+  }
+
+  /* ============================================================
+     SURFACES. One colour, so one mapping per ground.
+     ============================================================ */
+  .cs-observed--on-deep,
+  .cs-pane--ink .cs-observed {
+    color: var(--text-on-deep-muted);
+  }
+
+  .cs-observed--on-accent,
+  .cs-pane--madder .cs-observed {
+    color: var(--text-on-madder-muted);
+  }
+}

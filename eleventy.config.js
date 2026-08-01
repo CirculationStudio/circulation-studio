@@ -1128,6 +1128,32 @@ export default function (eleventyConfig) {
     );
   });
 
+  /* observed: the second inline shortcode, after fn.
+
+     NEW VOCABULARY WITH NO REFERENCE COUNTERPART, which observed.css states
+     and SHORTCODES.md repeats. Every value there is derived from a convention
+     this repo already keeps rather than invented.
+
+     It marks a claim as a field observation from client work rather than a
+     cited source. The document it was built for rests its credibility on the
+     distinction: filings and research are cited in prose and carry no marker,
+     and a claim that cannot be cited is labelled instead.
+
+     ONE CLASS OF CLAIM, ONE MARKER. No closed set of provenance values,
+     because the other two would never be written and a set nobody uses is a
+     set that rots. If a second class ever earns a marker, that is a decision
+     with a document behind it.
+
+     NO SURROUNDING NEWLINES, the inline rule. A blank line closes an HTML
+     block, so a marker padded like a block-level shortcode would be lifted out
+     of its paragraph. Same reason `item` and `fn` are written this way.
+
+     data-provenance makes it readable by a parser without reading the styling.
+     Whether it reaches schema is a later decision and is not made here. */
+  eleventyConfig.addShortcode("observed", function () {
+    return `<span class="cs-observed" data-provenance="field-observation">Observed</span>`;
+  });
+
   /* references and ref: the fourth parent-and-child pair.
 
      NUMBERING IS THE ORDERED LIST, not the numbering transform. An author

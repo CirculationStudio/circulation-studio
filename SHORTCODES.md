@@ -233,7 +233,7 @@ Reading the tables:
 
 **`related` items are explicit for now.** The entry above described `related` as pulling from a `cluster` frontmatter taxonomy. That taxonomy does not exist: no article declares a cluster, there is no index to query, and nothing maps a cluster to a set of articles. Building the mechanism before the taxonomy would mean inventing both, so each item is written out with its own `kind`, `title` and `url`. When clusters exist, `related` gains a `cluster` argument and the explicit form stays as the override.
 
-**Inline:** `{% fn id="bringhurst" %}` places a footnote marker in running prose. The only inline shortcode in the vocabulary, and the reason it takes no blank lines around it: a blank line closes an HTML block, and a marker separated by one would be lifted out of its paragraph.
+**Inline:** `{% fn id="bringhurst" %}` places a footnote marker in running prose. One of two inline shortcodes, with `observed`, and the reason neither takes blank lines around it: a blank line closes an HTML block, and a marker separated by one would be lifted out of its paragraph.
 
 **Footnotes are named, never numbered, and the build assigns every number.** A marker carries an `id` and the matching `{% note id="..." %}` carries the same one. Markers are numbered by order of appearance in the page, the notes are sorted to match, and each is linked to the other in both directions.
 
@@ -274,6 +274,7 @@ The build fails on a marker with no note, a note with no marker, or a duplicate 
 
 | Shortcode | Status | Args | Width | P | Notes |
 |---|---|---|---|---|---|
+| `observed` | LIVE | | inline | | Marks a claim as a field observation from client work rather than a cited source. Self-closing, no arguments. NO Component Reference counterpart, see below |
 | `epigraph` | PLANNED | `attribution` | UNVERIFIED | P | Assumed narrow. `pullquote` carried the same assumption and turned out to be measure |
 | `callout` | LIVE | **`label`** | measure | P | Closed set, see below |
 | `glossary` | PLANNED | `title` | measure | P | |
@@ -287,6 +288,14 @@ The build fails on a marker with no note, a note with no marker, or a duplicate 
 | `Tip` | Optional improvement. Skipping it costs nothing |
 | `Caveat` | A limit on what was just claimed |
 | `Watch out` | A mistake that costs the reader something. Guides only |
+
+**`observed` is new vocabulary and has no Component Reference counterpart.** Every value in its treatment is derived from a convention this repo already keeps rather than invented, and that is recorded in `observed.css` so nobody later reconciles it with the Reference and finds it missing.
+
+It marks a claim as a field observation from client work rather than a cited source. A document whose credibility rests on that distinction needs to show which claims are which: filings and platform disclosures are cited in prose and carry no marker, and a claim that cannot be cited is labelled instead.
+
+**One class of claim, one marker.** There is deliberately no closed set of provenance values. Two of the three would never be written, and a set nobody uses is a set that rots. A second class earning a marker is a decision with a document behind it.
+
+It emits `data-provenance="field-observation"`, so the distinction is available to a parser without reading the styling. Whether it reaches schema is a separate decision and is not made.
 
 `Watch out` is restricted to guides because in an article there is no action to get wrong.
 

@@ -28,6 +28,8 @@ pixels. Pixels are the wrong unit for it, because a column that reads well at
 one type size reads badly at another. Counting characters holds the
 relationship steady no matter what the type does.{% fn id="bringhurst" %}
 
+A claim that came from client work rather than from a source carries a marker instead of a citation.{% observed %} It is the second inline shortcode, and the only one that is not a reference to somewhere else.{% observed %}
+
 The number most typographers land on sits somewhere between sixty and
 seventy-five characters per line. Below that the eye returns to the left margin
 too often and the rhythm becomes choppy. Above it the return sweep gets long

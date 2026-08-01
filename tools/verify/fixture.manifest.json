@@ -133,6 +133,14 @@
         "ref": {
           "selector": ".cs-ref",
           "count": 3
+        },
+        "observed": {
+          "selector": ".cs-observed",
+          "count": 2
+        },
+        "observed provenance": {
+          "selector": "[data-provenance='field-observation']",
+          "count": 2
         }
       }
     },
