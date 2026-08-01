@@ -105,10 +105,14 @@
   }
 
   /* Deliberately SMALLER than the 18px prose beneath it. The Reference sets
-     guide step titles and FAQ questions at 16px/.08em, and the wide tracking
-     on the uppercase display face is what carries the hierarchy. Do not
-     "correct" this upward on the assumption that a heading must out-size its
-     body copy. */
+     prose h3 and guide step titles at 16px/.08em, and the wide tracking on the
+     uppercase display face is what carries the hierarchy. Do not "correct" this
+     upward on the assumption that a heading must out-size its body copy.
+
+     THIS COMMENT USED TO CLAIM FAQ QUESTIONS TOO, and they are not 16px/.08em.
+     The Reference sets a FAQ question at 14px/.06em. The misattribution is what
+     made faq's own drift look sanctioned, so it is corrected here rather than
+     only in faq.css. */
   .cs-prose > h3 {
     font-size: var(--text-article-h3);
     letter-spacing: var(--tracking-article-h3);

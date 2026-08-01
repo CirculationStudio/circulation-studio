@@ -91,7 +91,10 @@ for (const fixture of manifest.pages) {
       entries.map((entry) => {
         const el = document.querySelector(entry.selector);
         if (!el) return { name: entry.name, missing: true };
-        const c = getComputedStyle(el);
+        /* `pseudo` lets an entry measure ::after, which is where the faq
+           toggle lives. A mark drawn by a pseudo-element is still typography
+           and still drifts. */
+        const c = getComputedStyle(el, entry.pseudo ?? null);
         return {
           name: entry.name,
           values: {
@@ -100,7 +103,8 @@ for (const fixture of manifest.pages) {
             fontFamily: c.fontFamily.split(",")[0].replace(/["']/g, "").trim(),
             letterSpacing: c.letterSpacing,
             fontStyle: c.fontStyle,
-            textTransform: c.textTransform
+            textTransform: c.textTransform,
+            color: c.color
           }
         };
       }),

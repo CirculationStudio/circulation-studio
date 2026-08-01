@@ -166,7 +166,7 @@
         {
           "name": "faq title",
           "selector": ".cs-faq__title",
-          "source": "repo decision: a faq title is a section heading, so it takes the article h2 scale",
+          "source": "repo decision: the Reference's FAQ block has no heading of its own, so the title takes the article section scale",
           "expect": {
             "fontSize": "22px",
             "fontWeight": "600",
@@ -176,12 +176,37 @@
         },
         {
           "name": "qa question",
-          "selector": ".cs-qa__q",
-          "source": "repo decision: set in the body face, see note in the report",
+          "selector": ".cs-article__column > .cs-faq .cs-qa__q",
+          "source": "Component Reference",
           "expect": {
-            "fontSize": "16px",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "fontFamily": "Dual",
+            "letterSpacing": "0.84px",
+            "textTransform": "uppercase",
+            "color": "rgb(33, 21, 35)"
+          }
+        },
+        {
+          "name": "qa answer",
+          "selector": ".cs-article__column > .cs-faq .cs-qa__a",
+          "source": "Component Reference",
+          "expect": {
+            "fontSize": "15px",
             "fontWeight": "400",
-            "fontFamily": "Lora"
+            "fontFamily": "Lora",
+            "color": "rgb(107, 100, 112)"
+          }
+        },
+        {
+          "name": "qa toggle",
+          "selector": ".cs-article__column > .cs-faq .cs-qa__q",
+          "pseudo": "::after",
+          "source": "Component Reference",
+          "expect": {
+            "fontSize": "20px",
+            "fontFamily": "Lora",
+            "color": "rgb(143, 29, 46)"
           }
         },
         {
