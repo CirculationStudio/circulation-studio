@@ -63,6 +63,19 @@
     margin-top: var(--space-16);
   }
 
+  /* A paragraph FOLLOWING a list gets nothing from either side: the list closes
+     with no bottom margin and the paragraph opens with none, so they collide
+     exactly as two paragraphs would. Same 16px.
+
+     THIS SHAPE CAME FROM A REAL DOCUMENT RATHER THAN THE REFERENCE. The
+     Reference's executive summary is one paragraph and a list, which is why the
+     rule above only covered paragraph against paragraph. The first whitepaper
+     through the pipeline is paragraph, list, paragraph, and its closing
+     paragraph ran straight into item five of the list. */
+  .cs-execsummary :is(ol, ul) + p {
+    margin-top: var(--space-16);
+  }
+
   .cs-execsummary ol,
   .cs-execsummary ul {
     display: flex;
