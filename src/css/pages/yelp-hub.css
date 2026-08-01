@@ -701,6 +701,50 @@
   }
   .cs-rank__report tfoot td { border-bottom: 0 }
 
+  /* ---- closing ---- */
+
+  /* 2px ink, the same weight the coverage map opens with. The page's two
+     heaviest rules bracket the index: everything between them is the library,
+     and what follows is the offer to stop reading it. */
+  .cs-hub-close {
+    border-top: 2px solid var(--color-ink);
+    padding-top: 36px;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+  /* Dual 300, which .cs-close__note has set the end-of-page statement in on
+     two marketing pages since it was promoted out of home.css, and which
+     design.md section 2 finally names as of 2026-08-01. Not .cs-close itself:
+     that component centres its content and caps it at 44ch for a single
+     column, and this is a two-column close at 30px. Shared treatment, and the
+     layouts are genuinely different. */
+  .cs-hub-close__statement {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: var(--weight-light);
+    font-size: 30px;
+    line-height: 1.35;
+    letter-spacing: .01em;
+    color: var(--color-ink);
+    max-width: none;
+    text-wrap: pretty;
+  }
+  .cs-hub-close__body {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.75;
+  }
+  .cs-hub-close__actions {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    flex-wrap: wrap;
+    margin-top: var(--space-24);
+  }
+  .cs-hub-close__actions .cs-eyebrow { margin: 0 }
+
   /* ---- phone ---- */
 
   /* The comp's breakpoint is 1120px, the container width, so the page reflows
@@ -747,5 +791,15 @@
        real touch target rather than a button sized for a mouse. */
     .cs-rank .cs-btn { width: 100%; min-height: 48px; box-sizing: border-box }
     .cs-rank__report { padding: 20px }
+
+    .cs-hub-close {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-24);
+      padding-top: 28px;
+    }
+    .cs-hub-close__statement { font-size: 24px }
+    /* 44px so the closing link is a real touch target, matching the rank
+       button's treatment above. */
+    .cs-hub-close .cs-link { min-height: 44px; align-items: center }
   }
 }

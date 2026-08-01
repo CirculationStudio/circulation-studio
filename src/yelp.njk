@@ -99,6 +99,16 @@ rank:
   note: >-
     Sample rows from a monthly report. A real one carries your terms, your
     market and a note on what we would change next.
+
+closing:
+  statement: >-
+    If you would rather have this handled than study it, ask us whether Yelp is
+    the right place for your budget.
+  body: >-
+    We will read your market, your category and your review position, and tell
+    you plainly. If the conditions are not there we will say so. That answer
+    costs us an engagement and saves you a year.
+  cta: Start a conversation
 ---
 {% from "components/container.njk" import container %}
 {% from "components/button.njk" import button %}
@@ -352,5 +362,22 @@ rank:
         <tr><td class="cs-rank__note" colspan="3">{{ rank.note }}</td></tr>
       </tfoot>
     </table>
+  </div>
+{% endcall %}
+
+{#- CLOSING. NO SECOND MADDER PANE. The browse layer's rank 1 card is this
+    page's one madder ground, per design.md section 1 as amended 2026-08-01,
+    and the close earns its weight from the 2px ink rule and the type rather
+    than from a colour it is not entitled to. -#}
+{% call container(class="cs-hub-section") %}
+  <div class="cs-hub-close">
+    <p class="cs-hub-close__statement">{{ closing.statement }}</p>
+    <div>
+      <p class="cs-hub-close__body">{{ closing.body }}</p>
+      <div class="cs-hub-close__actions">
+        <a class="cs-link" href="/contact/">{{ closing.cta }} <span class="cs-link__arrow" aria-hidden="true">&rarr;</span></a>
+        <p class="cs-eyebrow">{{ site.booking.label }}</p>
+      </div>
+    </div>
   </div>
 {% endcall %}
