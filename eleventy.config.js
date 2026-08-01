@@ -296,6 +296,26 @@ export const YELP_FRONTMATTER = [
   ["summary", "the coverage map and the browse layer have no line to show under the title"]
 ];
 
+/* THE START HERE BAND IS AN ARTICLE WEARING A FLAG, not a copy of an article
+   written into the hub's frontmatter.
+
+   The band names one piece as the way in. Written into the hub template it
+   would be a second copy of a title and a summary that already exist on the
+   piece itself, and the two would drift the first time the piece was retitled,
+   silently, because nothing compares a hand-typed string to the file it
+   describes. So the piece declares `starthere: true` and the band reads it.
+
+   AT MOST ONE, and a build with two fails. "Start here" is a singular claim:
+   two of them is not a band with two entries, it is a page that has not
+   decided, and the comp draws one full-width row with no way to render a
+   second without inventing a layout.
+
+   ZERO IS A VALID STATE and renders nothing. That is the same rule the browse
+   layer and the FAQ counts follow: a band with no entry is omitted rather than
+   filled with a placeholder, because a placeholder card is indistinguishable
+   from a real one to a reader and to a crawler. */
+export const YELP_STARTHERE = "starthere";
+
 
 export default function (eleventyConfig) {
   eleventyConfig.addFilter("glyphSwaps", glyphSwaps);
@@ -1467,6 +1487,17 @@ export default function (eleventyConfig) {
       }
     }
 
+    /* At most one Start here. See YELP_STARTHERE above for why two is a
+       decision that has not been made rather than a band with two rows. */
+    const startHere = items.filter((item) => item.data[YELP_STARTHERE]);
+    if (startHere.length > 1) {
+      problems.push(
+        `${startHere.length} pieces declare "${YELP_STARTHERE}": ` +
+          `${startHere.map((i) => i.inputPath).join(", ")}. The band names ONE ` +
+          `way in, and the comp draws one row with nowhere to put a second.`
+      );
+    }
+
     if (problems.length) {
       throw new Error(
         `[yelp] ${problems.length} frontmatter problem(s) in src/yelp/:\n` +
@@ -1476,6 +1507,12 @@ export default function (eleventyConfig) {
     }
     return items;
   });
+
+  /* The Start here piece, or nothing. A collection rather than a filter so the
+     template asks for it by name and never re-derives the rule. */
+  eleventyConfig.addCollection("yelpStartHere", (collectionApi) =>
+    collectionApi.getFilteredByGlob("src/yelp/*.md").filter((item) => item.data[YELP_STARTHERE])
+  );
 
   eleventyConfig.addCollection("library", (collectionApi) =>
     collectionApi.getFilteredByGlob("src/library/*.md")

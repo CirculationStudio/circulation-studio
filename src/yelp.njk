@@ -33,6 +33,14 @@ intro:
   building: >-
     Calculators and estimators are in the build phase and will be listed here
     when the first one ships.
+
+# The band's furniture only. The entry itself is an article carrying
+# `starthere: true`, never a title and summary retyped here.
+starthere:
+  label: Start here
+  badge: yelp/yelp-ads-partner-badge.png
+  badgeAlt: Yelp Advertising Certified Partner
+  badgeLabel: Certified Partner
 ---
 {% from "components/container.njk" import container %}
 
@@ -93,3 +101,28 @@ intro:
     <figcaption class="cs-eyebrow">{{ imagecaption }}</figcaption>
   </figure>
 {% endcall %}
+
+{#- START HERE. One piece, flagged on the piece itself rather than copied into
+    this file, so a retitle cannot leave the band describing an older name. The
+    band is omitted entirely when nothing carries the flag: an empty band with
+    a placeholder row would read as a real recommendation. See YELP_STARTHERE
+    in eleventy.config.js. -#}
+{%- for entry in collections.yelpStartHere %}
+{% call container(class="cs-hub-section") %}
+  <a class="cs-starthere" href="{{ entry.url }}">
+    <span class="cs-starthere__label">{{ starthere.label }}</span>
+    <span>
+      <span class="cs-starthere__title">{{ entry.data.title }}</span>
+      <span class="cs-starthere__summary">{{ entry.data.summary }}</span>
+    </span>
+    <span class="cs-starthere__badge">
+      <span class="cs-starthere__badge-chip">
+        <img src="{{ site.cdn }}{{ starthere.badge }}"
+             alt="{{ starthere.badgeAlt }}"
+             width="72" height="72" loading="lazy" decoding="async">
+      </span>
+      <span class="cs-starthere__badge-label">{{ starthere.badgeLabel }}</span>
+    </span>
+  </a>
+{% endcall %}
+{%- endfor %}
