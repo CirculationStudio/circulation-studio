@@ -444,6 +444,135 @@
   .cs-browse__card:hover .cs-browse__card-title,
   .cs-browse__row:hover .cs-browse__row-title { color: var(--accent) }
 
+  /* ---- coverage map ---- */
+
+  /* 2px ink, the heaviest rule on the page. The browse layer's head takes the
+     .34 hairline and each cluster takes it again, so the map reads as one
+     block containing seven rather than as eight peers. */
+  .cs-map__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-top: 2px solid var(--color-ink);
+    padding-top: var(--space-16);
+  }
+  /* An h2 in APPARATUS, so uppercase stands. The Case rule moves titles in a
+     list to sentence case; this is a section heading over the list, not an
+     item in it. */
+  .cs-map__title {
+    margin: 0;
+    font-size: var(--text-article-h2);
+    letter-spacing: var(--tracking-caps);
+  }
+  .cs-map__head .cs-eyebrow { margin-top: var(--space-8) }
+  .cs-map__meta {
+    margin: 0;
+    max-width: none;
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  .cs-map__lede {
+    margin: 20px 0 32px;
+    font-size: 15px;
+    color: var(--text-muted);
+    max-width: 74ch;
+  }
+
+  .cs-map {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 56px;
+    row-gap: 28px;
+  }
+  .cs-map__cluster {
+    border-top: 1px solid var(--border-strong);
+    padding: var(--space-24) 0 var(--space-16);
+  }
+  .cs-map__cluster-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-16);
+  }
+  /* The cluster name is apparatus and keeps caps. It is also the FAQ section
+     anchor, per SHORTCODES.md, so its id is the cluster slug. */
+  .cs-map__cluster-name {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 13px;
+    line-height: 1.2;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+  .cs-map__cluster-state {
+    margin: 0;
+    max-width: none;
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--text-faint);
+    white-space: nowrap;
+  }
+  .cs-map__entries { margin-top: 10px }
+
+  .cs-map__entry {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    border-bottom: 1px solid var(--border-hairline);
+    padding: 10px 0;
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+  /* A fixed 76px rail, so every title in the column starts on one edge no
+     matter how long its type label is. "Whitepaper" and "FAQ" would otherwise
+     indent their titles differently and the column would lose its left edge. */
+  .cs-map__entry-type {
+    width: 76px;
+    flex: none;
+    font-size: 9px;
+  }
+  /* SENTENCE CASE, the Case rule's own example: an item in a directory. */
+  .cs-map__entry-title {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 15px;
+    line-height: 1.4;
+    letter-spacing: .01em;
+    color: var(--color-ink);
+  }
+  /* The lead entry, which is the newest. 17 at 600 against 15 at 500 is the
+     pair design.md section 2's Case amendment names. */
+  .cs-map__entry-title--lead {
+    font-weight: var(--weight-display);
+    font-size: 17px;
+  }
+  .cs-map__entry-summary {
+    display: block;
+    margin-top: 5px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--text-muted);
+  }
+  .cs-map__entry:hover .cs-map__entry-title { color: var(--accent) }
+
+  .cs-map__pending {
+    margin: 10px 0 0;
+    max-width: none;
+    border-bottom: 1px solid var(--border-hairline);
+    padding: 13px 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-faint);
+  }
+
   /* ---- phone ---- */
 
   /* The comp's breakpoint is 1120px, the container width, so the page reflows
@@ -477,5 +606,8 @@
     .cs-browse__feature-img { height: min(56vw, 240px) }
     .cs-browse__row { grid-template-columns: 104px minmax(0, 1fr); gap: var(--space-16) }
     .cs-browse__row img { width: 104px; height: 92px }
+
+    .cs-map { grid-template-columns: minmax(0, 1fr); row-gap: 0 }
+    .cs-map__cluster { padding: 22px 0 12px }
   }
 }

@@ -1692,6 +1692,36 @@ export default function (eleventyConfig) {
       .sort((a, b) => a.data.shelf - b.data.shelf)
   );
 
+  /* THE COVERAGE MAP. All seven clusters, always, in YELP_CLUSTERS order.
+     A cluster with no published entries is not omitted: the map's claim is
+     that this is the whole subject, so a missing column would quietly shrink
+     the subject to whatever has been written. Empty clusters take the comp's
+     in-preparation treatment instead.
+
+     ENTRIES ARE SORTED NEWEST FIRST, and the first one in each cluster leads.
+     The comp draws its first entry per cluster at 17px weight 600 with its
+     summary and the rest at 15px weight 500 without one, in every cluster that
+     has two. It does not say what decides which is first. Newest is the only
+     ordering the data supports without a second hand-maintained ranking, and
+     it means a cluster's lead changes when the cluster is added to, which is
+     what "last added" already promises the reader. */
+  eleventyConfig.addCollection("yelpMap", (collectionApi) => {
+    const items = collectionApi.getFilteredByGlob("src/yelp/*.md");
+    return [...YELP_CLUSTERS].map(([slug, name]) => {
+      const entries = items
+        .filter((item) => String(item.data.cluster || "").trim() === slug)
+        .sort((a, b) => new Date(b.data.updated) - new Date(a.data.updated));
+      return {
+        slug,
+        name,
+        entries,
+        /* The newest updated date in the cluster, or null. Derived rather than
+           declared, so it cannot claim a month nothing was added in. */
+        lastAdded: entries.length ? entries[0].data.updated : null
+      };
+    });
+  });
+
   /* Ranks lo..hi from an already sorted shelf. A filter rather than three
      collections, because the split is a fact about the LAYOUT and belongs
      beside the template that draws it. */

@@ -52,6 +52,20 @@ browse:
   eyebrow: Worth reading
   note: Chosen rather than sorted
   featureCta: Read the whitepaper
+
+# Furniture only. Every entry is an article, grouped by its declared cluster.
+map:
+  title: The full index
+  subtitle: Coverage map, everything published, by cluster
+  meta: Seven clusters
+  lede: >-
+    For the reader who wants the whole picture rather than a recommendation.
+    The subject laid out as seven clusters. Every long entry we have published
+    sits under the cluster it belongs to. The library is added to as the work
+    produces something worth writing down, so a cluster with one entry today
+    is a cluster we are still in.
+  pendingState: In preparation
+  pendingNote: The longer entries for this cluster are in preparation.
 ---
 {% from "components/container.njk" import container %}
 
@@ -210,3 +224,50 @@ browse:
   {%- endif %}
 {% endcall %}
 {%- endif %}
+
+{#- COVERAGE MAP. All seven clusters, always, whether or not anything has been
+    published under them. The map's claim is that this is the whole subject,
+    so dropping an empty cluster would shrink the subject to whatever happens
+    to be written. See the yelpMap collection. -#}
+{% call container(class="cs-hub-section") %}
+  <div class="cs-map__head">
+    <div>
+      <h2 class="cs-map__title">{{ map.title }}</h2>
+      <p class="cs-eyebrow">{{ map.subtitle }}</p>
+    </div>
+    <p class="cs-map__meta">{{ map.meta }}</p>
+  </div>
+  <p class="cs-map__lede">{{ map.lede }}</p>
+
+  <div class="cs-map">
+    {%- for cluster in collections.yelpMap %}
+    <div class="cs-map__cluster">
+      <div class="cs-map__cluster-head">
+        <h3 class="cs-map__cluster-name" id="{{ cluster.slug }}">{{ cluster.name }}</h3>
+        <p class="cs-map__cluster-state">
+          {%- if cluster.lastAdded %}Last added {{ cluster.lastAdded | monthYear }}{% else %}{{ map.pendingState }}{% endif -%}
+        </p>
+      </div>
+
+      {%- if cluster.entries.length %}
+      <div class="cs-map__entries">
+        {%- for entry in cluster.entries %}
+        <a class="cs-map__entry" href="{{ entry.url }}">
+          <span class="cs-hub-type cs-map__entry-type{{ " cs-hub-type--lead" if entry.data.kind == "whitepaper" }}">{{ entry.data.kind | kindLabel }}</span>
+          <span>
+            <span class="cs-map__entry-title{{ " cs-map__entry-title--lead" if loop.first }}">{{ entry.data.title }}</span>
+            {%- if loop.first %}<span class="cs-map__entry-summary">{{ entry.data.summary }}</span>{% endif %}
+          </span>
+        </a>
+        {%- endfor %}
+      </div>
+      {%- else %}
+      {#- The comp's empty row reads "Answered in the FAQ while the longer
+          entries are in preparation", which claims an FAQ that does not exist
+          yet. Reworded to something true today. -#}
+      <p class="cs-map__pending">{{ map.pendingNote }}</p>
+      {%- endif %}
+    </div>
+    {%- endfor %}
+  </div>
+{% endcall %}
