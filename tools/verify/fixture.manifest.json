@@ -568,6 +568,26 @@
         "standard header": {
           "selector": ".cs-article__deck",
           "count": 0
+        },
+        "cta": {
+          "selector": ".cs-cta",
+          "count": 1
+        },
+        "cta is a madder pane": {
+          "selector": ".cs-pane--madder.cs-cta",
+          "count": 1
+        },
+        "cta headline": {
+          "selector": ".cs-cta__headline",
+          "count": 1
+        },
+        "cta button": {
+          "selector": ".cs-cta__action .cs-btn--deep",
+          "count": 1
+        },
+        "madder panes on the page": {
+          "selector": ".cs-pane--madder",
+          "count": 1
         }
       },
       "signature": [
@@ -683,6 +703,29 @@
             "390": {
               "gridTemplateColumns": "260px"
             }
+          }
+        },
+        {
+          "name": "cta headline",
+          "selector": ".cs-cta__headline",
+          "source": "derived: an ordinary pane heading, no treatment of its own",
+          "expect": {
+            "fontSize": "22px",
+            "fontWeight": "600",
+            "fontFamily": "Dual",
+            "letterSpacing": "1.32px",
+            "color": "rgb(244, 245, 244)",
+            "marginTop": "0px"
+          }
+        },
+        {
+          "name": "cta box",
+          "selector": ".cs-cta",
+          "source": "derived: the madder pane's own flow spacing and padding",
+          "expect": {
+            "marginTop": "64px",
+            "marginBottom": "64px",
+            "padding": "64px 0px"
           }
         }
       ]

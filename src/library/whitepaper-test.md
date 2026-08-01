@@ -22,3 +22,13 @@ The cover is the only header treatment that is a component rather than a scale.
 Every other block in the vocabulary can be dropped into a prose column and
 measured there, so they live in the essay fixture where the sweep already covers
 them.
+
+{% cta headline="Does the fixture prove the block?", label="Read the manifest", url="https://example.com/manifest" %}
+One optional line of markdown copy, so the block is exercised with its copy
+present rather than only in its shortest form.
+{% endcta %}
+
+A closing line after the cta, so the block is measured with a neighbour under it
+rather than as the article's last child. A pane that ends an article
+deliberately contributes no bottom margin, which is a different case and is
+already covered by pane.css.

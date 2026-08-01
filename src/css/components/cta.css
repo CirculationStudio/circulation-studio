@@ -1,0 +1,53 @@
+/* CTA: the offer at the end of a piece.
+ *
+ * ============================================================
+ * NEW VOCABULARY. NO COMPONENT REFERENCE COUNTERPART.
+ * ============================================================
+ *
+ * The Reference has no conversion block, so there is nothing to copy. Almost
+ * everything here is therefore not designed at all: it is the madder pane,
+ * reused. That is the point of the file, and the reason it is nine lines.
+ *
+ * WHY IT EXISTS. A five thousand word whitepaper that convinces someone and
+ * then offers no way forward is a conversion failure. Nothing in the vocabulary
+ * did this job: `tool` embeds a tool, `related` points at more reading, and
+ * `newsletter` captures an email rather than booking a call.
+ *
+ * IT EMITS THE MADDER PANE RATHER THAN PAINTING ITS OWN GROUND. Two reasons,
+ * and the second is the one that matters mechanically.
+ *
+ * The design system reserved madder-as-a-pane as the single bold colour moment,
+ * at most one per page, at the most important point in the page, and then never
+ * used it anywhere. The end of a piece of content, where a reader who has read
+ * the whole argument decides what to do, is that point.
+ *
+ * And reusing the pane means the existing one-madder-pane-per-page check counts
+ * a cta automatically. A page cannot have a cta and a madder pane without the
+ * build saying so, because as far as the build is concerned there is only one
+ * kind of thing being counted. A second ground painted here would have needed
+ * its own enforcement, which would have been a second thing to keep in step.
+ *
+ * SO THERE IS NO NEW COLOUR, NO NEW WIDTH AND NO NEW HEADING TREATMENT.
+ * The ground, the 64px padding, the 64px symmetric flow spacing, the measure
+ * width of the inner column, the paper text and the paper link underline all
+ * come from pane.css. The headline is an h2 that is a direct child of
+ * .cs-pane__inner, which carries .cs-prose, so it takes exactly the heading
+ * treatment every other pane heading takes, including the margin-top:0 that
+ * .cs-prose > :first-child already gives a leading heading.
+ *
+ * THE BUTTON IS .cs-btn--deep, and that needs saying because it is not what was
+ * asked for. There is no .cs-btn--on-accent in this repo: the locked variant
+ * set in design.md section 6 is primary, secondary, ghost and deep, and `deep`
+ * is the paper-on-a-dark-ground treatment, described there as for use on an ink
+ * pane. It rests as a paper outline and fills to solid paper with ink text on
+ * hover, rather than resting filled. Every colour in it is already a verified
+ * pairing on madder. A fifth variant that rests filled would be an addition to
+ * a locked set, which is a design decision rather than a build one.
+ *
+ * The only value invented here is the 24px above the button, and it is the
+ * pane's own step: the same 24 a heading takes below itself. */
+@layer components {
+  .cs-cta__action {
+    margin-top: var(--space-24);
+  }
+}

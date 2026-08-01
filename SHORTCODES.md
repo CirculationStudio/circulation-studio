@@ -276,6 +276,7 @@ The build fails on a marker with no note, a note with no marker, or a duplicate 
 |---|---|---|---|---|---|
 | `observed` | LIVE | | inline | | Marks a claim as a field observation from client work rather than a cited source. Self-closing, no arguments. NO Component Reference counterpart, see below |
 | `epigraph` | PLANNED | `attribution` | UNVERIFIED | P | Assumed narrow. `pullquote` carried the same assumption and turned out to be measure |
+| `cta` | LIVE | **`headline`** **`label`** **`url`** | bleed | P | The offer at the end of a piece. Emits the madder pane, so it counts against the one-madder-pane-per-page rule. NO Component Reference counterpart, see below |
 | `callout` | LIVE | **`label`** | measure | P | Closed set, see below |
 | `glossary` | PLANNED | `title` | measure | P | |
 |   `term` | PLANNED | `word` | | P | Content is the definition |
@@ -288,6 +289,12 @@ The build fails on a marker with no note, a note with no marker, or a duplicate 
 | `Tip` | Optional improvement. Skipping it costs nothing |
 | `Caveat` | A limit on what was just claimed |
 | `Watch out` | A mistake that costs the reader something. Guides only |
+
+**`cta` is new vocabulary and has no Component Reference counterpart.** It exists because a long piece that convinces a reader and then offers no way forward is a conversion failure, and nothing else in the vocabulary does the job: `tool` embeds a tool, `related` points at more reading, and `newsletter` captures an email rather than booking a call.
+
+**It emits the madder pane rather than a ground of its own,** which is why it is bleed width and why its content sits at the measure like any pane's. Two reasons. The design system reserved madder-as-a-pane as the single bold colour moment, at most one per page at the most important point in the page, and never used it; the end of a piece of content is that point. And because a cta IS a pane, the existing one-madder-pane-per-page rule counts it automatically: **a page cannot carry both a cta and a `{% pane surface="madder" %}` without the build saying so.**
+
+Nothing about it is a new colour, a new width or a new heading treatment. The headline is an ordinary pane heading, and the button is `.cs-btn--deep`, the existing paper-on-a-dark-ground variant.
 
 **`observed` is new vocabulary and has no Component Reference counterpart.** Every value in its treatment is derived from a convention this repo already keeps rather than invented, and that is recorded in `observed.css` so nobody later reconciles it with the Reference and finds it missing.
 

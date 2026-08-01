@@ -1154,6 +1154,65 @@ export default function (eleventyConfig) {
     return `<span class="cs-observed" data-provenance="field-observation">Observed</span>`;
   });
 
+  /* cta: the offer at the end of a piece. NEW VOCABULARY, no Reference
+     counterpart, which cta.css states and SHORTCODES.md repeats.
+
+     IT EMITS THE MADDER PANE RATHER THAN A GROUND OF ITS OWN. The design
+     system reserved madder-as-a-pane as the one bold colour moment, at most
+     one per page at the most important point, and never used it. The end of a
+     piece of content is that point. And because it IS a pane, the existing
+     one-madder-pane-per-page check counts it for free: a page cannot carry a
+     cta and a madder pane without the build saying so. A second ground painted
+     here would have needed its own enforcement.
+
+     ALL THREE ARGUMENTS ARE REQUIRED, same shape as stat, each failing with
+     its own reason. A CTA with no destination is decoration, and one with no
+     label is a link that does not say where it goes.
+
+     The copy line is optional and is markdown, so it takes blank lines either
+     side. When it is absent the block stays one unbroken HTML block, which is
+     why the padding is built rather than interpolated.
+
+     THE BUTTON IS WRAPPED IN A DIV, and that is composition rather than taste.
+     An <a> is inline, so markdown-it would parse a line starting with one as a
+     paragraph and swallow the closing tags after it. Same trap pullquote hit
+     with <cite>, same fix: a block-level wrapper. */
+  const CTA_ARGUMENTS = [
+    ["headline", "A CTA with nothing to say is a coloured box"],
+    ["label", "A button with no label is a link that does not say where it goes"],
+    ["url", "A CTA with no destination is decoration"]
+  ];
+
+  eleventyConfig.addPairedShortcode("cta", function (content, options = {}) {
+    const { headline, label, url } = options || {};
+    const given = { headline, label, url };
+
+    for (const [name, why] of CTA_ARGUMENTS) {
+      if (!given[name] || !String(given[name]).trim()) {
+        throw new Error(
+          `[cta] missing required "${name}" in ${this.page?.inputPath || "unknown file"}. ` +
+            `${why}. See SHORTCODES.md. ` +
+            `headline=${JSON.stringify(headline ?? null)} ` +
+            `label=${JSON.stringify(label ?? null)} ` +
+            `url=${JSON.stringify(url ?? null)}`
+        );
+      }
+    }
+
+    const copy = content.trim();
+    const body = copy ? `\n\n${copy}\n\n` : `\n`;
+
+    return outsideColumn(
+      `<div class="cs-pane cs-pane--madder cs-cta">\n` +
+        `<div class="cs-pane__inner cs-prose">\n` +
+        `<h2 class="cs-cta__headline">${escapeHtml(headline)}</h2>` +
+        body +
+        `<div class="cs-cta__action">` +
+        `<a class="cs-btn cs-btn--deep" href="${escapeHtml(url)}">${escapeHtml(label)}</a>` +
+        `</div>\n</div>\n</div>`
+    );
+  });
+
   /* references and ref: the fourth parent-and-child pair.
 
      NUMBERING IS THE ORDERED LIST, not the numbering transform. An author

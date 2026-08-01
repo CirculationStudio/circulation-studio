@@ -242,6 +242,10 @@ Before investing in Yelp Ads, score your business honestly on six questions:
 
 Five or six yeses: Yelp belongs in your mix, and the remaining work is management quality. Three or four: fix the gaps first; most are fixable in a quarter. Two or fewer: spend the money on the foundation (reviews, profile, response process) or on a channel that fits your category, and revisit Yelp when the conditions change. We give this assessment honestly even when the answer costs us a management engagement, because a client whose campaign was doomed by conditions becomes a former client who tells people Yelp doesn't work.
 
+{% cta headline="Want a straight answer on whether Yelp fits your business?", label="Book a 30-minute call", url="https://tidycal.com/team/circulation-studio/30-minute-discovery" %}
+We will tell you if the conditions are not there. That answer costs us an engagement and saves you a year.
+{% endcta %}
+
 {% references title="Sources", note="Circulation Studio is a Laguna Beach digital marketing agency, a Yelp Ads Certified Partner, and a Google Partner serving established service businesses across Southern California and beyond." %}
 
 {% ref %}
