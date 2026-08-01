@@ -161,8 +161,9 @@ readingtime: 18
 reviewed: 2026-07
 cluster: cost-and-pricing   # src/yelp/ only, required, one of the seven below
 summary: What a dollar buys across nine trades, method shown.   # src/yelp/ only, required
-image: /assets/...      # PLANNED
-imagealt: ...           # PLANNED
+shelf: 1                # src/yelp/ only, optional, 1 to 5, see The browse shelf
+image: cs-img-field-1-landscape.webp      # bare filename, resolved through site.cdn
+imagealt: Field rows, repeatable growth at scale
 dropcap: true           # PLANNED, once per piece, at the open only
 nextreview: 2027-01     # PLANNED
 changelog: /library/.../changes/   # PLANNED
@@ -176,6 +177,24 @@ changelog: /library/.../changes/   # PLANNED
 **It was called `description` until 2026-08-01 and the rename is the whole point.** `description` means the meta description on the five marketing pages and meant the map line on an article, so the same key name held two different strings depending on where the file sat. Two near-synonyms holding a thirty-word tag and an eight-word label is a wart that costs someone an hour per article, forever, and it was renamed while exactly one article carried it. `description` now means one thing everywhere: the meta description, on a page with no `deck`.
 
 **`cluster` and `summary` are REQUIRED on every piece in `src/yelp/`**, and the build fails without them. Neither is required in `src/library/`, which has no coverage map. A missing cluster is not a cosmetic problem: the piece publishes and never appears on the one page that exists to list it.
+
+### The browse shelf
+
+`shelf` puts a piece on the Yelp Hub's Worth reading band. Optional, `src/yelp/` only, and a whole number from 1 to 5. A piece with no `shelf` is not on the shelf; it still appears in the coverage map, which is the full index.
+
+| Rank | Slot | Draws |
+|---|---|---|
+| 1 | feature | The large card on the madder ground, with the deck rather than the summary |
+| 2, 3 | side | The two stacked cards beside it |
+| 4, 5 | row | The two wide rows beneath |
+
+**The shelf is chosen, not sorted.** Rank is a number the piece carries, so promoting something is one edit on that piece rather than a reordering in the hub's own frontmatter.
+
+**A duplicate rank or an interior gap fails the build.** Two pieces at rank 2 is a tie nobody decided and the slot is one card. Ranks 1, 2, 4 means a piece was demoted or deleted and the rest were never renumbered. A SHORT shelf is fine and is not a gap: 1, 2, 3 is a three-piece shelf and the bottom row does not render.
+
+**A shelved piece must carry `image` and `imagealt`**, because every slot draws one and a card without its image is a hole rather than a smaller card.
+
+**`image` is a bare filename resolved through `site.cdn`**, matching how the five marketing pages already reference imagery. Its orientation token is checked against the slot: per `design.md` section 10 the token is the source of truth for aspect ratio, and every shelf slot is wider than it is tall, so `landscape` and `square` are accepted and `portrait` fails. Cropping a tall frame to a wide slot loses the subject rather than trimming it. Width and height belong to the card, never to frontmatter.
 
 ### Article kinds
 

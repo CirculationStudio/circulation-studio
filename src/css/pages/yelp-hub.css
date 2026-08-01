@@ -239,6 +239,211 @@
     color: var(--text-faint);
   }
 
+  /* ---- shared type label ---- */
+
+  /* The label above every title on this page. APPARATUS, so uppercase, per
+     design.md section 2's Case rule. --lead is madder and marks the whitepaper,
+     which is the only kind the comp accents: it is the longest and most sourced
+     thing here, so it gets the one colour and everything else gets faint. */
+  .cs-hub-type {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 10px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  .cs-hub-type--lead { color: var(--accent) }
+
+  /* ---- browse layer ---- */
+
+  .cs-browse__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-top: 1px solid var(--border-strong);
+    padding-top: var(--space-16);
+    margin-bottom: 28px;
+  }
+  .cs-browse__note {
+    margin: 0;
+    max-width: none;
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+
+  .cs-browse__top {
+    display: grid;
+    grid-template-columns: 1.45fr 1fr;
+    gap: var(--space-40);
+    align-items: start;
+  }
+  /* ONE PIECE ON THE SHELF IS ONE COLUMN. The comp draws five and never shows
+     this state. A feature card left at 1.45fr with an empty 1fr beside it
+     reads as a shelf that lost its contents rather than a short one, and a
+     placeholder card would read as a real recommendation. */
+  .cs-browse__top--alone { grid-template-columns: minmax(0, 1fr) }
+
+  /* THE ONE MADDER PANE ON THIS PAGE. design.md section 1, as amended
+     2026-08-01: a madder pane is permitted at most once per page as the single
+     most important moment. This is it, and the closing CTA deliberately does
+     not take a second. */
+  .cs-browse__feature {
+    background: var(--color-madder);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    color: var(--text-on-madder);
+    text-decoration: none;
+  }
+  .cs-browse__feature-img {
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
+    display: block;
+  }
+  .cs-browse__feature-body {
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-16);
+    flex: 1;
+  }
+  /* The only bordered type label on the page. On madder it cannot use the
+     accent to separate itself from the ground, so it takes an outline in the
+     paper tint instead. */
+  .cs-browse__feature-type {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 10px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-on-madder);
+    border: 1px solid var(--border-on-accent-strong);
+    padding: 4px var(--space-8);
+  }
+  .cs-browse__feature-title {
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: var(--text-h3);
+    line-height: 1.3;
+    letter-spacing: .01em;
+    color: var(--text-on-madder);
+  }
+  /* The DECK, not the summary. This card has room for a sentence and a half,
+     and the eight-word map line would waste it. Every other slot on the page
+     takes summary. */
+  .cs-browse__feature-summary {
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: var(--leading-body);
+    color: var(--text-on-madder-muted);
+  }
+  /* Pushes the meta and the call to action to the bottom, so two feature cards
+     of different copy length still line their footers up. */
+  .cs-browse__spacer { flex: 1 }
+  .cs-browse__feature-meta {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 10px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-on-madder-muted);
+  }
+  .cs-browse__feature-cta {
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 12px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text-on-madder);
+    border-bottom: 1px solid var(--color-paper);
+    padding-bottom: 2px;
+  }
+
+  .cs-browse__side {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+  .cs-browse__card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+  .cs-browse__card img {
+    width: 100%;
+    height: 170px;
+    object-fit: cover;
+    display: block;
+  }
+  /* SENTENCE CASE. A title in a list, per the Case rule. */
+  .cs-browse__card-title {
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 19px;
+    line-height: 1.3;
+    letter-spacing: .01em;
+    color: var(--color-ink);
+  }
+  .cs-browse__card-summary {
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: var(--leading-body);
+    color: var(--text-muted);
+  }
+
+  .cs-browse__bottom {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-40);
+    margin-top: var(--space-40);
+    border-top: 1px solid var(--border-hairline);
+    padding-top: 32px;
+  }
+  .cs-browse__row {
+    display: grid;
+    grid-template-columns: 132px minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+  .cs-browse__row img {
+    width: 132px;
+    height: 110px;
+    object-fit: cover;
+    display: block;
+  }
+  /* Weight 500 at 16px, against the side card's 600 at 19. The Case amendment
+     names both: size and weight carry the hierarchy now that case does not. */
+  .cs-browse__row-title {
+    display: block;
+    margin-top: var(--space-8);
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 16px;
+    line-height: 1.35;
+    letter-spacing: .01em;
+    color: var(--color-ink);
+  }
+  .cs-browse__row-summary {
+    display: block;
+    margin-top: 6px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+
+  .cs-browse__card:hover .cs-browse__card-title,
+  .cs-browse__row:hover .cs-browse__row-title { color: var(--accent) }
+
   /* ---- phone ---- */
 
   /* The comp's breakpoint is 1120px, the container width, so the page reflows
@@ -263,5 +468,14 @@
       padding: var(--space-24) 20px;
     }
     .cs-hub-badge img { width: 56px; height: 56px }
+
+    .cs-browse__top,
+    .cs-browse__bottom { grid-template-columns: minmax(0, 1fr) }
+    .cs-browse__top { gap: 32px }
+    .cs-browse__side { gap: 28px }
+    .cs-browse__bottom { gap: var(--space-24); margin-top: 32px }
+    .cs-browse__feature-img { height: min(56vw, 240px) }
+    .cs-browse__row { grid-template-columns: 104px minmax(0, 1fr); gap: var(--space-16) }
+    .cs-browse__row img { width: 104px; height: 92px }
   }
 }

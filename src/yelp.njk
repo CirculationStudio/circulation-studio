@@ -46,6 +46,12 @@ badge:
 # `starthere: true`, never a title and summary retyped here.
 starthere:
   label: Start here
+
+# Furniture only. Every card on the shelf is an article carrying a rank.
+browse:
+  eyebrow: Worth reading
+  note: Chosen rather than sorted
+  featureCta: Read the whitepaper
 ---
 {% from "components/container.njk" import container %}
 
@@ -137,3 +143,70 @@ starthere:
   </a>
 {% endcall %}
 {%- endfor %}
+
+{#- BROWSE LAYER. Ranks 1 to 5 off the pieces themselves. Each group renders
+    only if it has entries, so a one-piece shelf is a feature card alone
+    rather than a feature card beside two empty columns. See SHELF_SLOTS. -#}
+{%- set feature = collections.yelpShelf | shelfSlice(1, 1) | first %}
+{%- set side = collections.yelpShelf | shelfSlice(2, 3) %}
+{%- set row = collections.yelpShelf | shelfSlice(4, 5) %}
+{%- if feature %}
+{% call container(class="cs-hub-section") %}
+  <div class="cs-browse__head">
+    <p class="cs-eyebrow">{{ browse.eyebrow }}</p>
+    <p class="cs-browse__note">{{ browse.note }}</p>
+  </div>
+
+  {#- The grid collapses to one column when nothing is beside the feature.
+      No placeholder cards: an empty side column would read as a shelf that
+      lost its contents. -#}
+  <div class="cs-browse__top{{ " cs-browse__top--alone" if not side.length }}">
+    <a class="cs-browse__feature" href="{{ feature.url }}">
+      <img class="cs-browse__feature-img"
+           src="{{ site.cdn }}{{ feature.data.image }}"
+           alt="{{ feature.data.imagealt }}"
+           width="642" height="320" loading="lazy" decoding="async">
+      <span class="cs-browse__feature-body">
+        <span class="cs-browse__feature-type">{{ feature.data.kind | kindLabel }}</span>
+        <span class="cs-browse__feature-title">{{ feature.data.title }}</span>
+        <span class="cs-browse__feature-summary">{{ feature.data.deck }}</span>
+        <span class="cs-browse__spacer"></span>
+        <span class="cs-browse__feature-meta">Updated {{ feature.data.updated | monthYear }}</span>
+        <span class="cs-browse__feature-cta">{{ browse.featureCta }} <span aria-hidden="true">&rarr;</span></span>
+      </span>
+    </a>
+
+    {%- if side.length %}
+    <div class="cs-browse__side">
+      {%- for entry in side %}
+      <a class="cs-browse__card" href="{{ entry.url }}">
+        <img src="{{ site.cdn }}{{ entry.data.image }}"
+             alt="{{ entry.data.imagealt }}"
+             width="440" height="170" loading="lazy" decoding="async">
+        <span class="cs-hub-type{{ " cs-hub-type--lead" if entry.data.kind == "whitepaper" }}">{{ entry.data.kind | kindLabel }}</span>
+        <span class="cs-browse__card-title">{{ entry.data.title }}</span>
+        <span class="cs-browse__card-summary">{{ entry.data.summary }}</span>
+      </a>
+      {%- endfor %}
+    </div>
+    {%- endif %}
+  </div>
+
+  {%- if row.length %}
+  <div class="cs-browse__bottom">
+    {%- for entry in row %}
+    <a class="cs-browse__row" href="{{ entry.url }}">
+      <img src="{{ site.cdn }}{{ entry.data.image }}"
+           alt="{{ entry.data.imagealt }}"
+           width="132" height="110" loading="lazy" decoding="async">
+      <span>
+        <span class="cs-hub-type{{ " cs-hub-type--lead" if entry.data.kind == "whitepaper" }}">{{ entry.data.kind | kindLabel }}</span>
+        <span class="cs-browse__row-title">{{ entry.data.title }}</span>
+        <span class="cs-browse__row-summary">{{ entry.data.summary }}</span>
+      </span>
+    </a>
+    {%- endfor %}
+  </div>
+  {%- endif %}
+{% endcall %}
+{%- endif %}

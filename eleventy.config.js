@@ -316,6 +316,68 @@ export const YELP_FRONTMATTER = [
    from a real one to a reader and to a crawler. */
 export const YELP_STARTHERE = "starthere";
 
+/* THE BROWSE SHELF. Five ranks, three slots, and the rank is the only thing an
+   article declares.
+
+   `shelf: 1` through `shelf: 5` puts a piece on the hub's Worth reading band.
+   Rank 1 is the feature card on the madder ground, 2 and 3 the side list, 4
+   and 5 the bottom row. A piece with no `shelf` is not on the shelf; it still
+   appears in the coverage map, which is the full index.
+
+   RANK IS NOT POSITION IN A LIST, which is why it is a number the piece
+   carries rather than an order in a data file. The shelf is chosen rather than
+   sorted, the comp says so in its own header ("Five pieces, chosen rather than
+   sorted"), and a hand-ordered list in the hub's frontmatter would be a second
+   place to edit every time a piece is promoted.
+
+   DUPLICATES AND INTERIOR GAPS FAIL THE BUILD. Two pieces at rank 2 is not a
+   shelf with a tie, it is a decision nobody made, and the layout has one slot.
+   A gap is the same: ranks 1, 2, 4 means either something was demoted and
+   nobody renumbered, or rank 3 was deleted. A SHORT shelf is fine and is not a
+   gap: 1, 2, 3 is a three-piece shelf and the bottom row simply does not
+   render.
+
+   ORIENTATION IS CHECKED AGAINST AN ACCEPTED SET PER SLOT, not against one
+   value. design.md section 10 makes the filename's orientation token the
+   source of truth for aspect ratio and its selection rule is meaning-fit
+   first, ratio second. Every slot here is wider than it is tall, so landscape
+   fits and square crops to it acceptably, which is exactly what the comp does:
+   its own rank 3 card puts cs-img-rings-square in a 170px slot. Portrait is
+   the real error, because cropping a tall frame to a wide slot loses the
+   subject rather than trimming it. */
+export const SHELF_SLOTS = new Map([
+  [1, "feature"],
+  [2, "side"],
+  [3, "side"],
+  [4, "row"],
+  [5, "row"]
+]);
+
+/* Which orientation tokens each slot accepts. Declared per slot rather than
+   globally, so a future slot that IS taller than it is wide states so here
+   instead of quietly inheriting a rule written for wide ones. */
+export const SLOT_ORIENTATIONS = new Map([
+  ["feature", ["landscape", "square"]],
+  ["side", ["landscape", "square"]],
+  ["row", ["landscape", "square"]]
+]);
+
+/* The orientation token is the last hyphenated segment before the extension,
+   per design.md section 10's filename rule. Returns null when the name does
+   not carry one at all, which is itself a failure: a file outside the naming
+   convention has no declared ratio and nothing can check it. */
+export function imageOrientation(filename) {
+  const base = String(filename || "").replace(/\.[a-z0-9]+$/i, "");
+  /* A hyphen is required. Without one the whole basename is the last segment,
+     so "badname.webp" would report an orientation of "badname" and fail the
+     accepted-set check with a message about a ratio rather than about a name
+     outside the convention. Caught by a probe that expected the second message
+     and got the first. */
+  if (!base.includes("-")) return null;
+  const token = base.split("-").pop();
+  return token && /^[a-z]+$/.test(token) ? token : null;
+}
+
 /* Article kinds. A closed set, same shape as YELP_CLUSTERS and for the same
    reason: `kind` is the type label printed above a title on the hub, so an
    unknown value publishes an entry labelled with whatever was typed.
@@ -1518,6 +1580,82 @@ export default function (eleventyConfig) {
       }
     }
 
+    /* The shelf: ranks, their images, and the two ways a rank set can be
+       wrong. See SHELF_SLOTS above. */
+    const shelved = items.filter((item) => item.data.shelf !== undefined);
+    const ranks = [];
+    for (const item of shelved) {
+      const where = item.inputPath;
+      const rank = item.data.shelf;
+
+      if (!Number.isInteger(rank) || !SHELF_SLOTS.has(rank)) {
+        problems.push(
+          `${where}: shelf "${rank}" is not a rank. The shelf holds ` +
+            `${[...SHELF_SLOTS.keys()].join(", ")}, as whole numbers.`
+        );
+        continue;
+      }
+      ranks.push(rank);
+
+      /* A shelved piece is a CARD, and a card without its image is a hole in
+         the layout rather than a card with less in it. Not required off the
+         shelf, where nothing renders an image. */
+      for (const key of ["image", "imagealt"]) {
+        if (!item.data[key] || !String(item.data[key]).trim()) {
+          problems.push(
+            `${where}: on the shelf at rank ${rank} and missing "${key}". ` +
+              `Every shelf slot draws an image, and an empty alt on a ` +
+              `meaningful image is an accessibility failure, not a shortcut.`
+          );
+        }
+      }
+
+      if (item.data.image) {
+        const slot = SHELF_SLOTS.get(rank);
+        const accepted = SLOT_ORIENTATIONS.get(slot);
+        const orientation = imageOrientation(item.data.image);
+        if (!orientation) {
+          problems.push(
+            `${where}: image "${item.data.image}" carries no orientation ` +
+              `token. design.md section 10 names the token as the source of ` +
+              `truth for ratio, so a file outside the convention cannot be checked.`
+          );
+        } else if (!accepted.includes(orientation)) {
+          problems.push(
+            `${where}: image "${item.data.image}" is ${orientation} and the ` +
+              `${slot} slot at rank ${rank} takes ${accepted.join(" or ")}. ` +
+              `Cropping a tall frame to a wide slot loses the subject.`
+          );
+        }
+      }
+    }
+
+    const seen = new Set();
+    for (const rank of ranks) {
+      if (seen.has(rank)) {
+        problems.push(
+          `two pieces both declare shelf ${rank}. The slot is one card, and a ` +
+            `tie is a decision nobody made. Files: ` +
+            `${shelved.filter((i) => i.data.shelf === rank).map((i) => i.inputPath).join(", ")}.`
+        );
+      }
+      seen.add(rank);
+    }
+
+    /* A short shelf is fine, an interior gap is not. Ranks 1, 2, 3 is a
+       three-piece shelf; ranks 1, 2, 4 is a renumber somebody did not finish. */
+    const sorted = [...seen].sort((a, b) => a - b);
+    for (const [i, rank] of sorted.entries()) {
+      if (rank !== i + 1) {
+        problems.push(
+          `the shelf runs ${sorted.join(", ")}, which has a gap at ${i + 1}. ` +
+            `A short shelf is fine and stops at its last rank; a gap means a ` +
+            `piece was demoted or deleted and the rest were never renumbered.`
+        );
+        break;
+      }
+    }
+
     /* At most one Start here. See YELP_STARTHERE above for why two is a
        decision that has not been made rather than a band with two rows. */
     const startHere = items.filter((item) => item.data[YELP_STARTHERE]);
@@ -1544,6 +1682,37 @@ export default function (eleventyConfig) {
   eleventyConfig.addCollection("yelpStartHere", (collectionApi) =>
     collectionApi.getFilteredByGlob("src/yelp/*.md").filter((item) => item.data[YELP_STARTHERE])
   );
+
+  /* The shelf, in rank order. Validated in the yelp collection above, so this
+     only sorts. */
+  eleventyConfig.addCollection("yelpShelf", (collectionApi) =>
+    collectionApi
+      .getFilteredByGlob("src/yelp/*.md")
+      .filter((item) => SHELF_SLOTS.has(item.data.shelf))
+      .sort((a, b) => a.data.shelf - b.data.shelf)
+  );
+
+  /* Ranks lo..hi from an already sorted shelf. A filter rather than three
+     collections, because the split is a fact about the LAYOUT and belongs
+     beside the template that draws it. */
+  eleventyConfig.addFilter("shelfSlice", (items, lo, hi) =>
+    (items || []).filter((item) => item.data.shelf >= lo && item.data.shelf <= hi)
+  );
+
+  /* kind to the string a reader sees. One place, so a label never gets typed
+     into a template. */
+  eleventyConfig.addFilter("kindLabel", (kind) => ARTICLE_KINDS.get(String(kind || "").trim()) || "");
+
+  /* "Jun 2026". Same UTC-parts treatment as calendarDate and isoDate, for the
+     same reason: a local-time read prints the previous month for anything
+     dated the first. */
+  eleventyConfig.addFilter("monthYear", (value) => {
+    if (!value) return "";
+    const date =
+      value instanceof Date ? value : new Date(`${String(value).slice(0, 10)}T00:00:00Z`);
+    if (Number.isNaN(date.getTime())) return String(value);
+    return date.toLocaleDateString("en-US", { timeZone: "UTC", month: "short", year: "numeric" });
+  });
 
   eleventyConfig.addCollection("library", (collectionApi) =>
     collectionApi.getFilteredByGlob("src/library/*.md")

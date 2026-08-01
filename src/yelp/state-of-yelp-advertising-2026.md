@@ -9,6 +9,9 @@ readingtime: 22
 reviewed: 2026-06
 cluster: cost-and-pricing
 summary: What a dollar buys across nine trades, method shown.
+shelf: 1
+image: cs-img-field-1-landscape.webp
+imagealt: Field rows, repeatable growth at scale
 ---
 
 {% execsummary title="Executive summary" %}
