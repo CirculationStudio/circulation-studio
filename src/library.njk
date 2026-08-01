@@ -1,0 +1,36 @@
+---
+layout: layouts/base.njk
+title: "The Library: notes, essays and whitepapers"
+description: "Writing from Circulation Studio on search, local visibility and the platforms our clients depend on."
+permalink: /library/index.html
+---
+{% from "components/container.njk" import container %}
+
+{#
+  THE LIBRARY INDEX, MINIMAL AND TEMPORARY.
+
+  The designed version is a separate piece of work. This exists because
+  nav.footer links /library/ from every page on the site and nothing served it,
+  so the footer pointed at a 404 nine times over. A minimal real page is better
+  than a dead link and much better than removing the link, since the tier is
+  real: src/library/ holds articles and they publish at /library/<slug>/.
+
+  DELIBERATELY NOT A LISTING. Listing the two disposable fixtures would publish
+  them as if they were writing, and ARTICLE_SYSTEM.md section 10 has them
+  marked for deletion. When the designed version lands it reads
+  collections.library the way the hub reads collections.yelp.
+
+  Not in src/library/, for the same reason the hub is not in src/yelp/: that
+  directory's 11tydata.js makes every file in it an article.
+#}
+
+{% call container(class="cs-doc cs-doc--stub") %}
+  <p class="cs-eyebrow">The Library</p>
+  <h1 class="cs-doc__title">Notes, essays and whitepapers</h1>
+  <p class="cs-doc__lede">
+    Writing from the studio on search, local visibility and the platforms our
+    clients depend on. The index is being built; in the meantime the Yelp Hub
+    carries everything we have published on Yelp advertising.
+  </p>
+  <p><a class="cs-link" href="/yelp/">Visit the Yelp Hub <span class="cs-link__arrow" aria-hidden="true">&rarr;</span></a></p>
+{% endcall %}

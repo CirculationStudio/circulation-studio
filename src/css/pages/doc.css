@@ -1,0 +1,104 @@
+/* Documents: the policy pages and the Library stub.
+ *
+ * One stylesheet for three pages because they are one kind of page: a heading,
+ * a date, and a long single column of prose that nobody reads for pleasure and
+ * some people read very carefully. No components, no grounds, no accent beyond
+ * the links the base already styles.
+ *
+ * MEASURE IS THE WHOLE DESIGN HERE. base/elements.css caps p at 66ch, and the
+ * headings and lists need the same cap or the column breaks: a heading running
+ * the full 1120px above a 66ch paragraph reads as a fault rather than as a
+ * wide heading. Same reasoning as layouts/article.njk, which puts the cap on
+ * the wrapper for exactly this.
+ */
+@layer components {
+  .cs-doc {
+    padding-top: var(--space-96);
+    padding-bottom: var(--space-96);
+  }
+  .cs-doc__title {
+    margin: 0;
+    font-size: var(--text-h3);
+    letter-spacing: var(--tracking-caps);
+    max-width: 34ch;
+  }
+  .cs-doc__date {
+    margin: var(--space-16) 0 0;
+    max-width: none;
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 11px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  .cs-doc__lede {
+    margin: var(--space-24) 0 0;
+    font-size: var(--text-base);
+  }
+
+  /* The column. Every child takes the reading measure, not just the
+     paragraphs, so the block reads as one column. */
+  .cs-doc__body { margin-top: var(--space-40) }
+  .cs-doc__body > * { max-width: var(--container-measure) }
+
+  .cs-doc__body h2 {
+    margin: var(--space-64) 0 var(--space-16);
+    font-size: var(--text-article-h2);
+    letter-spacing: var(--tracking-caps);
+  }
+  .cs-doc__body h3 {
+    margin: var(--space-40) 0 var(--space-8);
+    font-size: var(--text-article-h3);
+    letter-spacing: var(--tracking-article-h3);
+  }
+  .cs-doc__body p { margin: 0 0 var(--space-16) }
+  .cs-doc__body ul {
+    margin: 0 0 28px;
+    padding-left: var(--space-24);
+    list-style: disc;
+  }
+  .cs-doc__body li { margin-bottom: var(--space-8) }
+  .cs-doc__contact { line-height: var(--leading-body) }
+
+  /* ---- the migrated-content banner ---- */
+
+  /* Mist, hairline, no accent. It is a status note, not a warning: the page is
+     real and published, it just has not been through legal review. Making it
+     madder would read as an error state on a page whose whole job is to be
+     calm and legible. */
+  .cs-migrated {
+    margin: var(--space-40) 0 0;
+    max-width: var(--container-measure);
+    background: var(--surface-panel);
+    border-left: 2px solid var(--border-strong);
+    padding: var(--space-24);
+  }
+  .cs-migrated__label {
+    margin: 0 0 var(--space-8);
+    max-width: none;
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 11px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+  .cs-migrated__body {
+    margin: 0;
+    max-width: none;
+    font-size: 15px;
+    line-height: var(--leading-body);
+    color: var(--text-muted);
+  }
+
+  /* The Library stub. Nothing to list yet, so it is a lede and a way onward
+     rather than an empty index. */
+  .cs-doc--stub .cs-doc__lede { max-width: var(--container-measure) }
+  .cs-doc--stub .cs-link { margin-top: var(--space-24); display: inline-flex }
+
+  @media (max-width: 1120px) {
+    .cs-doc { padding-top: var(--space-40); padding-bottom: var(--space-64) }
+    .cs-doc__body h2 { margin-top: var(--space-40) }
+  }
+}

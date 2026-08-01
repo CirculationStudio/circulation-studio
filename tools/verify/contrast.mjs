@@ -52,7 +52,11 @@ const PAGES = [
      a white card inside it. Every one of those is a pairing the five marketing
      pages never produce, and the live scan is the half that catches a token
      landing somewhere the matrix did not predict. */
-  "/yelp/"
+  "/yelp/",
+  /* The three pages written to give the footer real targets. Two of them carry
+     migrated policy text on a mist banner, which is a token pairing no other
+     page produces. */
+  "/library/", "/privacy-policy/", "/accessibility-statement/"
 ];
 
 /* Which surfaces a text token is allowed to land on. This is the contract: a

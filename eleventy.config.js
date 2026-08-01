@@ -1784,11 +1784,8 @@ export default function (eleventyConfig) {
      blocks, sweep measures edges, fingerprint hashes type, contract compares
      the spec. A link to nowhere passes all five.
 
-     SCOPE IS THE CONTENT TIERS, plus the hub that links into them. The five
-     marketing pages are excluded deliberately: their footer carries
-     placeholder hrefs that predate this check, and turning those into build
-     failures is a separate decision about that content rather than about this
-     mechanism.
+     SCOPE IS EVERY PAGE AND EVERY LINK, frame included. It was narrower once;
+     see the comment at the loop for why, and why the exclusion is gone.
 
      CHECKED AGAINST THE BUILT OUTPUT, which is the only thing that can answer
      the question. A permalink comes from directory data, a collection or a
@@ -1804,8 +1801,6 @@ export default function (eleventyConfig) {
      Built against zero FAQ files, the same way the counting mechanism was
      built against a directory that does not exist yet. */
   eleventyConfig.on("eleventy.after", ({ results }) => {
-    const IN_SCOPE = /(^|\/)src\/(yelp|library)\/|(^|\/)src\/yelp\.njk$/;
-
     /* Every URL this build actually produced, trailing slash normalised so
        "/yelp/faq" and "/yelp/faq/" compare equal. */
     const built = new Set();
@@ -1816,20 +1811,21 @@ export default function (eleventyConfig) {
 
     const problems = [];
     for (const r of results) {
-      if (!IN_SCOPE.test(r.inputPath)) continue;
+      /* EVERY PAGE, AND THE WHOLE DOCUMENT INCLUDING THE FRAME.
 
-      /* INSIDE <main> ONLY, which is authored content. The footer is on every
-         page and currently points at /library/, /privacy-policy/ and
-         /accessibility-statement/, none of which are built. Those are real and
-         they are frame: one fix in one partial, not fifteen findings repeated
-         once per page, and fixing them means deciding whether to write three
-         pages or drop three links. Scoping here keeps this check about the
-         thing it was asked for, an authored link to a page nobody has written,
-         and leaves the frame to its own commit. */
-      const main = /<main[^>]*>([\s\S]*)<\/main>/.exec(r.content);
-      if (!main) continue;
+         This was scoped to <main> and to the two content tiers when it was
+         written, because the footer linked /library/, /privacy-policy/ and
+         /accessibility-statement/ on every page and none of the three was
+         built. That produced twelve findings that were really one defect in
+         one partial, so the narrow scope kept the check about authored links
+         while the frame was dealt with separately.
 
-      for (const [, href] of main[1].matchAll(/href="([^"]*)"/g)) {
+         All three pages now exist, so the exclusion has nothing left to
+         protect and the check covers what it always should have: every link
+         on every page. The frame is where a dead link does the most damage,
+         since a broken footer link is broken site-wide rather than on one
+         article. */
+      for (const [, href] of r.content.matchAll(/href="([^"]*)"/g)) {
         /* Root-relative only. An external URL, a mailto:, a tel: and a
            same-page #anchor are all somebody else's problem, and external
            links are a separate decision recorded in the commit. */

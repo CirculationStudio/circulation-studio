@@ -1,0 +1,21 @@
+{#
+  The migrated-content banner.
+
+  Every page using it carries text lifted verbatim from the live
+  circulationstudio.com and NOT rewritten. CLAUDE.md forbids generating or
+  editing legal and policy language, so the text is transcribed and the
+  provenance is stated here rather than in the policy body, where an editorial
+  note would read as part of the policy.
+
+  `note` is for a page-specific warning about the migrated text. It is
+  provenance, not policy: it says what the text describes and when it was
+  written, never what the reader's rights are.
+#}
+<aside class="cs-migrated" aria-label="Content status">
+  <p class="cs-migrated__label">Migrated content, pending review</p>
+  <p class="cs-migrated__body">
+    This text is carried over verbatim from the previous circulationstudio.com
+    and has not been rewritten for this site. It is published so the page is
+    not missing, and it is awaiting legal review.{% if note %} {{ note }}{% endif %}
+  </p>
+</aside>

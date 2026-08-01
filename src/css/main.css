@@ -43,6 +43,7 @@
 @import "./pages/results.css";
 @import "./pages/contact.css";
 @import "./pages/yelp-hub.css";
+@import "./pages/doc.css";
 
 /* Design tokens pulled from the Circulation Studio Design System in Claude
    Design (tokens/colors.css, typography.css, layout.css) on 2026-07-27.
