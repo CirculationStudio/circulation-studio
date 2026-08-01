@@ -8,7 +8,7 @@ updated: 2026-06-30
 readingtime: 22
 reviewed: 2026-06
 cluster: cost-and-pricing
-description: What a dollar buys across nine trades, method shown.
+summary: What a dollar buys across nine trades, method shown.
 ---
 
 {% execsummary title="Executive summary" %}

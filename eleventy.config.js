@@ -293,7 +293,7 @@ export const YELP_CLUSTERS = new Map([
    build reports all the offenders rather than the first. */
 export const YELP_FRONTMATTER = [
   ["cluster", "the coverage map has nowhere to put it, so it publishes invisible"],
-  ["description", "the coverage map and the browse layer have no line to show under the title"]
+  ["summary", "the coverage map and the browse layer have no line to show under the title"]
 ];
 
 
@@ -397,7 +397,7 @@ export default function (eleventyConfig) {
   });
 
   /* pane: the first paired shortcode, and the one that establishes how all
-     eighteen of the others will compose with markdown.
+     nineteen of the others compose with markdown.
 
      ============================================================
      THE BLANK LINES ARE THE MECHANISM. DO NOT REMOVE THEM.

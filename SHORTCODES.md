@@ -160,7 +160,7 @@ updated: 2026-07-30
 readingtime: 18
 reviewed: 2026-07
 cluster: cost-and-pricing   # src/yelp/ only, required, one of the seven below
-description: What a dollar buys across nine trades, method shown.
+summary: What a dollar buys across nine trades, method shown.   # src/yelp/ only, required
 image: /assets/...      # PLANNED
 imagealt: ...           # PLANNED
 dropcap: true           # PLANNED, once per piece, at the open only
@@ -171,9 +171,11 @@ changelog: /library/.../changes/   # PLANNED
 
 **Keys marked PLANNED are read by nothing yet**, exactly like a PLANNED shortcode row. They are the roadmap, not the contract, and an authoring project should not be filling them in. `verify:contract` checks the unmarked ones are actually consumed by the build, which is how `cluster` and `nextreview` were caught sitting documented and unread: `cluster` described a taxonomy that did not exist, and `nextreview` still has no reader.
 
-**`description` is not the meta description, on an article.** The meta description and the JSON-LD description both come from `deck`, which is a sentence and a half. `description` is the one line the Yelp Hub's coverage map and browse layer show under a title, and it is shorter: eight words against thirty. On the five marketing pages, which have no deck, `description` is still the meta description. That is a wart and it is written here rather than left to be discovered.
+**`summary` is the coverage-map line, and it is not the meta description.** The meta description and the JSON-LD description both come from `deck`, which is a sentence and a half. `summary` is the one line the Yelp Hub's coverage map and browse layer show under a title, and it is much shorter: eight words against thirty. An article does not carry `description` at all.
 
-**`cluster` and `description` are REQUIRED on every piece in `src/yelp/`**, and the build fails without them. Neither is required in `src/library/`, which has no coverage map. A missing cluster is not a cosmetic problem: the piece publishes and never appears on the one page that exists to list it.
+**It was called `description` until 2026-08-01 and the rename is the whole point.** `description` means the meta description on the five marketing pages and meant the map line on an article, so the same key name held two different strings depending on where the file sat. Two near-synonyms holding a thirty-word tag and an eight-word label is a wart that costs someone an hour per article, forever, and it was renamed while exactly one article carried it. `description` now means one thing everywhere: the meta description, on a page with no `deck`.
+
+**`cluster` and `summary` are REQUIRED on every piece in `src/yelp/`**, and the build fails without them. Neither is required in `src/library/`, which has no coverage map. A missing cluster is not a cosmetic problem: the piece publishes and never appears on the one page that exists to list it.
 
 ### Yelp Hub clusters
 
@@ -217,7 +219,7 @@ Each meta column renders only if its key has a value, so a piece without a readi
 
 ## The vocabulary
 
-**Only LIVE shortcodes may be used in articles.** A PLANNED row describes intended behaviour and is not implemented. Reaching for one does not degrade, it fails the build: an unknown Nunjucks tag throws at parse time. Roughly forty are designed here and thirteen exist, so the distinction is most of the table.
+**Only LIVE shortcodes may be used in articles.** A PLANNED row describes intended behaviour and is not implemented. Reaching for one does not degrade, it fails the build: an unknown Nunjucks tag throws at parse time. Forty are designed here and twenty exist, so the distinction is half the table. `verify:contract` prints both counts on every run, which is the only reason to trust the numbers in this sentence.
 
 PLANNED rows are not deletable. They are the vocabulary design and the roadmap, and they are what stops the same block being reinvented under a different name later.
 

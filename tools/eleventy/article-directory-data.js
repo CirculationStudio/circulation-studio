@@ -28,19 +28,19 @@
  * marketing page's own `description` still wins on pages that have no deck.
  * Behaviour is identical to the eleventyComputed mapping this replaces.
  *
- * IT MOVED BECAUSE `description` IS NEEDED FOR SOMETHING ELSE. eleventyComputed
- * does not fall back to a frontmatter value, it REPLACES it, so computing
- * `description` from `deck` made a frontmatter `description` unreadable: the
- * Yelp Hub's coverage map needs a one-line summary per article and could not
- * have got at it. The two are genuinely different strings. The whitepaper's
- * deck is a sentence and a half; its map line is eight words.
+ * IT MOVED BECAUSE THE MAP LINE IS A SECOND STRING. eleventyComputed does not
+ * fall back to a frontmatter value, it REPLACES it, so computing `description`
+ * from `deck` made a frontmatter value of the same name unreadable: the Yelp
+ * Hub's coverage map needs a one-line summary per article and could not have
+ * got at it. The two are genuinely different strings. The whitepaper's deck is
+ * a sentence and a half; its map line is eight words.
  *
- * So on an article `deck` is the meta description and `description` is the
- * coverage-map line. That is a real semantic wart, since `description` means
- * the meta description on the five marketing pages and something else on an
- * article. It is written down in SHORTCODES.md rather than left to be
- * discovered, and renaming the map line to `summary` would remove it if that
- * reads better later.
+ * THE MAP LINE IS `summary`, RENAMED FROM `description` ON 2026-08-01. Under
+ * the old name the same key meant the meta description on the five marketing
+ * pages and the map line on an article, which is two strings behind one word
+ * and a wart this file used to record rather than fix. It was renamed while
+ * exactly one article carried it. `description` now means the meta description
+ * everywhere, `summary` means the map line, and no page reads both.
  */
 export default function articleDirectory(segment) {
   return {

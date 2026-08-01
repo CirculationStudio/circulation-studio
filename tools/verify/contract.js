@@ -150,8 +150,15 @@ for (const s of unknownStatus) {
    2. The build
    ============================================================ */
 
-const { PANE_SURFACES, TABLE_KINDS, CALLOUT_LABELS, CHILD_PAIRS, YELP_CLUSTERS, default: configure } =
-  await import(CONFIG_PATH.href);
+const {
+  PANE_SURFACES,
+  TABLE_KINDS,
+  CALLOUT_LABELS,
+  CHILD_PAIRS,
+  YELP_CLUSTERS,
+  YELP_FRONTMATTER,
+  default: configure
+} = await import(CONFIG_PATH.href);
 
 /* A stub that records the two registrations we care about and swallows the
    rest. A Proxy rather than a fixed object, so a config that starts calling a
@@ -579,6 +586,35 @@ for (const [key, where] of authored) {
         `with a value in it reads as supported and is not. Either wire it up and ` +
         `drop the PLANNED marker in the same commit, or take the key out of the ` +
         `file.`
+    );
+  }
+}
+
+/* The src/yelp/ required keys, imported rather than grepped.
+
+   THE GREP IS NOT ENOUGH FOR THESE TWO, and `summary` is why. Direction A
+   proves a key is read by looking for the word anywhere in the build, and
+   `\bsummary\b` already matches `<summary class="cs-qa__q">` in the faq
+   shortcode, the default title "Executive summary", and a comment. So the key
+   could stop being read tomorrow and Direction A would still pass, having
+   matched an HTML tag. That is a check passing on the wrong evidence, which is
+   the house failure mode.
+
+   These two are the keys a build actually fails without, so they get the
+   treatment the closed sets get: imported from eleventy.config.js and compared,
+   with no copy of the list on this side. */
+for (const [key] of YELP_FRONTMATTER) {
+  if (!documentedKeys.includes(key)) {
+    fail(
+      `frontmatter "${key}" is required in src/yelp/ by YELP_FRONTMATTER and is ` +
+        `not in SHORTCODES.md's frontmatter block. The authoring project writes ` +
+        `against that block and would never know to supply it.`
+    );
+  } else if (plannedKeys.has(key)) {
+    fail(
+      `frontmatter "${key}" is required in src/yelp/ by YELP_FRONTMATTER and is ` +
+        `marked PLANNED in SHORTCODES.md. Those cannot both be true: the build ` +
+        `fails without it and the spec says not to write it.`
     );
   }
 }
