@@ -117,6 +117,22 @@
         "method label": {
           "selector": ".cs-method__label",
           "count": 2
+        },
+        "references": {
+          "selector": ".cs-references",
+          "count": 1
+        },
+        "references label": {
+          "selector": ".cs-references__label",
+          "count": 1
+        },
+        "references note": {
+          "selector": ".cs-references__note",
+          "count": 1
+        },
+        "ref": {
+          "selector": ".cs-ref",
+          "count": 3
         }
       }
     },

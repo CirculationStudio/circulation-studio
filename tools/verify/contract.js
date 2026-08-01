@@ -29,7 +29,7 @@
  * Needs no server and no build. It is first in `npm run verify` because it is
  * the cheapest check and a spec mismatch should not wait for a browser.
  */
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 
 const SPEC_PATH = new URL("../../SHORTCODES.md", import.meta.url);
 const CONFIG_PATH = new URL("../../eleventy.config.js", import.meta.url);
@@ -425,6 +425,41 @@ for (const set of specClosedSets) {
         );
       }
     }
+  }
+}
+
+/* ============================================================
+   6b. Every component stylesheet is imported
+   ============================================================
+
+   A component CSS file that nothing imports is the quietest failure in this
+   repo. The block still renders, the markup still carries its classes, the
+   manifest still counts it and the sweep still finds it on the prose column,
+   because an unstyled block inherits the column's left edge. It just looks
+   wrong, and only to a human who happens to look.
+
+   It has already happened twice in one sitting: methodology.css and
+   references.css were both written, both correct, and both absent from
+   main.css. Caught by measuring a colour that came back as the article's h2
+   scale instead of the component's own.
+
+   So the check is that the directory and the import list agree. Not a list of
+   filenames here, which would rot the same way: it reads both sides. */
+const CSS_DIR = new URL("../../src/css/components/", import.meta.url);
+const MAIN_CSS = readFileSync(new URL("../../src/css/main.css", import.meta.url), "utf8");
+const componentFiles = readdirSync(CSS_DIR).filter((f) => f.endsWith(".css"));
+
+if (!componentFiles.length) {
+  console.error("CONTRACT FAILED: no component stylesheets found at all.");
+  process.exit(1);
+}
+for (const file of componentFiles) {
+  if (!MAIN_CSS.includes(`components/${file}`)) {
+    fail(
+      `${file}: exists in src/css/components/ and main.css never imports it, so ` +
+        `none of its rules ship. The block still renders and still counts, it ` +
+        `just falls back to the article's own scale.`
+    );
   }
 }
 

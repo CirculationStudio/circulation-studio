@@ -34,9 +34,20 @@
   }
 
   .cs-faq__title {
-    /* Size and tracking come from .cs-article h2. Only the spacing is set
-       here, because the title is not a direct child of a prose container and
-       takes none of the prose rhythm. */
+    /* Size and tracking USED to come from .cs-article h2, which matched every
+       h2 anywhere inside an article and outranked any component's own label
+       rule. That selector is now .cs-prose > h2, scoped to headings markdown
+       emits into a prose column, so this states the values instead of relying
+       on a rule that reached further than it should have.
+
+       The value is deliberately unchanged. A faq title IS a section heading,
+       which is what separates it from the panel labels in takeaways and
+       execsummary: those are labels on a box and sit at 12px to 14px.
+
+       Only the spacing is set here beyond that, because the title is not a
+       direct child of a prose container and takes none of the prose rhythm. */
+    font-size: var(--text-article-h2);
+    letter-spacing: var(--tracking-caps);
     margin: 0;
     padding: 16px 20px;
     border-bottom: 1px solid var(--border-hairline);

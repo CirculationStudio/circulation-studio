@@ -76,7 +76,30 @@
     letter-spacing: var(--tracking-article-h1);
   }
 
-  .cs-article h2 {
+  /* ============================================================
+     SCOPED TO PROSE HEADINGS, AND THAT SCOPING IS LOAD BEARING.
+     ============================================================
+
+     These were `.cs-article h2` and `.cs-article h3`, which is one class plus
+     one type, and it silently beat every panel label in the article system.
+     A component sets its label with a single class, `.cs-takeaways__title`,
+     which is lower specificity, so takeaways, faq, execsummary, methodology
+     and references all rendered their labels at the 22px section scale
+     instead of the 12px to 14px their own rules asked for. takeaways.css even
+     carried a comment explaining that it is a panel label at 14px rather than
+     a section heading at 22px, and that comment had never been true.
+
+     Nothing failed. The blocks rendered, the manifest counted them and the
+     sweep found them on the left edge, because an overridden font size is
+     still a font size. It was found by measuring a colour and noticing the
+     size next to it was wrong.
+
+     The direct-child selector says what was always meant: this is the scale
+     for headings markdown emits into a prose column, not for every h2 that
+     happens to be inside an article. A component label is inside a component,
+     so it now keeps its own rule. Panes carry .cs-prose on their inner
+     column, so prose inside a pane is still covered. */
+  .cs-prose > h2 {
     font-size: var(--text-article-h2);
     letter-spacing: var(--tracking-caps);
   }
@@ -86,7 +109,7 @@
      on the uppercase display face is what carries the hierarchy. Do not
      "correct" this upward on the assumption that a heading must out-size its
      body copy. */
-  .cs-article h3 {
+  .cs-prose > h3 {
     font-size: var(--text-article-h3);
     letter-spacing: var(--tracking-article-h3);
   }

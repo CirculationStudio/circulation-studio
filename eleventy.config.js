@@ -235,6 +235,16 @@ const CHILD_PAIRS = [
       "indented line under an unstyled one and no reader reads as a labelled row"
   },
   {
+    child: "cs-ref",
+    parent: "cs-references",
+    name: "ref",
+    parentName: "references",
+    wrapper: "{% references %} ... {% endreferences %}",
+    degradesTo:
+      "a list item outside any list, which carries no number at all, and a " +
+      "reference with no number cannot be pointed at"
+  },
+  {
     /* The numbering transform pairs a note with its marker and fails on either
        half missing, which is a different question from whether the note is
        inside the list. A note outside `footnotes` still has a marker, so it
@@ -1115,6 +1125,40 @@ export default function (eleventyConfig) {
       `<dl class="cs-methodology__list">\n` +
       `${content.trim()}` +
       `\n</dl>\n</div>\n`
+    );
+  });
+
+  /* references and ref: the fourth parent-and-child pair.
+
+     NUMBERING IS THE ORDERED LIST, not the numbering transform. An author
+     writes no number and cannot, which is the requirement; the browser numbers
+     in document order, which is the order they were written. The transform
+     exists for the two cases a list cannot do, footnotes sorted into marker
+     order and captions where the number is prose. Stamping one here would
+     print it twice, once as the marker and once as text.
+
+     INHERITS SURFACES. It paints nothing, so no data-no-pane. See
+     references.css for the mapping and for why the strong border tokens are
+     the right counterparts.
+
+     `note` is a plain-text argument rather than markdown, because it is a
+     sentence about the list rather than part of it. */
+  eleventyConfig.addPairedShortcode("ref", function (content) {
+    return `\n<li class="cs-ref">\n\n${content.trim()}\n\n</li>\n`;
+  });
+
+  eleventyConfig.addPairedShortcode("references", function (content, options = {}) {
+    const title = (options && options.title) || "References";
+    const note = (options && options.note) || "";
+    const trailing = note
+      ? `\n<p class="cs-references__note">${escapeHtml(note)}</p>`
+      : "";
+    return (
+      `\n<div class="cs-references">\n` +
+      `<h2 class="cs-references__label">${escapeHtml(title)}</h2>\n` +
+      `<ol class="cs-references__list">\n` +
+      `${content.trim()}` +
+      `\n</ol>${trailing}\n</div>\n`
     );
   });
 

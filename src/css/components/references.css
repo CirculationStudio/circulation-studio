@@ -1,0 +1,118 @@
+/* References: the source list that closes a whitepaper.
+ *
+ * INHERITS SURFACES, and it is the second block after faq to earn that rather
+ * than be excluded. It paints nothing: one border-top, a label, list items and
+ * an optional note, all of which are text and a line. A descendant selector
+ * reaches every colour it has, which is the test in SHORTCODES.md.
+ *
+ * The border is border-STRONG, so its deep counterparts are the strong ones,
+ * --border-on-deep-strong and --border-on-accent-strong, matching what
+ * pullquote does with the same weight. Using the hairline tokens there would
+ * quietly downgrade the rule that separates the references from the article.
+ *
+ * The surface selectors follow the convention stat established: the modifier
+ * class and the pane-descendant selector listed together, never one replacing
+ * the other, and properties grouped by hierarchy step rather than one rule per
+ * property. Here the steps are the block's own rule, the label and items that
+ * carry the document's text colour, and the note that is subordinate to them.
+ *
+ * NUMBERING IS NOT AUTHORED, AND IT IS NOT THE TRANSFORM EITHER. It is the
+ * ordered list. An author writes no number and cannot, which is the actual
+ * requirement, and the browser numbers in document order which is the order
+ * they are written. The numbering transform exists for the two cases a list
+ * cannot do: footnotes, where notes are SORTED into marker order and each end
+ * is linked to the other, and table and figure captions, where the number is
+ * prose inside a caption. Stamping a number into a reference on top of an
+ * ol marker would print it twice.
+ *
+ * What this does NOT give you is a call site: there is no way to point at
+ * reference 12 from a paragraph. That is the fn and note mechanism, which
+ * already exists and does have a transform. If references ever need call sites
+ * they need markers, and that is a vocabulary addition rather than a styling
+ * one.
+ *
+ * Flow spacing the standard 40px symmetric. No radius: there is no box, only a
+ * rule across the top. */
+@layer components {
+  .cs-prose > .cs-references {
+    margin-block: var(--space-40);
+  }
+
+  .cs-references {
+    border-top: 1px solid var(--border-strong);
+    padding-top: 20px;
+  }
+
+  .cs-references__label {
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 12px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-body);
+    margin: 0 0 var(--space-16);
+  }
+
+  .cs-references__list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 0;
+    padding-left: var(--space-24);
+    list-style: decimal;
+  }
+
+  .cs-ref {
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text-body);
+    margin: 0;
+  }
+  /* Content arrives as markdown, so a one-line reference is a paragraph. It
+     carries no margin of its own; the list's gap is the spacing. */
+  .cs-ref p {
+    margin: 0;
+  }
+
+  .cs-references__note {
+    font-family: var(--font-body);
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text-muted);
+    margin: var(--space-16) 0 0;
+  }
+
+  /* ============================================================
+     SURFACES. Borders and text only, so both deep grounds map cleanly.
+     ============================================================ */
+  .cs-references--on-deep,
+  .cs-pane--ink .cs-references {
+    border-top-color: var(--border-on-deep-strong);
+  }
+  .cs-references--on-deep .cs-references__label,
+  .cs-references--on-deep .cs-ref,
+  .cs-pane--ink .cs-references .cs-references__label,
+  .cs-pane--ink .cs-references .cs-ref {
+    color: var(--text-on-deep);
+  }
+  .cs-references--on-deep .cs-references__note,
+  .cs-pane--ink .cs-references .cs-references__note {
+    color: var(--text-on-deep-muted);
+  }
+
+  .cs-references--on-accent,
+  .cs-pane--madder .cs-references {
+    border-top-color: var(--border-on-accent-strong);
+  }
+  .cs-references--on-accent .cs-references__label,
+  .cs-references--on-accent .cs-ref,
+  .cs-pane--madder .cs-references .cs-references__label,
+  .cs-pane--madder .cs-references .cs-ref {
+    color: var(--text-on-madder);
+  }
+  .cs-references--on-accent .cs-references__note,
+  .cs-pane--madder .cs-references .cs-references__note {
+    color: var(--text-on-madder-muted);
+  }
+}

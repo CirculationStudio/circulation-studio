@@ -292,6 +292,18 @@ says so before anyone reads a word of either.
 3. The build error says label rather than ground, so it is true.
 {% endexecsummary %}
 
+{% references note="Numbering comes from the ordered list, not from an author and not from the numbering transform." %}
+{% ref %}
+Bringhurst, Robert. *The Elements of Typographic Style*. Hartley and Marks, 2004.
+{% endref %}
+{% ref %}
+A second entry, so the list's gap and its automatic numbering are both exercised.
+{% endref %}
+{% ref %}
+A third, because two entries cannot tell a gap from a margin.
+{% endref %}
+{% endreferences %}
+
 {% related title="Related" %}
 {% item kind="Field Note", title="How the measure was chosen", url="/library/measure/" %}
 {% item kind="Guide", title="Writing for answer engines", url="/library/aeo/" %}
