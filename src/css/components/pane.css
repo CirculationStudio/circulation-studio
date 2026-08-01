@@ -97,11 +97,25 @@
      ink and unreadable. The link becomes paper and the accent survives as the
      UNDERLINE in madder-lift, which is the design system's own on-deep inline
      link treatment rather than a new invention. */
-  .cs-pane--ink a {
+  /* ============================================================
+     THESE RULES COLOUR PROSE LINKS, NOT BUTTONS, hence :not(.cs-btn).
+     ============================================================
+
+     `.cs-pane--madder a` is one class plus one type, so it outranked
+     `.cs-btn--on-accent-primary` at a single class and repainted the cta's
+     button label paper where the variant asks for madder. Fourth instance of a
+     broad rule reaching into a component, caught by the manifest this time
+     rather than by eye, which is what the layout assertions were added for.
+
+     A button on a pane is not an inline link that happens to be on a pane. It
+     carries its own on-accent variant, and the pane has no business colouring
+     it. See ARTICLE_SYSTEM.md section 9.
+     ============================================================ */
+  .cs-pane--ink a:not(.cs-btn) {
     color: var(--text-on-deep);
     text-decoration-color: var(--color-madder-lift);
   }
-  .cs-pane--ink a:hover {
+  .cs-pane--ink a:not(.cs-btn):hover {
     color: var(--text-on-deep);
     text-decoration-color: var(--color-paper);
   }
@@ -115,11 +129,11 @@
   /* On madder there is no second colour available: ink is 1.99:1 and the
      accent cannot accent itself. So the link is paper and the underline is a
      PAPER TINT, going to full paper on hover. That is the only axis left. */
-  .cs-pane--madder a {
+  .cs-pane--madder a:not(.cs-btn) {
     color: var(--text-on-madder);
     text-decoration-color: var(--border-on-accent-strong);
   }
-  .cs-pane--madder a:hover {
+  .cs-pane--madder a:not(.cs-btn):hover {
     color: var(--text-on-madder);
     text-decoration-color: var(--color-paper);
   }

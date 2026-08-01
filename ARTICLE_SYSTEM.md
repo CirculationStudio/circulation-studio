@@ -245,14 +245,44 @@ Three shapes, chosen by what a block belongs to:
 Margins collapse, so a gap is the larger of two values and not their sum.
 Every number above is measured in the browser, not asserted.
 
-## 8. Radius
+## 8. Where the Reference and design.md disagree
 
-`--radius-control` throughout, against the Component Reference's inline 8px.
-The token set has exactly two radii and main.css states the rule as near-square
-corners everywhere. The Reference uses 8px on every panel block, so this is
-systemic rather than a one-off, which makes it a design system question rather
-than a build one. Recorded in `table.css` and `faq.css`. If 8px is adopted it
-needs a token and an amendment to that rule, not a literal per component.
+Five instances now, which is enough that it is a pattern rather than a series of
+one-offs. **All of them are design system questions, not build ones.** The build
+records each disagreement next to the code it affects and picks the option it
+can defend, rather than quietly resolving them.
+
+**Radius.** `--radius-control` throughout, against the Component Reference's
+inline 8px. The token set has exactly two radii and main.css states the rule as
+near-square corners everywhere. The Reference uses 8px on every panel block, so
+this is systemic rather than a one-off. Recorded in `table.css` and `faq.css`.
+If 8px is adopted it needs a token and an amendment to that rule, not a literal
+per component.
+
+**The faq toggle's 160ms.** The Reference's duration, and the motion scale has
+`--dur-fast` at 140ms and `--dur-snap` at 220ms and nothing between. It is a
+literal in `faq.css` rather than a substituted token, because 140 is not what the
+Reference says. `--ease-out` needed no such call: it is already exactly the
+Reference's `cubic-bezier(.2, .7, .3, 1)`.
+
+**The two on-accent button variants.** `--on-accent-primary` and `--on-accent`
+are the Reference's, for use on a madder pane, and design.md's variant list names
+only primary, secondary, ghost and deep. The absence is a gap in design.md rather
+than a decision against them. Recorded in `button.css` and in the button macro's
+own documentation. This one bit: the cta shipped with `--deep` on the reading
+that the four were the whole set, and `--deep` is the ink-pane variant whose
+hover carries ink where madder wants madder.
+
+**The faq question's 14px/.06em**, which `article.css` had misattributed as
+16px/.08em alongside prose h3 and guide step titles. That was a repo error about
+the Reference rather than a disagreement with it, and it is corrected, but it
+belongs in this list because it had the same effect: it made drift look
+sanctioned.
+
+**The panel label scale.** The Reference gives its FAQ block no heading of its
+own, so `faq`'s title at the article section scale is this repo's decision rather
+than the Reference's. Recorded in the fixture manifest as a repo decision, which
+is where the distinction is now kept honest.
 
 ## 9. Prose rules are scoped, and component elements neutralize the base
 

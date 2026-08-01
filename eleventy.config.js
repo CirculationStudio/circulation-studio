@@ -1173,6 +1173,11 @@ export default function (eleventyConfig) {
      side. When it is absent the block stays one unbroken HTML block, which is
      why the padding is built rather than interpolated.
 
+     THE BUTTON IS --on-accent-primary, the Component Reference's primary action
+     on a madder ground: paper fill, paper border, madder label. It shipped as
+     --deep first, which is the ink-pane variant and carries ink on hover where
+     madder wants madder. See button.css.
+
      THE BUTTON IS WRAPPED IN A DIV, and that is composition rather than taste.
      An <a> is inline, so markdown-it would parse a line starting with one as a
      paragraph and swallow the closing tags after it. Same trap pullquote hit
@@ -1208,7 +1213,7 @@ export default function (eleventyConfig) {
         `<h2 class="cs-cta__headline">${escapeHtml(headline)}</h2>` +
         body +
         `<div class="cs-cta__action">` +
-        `<a class="cs-btn cs-btn--deep" href="${escapeHtml(url)}">${escapeHtml(label)}</a>` +
+        `<a class="cs-btn cs-btn--on-accent-primary" href="${escapeHtml(url)}">${escapeHtml(label)}</a>` +
         `</div>\n</div>\n</div>`
     );
   });

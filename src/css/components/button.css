@@ -75,6 +75,50 @@
   }
   .cs-btn--deep:hover { background: var(--color-paper); color: var(--color-ink) }
 
+  /* ============================================================
+     ON A MADDER PANE. Both variants are the Component Reference's, and
+     NEITHER APPEARS IN design.md's variant list.
+     ============================================================
+
+     That list names four: primary, secondary, ghost, deep. The Reference
+     carries these two as well, and uses --on-accent-primary for its primary
+     action on madder and --on-accent for its secondary. The absence is a gap in
+     design.md rather than a decision against them, and it is the fifth place
+     the Reference and design.md disagree. Recorded in ARTICLE_SYSTEM.md
+     section 8 with the others, because it is a design system question and not
+     one this repo settles.
+
+     WHY NOT --deep ON MADDER, which is what the cta shipped with first. deep is
+     documented for an ink pane and its hover carries INK text. On madder the
+     Reference carries madder, which is the accent recognising its own ground
+     rather than borrowing the other deep surface's answer. No contrast pairing
+     changes either way: madder on paper is 8.06:1 and ink on paper is 16.06:1,
+     both verified and both AA.
+
+     The secondary is added now rather than when it is first needed, because the
+     moment a madder pane wants two actions is the moment someone reaches for
+     the nearest lookalike, and --deep is the nearest lookalike. */
+  .cs-btn--on-accent-primary {
+    background: var(--color-paper);
+    border-color: var(--color-paper);
+    color: var(--accent);
+  }
+  .cs-btn--on-accent-primary:hover {
+    background: var(--color-mist);
+    border-color: var(--color-mist);
+    color: var(--accent-hover);
+  }
+
+  .cs-btn--on-accent {
+    background: transparent;
+    border-color: var(--color-paper);
+    color: var(--color-paper);
+  }
+  .cs-btn--on-accent:hover {
+    background: var(--color-paper);
+    color: var(--accent);
+  }
+
   /* Ghost / CTA text link. Distinct from inline body-copy links, which keep a
      permanent madder underline (see base/elements.css). Here the underline
      draws in from the left and the arrow slides right. */

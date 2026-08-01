@@ -115,7 +115,9 @@ for (const fixture of manifest.pages) {
             marginBottom: c.marginBottom,
             rowGap: c.rowGap,
             gridTemplateColumns: c.gridTemplateColumns,
-            overflowX: c.overflowX
+            overflowX: c.overflowX,
+            backgroundColor: c.backgroundColor,
+            borderColor: c.borderTopColor
           }
         };
       }),

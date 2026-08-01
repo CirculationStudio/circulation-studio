@@ -35,14 +35,13 @@
  * treatment every other pane heading takes, including the margin-top:0 that
  * .cs-prose > :first-child already gives a leading heading.
  *
- * THE BUTTON IS .cs-btn--deep, and that needs saying because it is not what was
- * asked for. There is no .cs-btn--on-accent in this repo: the locked variant
- * set in design.md section 6 is primary, secondary, ghost and deep, and `deep`
- * is the paper-on-a-dark-ground treatment, described there as for use on an ink
- * pane. It rests as a paper outline and fills to solid paper with ink text on
- * hover, rather than resting filled. Every colour in it is already a verified
- * pairing on madder. A fifth variant that rests filled would be an addition to
- * a locked set, which is a design decision rather than a build one.
+ * THE BUTTON IS .cs-btn--on-accent-primary, the Component Reference's primary
+ * action on a madder ground: paper fill, paper border, madder label, hovering
+ * to mist with madder-deep. It shipped as --deep first, on the reading that
+ * design.md's four-variant list was the whole set. It is not: the Reference
+ * carries the two on-accent variants as well and design.md simply does not
+ * cover them. --deep is the ink-pane variant and its hover carries ink text,
+ * where madder wants madder.
  *
  * The only value invented here is the 24px above the button, and it is the
  * pane's own step: the same 24 a heading takes below itself. */

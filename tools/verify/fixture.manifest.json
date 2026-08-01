@@ -582,7 +582,7 @@
           "count": 1
         },
         "cta button": {
-          "selector": ".cs-cta__action .cs-btn--deep",
+          "selector": ".cs-cta__action .cs-btn--on-accent-primary",
           "count": 1
         },
         "madder panes on the page": {
@@ -726,6 +726,18 @@
             "marginTop": "64px",
             "marginBottom": "64px",
             "padding": "64px 0px"
+          }
+        },
+        {
+          "name": "cta button",
+          "selector": ".cs-cta__action .cs-btn",
+          "source": "Component Reference: --on-accent-primary, absent from design.md's variant list",
+          "expect": {
+            "backgroundColor": "rgb(244, 245, 244)",
+            "borderColor": "rgb(244, 245, 244)",
+            "color": "rgb(143, 29, 46)",
+            "fontFamily": "Dual",
+            "textTransform": "uppercase"
           }
         }
       ]
