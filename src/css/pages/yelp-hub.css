@@ -590,6 +590,117 @@
     color: var(--text-faint);
   }
 
+  /* ---- rank tracking ---- */
+
+  /* Mist, bordered. The only panel ground on the page: the browse feature is
+     madder and the Start here band is ink, so this is the quiet third. */
+  .cs-rank {
+    border: 1px solid var(--border-strong);
+    background: var(--surface-panel);
+    padding: 56px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 400px;
+    gap: var(--space-64);
+    align-items: center;
+  }
+  /* The one madder eyebrow on the page. Everywhere else an eyebrow is faint;
+     here it marks the single commercial offer among seven editorial sections,
+     which is the distinction worth spending the accent on. 7.23:1 on mist. */
+  .cs-rank__eyebrow {
+    margin: 0;
+    max-width: none;
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 11px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .cs-rank__title {
+    margin: var(--space-16) 0 0;
+    font-size: var(--text-h3);
+    letter-spacing: var(--tracking-caps);
+  }
+  .cs-rank__body {
+    margin: var(--space-16) 0 0;
+    font-size: 15px;
+    max-width: 52ch;
+  }
+  .cs-rank__cta { margin-top: 28px }
+
+  .cs-rank__report {
+    background: var(--surface-card);
+    border: 1px solid var(--border-hairline);
+    padding: var(--space-24);
+    border-collapse: collapse;
+    width: 100%;
+  }
+  .cs-rank__report-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid var(--border-strong);
+    padding-bottom: 10px;
+    text-align: left;
+  }
+  .cs-rank__report-title {
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 10px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+  .cs-rank__report-date {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  .cs-rank__report td {
+    border-bottom: 1px solid var(--border-hairline);
+    padding: 11px 0;
+    vertical-align: baseline;
+  }
+  .cs-rank__term {
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--color-ink);
+  }
+  .cs-rank__position {
+    width: 46px;
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 16px;
+    text-align: right;
+    color: var(--color-ink);
+  }
+  /* Movement is madder, holding is faint. Colour carries the only meaning in
+     this column, so the words say it too: "Was 7" and "Held" read correctly
+     with no colour at all, which is the requirement. */
+  .cs-rank__delta {
+    width: 74px;
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    text-align: right;
+    color: var(--text-faint);
+  }
+  .cs-rank__delta--moved { color: var(--accent) }
+  .cs-rank__note {
+    padding-top: 14px;
+    font-family: var(--font-body);
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text-faint);
+  }
+  .cs-rank__report tfoot td { border-bottom: 0 }
+
   /* ---- phone ---- */
 
   /* The comp's breakpoint is 1120px, the container width, so the page reflows
@@ -626,5 +737,15 @@
 
     .cs-map { grid-template-columns: minmax(0, 1fr); row-gap: 0 }
     .cs-map__cluster { padding: 22px 0 12px }
+
+    .cs-rank {
+      padding: 28px;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 28px;
+    }
+    /* Full width and 48px tall, so the one commercial action on the page is a
+       real touch target rather than a button sized for a mouse. */
+    .cs-rank .cs-btn { width: 100%; min-height: 48px; box-sizing: border-box }
+    .cs-rank__report { padding: 20px }
   }
 }

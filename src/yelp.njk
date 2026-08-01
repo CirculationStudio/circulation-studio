@@ -66,8 +66,42 @@ map:
     is a cluster we are still in.
   pendingState: In preparation
   pendingNote: The longer entries for this cluster are in preparation.
+
+# The one service offer on this page. The report rows are a SAMPLE, labelled as
+# one in the note beneath them, not a real client's positions.
+rank:
+  eyebrow: Service, from the studio
+  title: Yelp Rank Tracking
+  body: >-
+    Monthly tracking of where your business ranks in Yelp search for the terms
+    that bring you work, reported plainly and tied to what we would change
+    next. A managed service, run by the team, not a self-serve tool.
+  cta: Ask about rank tracking
+  reportTitle: Position report
+  reportDate: 2026-06-30
+  rows:
+    - term: emergency plumber, Laguna Beach
+      position: 3
+      delta: Was 7
+      moved: true
+    - term: water heater repair
+      position: 5
+      delta: Held
+      moved: false
+    - term: drain cleaning near me
+      position: 2
+      delta: Was 4
+      moved: true
+    - term: slab leak detection
+      position: 9
+      delta: Was 14
+      moved: true
+  note: >-
+    Sample rows from a monthly report. A real one carries your terms, your
+    market and a note on what we would change next.
 ---
 {% from "components/container.njk" import container %}
+{% from "components/button.njk" import button %}
 
 {#
   The Yelp Hub landing page.
@@ -276,5 +310,47 @@ map:
       {%- endif %}
     </div>
     {%- endfor %}
+  </div>
+{% endcall %}
+
+{#- RANK TRACKING. The one service offer on the page. The report card holds
+    SAMPLE rows, said so in the note beneath them, because a real client's
+    positions are not ours to publish. -#}
+{% call container(class="cs-hub-section") %}
+  <div class="cs-rank">
+    <div>
+      <p class="cs-rank__eyebrow">{{ rank.eyebrow }}</p>
+      <h2 class="cs-rank__title">{{ rank.title }}</h2>
+      <p class="cs-rank__body">{{ rank.body }}</p>
+      {{ button(rank.cta, href="/contact/", class="cs-rank__cta") }}
+    </div>
+
+    {#- A table, because it is one: four rows of term, position and movement.
+        The comp draws it as divs, which reads identically and tells a screen
+        reader nothing about the columns. -#}
+    <table class="cs-rank__report">
+      <caption class="cs-rank__report-head">
+        <span class="cs-rank__report-title">{{ rank.reportTitle }}</span>
+        <span class="cs-rank__report-date">{{ rank.reportDate | monthYear }}</span>
+      </caption>
+      <thead class="sr-only">
+        <tr><th scope="col">Search term</th><th scope="col">Position</th><th scope="col">Change</th></tr>
+      </thead>
+      <tbody>
+        {%- for row in rank.rows %}
+        <tr>
+          <td class="cs-rank__term">{{ row.term }}</td>
+          <td class="cs-rank__position">{{ row.position }}</td>
+          <td class="cs-rank__delta{{ " cs-rank__delta--moved" if row.moved }}">{{ row.delta }}</td>
+        </tr>
+        {%- endfor %}
+      </tbody>
+      {#- The note is inside the card, where the comp puts it, so it travels
+          with the numbers it qualifies. A tfoot rather than a p, because a p
+          cannot live in a table and the qualifier belongs to the table. -#}
+      <tfoot>
+        <tr><td class="cs-rank__note" colspan="3">{{ rank.note }}</td></tr>
+      </tfoot>
+    </table>
   </div>
 {% endcall %}
