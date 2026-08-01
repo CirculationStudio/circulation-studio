@@ -79,7 +79,7 @@ schema maps across directly. See SCHEMA.md.
 **Location resolved 2026-07-27: Laguna Beach, California is canonical.**
 Earlier docs described the studio as based in San Miguel de Allende,
 Guanajuato, Mexico, including a full Mexico address in the SCHEMA.md
-Organization template and positioning language in voice-tone.md. All of it was
+Organization template and positioning language in the retired voice-tone.md. All of it was
 stale bleed-over and all of it was wrong. Do not reintroduce a Mexico address
 or describe the studio as Mexico-based. If a task appears to call for it, the
 task is working from stale source material.

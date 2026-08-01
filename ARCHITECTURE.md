@@ -32,7 +32,7 @@ See the repo root for the complete directory tree. Key locations:
 - **Site structure:** See SITE_ARCHITECTURE.md for sitemap, URLs, keyword mapping, and internal linking strategy
 - **Structured data:** See SCHEMA.md for JSON-LD schema types per page template
 - **Article system:** See SHORTCODES.md for the shortcode vocabulary contract, and ARTICLE_SYSTEM.md for the build mechanics behind it, composition, transforms and the verify scripts
-- **Brand voice:** See voice-tone.md for writing guidelines (if applicable)
+- **Article voice:** See VOICE_ARTICLES.md for the register articles are written in, the seven rules and the banned constructions
 
 ## Build commands
 

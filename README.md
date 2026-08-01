@@ -28,7 +28,7 @@ All project documentation is in the root directory:
 - **DEPLOYMENT.md** - Cloudflare Pages configuration and deployment process
 - **SITE_ARCHITECTURE.md** - Sitemap, URLs, keywords, and content strategy
 - **SCHEMA.md** - Structured data specifications
-- **voice-tone.md** - Brand voice guidelines
+- **VOICE_ARTICLES.md** - The register articles are written in
 
 ## Agent Instructions
 
@@ -76,7 +76,7 @@ circulation-studio/
 ├── DEPLOYMENT.md
 ├── SITE_ARCHITECTURE.md
 ├── SCHEMA.md
-├── voice-tone.md
+├── VOICE_ARTICLES.md
 ├── .claude/
 │   ├── CLAUDE.md
 │   ├── AUDIT_AGENT.md

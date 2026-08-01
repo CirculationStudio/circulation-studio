@@ -62,7 +62,7 @@ This file contains the rules, standards, and brand constraints that all AI agent
 
 #### Voice (agency-AI provenance)
 
-[Reference voice-tone.md for detailed brand voice]
+[Reference VOICE_ARTICLES.md for the register articles are written in]
 
 Key principles:
 - Authentic and grounded (not generic agency speak)
@@ -89,7 +89,8 @@ Key principles:
 
 ### For agency-AI content (our approach)
 
-- Follow voice-tone.md for all copy generation
+- Follow VOICE_ARTICLES.md for all article copy: it governs the register, and
+  its seven rules and banned constructions are as binding as the house list above
 - Never invent claims, credentials, or facts that cannot be verified
 - All generated copy must be reviewed before deployment
 - Lead with value and clarity, not marketing speak
@@ -141,7 +142,7 @@ Key principles:
    - DESIGN_SYSTEM.md for brand constraints
    - SITE_ARCHITECTURE.md for content strategy
    - SCHEMA.md for structured data requirements
-   - voice-tone.md for copy guidelines
+   - VOICE_ARTICLES.md for the register articles are written in
    - SHORTCODES.md and ARTICLE_SYSTEM.md before touching the article system
 
 2. Make changes following all constraints above

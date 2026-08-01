@@ -109,7 +109,7 @@ Root documentation (human-authored, agent-referenced)
 ├── DEPLOYMENT.md - Hosting and deployment config
 ├── SITE_ARCHITECTURE.md - Content strategy and sitemap
 ├── SCHEMA.md - Structured data specifications
-└── voice-tone.md - Writing guidelines
+└── VOICE_ARTICLES.md - The register articles are written in
 
 .claude/ (agent-specific instructions)
 ├── CLAUDE.md - Build and optimization rules
