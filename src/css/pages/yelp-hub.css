@@ -563,6 +563,23 @@
   }
   .cs-map__entry:hover .cs-map__entry-title { color: var(--accent) }
 
+  /* Rendered only when a cluster has questions, so this rule has no subject
+     today. It ships anyway: the day the first FAQ file lands, the link should
+     already be styled rather than appearing unstyled for one commit. */
+  .cs-map__faq {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 12px;
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .cs-map__faq:hover { color: var(--accent-hover) }
+
   .cs-map__pending {
     margin: 10px 0 0;
     max-width: none;

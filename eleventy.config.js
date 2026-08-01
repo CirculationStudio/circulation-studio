@@ -1707,6 +1707,25 @@ export default function (eleventyConfig) {
      what "last added" already promises the reader. */
   eleventyConfig.addCollection("yelpMap", (collectionApi) => {
     const items = collectionApi.getFilteredByGlob("src/yelp/*.md");
+
+    /* FAQ COUNTS, COUNTED FROM CONTENT. One file per question in
+       src/yelp/faq/, each declaring the cluster it answers under, and the
+       count is how many match. Never a number in frontmatter: a hand-kept
+       count is wrong the first time somebody adds a question and forgets, and
+       a count that overstates is a link to answers a reader will not find.
+
+       ZERO IS THE STATE TODAY and it renders no link at all, per the rule the
+       whole page follows: an empty thing is omitted rather than shown empty.
+       A cluster reading "0 questions in the FAQ" pointing at an anchor on a
+       page that does not exist is worse than no link, for a reader and for a
+       crawler.
+
+       The glob is deliberately for a directory that does not exist yet.
+       getFilteredByGlob returns an empty array rather than throwing, so the
+       mechanism is live and correct now and the first file dropped in starts
+       counting with no edit here. */
+    const faqs = collectionApi.getFilteredByGlob("src/yelp/faq/*.md");
+
     return [...YELP_CLUSTERS].map(([slug, name]) => {
       const entries = items
         .filter((item) => String(item.data.cluster || "").trim() === slug)
@@ -1717,7 +1736,8 @@ export default function (eleventyConfig) {
         entries,
         /* The newest updated date in the cluster, or null. Derived rather than
            declared, so it cannot claim a month nothing was added in. */
-        lastAdded: entries.length ? entries[0].data.updated : null
+        lastAdded: entries.length ? entries[0].data.updated : null,
+        faqCount: faqs.filter((f) => String(f.data.cluster || "").trim() === slug).length
       };
     });
   });

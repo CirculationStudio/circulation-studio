@@ -267,6 +267,13 @@ map:
           yet. Reworded to something true today. -#}
       <p class="cs-map__pending">{{ map.pendingNote }}</p>
       {%- endif %}
+
+      {#- No questions, no link. A cluster reading "0 questions in the FAQ"
+          pointing at an anchor on a page nobody has built is worse than
+          silence, for a reader and for a crawler. Counted, never declared. -#}
+      {%- if cluster.faqCount %}
+      <a class="cs-map__faq" href="/yelp/faq/#{{ cluster.slug }}">{{ cluster.faqCount }} {{ "question" if cluster.faqCount == 1 else "questions" }} in the FAQ <span aria-hidden="true">&rarr;</span></a>
+      {%- endif %}
     </div>
     {%- endfor %}
   </div>
