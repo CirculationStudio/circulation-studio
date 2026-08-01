@@ -245,44 +245,105 @@ Three shapes, chosen by what a block belongs to:
 Margins collapse, so a gap is the larger of two values and not their sum.
 Every number above is measured in the browser, not asserted.
 
-## 8. Where the Reference and design.md disagree
+## 8. Which artefact wins, and why the six happened
 
-Five instances now, which is enough that it is a pattern rather than a series of
-one-offs. **All of them are design system questions, not build ones.** The build
-records each disagreement next to the code it affects and picks the option it
-can defend, rather than quietly resolving them.
+Read the design system directly on 2026-08-01 through `/design-sync` rather than
+from summaries of it. The picture is not the one the register described, and the
+correction matters more than any of the six decisions it settles.
 
-**Radius.** `--radius-control` throughout, against the Component Reference's
-inline 8px. The token set has exactly two radii and main.css states the rule as
-near-square corners everywhere. The Reference uses 8px on every panel block, so
-this is systemic rather than a one-off. Recorded in `table.css` and `faq.css`.
-If 8px is adopted it needs a token and an amendment to that rule, not a literal
-per component.
+### There are three artefacts, not two, and the third is not in the design system
 
-**The faq toggle's 160ms.** The Reference's duration, and the motion scale has
-`--dur-fast` at 140ms and `--dur-snap` at 220ms and nothing between. It is a
-literal in `faq.css` rather than a substituted token, because 140 is not what the
-Reference says. `--ease-out` needed no such call: it is already exactly the
-Reference's `cubic-bezier(.2, .7, .3, 1)`.
+1. **`design.md`**, in the Claude Design project. Rules and prohibitions,
+   marked LOCKED per section, with an explicit precedence claim of its own: "if
+   any file, card, or generated text conflicts with this document, this document
+   wins."
+2. **`tokens/*.css` and `components/components.css`**, in the same project. The
+   machine-readable system. This is what `/design-sync` pulls.
+3. **The Component Reference.** Not in the design system project. Every disputed
+   value came from here, and it can only be read by hand.
 
-**The two on-accent button variants.** `--on-accent-primary` and `--on-accent`
-are the Reference's, for use on a madder pane, and design.md's variant list names
-only primary, secondary, ghost and deep. The absence is a gap in design.md rather
-than a decision against them. Recorded in `button.css` and in the button macro's
-own documentation. This one bit: the cta shipped with `--deep` on the reading
-that the four were the whole set, and `--deep` is the ink-pane variant whose
-hover carries ink where madder wants madder.
+**On all six disagreements, artefacts 1 and 2 agree with each other.** They are
+not in conflict. The conflict is between the design system and a fourth thing
+that sits outside it:
 
-**The faq question's 14px/.06em**, which `article.css` had misattributed as
-16px/.08em alongside prose h3 and guide step titles. That was a repo error about
-the Reference rather than a disagreement with it, and it is corrected, but it
-belongs in this list because it had the same effect: it made drift look
-sanctioned.
+- Radius. `design.md` section 4 LOCKED says "Corners 2px". `tokens/layout.css`
+  says `--radius-control:2px` with the comment "near-square engraved-plate
+  corners everywhere, buttons included". `components/components.css` uses
+  `var(--radius-control)` on every component it defines. Three for 2px.
+- Motion. `design.md` section 5 LOCKED says 140ms and 220ms.
+  `tokens/layout.css` carries `--dur-fast:140ms` and `--dur-snap:220ms` and
+  nothing between. Two for 140.
+- Button variants. `design.md` section 6 says "LOCKED SET, nothing else" and
+  "never invent inline". `components/components.css` carries exactly primary,
+  secondary, ghost, deep. Nothing anywhere in the project carries an on-accent
+  variant.
 
-**The panel label scale.** The Reference gives its FAQ block no heading of its
-own, so `faq`'s title at the article section scale is this repo's decision rather
-than the Reference's. Recorded in the fixture manifest as a repo decision, which
-is where the distinction is now kept honest.
+### The rule
+
+**The design system wins. `design.md` first, then the tokens and
+`components.css`, which have not yet been caught disagreeing with it.**
+
+**The Component Reference is authoritative only where the design system is
+silent.** Silence is not prohibition, and most of this article system lives in
+that silence: `design.md` section 6's long-form set is `.cs-pullquote`,
+`.cs-stat`, `.cs-fnref`, `.cs-footnotes` and `.cs-contentlabel`. takeaways,
+callout, faq, table, related, execsummary, methodology, references, observed,
+cover and cta are all outside it. They are legitimate because nothing rules them
+out, and every one of them is a proposal in the sense section 6 means.
+
+**Where the design system speaks, it wins even at scale.** Thirteen panel blocks
+drawn at 8px is not thirteen votes; it is one artefact repeated. Uniformity is
+what an unexamined default looks like, and the token set corroborates that
+reading: there is a control radius and a pill radius and no panel radius at all,
+because a panel radius was never a decision.
+
+**A stated rule is amended, not worked around.** Sentence case for titles in a
+list contradicts section 2. It is written up as an amendment, applied in one
+place, and flagged, rather than quietly done everywhere.
+
+### What stops the next six
+
+The six were all found by building. That is the actual defect: **the artefact
+carrying the most values is the one nothing can check.**
+
+- **The Component Reference is not in the design system.** Nothing syncs it,
+  nothing diffs it, and reading it is a person's job. This is why a summary of
+  it put an ink-pane button on a madder pane. Everything in it that is real
+  should move into `components/components.css` and `tokens/*.css`, where
+  `/design-sync` can see it, and what is left should be understood as sketches.
+- **The article type scale is repo-only.** Fourteen `--text-article-*` and
+  `--tracking-article-*` values, taken from the Reference by hand.
+  `tokens/typography.css` carries `--text-h1/h2/h3/base/caption` and nothing
+  else, so the article scale is invisible to reconciliation. That is how
+  `--text-article-h3` sat at a wrong holding value for several commits. **It
+  should be promoted into `tokens/typography.css`.** That is an upstream change
+  this repo cannot make; until it happens the tokens are marked in `main.css` so
+  a sync can see which are unreconciled.
+- **The tokens are not clean either.** `tokens/typography.css` still carries
+  `--text-base:17px` while the build ships 18px, which DESIGN_SYSTEM.md records
+  as Reference drift corrected on 2026-07-30. The correction never went
+  upstream. So the token file is stale in at least one place, and "the tokens
+  win" is a rule with a known exception already.
+- **Names differ across the boundary.** Upstream is `--track-caps`, `--measure`,
+  `--ink`. The repo is `--tracking-caps`, `--container-measure`, `--color-ink`.
+  The rename is done by hand at sync time and nothing checks it.
+
+### The register
+
+Kept because each of these is a live disagreement, not a settled one.
+
+| Where | Design system says | Reference says | Resolved |
+|---|---|---|---|
+| Radius | 2px, LOCKED, three artefacts | 8px on 13 panel blocks | **Design system.** No change; the build was already right |
+| Motion | 140 / 220, LOCKED | 160ms on the faq toggle | **Design system.** Literal replaced with `--dur-fast` |
+| Button variants | four, "nothing else" | three more, incl. on-accent | **Design system.** Variants kept but relabelled PROPOSED, awaiting sign-off |
+| faq question | silent | display 600, 14px, .06em, caps | **Reference**, by silence. Already correct |
+| faq title | silent | no heading at all | **Repo.** Heading confirmed, scale moved to a 12px panel label |
+| Titles in a list | caps, no exception | n/a | **Amendment proposed**, applied to `related` only |
+
+Two upstream changes would retire most of this: promote the article type scale
+into `tokens/typography.css`, and move the Component Reference's real values into
+`components/components.css`. Both are sign-off decisions, not build ones.
 
 ## 9. Prose rules are scoped, and component elements neutralize the base
 

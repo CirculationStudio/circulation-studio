@@ -103,6 +103,23 @@
      have to be larger than the prose to read as one when it differs in face,
      case and rhythm. The 22px h3 instances elsewhere in that file are a later
      addition and are not evidence. */
+  /* ============================================================
+     REPO-ONLY, AND INVISIBLE TO THE TOKEN RECONCILIATION.
+     ============================================================
+
+     These fourteen values do not exist in tokens/typography.css, which carries
+     --text-h1/h2/h3/base/caption and nothing else. They were taken from the
+     Component Reference by hand, which is an artefact that is not in the design
+     system project at all, so nothing upstream can confirm or contradict them.
+
+     That is how --text-article-h3 sat at a wrong holding value for several
+     commits: there was nothing to reconcile it against.
+
+     THE FIX IS UPSTREAM: promote this block into tokens/typography.css so
+     /design-sync covers it. Until then, treat every value here as unverified
+     against the system and do not assume a sync has checked them. See
+     ARTICLE_SYSTEM.md section 8.
+     ============================================================ */
   --text-article-h1: 40px;
   --text-article-h1-phone: 28px;
   --text-article-h1-compact: 28px;
