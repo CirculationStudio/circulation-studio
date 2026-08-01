@@ -261,6 +261,9 @@ Not decided. Do not resolve any of these silently.
   yet. The migration redirect map is still to be collected, see `src/_redirects`.
 - **`epigraph` width is UNVERIFIED.** It carries the assumption `pullquote`
   carried, and that one was wrong. See SHORTCODES.md.
-- **`src/library/pipeline-test.md` is a disposable fixture**, not content. It
-  exists to exercise every block and joint. Delete it when real articles land,
-  and delete the manifest counts with it.
+- **Two disposable fixtures**, not content. `src/library/pipeline-test.md`
+  exercises every block that lives in a prose column;
+  `src/library/whitepaper-test.md` exercises the cover, which cannot share a
+  page with the sweep's one-left-edge assertion because a cover panel indents
+  its own heading. Delete both when real articles land, and delete their
+  manifest pages with them.

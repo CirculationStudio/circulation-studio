@@ -99,15 +99,9 @@
     line-height: var(--leading-article-compact);
   }
 
-  /* The whitepaper cover treatment. The 20ch cap is the Reference's and is the
-     one place an article heading is held to a measure of its own: a cover
-     title is set large enough that the 66ch column would let it run to four or
-     five words a line and stop reading as a cover. */
-  .cs-article--cover h1 {
-    font-size: var(--text-article-cover);
-    line-height: var(--leading-article-cover);
-    max-width: 20ch;
-  }
+  /* The cover treatment is NOT here. header: cover renders its own component,
+     .cs-cover, which owns the heading scale along with the panel it sits in.
+     See components/cover.css. */
 
   .cs-article__deck {
     font-size: var(--text-deck);
@@ -301,7 +295,6 @@
   @media (max-width: 767px) {
     .cs-article h1 { font-size: var(--text-article-h1-phone) }
     .cs-article--compact h1 { font-size: var(--text-article-h1-compact-phone) }
-    .cs-article--cover h1 { font-size: var(--text-article-cover-phone) }
     .cs-article__deck { font-size: var(--text-deck-phone) }
   }
 }

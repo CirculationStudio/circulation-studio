@@ -1,0 +1,134 @@
+/* Whitepaper cover: the `header: cover` treatment.
+ *
+ * PARTIALLY BUILT BEFORE THIS. article.css already carried the heading scale,
+ * .cs-article--cover h1 at --text-article-cover with the 20ch cap, and nothing
+ * else: no panel, no top row, no meta grid, and layouts/article.njk rendered
+ * the same plain header whatever `header` said. The scale has moved here, so
+ * the cover is one component in one file rather than a rule in the article's
+ * heading scale plus a panel somewhere else.
+ *
+ * THE 20ch CAP IS THE REFERENCE'S and is the one place an article heading is
+ * held to a measure of its own: a cover title is set large enough that the 66ch
+ * column would let it run to four or five words a line and stop reading as a
+ * cover.
+ *
+ * STRUCTURE IS INFERRED, VALUES ARE NOT. The Reference gives the panel a flex
+ * column with gap 40 AND gives the deck margin-top 24. Those only coexist if
+ * the deck is grouped with the h1 rather than being a sibling of it, so the
+ * flex children are three: top row, title group, meta grid. Everything else is
+ * the Reference's number.
+ *
+ * TWO VALUES THE REFERENCE DOES NOT GIVE, both flagged rather than filled
+ * silently:
+ *
+ * 1. The panel's width. It sits at the reading measure, inside
+ *    .cs-article__column, because the caps it does specify are narrower than
+ *    the measure (20ch title, 52ch deck) and fit inside it with room. Moving it
+ *    to main width would be a structural change to the layout, and nothing in
+ *    the Reference asks for one.
+ *
+ * 2. Phone padding. 64px 56px at 390px leaves under 200px of content, which
+ *    cannot hold a 30px heading. Reduced to 40px 24px below 767px, the
+ *    breakpoint the rest of the article scale already uses. The Reference gives
+ *    the meta grid's phone behaviour and nothing else's.
+ *
+ * --white is the Reference's name for the panel ground. This repo has no
+ * --white token: main.css says outright that white is omitted because
+ * Tailwind's bg-white is already #FFFFFF, and the one semantic token holding
+ * that value is --surface-card. Used here for the exact value the Reference
+ * asks for without adding a token that would duplicate it.
+ *
+ * RADIUS --radius-control, as everywhere. */
+@layer components {
+  .cs-cover {
+    background: var(--surface-card);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-control);
+    padding: var(--space-64) 56px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-40);
+  }
+
+  /* Kind on the left, date on the right, sharing a baseline so the two
+     different weights sit on one line rather than on two optical ones. */
+  .cs-cover__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-24);
+    border-bottom: 1px solid var(--border-hairline);
+    padding-bottom: var(--space-16);
+  }
+
+  .cs-cover__kind,
+  .cs-cover__edition {
+    font-family: var(--font-display);
+    font-size: 11px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+  }
+  .cs-cover__kind {
+    font-weight: var(--weight-display);
+    color: var(--color-madder);
+  }
+  .cs-cover__edition {
+    font-weight: var(--weight-medium);
+    color: var(--text-faint);
+  }
+
+  .cs-cover h1 {
+    font-size: var(--text-article-cover);
+    line-height: var(--leading-article-cover);
+    letter-spacing: var(--tracking-article-h1);
+    text-transform: uppercase;
+    /* Balances the last line rather than leaving one word alone under a
+       three-line title, which is the failure a 20ch cap makes more likely. */
+    text-wrap: pretty;
+    max-width: 20ch;
+    margin: 0;
+  }
+
+  .cs-cover__deck {
+    font-family: var(--font-body);
+    font-size: var(--text-deck);
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--text-muted);
+    max-width: 52ch;
+    margin: var(--space-24) 0 0;
+  }
+
+  .cs-cover__meta {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-24);
+    border-top: 1px solid var(--border-hairline);
+    padding-top: 20px;
+    margin: 0;
+  }
+
+  .cs-cover__meta dt {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 10px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  .cs-cover__meta dd {
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-body);
+    margin: 6px 0 0;
+  }
+
+  @media (max-width: 767px) {
+    .cs-cover { padding: var(--space-40) var(--space-24) }
+    .cs-cover h1 { font-size: var(--text-article-cover-phone) }
+    .cs-cover__deck { font-size: var(--text-deck-phone) }
+    .cs-cover__meta { grid-template-columns: 1fr }
+  }
+}

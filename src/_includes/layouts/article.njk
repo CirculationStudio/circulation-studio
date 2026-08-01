@@ -30,6 +30,13 @@ layout: layouts/base.njk
     base, which is what a piece with no opinion should get. -#}
 <article class="cs-article py-24{{ " cs-article--" + header if header }}">
   <div class="cs-article__column cs-prose">
+  {#- cover is the one header treatment that is a component rather than a
+      scale. It replaces the standard header outright, carrying the kind, the
+      title, the deck and the byline fields in its own panel, so nothing below
+      is rendered twice. See partials/cover.njk. -#}
+  {%- if header == "cover" %}
+  {% include "partials/cover.njk" %}
+  {%- else %}
   <header>
     <p class="caption">{{ kind }}</p>
 
@@ -50,6 +57,7 @@ layout: layouts/base.njk
     <p class="caption">{{ byline.name if byline else author }}, updated
       <time datetime="{{ updated | isoDate }}">{{ updated | calendarDate }}</time></p>
   </header>
+  {%- endif %}
 
   {{ content | safe }}
   </div>

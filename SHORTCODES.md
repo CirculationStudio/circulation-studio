@@ -170,6 +170,20 @@ cluster: measurement    # drives the related block
 
 `header: cover` is the whitepaper cover treatment. `header: glyph` is the flagship glyph header, which is rare by rule, one flagship piece at a time, and only when a word in the title carries the meaning the glyph refers to.
 
+**`header: cover` replaces the standard header outright**, and is the only treatment that is a component rather than a heading scale. It is driven entirely by frontmatter keys already listed above, and it adds none:
+
+| Slot | Key |
+|---|---|
+| Top left | `kind` |
+| Top right | `updated`, as a calendar date |
+| Title | `title` |
+| Deck | `deck` |
+| Meta, column 1 | `author`, resolved to a display name |
+| Meta, column 2 | `readingtime` |
+| Meta, column 3 | `reviewed` |
+
+Each meta column renders only if its key has a value, so a piece without a reading time gets two filled cells rather than a labelled blank. There is no `edition` key: the Reference calls the top-right slot "edition/date" and the date is what fills it. An explicit edition string would be a new frontmatter key and a row here, not a silent addition.
+
 `author` is a key, not a name. Author bios live in a data file so a bio is written once and rendered everywhere. Free-text author names in frontmatter are how you end up with three spellings of the same person.
 
 **Frame**, rendered by the layout and never authored: masthead, breadcrumb, footer, colophon, reading progress.

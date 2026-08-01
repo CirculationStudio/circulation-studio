@@ -1,0 +1,58 @@
+{#
+  The whitepaper cover header, used when front matter says `header: cover`.
+  Everything here is driven by front matter keys that already exist in
+  SHORTCODES.md. No key was invented for it.
+
+  TOP RIGHT IS THE DATE, NOT AN EDITION. The Reference calls that slot
+  "edition/date" and the frontmatter vocabulary has no `edition` key. Rather
+  than invent one, it renders `updated`, through the same two filters the
+  standard byline uses, so the visible string and the machine date cannot
+  disagree by a day. If an explicit edition string is ever wanted, that is a new
+  frontmatter key and a SHORTCODES.md row, not a silent addition here.
+
+  THE META GRID RENDERS ONLY THE FIELDS A DOCUMENT HAS. Three columns, and each
+  cell is conditional, so a piece without a reading time gets two filled cells
+  rather than a labelled blank. The Reference specifies three columns and does
+  not say which fields go in them; these are the frontmatter keys that describe
+  a document rather than its content, in the order a reader wants them.
+#}
+<header class="cs-cover">
+  <div class="cs-cover__top">
+    <span class="cs-cover__kind">{{ kind }}</span>
+    <span class="cs-cover__edition">
+      <time datetime="{{ updated | isoDate }}">{{ updated | calendarDate }}</time>
+    </span>
+  </div>
+
+  {#- h1 and deck are one group, so the panel's 40px gap separates the three
+      sections and the deck's own 24px separates it from the title. -#}
+  <div class="cs-cover__title">
+    <h1>{{ title }}</h1>
+    {% if deck %}<p class="cs-cover__deck">{{ deck }}</p>{% endif %}
+  </div>
+
+  {#- author resolves against _data/authors.js exactly as the standard byline
+      does, and falls back to the raw key, which is obviously wrong and
+      greppable rather than silently blank. -#}
+  {%- set byline = authors[author] -%}
+  <dl class="cs-cover__meta">
+    {% if author %}
+    <div class="cs-cover__field">
+      <dt>Author</dt>
+      <dd>{{ byline.name if byline else author }}</dd>
+    </div>
+    {% endif %}
+    {% if readingtime %}
+    <div class="cs-cover__field">
+      <dt>Reading time</dt>
+      <dd>{{ readingtime }} min</dd>
+    </div>
+    {% endif %}
+    {% if reviewed %}
+    <div class="cs-cover__field">
+      <dt>Reviewed</dt>
+      <dd>{{ reviewed }}</dd>
+    </div>
+    {% endif %}
+  </dl>
+</header>

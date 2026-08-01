@@ -32,38 +32,48 @@ const manifest = JSON.parse(
 const browser = await chromium.launch();
 const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
 const page = await context.newPage();
-await page.goto(BASE + manifest.url, { waitUntil: "domcontentloaded" });
-await assertReadyToMeasure(page, manifest.url);
-
-const counts = await page.evaluate(
-  (blocks) =>
-    Object.fromEntries(
-      Object.entries(blocks).map(([name, spec]) => [
-        name,
-        document.querySelectorAll(spec.selector).length
-      ])
-    ),
-  manifest.blocks
-);
-
-await browser.close();
 
 const failures = [];
-for (const [name, spec] of Object.entries(manifest.blocks)) {
-  const found = counts[name];
-  const ok = found === spec.count;
-  console.log(
-    `  ${ok ? "  " : "!!"} ${name.padEnd(18)} ${String(found).padStart(3)} / ${String(spec.count).padEnd(3)} ${spec.selector}`
+let declared = 0;
+
+/* One entry per fixture page. The essay fixture and the whitepaper fixture
+   declare different blocks, and a count that belongs to one would be a silent
+   zero on the other, so each page carries its own. */
+for (const fixture of manifest.pages) {
+  await page.goto(BASE + fixture.url, { waitUntil: "domcontentloaded" });
+  await assertReadyToMeasure(page, fixture.url);
+
+  const counts = await page.evaluate(
+    (blocks) =>
+      Object.fromEntries(
+        Object.entries(blocks).map(([name, spec]) => [
+          name,
+          document.querySelectorAll(spec.selector).length
+        ])
+      ),
+    fixture.blocks
   );
-  if (!ok) {
-    failures.push(
-      `${name}: declared ${spec.count}, found ${found} (${spec.selector}). ` +
-        (found < spec.count
-          ? "A block is missing. If a markdown edit was meant to add one, it matched nothing."
-          : "There is an extra block. If that is intended, update the manifest in the same commit.")
+
+  console.log(`\n  ${fixture.url}`);
+  for (const [name, spec] of Object.entries(fixture.blocks)) {
+    declared += 1;
+    const found = counts[name];
+    const ok = found === spec.count;
+    console.log(
+      `  ${ok ? "  " : "!!"} ${name.padEnd(18)} ${String(found).padStart(3)} / ${String(spec.count).padEnd(3)} ${spec.selector}`
     );
+    if (!ok) {
+      failures.push(
+        `${fixture.url} ${name}: declared ${spec.count}, found ${found} (${spec.selector}). ` +
+          (found < spec.count
+            ? "A block is missing. If a markdown edit was meant to add one, it matched nothing."
+            : "There is an extra block. If that is intended, update the manifest in the same commit.")
+      );
+    }
   }
 }
+
+await browser.close();
 
 if (failures.length) {
   console.error(`\nMANIFEST FAILED, ${failures.length} mismatch(es):`);
@@ -71,5 +81,6 @@ if (failures.length) {
   process.exit(1);
 }
 console.log(
-  `\nMANIFEST MATCHED. ${Object.keys(manifest.blocks).length} block types at their declared counts.`
+  `\nMANIFEST MATCHED. ${declared} block types at their declared counts across ` +
+    `${manifest.pages.length} fixture page(s).`
 );
