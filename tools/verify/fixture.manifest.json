@@ -166,12 +166,13 @@
         {
           "name": "faq title",
           "selector": ".cs-faq__title",
-          "source": "repo decision: the Reference's FAQ block has no heading of its own, so the title takes the article section scale",
+          "source": "repo decision: the Reference's FAQ block has no heading; this is a panel label, matching methodology's header bar",
           "expect": {
-            "fontSize": "22px",
+            "fontSize": "12px",
             "fontWeight": "600",
             "fontFamily": "Dual",
-            "letterSpacing": "1.32px"
+            "letterSpacing": "1.2px",
+            "textTransform": "uppercase"
           }
         },
         {

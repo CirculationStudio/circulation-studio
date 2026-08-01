@@ -33,21 +33,43 @@
     border-radius: var(--radius-control);
   }
 
+  /* A PANEL LABEL, NOT A SECTION HEADING, and that is a reversal.
+
+     The heading itself is confirmed: the Reference's FAQ block has none, but a
+     bare accordion with nothing naming it is the "accordion nobody labelled"
+     the orphan check already exists to prevent, and it would leave the block
+     out of the document outline. Silence in the Reference is not a
+     prohibition. So the element stays.
+
+     The SCALE was wrong. It sat at the article section scale, 22px, on the
+     reading that a faq title is a section heading. Four of the five panel
+     blocks label themselves at 12px to 14px: takeaways, execsummary,
+     methodology, references. faq was the only one at section scale, which made
+     it read as a peer of the h2s around it rather than as a label on a box.
+
+     The argument that settles it: the section-heading job already has a tool.
+     An author who wants an FAQ to be its own document section writes a prose
+     `## Frequently asked questions` above it, and that is a real h2 in the
+     outline. Leaving the panel's own label at section scale gave the same job
+     two tools and no way to tell them apart.
+
+     12px matches methodology, which is the closest structural analogue: a
+     labelled bar at the top of a bordered block with a hairline under it.
+     takeaways was the first guess at 14px and it was wrong for a measurable
+     reason. The questions are 14px display caps themselves, so a 14px label
+     above them read as another question row rather than as the thing naming
+     them. A label has to be smaller than the content it labels, which is what
+     methodology already does: 12px bar over 15px bodies.
+
+     Spacing is set here too, because the title is not a direct child of a
+     prose container and takes none of the prose rhythm. */
   .cs-faq__title {
-    /* Size and tracking USED to come from .cs-article h2, which matched every
-       h2 anywhere inside an article and outranked any component's own label
-       rule. That selector is now .cs-prose > h2, scoped to headings markdown
-       emits into a prose column, so this states the values instead of relying
-       on a rule that reached further than it should have.
-
-       The value is deliberately unchanged. A faq title IS a section heading,
-       which is what separates it from the panel labels in takeaways and
-       execsummary: those are labels on a box and sit at 12px to 14px.
-
-       Only the spacing is set here beyond that, because the title is not a
-       direct child of a prose container and takes none of the prose rhythm. */
-    font-size: var(--text-article-h2);
-    letter-spacing: var(--tracking-caps);
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 12px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text-body);
     margin: 0;
     padding: 16px 20px;
     border-bottom: 1px solid var(--border-hairline);
