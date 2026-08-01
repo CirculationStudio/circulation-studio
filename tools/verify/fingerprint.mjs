@@ -46,18 +46,41 @@ const BASE = process.env.VERIFY_BASE || "http://localhost:8899";
 const BASELINE = new URL("./fingerprint.baseline.json", import.meta.url);
 const WRITE = process.argv.includes("--write");
 
+/* THE HUB HAS ITS OWN ENTRY AND DOES NOT JOIN THE MARKETING BASELINE.
+
+   This baseline exists to prove that article-system work does not move the
+   five marketing pages. Folding a sixth page into it would change what a
+   passing run means: "the marketing pages are unchanged" would quietly become
+   "the marketing pages and the hub are unchanged", and a hub edit would then
+   read as a marketing regression to whoever saw the failure.
+
+   It is in the same file because the file is a map keyed by page and width,
+   not a set, so adding a key adds a row rather than redefining the rest. */
 const PAGES = [
   ["home", "/"],
   ["who", "/who-we-are/"],
   ["what", "/what-we-do/"],
   ["results", "/results/"],
-  ["contact", "/contact/"]
+  ["contact", "/contact/"],
+  ["yelphub", "/yelp/"]
 ];
 const WIDTHS = [1440, 390];
 
 /* Element counts at the time the baseline was taken. Anything below these
    means the page did not render, not that it changed. */
-const MIN_ELEMENTS = { home: 133, who: 151, what: 149, results: 149, contact: 117 };
+const MIN_ELEMENTS = {
+  home: 133,
+  who: 151,
+  what: 149,
+  results: 149,
+  contact: 117,
+  /* The hub is DATA-DRIVEN and this floor will rise. Every article added to
+     src/yelp/ adds elements to the coverage map, so a run that drops below 207
+     means the page stopped rendering rather than that content was removed.
+     Re-take the baseline when the shelf or the map changes, in the same commit
+     that changes it. */
+  yelphub: 207
+};
 
 const browser = await chromium.launch();
 const result = {};

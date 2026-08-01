@@ -46,7 +46,13 @@ const CSS = readFileSync(new URL("../../src/css/main.css", import.meta.url), "ut
 const PAGES = [
   "/", "/who-we-are/", "/what-we-do/", "/results/", "/contact/",
   "/library/pipeline-test/", "/library/whitepaper-test/",
-  "/yelp/state-of-yelp-advertising-2026/"
+  "/yelp/state-of-yelp-advertising-2026/",
+  /* The hub introduces three grounds in one page: the Start here band on ink,
+     the rank 1 browse card on madder, and the rank tracking panel on mist with
+     a white card inside it. Every one of those is a pairing the five marketing
+     pages never produce, and the live scan is the half that catches a token
+     landing somewhere the matrix did not predict. */
+  "/yelp/"
 ];
 
 /* Which surfaces a text token is allowed to land on. This is the contract: a
