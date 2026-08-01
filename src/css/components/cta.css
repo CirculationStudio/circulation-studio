@@ -39,12 +39,10 @@
  * label, hovering to mist with madder-deep. It shipped as --deep first, which
  * is the ink-pane variant whose hover carries ink where madder wants madder.
  *
- * That variant is a PROPOSED addition to design.md's locked set, not a settled
- * one. The design system project carries four button variants and no on-accent
- * of any kind, so this block depends on a proposal. It is the same standing
- * .cs-eyebrow has and it is flagged in button.css and in ARTICLE_SYSTEM.md
- * section 8. If the proposal is refused, this reverts to --deep and the only
- * loss is an ink hover on a madder ground.
+ * design.md section 6 names that variant as of 2026-08-01, so the block no
+ * longer rests on a proposal. What is still open is the implementation:
+ * components/components.css does not carry it yet, so the rule this button
+ * uses is the local copy in button.css rather than anything a sync delivers.
  *
  * The only value invented here is the 24px above the button, and it is the
  * pane's own step: the same 24 a heading takes below itself. */

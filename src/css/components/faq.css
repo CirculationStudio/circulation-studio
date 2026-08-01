@@ -13,12 +13,11 @@
  * nothing. Its only colours are hairlines and text, both of which a descendant
  * selector reaches. See the surface block at the bottom.
  *
- * RADIUS: --radius-control, not the Reference's 8px, the same call made on the
- * table and for the same reason. The token set has exactly two radii and
- * main.css states the rule as near-square corners everywhere. The Reference
- * draws 8px on every panel block, so this is systemic rather than a one-off:
- * it is a design system question, not a build one, and until it is answered
- * the repo's own rule wins. */
+ * RADIUS: --radius-control, and this is now settled rather than held. design.md
+ * section 4 was amended on 2026-08-01 to say 2px everywhere, panels and
+ * long-form blocks included, and to say that a Reference comp drawing 8px on a
+ * panel is a drawing default rather than an amendment. The build never
+ * changed; only the question is closed. */
 @layer components {
   /* Same 40px symmetric spacing as stat and table, and for the same reason: a
      block of reference material belongs to neither neighbour. Works in the
@@ -135,11 +134,10 @@
      banned outright, which the footnote marker already solved with
      --color-madder-lift.
 
-     THE DURATION IS --dur-fast, 140ms, NOT THE REFERENCE'S 160. Resolved
-     against the design system rather than held as a literal. design.md section
-     5 is LOCKED and says 140ms for colour and border shifts with 220ms
-     reserved for the button snap, and tokens/layout.css carries exactly those
-     two and nothing between. Three artefacts agree and one disagrees.
+     THE DURATION IS --dur-fast, 140ms, NOT THE REFERENCE'S 160. design.md
+     section 5 was amended on 2026-08-01 to say outright that 140 and 220 are
+     the only durations in the system, that there is no third, and that a
+     component seeming to want one takes 140. Settled upstream, not just here.
 
      The margin is 20ms on a 45 degree rotation, which nobody can see. Adding a
      third duration to a two-value scale to encode a difference below the

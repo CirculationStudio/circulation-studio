@@ -76,8 +76,7 @@
   .cs-btn--deep:hover { background: var(--color-paper); color: var(--color-ink) }
 
   /* ============================================================
-     ON A MADDER PANE. PROPOSED ADDITIONS TO THE LOCKED SET, AWAITING
-     SIGN-OFF. Same standing as .cs-eyebrow, .cs-close and .cs-rule.
+     ON A MADDER PANE. NAMED IN design.md SECTION 6 AS OF 2026-08-01.
      ============================================================
 
      Read the design system directly on 2026-08-01 rather than trusting a
@@ -88,16 +87,18 @@
      primary, secondary, ghost, deep. Nothing in the design system project
      carries an on-accent variant of any kind.
 
-     So this is not a gap in design.md that the Component Reference fills. It
-     is an addition, and the honest label for an addition to a locked set is
-     PROPOSED. The values below are the ones specified for them, and they are
-     what a madder pane needs, but their status is a decision that has not been
-     taken yet rather than one taken elsewhere.
+     That was resolved upstream rather than here. design.md section 6 now names
+     seven button variants including these two, and says outright that the
+     shorter list was read as complete and put an ink-pane button on a madder
+     pane.
 
-     THE UPSTREAM CHANGE IS THE REAL FIX: add both to
-     components/components.css and name them in design.md section 6. Until that
-     happens the build carries them locally and says so, which is the pattern
-     eyebrow.css already set. See ARTICLE_SYSTEM.md section 8.
+     THE OTHER HALF IS STILL OPEN. components/components.css does not carry
+     them yet, so a /design-sync will not deliver them and these local copies
+     are what the site runs on. design.md records that gap explicitly. The
+     third variant it names, --on-deep-primary, has no supplied values and is
+     implemented nowhere; by symmetry it would be a paper fill with an ink
+     label hovering to mist with ink-press, but a derived value is not a
+     specified one. See ARTICLE_SYSTEM.md section 8.
 
      WHY NOT --deep ON MADDER, which is what the cta shipped with first. deep is
      documented for an ink pane and its hover carries INK text. On madder the

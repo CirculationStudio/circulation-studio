@@ -328,22 +328,64 @@ carrying the most values is the one nothing can check.**
   `--ink`. The repo is `--tracking-caps`, `--container-measure`, `--color-ink`.
   The rename is done by hand at sync time and nothing checks it.
 
-### The register
+### The register, now closed upstream
 
-Kept because each of these is a live disagreement, not a settled one.
+Written into `design.md` on 2026-08-01 through `/design-sync`, so the next
+person reading the rules gets the answer instead of rediscovering the question.
 
-| Where | Design system says | Reference says | Resolved |
-|---|---|---|---|
-| Radius | 2px, LOCKED, three artefacts | 8px on 13 panel blocks | **Design system.** No change; the build was already right |
-| Motion | 140 / 220, LOCKED | 160ms on the faq toggle | **Design system.** Literal replaced with `--dur-fast` |
-| Button variants | four, "nothing else" | three more, incl. on-accent | **Design system.** Variants kept but relabelled PROPOSED, awaiting sign-off |
-| faq question | silent | display 600, 14px, .06em, caps | **Reference**, by silence. Already correct |
-| faq title | silent | no heading at all | **Repo.** Heading confirmed, scale moved to a 12px panel label |
-| Titles in a list | caps, no exception | n/a | **Amendment proposed**, applied to `related` only |
+| Where | Resolved | Where it is now written |
+|---|---|---|
+| Radius | **Design system.** 2px everywhere | `design.md` section 4 says panels and long-form blocks included, and that an 8px comp is a drawing default rather than an amendment |
+| Motion | **Design system.** 140 and 220 | `design.md` section 5 says there is no third duration and a component seeming to want one takes 140 |
+| Button variants | **Reference.** The list was incomplete | `design.md` section 6 names seven, and records that the shorter list was read as complete and put an ink-pane button on a madder pane |
+| Titles in a list | **Amendment approved** | `design.md` section 2, as the Case rule, not a note |
+| faq question | **Reference**, by silence | Unchanged in the build; nothing upstream to write |
+| faq title | **Repo.** Heading kept, scale replaced | Unchanged upstream; the Reference has no faq block to disagree with |
 
-Two upstream changes would retire most of this: promote the article type scale
-into `tokens/typography.css`, and move the Component Reference's real values into
-`components/components.css`. Both are sign-off decisions, not build ones.
+**The article type scale is promoted.** All fourteen values now live in
+`tokens/typography.css`, so `/design-sync` covers them and the reconciliation can
+see them. They had lived only in this repo since the article system was built.
+
+### Three things still open, and the first is the important one
+
+**`components/components.css` does not carry the on-accent variants.** They are
+named in `design.md` section 6 and running in this build from a local copy in
+`button.css`, so a sync will not deliver them. `on-deep-primary` is named
+upstream and implemented nowhere: no values were ever supplied for it, and by
+symmetry it would be a paper fill with an ink label hovering to mist with
+ink-press, but a derived value is not a specified one. Naming a variant without
+implementing it is the same failure as implementing one without naming it, in
+the other direction, and `design.md` now says so about itself.
+
+**`tokens/typography.css` still says `--text-base:17px`** while this build ships
+18px, which DESIGN_SYSTEM.md records as Reference drift corrected on 2026-07-30.
+`design.md` section 2 also says 17px. The correction was never taken upstream,
+so the token file and the running site disagree about body size. Left alone
+deliberately: changing a LOCKED value is a bigger call than any of the six, and
+it wants a decision rather than a patch. `--text-faint` has the same shape,
+`.45` upstream against `.65` here.
+
+**Names still diverge across the boundary.** Upstream is `--track-caps`,
+`--measure`, `--ink`; this repo is `--tracking-caps`, `--container-measure`,
+`--color-ink`. The promoted article tokens land as `--track-article-*` and are
+consumed here as `--tracking-article-*`. The rename is done by hand at sync time
+and nothing checks it.
+
+### What actually stops the next six
+
+Not the register. The register is a list of things already found by building.
+
+**The Component Reference is not in the design system.** Nothing syncs it,
+nothing diffs it, and reading it is a person's job, which is why a summary of it
+put the wrong button on a madder pane and why fourteen type tokens went
+unreconciled for the life of the article system. Every value in it that is real
+belongs in `components/components.css` and `tokens/*.css`, where `/design-sync`
+can reach it. What remains after that move is a set of sketches, and should be
+read as sketches.
+
+That is the whole answer. Two artefacts cannot be reconciled by writing a third
+document about their differences; they are reconciled by making one of them
+machine-readable.
 
 ## 9. Prose rules are scoped, and component elements neutralize the base
 

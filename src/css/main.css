@@ -104,21 +104,21 @@
      case and rhythm. The 22px h3 instances elsewhere in that file are a later
      addition and are not evidence. */
   /* ============================================================
-     REPO-ONLY, AND INVISIBLE TO THE TOKEN RECONCILIATION.
+     PROMOTED UPSTREAM 2026-08-01. These are no longer repo-only.
      ============================================================
 
-     These fourteen values do not exist in tokens/typography.css, which carries
-     --text-h1/h2/h3/base/caption and nothing else. They were taken from the
-     Component Reference by hand, which is an artefact that is not in the design
-     system project at all, so nothing upstream can confirm or contradict them.
+     All fourteen now live in tokens/typography.css in the design system, so
+     /design-sync covers them and the reconciliation can finally see them. They
+     had lived only here since the article system was built, taken by hand from
+     a Component Reference that keeps its values inline in markup, which is how
+     --text-article-h3 sat at a wrong holding value for several commits with
+     nothing to check it against.
 
-     That is how --text-article-h3 sat at a wrong holding value for several
-     commits: there was nothing to reconcile it against.
-
-     THE FIX IS UPSTREAM: promote this block into tokens/typography.css so
-     /design-sync covers it. Until then, treat every value here as unverified
-     against the system and do not assume a sync has checked them. See
-     ARTICLE_SYSTEM.md section 8.
+     ONE THING TO WATCH AT THE NEXT SYNC: the upstream names are
+     --track-article-h1 and --track-article-h3, matching its --track-caps and
+     --track-wide. This repo namespaces them as --tracking-*, the same rename it
+     already applies to the rest of the tracking scale. The rename is still done
+     by hand and nothing checks it. See ARTICLE_SYSTEM.md section 8.
      ============================================================ */
   --text-article-h1: 40px;
   --text-article-h1-phone: 28px;

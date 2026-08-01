@@ -74,8 +74,9 @@
      is set in sentence case. Tracking drops with it, because .04em exists to
      open up caps and does nothing for lower case.
 
-     This is an amendment to design.md section 2 and is flagged as proposed in
-     ARTICLE_SYSTEM.md section 8, not a decision already taken upstream.
+     THIS IS NOW THE RULE, not a local reading of one. design.md section 2 was
+     amended on 2026-08-01: uppercase is reserved for apparatus, and titles in a
+     list take sentence case. Prose headings are unchanged.
 
      SCOPED TO THE ARTICLE SYSTEM ON PURPOSE. The marketing pages have four
      more lists that would qualify: service names, team member names, case
