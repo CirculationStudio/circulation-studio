@@ -316,6 +316,25 @@ export const YELP_FRONTMATTER = [
    from a real one to a reader and to a crawler. */
 export const YELP_STARTHERE = "starthere";
 
+/* Article kinds. A closed set, same shape as YELP_CLUSTERS and for the same
+   reason: `kind` is the type label printed above a title on the hub, so an
+   unknown value publishes an entry labelled with whatever was typed.
+
+   THE KEY IS NOT THE LABEL. `fieldnote` prints "Field note" and `faq` prints
+   "FAQ", which keeps the set lowercase and single word like every other name
+   in SHORTCODES.md while the page shows something a reader would write.
+
+   `article` is the generic case and its absence was an oversight. The Yelp Hub
+   comp labels an entry "Article" and no value produced it. */
+export const ARTICLE_KINDS = new Map([
+  ["article", "Article"],
+  ["essay", "Essay"],
+  ["fieldnote", "Field note"],
+  ["guide", "Guide"],
+  ["faq", "FAQ"],
+  ["whitepaper", "Whitepaper"]
+]);
+
 
 export default function (eleventyConfig) {
   eleventyConfig.addFilter("glyphSwaps", glyphSwaps);
@@ -1483,6 +1502,18 @@ export default function (eleventyConfig) {
           `${where}: unknown cluster "${cluster}". The set is closed: ` +
             `${[...YELP_CLUSTERS.keys()].join(", ")}. An unknown cluster ` +
             `publishes a piece that never appears in the coverage map.`
+        );
+      }
+
+      /* kind is the type label the hub prints above a title. Checked here
+         rather than at render, so an unknown value fails the build instead of
+         printing itself onto a card. */
+      const kind = item.data.kind;
+      if (kind && !ARTICLE_KINDS.has(String(kind).trim())) {
+        problems.push(
+          `${where}: unknown kind "${kind}". The set is closed: ` +
+            `${[...ARTICLE_KINDS.keys()].join(", ")}. An unknown kind prints ` +
+            `itself as the type label on the hub.`
         );
       }
     }

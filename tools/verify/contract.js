@@ -157,6 +157,7 @@ const {
   CHILD_PAIRS,
   YELP_CLUSTERS,
   YELP_FRONTMATTER,
+  ARTICLE_KINDS,
   default: configure
 } = await import(CONFIG_PATH.href);
 
@@ -616,6 +617,50 @@ for (const [key] of YELP_FRONTMATTER) {
         `marked PLANNED in SHORTCODES.md. Those cannot both be true: the build ` +
         `fails without it and the spec says not to write it.`
     );
+  }
+}
+
+/* The kind set, compared like the cluster set. The frontmatter block's inline
+   comment carries the same list, so both are checked: a table row the build
+   does not know about, and a comment that has drifted from either. */
+const kindTable = tables.find((t) => t.header[0] === "Kind" && t.header[1] === "Label rendered");
+if (!kindTable) {
+  fail("no article kinds table in SHORTCODES.md, so the kind set is unchecked.");
+} else {
+  const specKinds = kindTable.rows.map((r) => r.cells[0].replace(/`/g, "").trim());
+  const specLabels = kindTable.rows.map((r) => r.cells[1].trim());
+  const buildKinds = [...ARTICLE_KINDS.keys()];
+  if (JSON.stringify([...specKinds].sort()) !== JSON.stringify([...buildKinds].sort())) {
+    fail(
+      `the kind set differs. SHORTCODES.md has ${specKinds.join(", ")}; ` +
+        `the build has ${buildKinds.join(", ")}.`
+    );
+  }
+  /* The LABEL is what a reader sees, so a drifted label is a visible defect
+     rather than a naming one. Compared per row. */
+  for (const [i, kind] of specKinds.entries()) {
+    const built = ARTICLE_KINDS.get(kind);
+    if (built && built !== specLabels[i]) {
+      fail(
+        `kind "${kind}" renders "${built}" in the build and SHORTCODES.md says ` +
+          `"${specLabels[i]}". That string is printed on every card of that type.`
+      );
+    }
+  }
+  /* And the frontmatter comment, which is the line the authoring project
+     actually reads when it picks a kind. */
+  const kindComment = /^kind:.*#\s*(.+)$/m.exec(frontmatterBlock[1]);
+  if (!kindComment) {
+    fail("the frontmatter block's kind line carries no comment listing the set.");
+  } else {
+    const commented = kindComment[1].split("|").map((s) => s.trim()).filter(Boolean);
+    if (JSON.stringify([...commented].sort()) !== JSON.stringify([...buildKinds].sort())) {
+      fail(
+        `the kind comment in the frontmatter block lists ${commented.join(", ")}, ` +
+          `and the build has ${buildKinds.join(", ")}. That comment is what the ` +
+          `authoring project reads when it picks a kind.`
+      );
+    }
   }
 }
 

@@ -129,12 +129,17 @@
     max-width: var(--container-measure);
   }
 
+  .cs-hub-intro__aside {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-24);
+    padding-top: var(--space-8);
+  }
   .cs-hub-intro__figure {
     margin: 0;
     display: flex;
     flex-direction: column;
     gap: 12px;
-    padding-top: var(--space-8);
   }
   .cs-hub-intro__figure img {
     width: 100%;
@@ -156,9 +161,11 @@
      and the two are different budgets, so this page spends each exactly once.
      Nothing enforces the ink budget on a marketing page: the one-per-page rule
      is a build check on article panes only, and this is a page template. */
+  /* Two columns, not the comp's three. The third held the badge, which now
+     sits in the intro. */
   .cs-starthere {
     display: grid;
-    grid-template-columns: 160px minmax(0, 1fr) auto;
+    grid-template-columns: 160px minmax(0, 1fr);
     gap: var(--space-40);
     align-items: center;
     background: var(--surface-deep);
@@ -200,37 +207,36 @@
   }
   .cs-starthere:hover .cs-starthere__title { color: var(--color-madder-lift) }
 
-  .cs-starthere__badge {
+  /* ---- certification badge ---- */
+
+  /* ON PAPER, WHICH IS WHY THERE IS NO CHIP. The comp puts this on the ink
+     band and gives it a paper chip to sit on, because the supplied artwork has
+     a white ground and would otherwise show a white rectangle on ink. In the
+     intro the ground is already paper, so multiply alone drops the file's
+     white into the page and the chip would be an invisible rectangle around
+     nothing. Keep multiply: without it the artwork's white is #FFFFFF against
+     paper's #F4F5F4 and the edge shows. */
+  .cs-hub-badge {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 10px;
-    white-space: nowrap;
+    gap: 12px;
+    margin: 0;
+    max-width: none;
   }
-  /* A PAPER CHIP, not the badge sitting on ink. The supplied badge is artwork
-     on a white ground, so it needs its own ground to sit on rather than a
-     knockout. multiply then drops the file's white into the chip's paper, so
-     the chip edge is the only edge. Both are required: multiply alone on ink
-     would render the badge nearly black. */
-  .cs-starthere__badge-chip {
-    background: var(--color-paper);
-    padding: var(--space-8);
-    display: block;
-  }
-  .cs-starthere__badge-chip img {
+  .cs-hub-badge img {
     width: 72px;
     height: 72px;
     object-fit: contain;
     display: block;
     mix-blend-mode: multiply;
   }
-  .cs-starthere__badge-label {
+  .cs-hub-badge__label {
     font-family: var(--font-display);
     font-weight: var(--weight-medium);
     font-size: 10px;
     letter-spacing: .12em;
     text-transform: uppercase;
-    color: var(--text-on-deep-faint);
+    color: var(--text-faint);
   }
 
   /* ---- phone ---- */
@@ -256,14 +262,6 @@
       align-items: start;
       padding: var(--space-24) 20px;
     }
-    /* The badge turns into a row beside its label rather than stacking, so it
-       reads as one object on a narrow column instead of two stacked ones. */
-    .cs-starthere__badge {
-      flex-direction: row;
-      align-items: center;
-      gap: 12px;
-      margin-top: 4px;
-    }
-    .cs-starthere__badge-chip img { width: 56px; height: 56px }
+    .cs-hub-badge img { width: 56px; height: 56px }
   }
 }

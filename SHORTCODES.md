@@ -153,7 +153,7 @@ These are frontmatter or frame. They are listed so the authoring project knows n
 ---
 title: The Yelp Ads benchmark report
 deck: Here's what a dollar of Yelp Ads actually bought.
-kind: whitepaper        # fieldnote | essay | guide | faq | whitepaper
+kind: whitepaper        # article | essay | fieldnote | guide | faq | whitepaper
 header: feature         # standard | feature | compact | cover | glyph
 author: connor          # keyed to a data file, never a free-text name
 updated: 2026-07-30
@@ -176,6 +176,23 @@ changelog: /library/.../changes/   # PLANNED
 **It was called `description` until 2026-08-01 and the rename is the whole point.** `description` means the meta description on the five marketing pages and meant the map line on an article, so the same key name held two different strings depending on where the file sat. Two near-synonyms holding a thirty-word tag and an eight-word label is a wart that costs someone an hour per article, forever, and it was renamed while exactly one article carried it. `description` now means one thing everywhere: the meta description, on a page with no `deck`.
 
 **`cluster` and `summary` are REQUIRED on every piece in `src/yelp/`**, and the build fails without them. Neither is required in `src/library/`, which has no coverage map. A missing cluster is not a cosmetic problem: the piece publishes and never appears on the one page that exists to list it.
+
+### Article kinds
+
+A closed set of six. `kind` is the type label the coverage map and the browse layer print above a title, so an unknown value publishes an entry labelled with whatever was typed. The build rejects anything not in this table.
+
+**`article` is the generic case**, for a piece that is none of the other five. Its absence was an oversight rather than a decision: the Yelp Hub comp labels an entry "Article", and there was no value that produced it.
+
+| Kind | Label rendered | Use |
+|---|---|---|
+| `article` | Article | The generic long piece, when none of the five below fits |
+| `essay` | Essay | An argument in our own voice |
+| `fieldnote` | Field note | A short observation from managed accounts |
+| `guide` | Guide | Step by step, and the only kind `callout` label="Watch out" is legal in |
+| `faq` | FAQ | A question and answer piece |
+| `whitepaper` | Whitepaper | Long, sourced, with a methodology |
+
+The label is not the key. `fieldnote` renders "Field note" and `faq` renders "FAQ", so the set stays lowercase and single word like every other name in this file while the page prints something a reader would write.
 
 ### Yelp Hub clusters
 

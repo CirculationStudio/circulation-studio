@@ -34,13 +34,18 @@ intro:
     Calculators and estimators are in the build phase and will be listed here
     when the first one ships.
 
+# The certification proof. In the intro rather than the Start here band, where
+# the comp draws it, because the band renders only when a piece declares
+# itself and the page would otherwise ship without it.
+badge:
+  file: yelp/yelp-ads-partner-badge.png
+  alt: Yelp Advertising Certified Partner
+  label: Certified Partner
+
 # The band's furniture only. The entry itself is an article carrying
 # `starthere: true`, never a title and summary retyped here.
 starthere:
   label: Start here
-  badge: yelp/yelp-ads-partner-badge.png
-  badgeAlt: Yelp Advertising Certified Partner
-  badgeLabel: Certified Partner
 ---
 {% from "components/container.njk" import container %}
 
@@ -94,12 +99,26 @@ starthere:
       but it carries meaning per design.md section 10, so it takes real alt
       text rather than an empty attribute. Width and height are the slot's,
       not the file's: the card owns its dimensions. -#}
-  <figure class="cs-hub-intro__figure">
-    <img src="{{ site.cdn }}{{ image }}"
-         alt="{{ imagealt }}"
-         width="240" height="340" loading="eager" fetchpriority="high" decoding="async">
-    <figcaption class="cs-eyebrow">{{ imagecaption }}</figcaption>
-  </figure>
+  <div class="cs-hub-intro__aside">
+    <figure class="cs-hub-intro__figure">
+      <img src="{{ site.cdn }}{{ image }}"
+           alt="{{ imagealt }}"
+           width="240" height="340" loading="eager" fetchpriority="high" decoding="async">
+      <figcaption class="cs-eyebrow">{{ imagecaption }}</figcaption>
+    </figure>
+
+    {#- THE BADGE IS HERE AND THE COMP PUTS IT IN THE START HERE BAND. Moved
+        because that band renders only when a piece carries `starthere`, and
+        nothing does, so on the comp's placement the page would ship with no
+        certification proof at all. The intro is where the claim is made in
+        prose, so it is where the proof belongs. -#}
+    <p class="cs-hub-badge">
+      <img src="{{ site.cdn }}{{ badge.file }}"
+           alt="{{ badge.alt }}"
+           width="72" height="72" loading="lazy" decoding="async">
+      <span class="cs-hub-badge__label">{{ badge.label }}</span>
+    </p>
+  </div>
 {% endcall %}
 
 {#- START HERE. One piece, flagged on the piece itself rather than copied into
@@ -114,14 +133,6 @@ starthere:
     <span>
       <span class="cs-starthere__title">{{ entry.data.title }}</span>
       <span class="cs-starthere__summary">{{ entry.data.summary }}</span>
-    </span>
-    <span class="cs-starthere__badge">
-      <span class="cs-starthere__badge-chip">
-        <img src="{{ site.cdn }}{{ starthere.badge }}"
-             alt="{{ starthere.badgeAlt }}"
-             width="72" height="72" loading="lazy" decoding="async">
-      </span>
-      <span class="cs-starthere__badge-label">{{ starthere.badgeLabel }}</span>
     </span>
   </a>
 {% endcall %}
