@@ -263,6 +263,40 @@ const CHILD_PAIRS = [
 
 export { PANE_SURFACES, TABLE_KINDS, CALLOUT_LABELS, CHILD_PAIRS };
 
+/* The Yelp Hub taxonomy. Seven clusters, ordered as the coverage map renders
+   them, which is the order the comp fixes rather than alphabetical.
+
+   A CLOSED SET, the same shape as CALLOUT_LABELS and for the same reason. A
+   cluster that does not exist is a piece that never appears in the coverage
+   map: it would build, publish, and be invisible on the one page that exists to
+   list it. That is a silent failure, so it is a build error instead.
+
+   ONE CLUSTER PER PIECE. Not a list. A piece that belongs in two places belongs
+   in one and links to the other, and the coverage map has one column per
+   cluster with no way to render an entry twice without lying about the count.
+
+   Slugs are derived from the names, lowercase and hyphenated with "and" kept,
+   per CLAUDE.md's URL rule. They are the FAQ section anchors as well, so
+   renaming one moves a published anchor. */
+export const YELP_CLUSTERS = new Map([
+  ["cost-and-pricing", "Cost and pricing"],
+  ["value-and-results", "Value and results"],
+  ["profile-and-reviews", "Profile and reviews"],
+  ["comparisons-and-alternatives", "Comparisons and alternatives"],
+  ["partners-and-management", "Partners and management"],
+  ["mechanics-and-how-to", "Mechanics and how-to"],
+  ["industry-verticals", "Industry verticals"]
+]);
+
+/* Frontmatter every piece in src/yelp/ must carry, with what breaks without it.
+   Enforced in the collection below, where every item is visible at once, so a
+   build reports all the offenders rather than the first. */
+export const YELP_FRONTMATTER = [
+  ["cluster", "the coverage map has nowhere to put it, so it publishes invisible"],
+  ["description", "the coverage map and the browse layer have no line to show under the title"]
+];
+
+
 export default function (eleventyConfig) {
   eleventyConfig.addFilter("glyphSwaps", glyphSwaps);
 
@@ -1399,9 +1433,46 @@ export default function (eleventyConfig) {
      step. A template that genuinely wants both tiers and nothing else writes
      `collections.yelp.concat(collections.library)`, which is one expression
      and cannot fall out of date. */
-  eleventyConfig.addCollection("yelp", (collectionApi) =>
-    collectionApi.getFilteredByGlob("src/yelp/*.md")
-  );
+  /* The Yelp tier, with its frontmatter enforced here rather than per page.
+     A collection callback sees every item at once, so a build names all the
+     offenders instead of stopping at the first, and it runs whether or not a
+     template happens to consume the collection. */
+  eleventyConfig.addCollection("yelp", (collectionApi) => {
+    const items = collectionApi.getFilteredByGlob("src/yelp/*.md");
+    const problems = [];
+
+    for (const item of items) {
+      const where = item.inputPath;
+      for (const [key, breaks] of YELP_FRONTMATTER) {
+        const value = item.data[key];
+        if (!value || !String(value).trim()) {
+          problems.push(`${where}: missing "${key}". Without it ${breaks}.`);
+        }
+      }
+      const cluster = item.data.cluster;
+      if (cluster && Array.isArray(cluster)) {
+        problems.push(
+          `${where}: "cluster" is a list. A piece declares exactly one cluster; ` +
+            `one that belongs in two belongs in one and links to the other.`
+        );
+      } else if (cluster && !YELP_CLUSTERS.has(String(cluster).trim())) {
+        problems.push(
+          `${where}: unknown cluster "${cluster}". The set is closed: ` +
+            `${[...YELP_CLUSTERS.keys()].join(", ")}. An unknown cluster ` +
+            `publishes a piece that never appears in the coverage map.`
+        );
+      }
+    }
+
+    if (problems.length) {
+      throw new Error(
+        `[yelp] ${problems.length} frontmatter problem(s) in src/yelp/:\n` +
+          problems.map((p) => `    ${p}`).join("\n") +
+          `\n  See SHORTCODES.md, Frontmatter.`
+      );
+    }
+    return items;
+  });
 
   eleventyConfig.addCollection("library", (collectionApi) =>
     collectionApi.getFilteredByGlob("src/library/*.md")

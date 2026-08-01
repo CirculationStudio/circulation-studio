@@ -155,18 +155,41 @@ title: The Yelp Ads benchmark report
 deck: Here's what a dollar of Yelp Ads actually bought.
 kind: whitepaper        # fieldnote | essay | guide | faq | whitepaper
 header: feature         # standard | feature | compact | cover | glyph
-image: /assets/...
-imagealt: ...
 author: connor          # keyed to a data file, never a free-text name
 updated: 2026-07-30
 readingtime: 18
-dropcap: true           # once per piece, at the open only
 reviewed: 2026-07
-nextreview: 2027-01
-changelog: /library/.../changes/
-cluster: measurement    # drives the related block
+cluster: cost-and-pricing   # src/yelp/ only, required, one of the seven below
+description: What a dollar buys across nine trades, method shown.
+image: /assets/...      # PLANNED
+imagealt: ...           # PLANNED
+dropcap: true           # PLANNED, once per piece, at the open only
+nextreview: 2027-01     # PLANNED
+changelog: /library/.../changes/   # PLANNED
 ---
 ```
+
+**Keys marked PLANNED are read by nothing yet**, exactly like a PLANNED shortcode row. They are the roadmap, not the contract, and an authoring project should not be filling them in. `verify:contract` checks the unmarked ones are actually consumed by the build, which is how `cluster` and `nextreview` were caught sitting documented and unread: `cluster` described a taxonomy that did not exist, and `nextreview` still has no reader.
+
+**`description` is not the meta description, on an article.** The meta description and the JSON-LD description both come from `deck`, which is a sentence and a half. `description` is the one line the Yelp Hub's coverage map and browse layer show under a title, and it is shorter: eight words against thirty. On the five marketing pages, which have no deck, `description` is still the meta description. That is a wart and it is written here rather than left to be discovered.
+
+**`cluster` and `description` are REQUIRED on every piece in `src/yelp/`**, and the build fails without them. Neither is required in `src/library/`, which has no coverage map. A missing cluster is not a cosmetic problem: the piece publishes and never appears on the one page that exists to list it.
+
+### Yelp Hub clusters
+
+A closed set of seven, the same shape as `callout`'s labels. **A piece declares exactly one.** Not a list: the coverage map has one column per cluster and no way to render an entry twice without lying about its own count. A piece that belongs in two belongs in one and links to the other.
+
+The order is the order the coverage map renders, which the comp fixes. The slugs are the FAQ section anchors as well, so renaming one moves a published anchor.
+
+| Cluster | Slug |
+|---|---|
+| Cost and pricing | `cost-and-pricing` |
+| Value and results | `value-and-results` |
+| Profile and reviews | `profile-and-reviews` |
+| Comparisons and alternatives | `comparisons-and-alternatives` |
+| Partners and management | `partners-and-management` |
+| Mechanics and how-to | `mechanics-and-how-to` |
+| Industry verticals | `industry-verticals` |
 
 `header: cover` is the whitepaper cover treatment. `header: glyph` is the flagship glyph header, which is rare by rule, one flagship piece at a time, and only when a word in the title carries the meaning the glyph refers to.
 

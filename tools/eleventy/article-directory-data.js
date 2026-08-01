@@ -22,23 +22,25 @@
  * typo in a layout path fails the build, while a typo in a permalink SHIPS, at
  * the wrong URL, and looks like a content decision.
  *
- * THE DECK IS THE META DESCRIPTION. Before this mapping existed, base.njk and
- * partials/schema.njk both read `description`, articles set only `deck`, and
- * every article shipped the site-wide default ("Creative agency based in
- * Laguna Beach, California.") as both its meta description and its JSON-LD
- * description. One mapping fixes both, because both read the same key.
+ * THE DECK IS THE META DESCRIPTION, and that is now done in the templates
+ * rather than here. base.njk and partials/schema.njk read
+ * `deck or description or site.description`, so an article's deck wins and a
+ * marketing page's own `description` still wins on pages that have no deck.
+ * Behaviour is identical to the eleventyComputed mapping this replaces.
  *
- * Scoped to these directories rather than to base.njk on purpose. The five
- * marketing pages write their own `description` in front matter and must keep
- * it; nothing here reaches them.
+ * IT MOVED BECAUSE `description` IS NEEDED FOR SOMETHING ELSE. eleventyComputed
+ * does not fall back to a frontmatter value, it REPLACES it, so computing
+ * `description` from `deck` made a frontmatter `description` unreadable: the
+ * Yelp Hub's coverage map needs a one-line summary per article and could not
+ * have got at it. The two are genuinely different strings. The whitepaper's
+ * deck is a sentence and a half; its map line is eight words.
  *
- * NOTE THE ONE-WAY MAPPING. This deliberately does NOT read data.description
- * and fall back to deck. eleventyComputed referencing the key it computes is a
- * circular dependency and Eleventy throws on it. So deck wins outright, and an
- * article that ever needs a meta description saying something different from
- * its deck will need a separate frontmatter field rather than an override. That
- * has not come up, and a deck and a description doing different jobs is a
- * content decision worth making deliberately rather than by accident.
+ * So on an article `deck` is the meta description and `description` is the
+ * coverage-map line. That is a real semantic wart, since `description` means
+ * the meta description on the five marketing pages and something else on an
+ * article. It is written down in SHORTCODES.md rather than left to be
+ * discovered, and renaming the map line to `summary` would remove it if that
+ * reads better later.
  */
 export default function articleDirectory(segment) {
   return {
@@ -47,10 +49,6 @@ export default function articleDirectory(segment) {
     /* A function rather than a template string, so the tier comes from the
        argument above and the slug from the file name, with no template engine
        in between to get the escaping or the trailing slash wrong. */
-    permalink: (data) => `/${segment}/${data.page.fileSlug}/`,
-
-    eleventyComputed: {
-      description: (data) => data.deck
-    }
+    permalink: (data) => `/${segment}/${data.page.fileSlug}/`
   };
 }

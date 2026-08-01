@@ -150,7 +150,7 @@ for (const s of unknownStatus) {
    2. The build
    ============================================================ */
 
-const { PANE_SURFACES, TABLE_KINDS, CALLOUT_LABELS, CHILD_PAIRS, default: configure } =
+const { PANE_SURFACES, TABLE_KINDS, CALLOUT_LABELS, CHILD_PAIRS, YELP_CLUSTERS, default: configure } =
   await import(CONFIG_PATH.href);
 
 /* A stub that records the two registrations we care about and swallows the
@@ -459,6 +459,129 @@ for (const file of componentFiles) {
       `${file}: exists in src/css/components/ and main.css never imports it, so ` +
         `none of its rules ship. The block still renders and still counts, it ` +
         `just falls back to the article's own scale.`
+    );
+  }
+}
+
+/* ============================================================
+   6c. Frontmatter, both directions
+   ============================================================
+
+   The shortcode half of this file has been checked for a while. The frontmatter
+   half had not, which is how `cluster` and `nextreview` sat documented in
+   SHORTCODES.md and read by nothing at all: `cluster` described a taxonomy that
+   did not exist, and `nextreview` still has no reader. A key nobody consumes is
+   a key the authoring project is being asked to fill in for no reason.
+
+   DIRECTION A: every key documented in the frontmatter block appears somewhere
+   in the build. Grepped rather than declared, because a declaration that a key
+   is read is exactly the thing that was wrong before.
+
+   DIRECTION B: every key any article actually sets is documented. That catches
+   an author inventing one.
+
+   And the cluster set is compared like any other closed set. */
+const FRONTMATTER_EXEMPT = new Set(["title"]);
+
+const frontmatterBlock = /\*\*Frontmatter\*\*[^`]*```yaml\n([\s\S]*?)```/.exec(spec);
+if (!frontmatterBlock) {
+  console.error("CONTRACT FAILED: no frontmatter block found in SHORTCODES.md.");
+  process.exit(1);
+}
+const documentedKeys = [];
+const plannedKeys = new Set();
+for (const line of frontmatterBlock[1].split("\n")) {
+  const m = /^([a-z][a-z0-9]*):(.*)$/.exec(line);
+  if (!m) continue;
+  documentedKeys.push(m[1]);
+  if (/#\s*PLANNED/.test(m[2])) plannedKeys.add(m[1]);
+}
+if (!documentedKeys.length) {
+  console.error("CONTRACT FAILED: the frontmatter block documents no keys.");
+  process.exit(1);
+}
+
+/* Everything that could read a frontmatter key. */
+const readerFiles = [];
+const collectReaders = (dir) => {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const full = new URL(`${entry.name}${entry.isDirectory() ? "/" : ""}`, dir);
+    if (entry.isDirectory()) collectReaders(full);
+    else if (/\.(njk|js|mjs)$/.test(entry.name)) readerFiles.push(readFileSync(full, "utf8"));
+  }
+};
+collectReaders(new URL("../../src/_includes/", import.meta.url));
+collectReaders(new URL("../../src/_data/", import.meta.url));
+collectReaders(new URL("../../tools/eleventy/", import.meta.url));
+readerFiles.push(readFileSync(new URL("../../eleventy.config.js", import.meta.url), "utf8"));
+for (const dir of ["../../src/yelp/", "../../src/library/"]) {
+  for (const entry of readdirSync(new URL(dir, import.meta.url), { withFileTypes: true })) {
+    if (entry.name.endsWith(".11tydata.js")) {
+      readerFiles.push(readFileSync(new URL(`${dir}${entry.name}`, import.meta.url), "utf8"));
+    }
+  }
+}
+const readers = readerFiles.join("\n");
+
+for (const key of documentedKeys) {
+  if (FRONTMATTER_EXEMPT.has(key)) continue;
+  if (plannedKeys.has(key)) {
+    notes.push(`frontmatter "${key}": PLANNED, read by nothing yet and not expected to be.`);
+    continue;
+  }
+  /* Grepped, which can say a key is read when the word merely appears in a
+     comment. It cannot say a key is read when it is not, which is the direction
+     that matters here. */
+  const used = new RegExp(`\\b${key}\\b`).test(readers);
+  if (!used) {
+    fail(
+      `frontmatter "${key}": documented in SHORTCODES.md and read by nothing in ` +
+        `the build. Either wire it up or stop asking the authoring project for it.`
+    );
+  }
+}
+
+/* Direction B, plus the cluster set. */
+const articleDirs = ["../../src/yelp/", "../../src/library/"];
+const authored = new Map();
+for (const dir of articleDirs) {
+  for (const entry of readdirSync(new URL(dir, import.meta.url), { withFileTypes: true })) {
+    if (!entry.name.endsWith(".md")) continue;
+    const text = readFileSync(new URL(`${dir}${entry.name}`, import.meta.url), "utf8");
+    const fm = /^---\n([\s\S]*?)\n---/.exec(text);
+    if (!fm) continue;
+    for (const m of fm[1].matchAll(/^([a-z][a-z0-9]*):/gm)) {
+      authored.set(m[1], `${dir}${entry.name}`.replace("../../", ""));
+    }
+  }
+}
+for (const [key, where] of authored) {
+  if (!documentedKeys.includes(key)) {
+    fail(
+      `frontmatter "${key}" is set in ${where} and is not in SHORTCODES.md's ` +
+        `frontmatter block. The authoring project writes against that block.`
+    );
+  }
+}
+
+const clusterTable = tables.find((t) => t.header[0] === "Cluster" && t.header[1] === "Slug");
+if (!clusterTable) {
+  fail("no cluster table in SHORTCODES.md, so the Yelp taxonomy is unchecked.");
+} else {
+  const specClusters = clusterTable.rows.map((r) => r.cells[1].replace(/`/g, "").trim());
+  const buildClusters = [...YELP_CLUSTERS.keys()];
+  const missing = specClusters.filter((c) => !buildClusters.includes(c));
+  const extra = buildClusters.filter((c) => !specClusters.includes(c));
+  if (missing.length || extra.length) {
+    fail(
+      `the cluster set differs. SHORTCODES.md has ${specClusters.join(", ")}; ` +
+        `the build has ${buildClusters.join(", ")}.`
+    );
+  }
+  if (JSON.stringify(specClusters) !== JSON.stringify(buildClusters)) {
+    fail(
+      `the cluster ORDER differs, and the order is what the coverage map renders. ` +
+        `SHORTCODES.md: ${specClusters.join(", ")}. Build: ${buildClusters.join(", ")}.`
     );
   }
 }

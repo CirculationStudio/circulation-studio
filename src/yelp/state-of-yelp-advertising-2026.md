@@ -8,7 +8,8 @@ updated: 2026-06-30
 readingtime: 22
 reviewed: 2026-06
 nextreview: 2026-12
-cluster: yelp-advertising
+cluster: cost-and-pricing
+description: What a dollar buys across nine trades, method shown.
 ---
 
 {% execsummary title="Executive summary" %}
