@@ -21,6 +21,44 @@ import { assertReadyToMeasure } from "./readiness.mjs";
 
 const BASE = process.env.VERIFY_BASE || "http://localhost:8899";
 const URL = process.argv[2] || `${BASE}/library/pipeline-test/`;
+
+/* THE HUB IS SWEPT SEPARATELY, with its own list and no shared left edge.
+ *
+ * The article sweep asserts that every type sits on ONE column edge, because a
+ * prose column has one. The hub does not: it is a page template of two-column
+ * grids and full-bleed grounds, so the same assertion would be meaningless
+ * there and a copy of the article list would match nothing.
+ *
+ * What carries over is the half that matters most, and the half this script
+ * was written for: NOTHING MAY COME BACK EMPTY. Every block the hub claims to
+ * render is named with a minimum, so a selector that stops matching fails
+ * instead of the page quietly losing a section. That is the exact gap the
+ * fingerprint could not close, since a missing section changes a hash rather
+ * than failing a count.
+ *
+ * `column: true` marks only the blocks that sit at the container's own left
+ * edge, which on this page is every full-width section. The feature card, the
+ * map's second column and the report card are deliberately elsewhere and are
+ * measured without being held to it. */
+const HUB_URL = `${BASE}/yelp/`;
+const HUB_EXPECTED = [
+  { label: "hub intro",     selector: ".cs-hub-intro",        min: 1, column: true },
+  { label: "hub headline",  selector: ".cs-hub-intro__headline", min: 1, column: true },
+  { label: "hub lede",      selector: ".cs-hub-intro__lede",  min: 1, column: true },
+  { label: "hub badge",     selector: ".cs-hub-badge",        min: 1, column: false },
+  { label: "browse head",   selector: ".cs-browse__head",     min: 1, column: true },
+  { label: "browse feature",selector: ".cs-browse__feature",  min: 1, column: true },
+  { label: "feature title", selector: ".cs-browse__feature-title", min: 1, column: false },
+  { label: "map head",      selector: ".cs-map__head",        min: 1, column: true },
+  { label: "map",           selector: ".cs-map",              min: 1, column: true },
+  { label: "map cluster",   selector: ".cs-map__cluster",     min: 7, column: false },
+  { label: "map entry",     selector: ".cs-map__entry",       min: 1, column: false },
+  { label: "map pending",   selector: ".cs-map__pending",     min: 6, column: false },
+  { label: "rank panel",    selector: ".cs-rank",             min: 1, column: true },
+  { label: "rank row",      selector: ".cs-rank__report tbody tr", min: 4, column: false },
+  { label: "closing",       selector: ".cs-hub-close",        min: 1, column: true },
+  { label: "closing note",  selector: ".cs-hub-close__statement", min: 1, column: true }
+];
 const WIDTHS = [390, 1440, 2560];
 
 /* Every type the sweep claims to cover. `min` is the number of matches below
@@ -146,6 +184,71 @@ for (const width of WIDTHS) {
   await context.close();
 }
 
+/* THE HUB PASS. A separate loop rather than a parameterised one, because it
+   asserts a different thing: presence and the container edge, not a prose
+   column. Folding the two together would mean a `column` flag that means one
+   thing on an article and another on a page template. */
+for (const width of WIDTHS) {
+  const context = await browser.newContext({ viewport: { width, height: 900 } });
+  const page = await context.newPage();
+  await page.goto(HUB_URL, { waitUntil: "domcontentloaded" });
+  await assertReadyToMeasure(page, `${HUB_URL} @${width}`);
+
+  const measured = await page.evaluate((expected) => {
+    const round = (n) => Math.round(n * 10) / 10;
+    return expected.map((e) => {
+      const nodes = [...document.querySelectorAll(e.selector)];
+      return {
+        ...e,
+        count: nodes.length,
+        boxes: nodes.map((n) => {
+          const b = n.getBoundingClientRect();
+          return { left: round(b.left), width: round(b.width) };
+        })
+      };
+    });
+  }, HUB_EXPECTED);
+
+  const doc = await page.evaluate(() => ({
+    scrollWidth: document.documentElement.scrollWidth,
+    clientWidth: document.documentElement.clientWidth
+  }));
+
+  console.log(`\n=============== hub @${width} ===============`);
+  for (const m of measured) {
+    const shown = m.boxes.length ? `left ${m.boxes[0].left}  width ${m.boxes[0].width}` : "(none)";
+    console.log(`  ${m.label.padEnd(15)} x${String(m.count).padStart(2)}  ${shown}`);
+  }
+
+  /* 1. Nothing empty. This is the assertion the hub had none of: a page that
+        lost a whole section changes a fingerprint hash rather than failing a
+        count, and 207 elements is a floor rather than an exact number. */
+  for (const m of measured) {
+    if (m.count < m.min) {
+      failures.push(
+        `hub @${width} ${m.label}: expected at least ${m.min} match(es) of ` +
+          `"${m.selector}", found ${m.count}`
+      );
+    }
+  }
+
+  /* 2. Full-width sections share the container's left edge. */
+  const hubEdges = [...new Set(measured.filter((m) => m.column).flatMap((m) => m.boxes.map((b) => b.left)))];
+  console.log(`  -> container left edges: ${hubEdges.join(", ") || "(none)"}`);
+  if (hubEdges.length === 0) {
+    failures.push(`hub @${width}: no container elements measured at all`);
+  } else if (hubEdges.length > 1) {
+    failures.push(`hub @${width}: ${hubEdges.length} different left edges at container width: ${hubEdges.join(", ")}`);
+  }
+
+  /* 3. No sideways scroll, the same assertion the article pass makes. */
+  if (doc.scrollWidth !== doc.clientWidth) {
+    failures.push(`hub @${width}: horizontal scroll, scrollWidth ${doc.scrollWidth} vs clientWidth ${doc.clientWidth}`);
+  }
+
+  await context.close();
+}
+
 await browser.close();
 
 if (failures.length) {
@@ -153,4 +256,7 @@ if (failures.length) {
   for (const f of failures) console.error(`  ${f}`);
   process.exit(1);
 }
-console.log(`\nSWEEP PASSED. ${EXPECTED.length} element types found and aligned at ${WIDTHS.join(", ")}.`);
+console.log(
+  `\nSWEEP PASSED. ${EXPECTED.length} article element types aligned on the prose ` +
+    `column and ${HUB_EXPECTED.length} hub types on the container edge, at ${WIDTHS.join(", ")}.`
+);

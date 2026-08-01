@@ -754,6 +754,249 @@
           }
         }
       ]
+    },
+    {
+      "url": "/yelp/",
+      "_note": "The hub is a PAGE TEMPLATE, not a fixture. Its counts are what the current content produces: one shelved piece, one populated cluster, six in preparation, no FAQ files. Several are deliberately ZERO, which is the assertion that an empty thing stays omitted rather than rendering empty. Change the content, change these, same commit.",
+      "blocks": {
+        "hub intro": {
+          "selector": ".cs-hub-intro",
+          "count": 1
+        },
+        "hub badge": {
+          "selector": ".cs-hub-badge",
+          "count": 1
+        },
+        "start here band": {
+          "selector": ".cs-starthere",
+          "count": 0
+        },
+        "browse head": {
+          "selector": ".cs-browse__head",
+          "count": 1
+        },
+        "browse feature": {
+          "selector": ".cs-browse__feature",
+          "count": 1
+        },
+        "browse side": {
+          "selector": ".cs-browse__side",
+          "count": 0
+        },
+        "browse bottom": {
+          "selector": ".cs-browse__bottom",
+          "count": 0
+        },
+        "map": {
+          "selector": ".cs-map",
+          "count": 1
+        },
+        "map cluster": {
+          "selector": ".cs-map__cluster",
+          "count": 7
+        },
+        "map entry": {
+          "selector": ".cs-map__entry",
+          "count": 1
+        },
+        "map pending": {
+          "selector": ".cs-map__pending",
+          "count": 6
+        },
+        "map faq link": {
+          "selector": ".cs-map__faq",
+          "count": 0
+        },
+        "rank panel": {
+          "selector": ".cs-rank",
+          "count": 1
+        },
+        "rank row": {
+          "selector": ".cs-rank__report tbody tr",
+          "count": 4
+        },
+        "closing": {
+          "selector": ".cs-hub-close",
+          "count": 1
+        }
+      },
+      "signature": [
+        {
+          "name": "hub headline",
+          "selector": ".cs-hub-intro__headline",
+          "source": "repo decision: --text-h3 plus --tracking-caps, the pair .cs-lead__headline already uses for a page proposition",
+          "expect": {
+            "fontSize": "24px",
+            "fontWeight": "600",
+            "fontFamily": "Dual",
+            "letterSpacing": "1.44px",
+            "textTransform": "uppercase"
+          },
+          "expectAt": {
+            "390": {
+              "fontSize": "21px",
+              "letterSpacing": "1.26px"
+            }
+          }
+        },
+        {
+          "name": "hub lede",
+          "selector": ".cs-hub-intro__lede",
+          "source": "design.md section 2 LOCKED at 18px. The comp draws 17, the value design.md names as corrected drift, so this assertion is what stops the comp winning",
+          "expect": {
+            "fontSize": "18px",
+            "fontFamily": "Lora"
+          },
+          "expectAt": {
+            "390": {
+              "fontSize": "16px"
+            }
+          }
+        },
+        {
+          "name": "hub badge label",
+          "selector": ".cs-hub-badge",
+          "source": "repo decision: a p that is not prose, so it must neutralize the 66ch cap from base/elements.css. Section 9, the callout-bar defect class",
+          "expect": {
+            "maxWidth": "none"
+          }
+        },
+        {
+          "name": "browse feature ground",
+          "selector": ".cs-browse__feature",
+          "source": "design.md section 1 as amended 2026-08-01: the one madder pane on this page",
+          "expect": {
+            "backgroundColor": "rgb(143, 29, 46)"
+          }
+        },
+        {
+          "name": "browse feature title",
+          "selector": ".cs-browse__feature-title",
+          "source": "design.md section 2 Case rule: a title in a list is sentence case. textTransform none is the assertion",
+          "expect": {
+            "fontSize": "24px",
+            "fontWeight": "600",
+            "fontFamily": "Dual",
+            "textTransform": "none",
+            "color": "rgb(244, 245, 244)"
+          }
+        },
+        {
+          "name": "map title",
+          "selector": ".cs-map__title",
+          "source": "comp, and apparatus so caps stand",
+          "expect": {
+            "fontSize": "22px",
+            "fontWeight": "600",
+            "fontFamily": "Dual",
+            "textTransform": "uppercase"
+          }
+        },
+        {
+          "name": "map meta",
+          "selector": ".cs-map__meta",
+          "source": "repo decision: a p that is not prose, same neutralization as the badge label",
+          "expect": {
+            "maxWidth": "none",
+            "fontSize": "10px",
+            "textTransform": "uppercase"
+          }
+        },
+        {
+          "name": "map cluster name",
+          "selector": ".cs-map__cluster-name",
+          "source": "comp: apparatus, uppercase, and the FAQ section anchor",
+          "expect": {
+            "fontSize": "13px",
+            "fontWeight": "600",
+            "fontFamily": "Dual",
+            "textTransform": "uppercase"
+          }
+        },
+        {
+          "name": "map lead entry title",
+          "selector": ".cs-map__entry-title--lead",
+          "source": "design.md section 2 Case amendment names 17 at 600 against 15 at 500. Sentence case is the point",
+          "expect": {
+            "fontSize": "17px",
+            "fontWeight": "600",
+            "fontFamily": "Dual",
+            "textTransform": "none"
+          }
+        },
+        {
+          "name": "map entry type",
+          "selector": ".cs-map__entry-type",
+          "source": "comp: the 76px rail that keeps titles on one left edge",
+          "expect": {
+            "fontSize": "9px",
+            "textTransform": "uppercase"
+          }
+        },
+        {
+          "name": "rank panel ground",
+          "selector": ".cs-rank",
+          "source": "comp: mist, the quiet third ground after ink and madder",
+          "expect": {
+            "backgroundColor": "rgb(231, 233, 232)",
+            "padding": "56px"
+          },
+          "expectAt": {
+            "390": {
+              "padding": "28px"
+            }
+          }
+        },
+        {
+          "name": "rank eyebrow",
+          "selector": ".cs-rank__eyebrow",
+          "source": "repo decision: the one madder eyebrow, marking the single commercial offer. 7.23:1 on mist",
+          "expect": {
+            "fontSize": "11px",
+            "color": "rgb(143, 29, 46)",
+            "maxWidth": "none"
+          }
+        },
+        {
+          "name": "rank delta moved",
+          "selector": ".cs-rank__delta--moved",
+          "source": "repo decision: colour reinforces movement, the words carry it",
+          "expect": {
+            "color": "rgb(143, 29, 46)",
+            "textTransform": "uppercase"
+          }
+        },
+        {
+          "name": "closing statement",
+          "selector": ".cs-hub-close__statement",
+          "source": "design.md section 2, closing statement at Dual 300, named upstream 2026-08-01",
+          "expect": {
+            "fontSize": "30px",
+            "fontWeight": "300",
+            "fontFamily": "Dual",
+            "textTransform": "none"
+          },
+          "expectAt": {
+            "390": {
+              "fontSize": "24px"
+            }
+          }
+        },
+        {
+          "name": "closing rule",
+          "selector": ".cs-hub-close",
+          "source": "comp: 2px ink, the same weight the coverage map opens with",
+          "expect": {
+            "padding": "36px 0px 0px",
+            "borderColor": "rgb(33, 21, 35)"
+          },
+          "expectAt": {
+            "390": {
+              "padding": "28px 0px 0px"
+            }
+          }
+        }
+      ]
     }
   ],
   "_signature": "Each block declares the computed values that would be wrong if its stylesheet never shipped, or its rule lost to a broader selector, or its box stopped being the shape that makes it readable as itself. Type AND layout, because three defects in a row were invisible to every other check: a block that renders, counts and aligns can still be the wrong size, the wrong width, or spaced wrong. DECLARED HERE, NOT READ BACK FROM THE CSS: comparing a computed value to the rule that produced it proves only that the browser works. `source` records where each value came from. `expect` holds values asserted at every width; `expectAt` holds the ones that differ by width."

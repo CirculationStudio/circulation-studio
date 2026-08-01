@@ -257,6 +257,34 @@ prevent is **a check that passes having measured nothing**.
 Screenshot comparison is not a substitute. Results has lazy CDN images and two
 captures of the same build differ.
 
+### The one madder pane rule is enforced twice, by two different things
+
+This reads like one rule with one check and it is not. Stating it precisely
+matters, because the obvious wrong summary is that the build check covers
+everything, and it covers exactly half.
+
+- **On an article, the shortcode transform counts panes.** `cta` and
+  `{% pane surface="madder" %}` both emit a madder pane, the transform sees
+  both in the output, and a second one fails the build by name. That works
+  because an article's grounds are all emitted by shortcodes.
+- **On a page template, `verify:contrast` measures grounds.** The Yelp Hub
+  paints its madder in CSS, on `.cs-browse__feature`. **No shortcode runs, so
+  the transform never sees the page and cannot be made to.** What protects it
+  is the live scan: it composites every text-carrying element against the first
+  opaque background above it, so a second madder ground appears as new madder
+  pairings and any ink-on-madder in one fails outright at 1.99:1.
+
+So the article side counts a construct and the page side measures a colour.
+Neither can do the other's job. A page template that emitted a madder pane
+through a shortcode would be caught by the transform; an article that painted
+one in CSS would be caught only by contrast, and only if something readable
+sat on it.
+
+**The gap that leaves:** a madder ground with no text on it is invisible to
+both. Nothing has one, and if something ever does, the check that would catch
+it is the manifest's `backgroundColor` assertion, which is per block and
+declared rather than global.
+
 ## 7. Flow spacing has a principle, not a table
 
 Three shapes, chosen by what a block belongs to:
