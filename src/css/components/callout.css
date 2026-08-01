@@ -24,8 +24,22 @@
     overflow: hidden;
   }
 
+  /* max-width:none is load bearing, the same call eyebrow.css documents and
+     pullquote makes. This renders as a <p>, so base/elements.css gives it
+     max-width 66ch, and ch resolves against the element's OWN font. At 10px
+     display that is 468.6px, so the painted label bar stopped at 63% of a
+     738px callout and left a step of bare paper beside it.
+
+     It hid for two reasons worth recording. Below about 469px of callout the
+     cap is wider than the block and nothing shows, so it was invisible at 390
+     and in every phone screenshot. And nothing measures a width that is merely
+     too small: the block rendered, counted, aligned and had the right type.
+
+     A label bar is not prose. Anything that paints a ground across a component
+     has to span it. */
   .cs-callout__label {
     margin: 0;
+    max-width: none;
     padding: 10px 24px;
     font-family: var(--font-display);
     font-weight: var(--weight-display);
