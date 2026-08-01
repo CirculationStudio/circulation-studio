@@ -112,6 +112,7 @@ for (const fixture of manifest.pages) {
             padding: c.padding,
             paddingLeft: c.paddingLeft,
             marginTop: c.marginTop,
+            marginBottom: c.marginBottom,
             rowGap: c.rowGap,
             gridTemplateColumns: c.gridTemplateColumns,
             overflowX: c.overflowX

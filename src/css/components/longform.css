@@ -95,17 +95,31 @@
      without one, so this is enforced rather than merely documented. */
   .cs-stat__source { font-size: 12px; color: var(--text-faint) }
 
-  /* FLOW SPACING. Symmetric, 40px, for the same reason a pane is symmetric at
-     64: a stat is self-contained evidence belonging to neither neighbour. It
-     does not complete the sentence above it the way a list does, and it does
-     not introduce the paragraph below it the way a heading does. One step down
-     the locked scale from the pane, because it is a much smaller interruption.
+  /* FLOW SPACING. Symmetric, 24px, and the reasoning here was wrong until a
+     real document showed it.
 
-     The 16px internal padding stays and is separate: padding does not
-     collapse, so the visible gap to the first ink is the 40 plus that 16. */
+     IT USED TO SAY a stat is self-contained evidence belonging to neither
+     neighbour, and took 40px on that basis, one step down from the pane. That
+     describes a stat pulled out as an exhibit. It is not what a stat does in a
+     document. In the first whitepaper through the pipeline the $307 figure sits
+     between the paragraph that derives it and the paragraph that interprets it:
+     it binds to BOTH neighbours, and it is the middle term of an argument
+     rather than an interruption in one.
+
+     At 40px the arithmetic made that worse than it sounds. Padding does not
+     collapse, so the visible gap either side was the 40 plus the block's own
+     16px of padding, 56px. An h2 takes 64px above it. A figure belonging to the
+     sentences around it was reading as separated as a new section, which is the
+     opposite of what it is for.
+
+     24 plus the 16 is 40 of visible gap, clear of the 28px between paragraphs
+     so the figure still stops the reader, and well short of the 64 that means
+     "new section".
+
+     The 16px internal padding is unchanged and is still separate from this. */
   .cs-prose > .cs-stat {
-    margin-top: var(--space-40);
-    margin-bottom: var(--space-40);
+    margin-top: var(--space-24);
+    margin-bottom: var(--space-24);
   }
 
   /* ============================================================

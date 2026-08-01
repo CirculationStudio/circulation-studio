@@ -342,6 +342,16 @@
           }
         },
         {
+          "name": "stat box",
+          "selector": ".cs-article__column > .cs-stat",
+          "source": "repo decision: a stat binds to both neighbours, corrected against a real document",
+          "expect": {
+            "marginTop": "24px",
+            "marginBottom": "24px",
+            "padding": "16px 0px"
+          }
+        },
+        {
           "name": "table number",
           "selector": ".cs-table__number",
           "source": "Component Reference",
