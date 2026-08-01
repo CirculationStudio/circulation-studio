@@ -35,13 +35,16 @@
  * treatment every other pane heading takes, including the margin-top:0 that
  * .cs-prose > :first-child already gives a leading heading.
  *
- * THE BUTTON IS .cs-btn--on-accent-primary, the Component Reference's primary
- * action on a madder ground: paper fill, paper border, madder label, hovering
- * to mist with madder-deep. It shipped as --deep first, on the reading that
- * design.md's four-variant list was the whole set. It is not: the Reference
- * carries the two on-accent variants as well and design.md simply does not
- * cover them. --deep is the ink-pane variant and its hover carries ink text,
- * where madder wants madder.
+ * THE BUTTON IS .cs-btn--on-accent-primary: paper fill, paper border, madder
+ * label, hovering to mist with madder-deep. It shipped as --deep first, which
+ * is the ink-pane variant whose hover carries ink where madder wants madder.
+ *
+ * That variant is a PROPOSED addition to design.md's locked set, not a settled
+ * one. The design system project carries four button variants and no on-accent
+ * of any kind, so this block depends on a proposal. It is the same standing
+ * .cs-eyebrow has and it is flagged in button.css and in ARTICLE_SYSTEM.md
+ * section 8. If the proposal is refused, this reverts to --deep and the only
+ * loss is an ink hover on a madder ground.
  *
  * The only value invented here is the 24px above the button, and it is the
  * pane's own step: the same 24 a heading takes below itself. */

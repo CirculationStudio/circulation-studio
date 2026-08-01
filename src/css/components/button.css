@@ -76,17 +76,28 @@
   .cs-btn--deep:hover { background: var(--color-paper); color: var(--color-ink) }
 
   /* ============================================================
-     ON A MADDER PANE. Both variants are the Component Reference's, and
-     NEITHER APPEARS IN design.md's variant list.
+     ON A MADDER PANE. PROPOSED ADDITIONS TO THE LOCKED SET, AWAITING
+     SIGN-OFF. Same standing as .cs-eyebrow, .cs-close and .cs-rule.
      ============================================================
 
-     That list names four: primary, secondary, ghost, deep. The Reference
-     carries these two as well, and uses --on-accent-primary for its primary
-     action on madder and --on-accent for its secondary. The absence is a gap in
-     design.md rather than a decision against them, and it is the fifth place
-     the Reference and design.md disagree. Recorded in ARTICLE_SYSTEM.md
-     section 8 with the others, because it is a design system question and not
-     one this repo settles.
+     Read the design system directly on 2026-08-01 rather than trusting a
+     summary of it, and the picture is not what the earlier note here said.
+     design.md section 6 does not merely list four variants, it says "LOCKED
+     SET, nothing else" and "never invent inline". components/components.css,
+     which is the machine-readable component source, carries exactly four:
+     primary, secondary, ghost, deep. Nothing in the design system project
+     carries an on-accent variant of any kind.
+
+     So this is not a gap in design.md that the Component Reference fills. It
+     is an addition, and the honest label for an addition to a locked set is
+     PROPOSED. The values below are the ones specified for them, and they are
+     what a madder pane needs, but their status is a decision that has not been
+     taken yet rather than one taken elsewhere.
+
+     THE UPSTREAM CHANGE IS THE REAL FIX: add both to
+     components/components.css and name them in design.md section 6. Until that
+     happens the build carries them locally and says so, which is the pattern
+     eyebrow.css already set. See ARTICLE_SYSTEM.md section 8.
 
      WHY NOT --deep ON MADDER, which is what the cta shipped with first. deep is
      documented for an ink pane and its hover carries INK text. On madder the
