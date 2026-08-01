@@ -38,6 +38,7 @@ const browser = await chromium.launch();
 const failures = [];
 let declared = 0;
 let asserted = 0;
+let containmentAsserted = 0;
 
 for (const width of WIDTHS) {
   const context = await browser.newContext({ viewport: { width, height: 900 } });
@@ -155,6 +156,90 @@ for (const fixture of manifest.pages) {
       );
     } else {
       console.log(`     ${entry.name.padEnd(20)} @${width} ${Object.keys(want).length} value(s) ok`);
+    }
+  }
+
+  /* CONTAINMENT. Geometry between TWO elements, which no computed value can
+     express: every property above describes one box in isolation, and a child
+     spilling out of its parent is a relationship.
+
+     Two things are checked and they are not the same thing.
+
+     `over`/`under` is CONTAINMENT: the child must not pass the parent's
+     content box. That is the assertion for a card bursting its panel.
+
+     `minInset` is BREATHING ROOM, and it is the one that would have caught
+     the defect this was written for. The rank card looked like it burst its
+     panel and every box measurement said it fitted, because it did fit: the
+     card filled its 400px track exactly and containment alone reports 0 and
+     passes. The real fault was one level in. `padding: 24px` on a table with
+     border-collapse:collapse is DROPPED by the engine, so the rows ran flush
+     to the card's own edge and the right-aligned movement column read as
+     clipped. Containment could never have seen that. An inset floor between
+     the table and the card can, because a dropped padding measures as zero. */
+  for (const rule of fixture.containment ?? []) {
+    const geom = await page.evaluate(({ child, parent }) => {
+      const c = document.querySelector(child);
+      const p = document.querySelector(parent);
+      if (!c || !p) return { missing: !c ? child : parent };
+      const cb = c.getBoundingClientRect();
+      const pb = p.getBoundingClientRect();
+      const ps = getComputedStyle(p);
+      const R = (n) => Math.round(n * 10) / 10;
+      return {
+        childLeft: R(cb.left),
+        childRight: R(cb.right),
+        /* Content box, for containment. */
+        innerLeft: R(pb.left + parseFloat(ps.paddingLeft) + parseFloat(ps.borderLeftWidth)),
+        innerRight: R(pb.right - parseFloat(ps.paddingRight) - parseFloat(ps.borderRightWidth)),
+        /* BORDER box, for the inset. Measuring the inset against the content
+           box would be circular: a correctly padded child is flush with its
+           parent's content box by definition, so the padding being checked is
+           the very thing subtracted before measuring. Against the border box a
+           dropped padding reads as zero and a real one reads as its width. */
+        outerLeft: R(pb.left),
+        outerRight: R(pb.right)
+      };
+    }, { child: rule.child, parent: rule.parent });
+
+    containmentAsserted += 1;
+
+    if (geom.missing) {
+      failures.push(
+        `${fixture.url} @${width} ${rule.name}: nothing matches "${geom.missing}", ` +
+          `so containment was not checked. ${rule.why ?? ""}`
+      );
+      console.log(`  !! ${rule.name.padEnd(20)} @${width} selector matched nothing`);
+      continue;
+    }
+
+    const over = Math.round((geom.childRight - geom.innerRight) * 10) / 10;
+    const under = Math.round((geom.innerLeft - geom.childLeft) * 10) / 10;
+    const want = rule.minInsetAt?.[String(width)] ?? rule.minInset ?? 0;
+    const inset = Math.round(
+      Math.min(geom.childLeft - geom.outerLeft, geom.outerRight - geom.childRight) * 10
+    ) / 10;
+
+    if (over > 0.5 || under > 0.5) {
+      failures.push(
+        `${fixture.url} @${width} ${rule.name}: "${rule.child}" is not inside ` +
+          `"${rule.parent}". Child spans ${geom.childLeft} to ${geom.childRight}, ` +
+          `the parent's content box is ${geom.innerLeft} to ${geom.innerRight} ` +
+          `(over right by ${over}, past left by ${under}). ${rule.why ?? ""}`
+      );
+      console.log(`  !! ${rule.name.padEnd(20)} @${width} escapes by ${Math.max(over, under)}px`);
+    } else if (inset + 0.5 < want) {
+      failures.push(
+        `${fixture.url} @${width} ${rule.name}: "${rule.child}" is inset ${inset}px ` +
+          `from "${rule.parent}" and needs at least ${want}px. It is contained but ` +
+          `flush, which is what a dropped padding looks like. ${rule.why ?? ""}`
+      );
+      console.log(`  !! ${rule.name.padEnd(20)} @${width} inset ${inset} < ${want}`);
+    } else {
+      console.log(
+        `     ${rule.name.padEnd(20)} @${width} contained, inset ${inset}px` +
+          (want ? ` (min ${want})` : "")
+      );
     }
   }
 }

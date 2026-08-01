@@ -996,8 +996,31 @@
             }
           }
         }
+      ],
+      "containment": [
+        {
+          "name": "report card in panel",
+          "child": ".cs-rank__report",
+          "parent": ".cs-rank",
+          "why": "The card must not pass the panel's content box, and must sit the panel's own padding in from its border.",
+          "minInset": 56,
+          "minInsetAt": {
+            "390": 28
+          }
+        },
+        {
+          "name": "report rows inset",
+          "child": ".cs-rank__table",
+          "parent": ".cs-rank__report",
+          "minInset": 24,
+          "minInsetAt": {
+            "390": 20
+          },
+          "why": "THIS is the one that catches the defect. padding on a table with border-collapse:collapse is dropped by the engine, so the rows ran flush to the card edge and the movement column read as clipped while every box still fitted. A dropped padding measures as an inset of zero."
+        }
       ]
     }
   ],
-  "_signature": "Each block declares the computed values that would be wrong if its stylesheet never shipped, or its rule lost to a broader selector, or its box stopped being the shape that makes it readable as itself. Type AND layout, because three defects in a row were invisible to every other check: a block that renders, counts and aligns can still be the wrong size, the wrong width, or spaced wrong. DECLARED HERE, NOT READ BACK FROM THE CSS: comparing a computed value to the rule that produced it proves only that the browser works. `source` records where each value came from. `expect` holds values asserted at every width; `expectAt` holds the ones that differ by width."
+  "_signature": "Each block declares the computed values that would be wrong if its stylesheet never shipped, or its rule lost to a broader selector, or its box stopped being the shape that makes it readable as itself. Type AND layout, because three defects in a row were invisible to every other check: a block that renders, counts and aligns can still be the wrong size, the wrong width, or spaced wrong. DECLARED HERE, NOT READ BACK FROM THE CSS: comparing a computed value to the rule that produced it proves only that the browser works. `source` records where each value came from. `expect` holds values asserted at every width; `expectAt` holds the ones that differ by width.",
+  "_containment": "Geometry between TWO elements, which no computed value can express. Every value in `signature` describes one box in isolation; a child spilling out of its parent is a relationship. The child's margin box is compared against the parent's PADDING box, so a child that fills its parent edge to edge fails alongside one that overflows."
 }

@@ -75,11 +75,15 @@ const MIN_ELEMENTS = {
   results: 149,
   contact: 117,
   /* The hub is DATA-DRIVEN and this floor will rise. Every article added to
-     src/yelp/ adds elements to the coverage map, so a run that drops below 207
-     means the page stopped rendering rather than that content was removed.
-     Re-take the baseline when the shelf or the map changes, in the same commit
-     that changes it. */
-  yelphub: 207
+     src/yelp/ adds elements to the coverage map, so a run that drops below the
+     floor means the page stopped rendering rather than that content was
+     removed. Re-take the baseline when the shelf or the map changes, in the
+     same commit that changes it.
+
+     207 until the rank card was rebuilt as a wrapper div around its table,
+     which added two elements. The fingerprint caught that change and the five
+     marketing hashes did not move, which is the split this file exists for. */
+  yelphub: 209
 };
 
 const browser = await chromium.launch();

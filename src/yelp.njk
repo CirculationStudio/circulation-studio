@@ -338,10 +338,22 @@ closing:
     {#- A table, because it is one: four rows of term, position and movement.
         The comp draws it as divs, which reads identically and tells a screen
         reader nothing about the columns. -#}
-    <table class="cs-rank__report">
+    {#- THE CARD IS THE DIV, THE TABLE IS ONLY THE ROWS. Padding does not apply
+        to a table element when border-collapse is collapse, so 24px sat on the
+        table doing nothing and every cell ran flush to the white ground. The
+        frame belongs to a wrapper, which is what .cs-table__scroll already
+        does for the article table. -#}
+    <div class="cs-rank__report">
+    <table class="cs-rank__table">
+      {#- The flex row is INSIDE the caption. display:flex on a caption takes
+          it out of the caption slot and an anonymous cell wraps it, which put
+          this header in the first column at 278px inside a 400px table and
+          stopped its rule short of the card. -#}
       <caption class="cs-rank__report-head">
-        <span class="cs-rank__report-title">{{ rank.reportTitle }}</span>
-        <span class="cs-rank__report-date">{{ rank.reportDate | monthYear }}</span>
+        <span class="cs-rank__report-row">
+          <span class="cs-rank__report-title">{{ rank.reportTitle }}</span>
+          <span class="cs-rank__report-date">{{ rank.reportDate | monthYear }}</span>
+        </span>
       </caption>
       <thead class="sr-only">
         <tr><th scope="col">Search term</th><th scope="col">Position</th><th scope="col">Change</th></tr>
@@ -362,6 +374,7 @@ closing:
         <tr><td class="cs-rank__note" colspan="3">{{ rank.note }}</td></tr>
       </tfoot>
     </table>
+    </div>
   </div>
 {% endcall %}
 

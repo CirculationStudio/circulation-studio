@@ -628,20 +628,37 @@
   }
   .cs-rank__cta { margin-top: 28px }
 
+  /* THE CARD IS THIS DIV. Padding does NOT apply to a table element when
+     border-collapse is collapse, so 24px declared on the table was dropped by
+     the engine and every cell ran flush to the white ground: the right-aligned
+     movement column sat hard against the card edge and read as clipped. The
+     box never overflowed, which is why a border-box measurement found nothing
+     and only a screenshot showed it.
+
+     The frame belongs to a wrapper, which is the pattern table.css already
+     uses: .cs-table__scroll owns the figure's border while cell padding lives
+     on the cells. Same shape, arrived at the same way. */
   .cs-rank__report {
     background: var(--surface-card);
     border: 1px solid var(--border-hairline);
     padding: var(--space-24);
+  }
+  .cs-rank__table {
     border-collapse: collapse;
     width: 100%;
   }
-  .cs-rank__report-head {
+  /* The caption keeps its default table-caption display and spans the table.
+     display:flex on a caption takes it OUT of the caption slot: a non-table
+     display inside a table gets wrapped in an anonymous cell, which put this
+     header in the first column at 278px inside a 400px table and stopped its
+     rule short of the card. The flex lives on a span inside it instead. */
+  .cs-rank__report-head { text-align: left }
+  .cs-rank__report-row {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
     border-bottom: 1px solid var(--border-strong);
     padding-bottom: 10px;
-    text-align: left;
   }
   .cs-rank__report-title {
     font-family: var(--font-display);
@@ -659,7 +676,7 @@
     text-transform: uppercase;
     color: var(--text-faint);
   }
-  .cs-rank__report td {
+  .cs-rank__table td {
     border-bottom: 1px solid var(--border-hairline);
     padding: 11px 0;
     vertical-align: baseline;
@@ -699,7 +716,7 @@
     line-height: 1.6;
     color: var(--text-faint);
   }
-  .cs-rank__report tfoot td { border-bottom: 0 }
+  .cs-rank__table tfoot td { border-bottom: 0 }
 
   /* ---- closing ---- */
 
