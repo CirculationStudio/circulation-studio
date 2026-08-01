@@ -307,7 +307,7 @@ A third, because two entries cannot tell a gap from a margin.
 {% endreferences %}
 
 {% related title="Related" %}
-{% item kind="Field Note", title="How the measure was chosen", url="/library/measure/" %}
-{% item kind="Guide", title="Writing for answer engines", url="/library/aeo/" %}
-{% item kind="Whitepaper", title="The Yelp Ads benchmark", url="/yelp/yelp-benchmark/" %}
+{% item kind="Whitepaper", title="The state of Yelp advertising in 2026", url="/yelp/state-of-yelp-advertising-2026/" %}
+{% item kind="Whitepaper", title="The whitepaper cover fixture", url="/library/whitepaper-test/" %}
+{% item kind="Guide", title="The Yelp Hub", url="/yelp/" %}
 {% endrelated %}

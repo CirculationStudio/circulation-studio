@@ -1768,6 +1768,99 @@ export default function (eleventyConfig) {
     collectionApi.getFilteredByGlob("src/library/*.md")
   );
 
+  /* DEAD INTERNAL LINKS FAIL THE BUILD.
+     ============================================================
+
+     WHY THIS EXISTS, AND IT IS ABOUT THE FAQ. The fifty FAQ answers each carry
+     an inline link to the spoke that covers their topic in depth: the page is
+     designed as a secondary hub with the highest internal-link density in the
+     cluster. Almost none of those spokes exist yet, so the FAQ will ship
+     pointing at pages that are not there.
+
+     A dead internal link is the quietest defect this project can produce. It
+     builds, it publishes, it looks exactly like a working link, and the only
+     signal is a reader hitting a 404 on a page we sent them to. Nothing in the
+     five checks looks at hrefs: contrast measures colour, manifest counts
+     blocks, sweep measures edges, fingerprint hashes type, contract compares
+     the spec. A link to nowhere passes all five.
+
+     SCOPE IS THE CONTENT TIERS, plus the hub that links into them. The five
+     marketing pages are excluded deliberately: their footer carries
+     placeholder hrefs that predate this check, and turning those into build
+     failures is a separate decision about that content rather than about this
+     mechanism.
+
+     CHECKED AGAINST THE BUILT OUTPUT, which is the only thing that can answer
+     the question. A permalink comes from directory data, a collection or a
+     filter, so no amount of reading source tells you what URL exists. The set
+     of real URLs is the set Eleventy just wrote.
+
+     ASSETS ARE OUT OF SCOPE. Anything with a file extension is skipped: those
+     are served by passthrough copy and by the CDN, and this runs before the
+     Vite pass has finished writing, so a filesystem answer here would be
+     wrong as often as right. This checks PAGE links, which is where the FAQ's
+     risk is.
+
+     Built against zero FAQ files, the same way the counting mechanism was
+     built against a directory that does not exist yet. */
+  eleventyConfig.on("eleventy.after", ({ results }) => {
+    const IN_SCOPE = /(^|\/)src\/(yelp|library)\/|(^|\/)src\/yelp\.njk$/;
+
+    /* Every URL this build actually produced, trailing slash normalised so
+       "/yelp/faq" and "/yelp/faq/" compare equal. */
+    const built = new Set();
+    for (const r of results) {
+      if (!r.url) continue;
+      built.add(r.url.endsWith("/") ? r.url : `${r.url}/`);
+    }
+
+    const problems = [];
+    for (const r of results) {
+      if (!IN_SCOPE.test(r.inputPath)) continue;
+
+      /* INSIDE <main> ONLY, which is authored content. The footer is on every
+         page and currently points at /library/, /privacy-policy/ and
+         /accessibility-statement/, none of which are built. Those are real and
+         they are frame: one fix in one partial, not fifteen findings repeated
+         once per page, and fixing them means deciding whether to write three
+         pages or drop three links. Scoping here keeps this check about the
+         thing it was asked for, an authored link to a page nobody has written,
+         and leaves the frame to its own commit. */
+      const main = /<main[^>]*>([\s\S]*)<\/main>/.exec(r.content);
+      if (!main) continue;
+
+      for (const [, href] of main[1].matchAll(/href="([^"]*)"/g)) {
+        /* Root-relative only. An external URL, a mailto:, a tel: and a
+           same-page #anchor are all somebody else's problem, and external
+           links are a separate decision recorded in the commit. */
+        if (!href.startsWith("/")) continue;
+
+        const target = href.split("#")[0].split("?")[0];
+        if (!target) continue;
+        if (/\.[a-z0-9]+$/i.test(target)) continue;
+
+        const normalised = target.endsWith("/") ? target : `${target}/`;
+        if (!built.has(normalised)) {
+          problems.push(
+            `${r.inputPath.replace(/^\.\//, "")} links to ${href}, and this build ` +
+              `produced no such page.`
+          );
+        }
+      }
+    }
+
+    if (problems.length) {
+      const unique = [...new Set(problems)];
+      throw new Error(
+        `[links] ${unique.length} dead internal link(s):\n` +
+          unique.map((p) => `    ${p}`).join("\n") +
+          `\n  A dead internal link builds, publishes and looks like a working ` +
+          `one. Either the target is not written yet, in which case do not link ` +
+          `it, or the permalink moved and the link did not follow.`
+      );
+    }
+  });
+
   /* JSON-LD serialiser for partials/schema.njk.
 
      Nunjucks' built-in `dump` is JSON.stringify and nothing else, which is not
