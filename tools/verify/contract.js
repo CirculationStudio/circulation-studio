@@ -8,7 +8,7 @@
  * depends on the two sides agreeing, and until now nothing checked that they
  * did. They had already drifted: thirteen of roughly forty rows were real and
  * the file did not say which, `pane` and `fn` were live and documented only in
- * prose, and `related` described a cluster taxonomy that does not exist.
+ * prose, and `related` described a cluster taxonomy that did not exist.
  *
  * IT READS THE BUILD RATHER THAN A DESCRIPTION OF IT. The shortcodes are
  * registered by running the real config against a recording stub, the arguments
@@ -477,8 +477,16 @@ for (const file of componentFiles) {
    in the build. Grepped rather than declared, because a declaration that a key
    is read is exactly the thing that was wrong before.
 
-   DIRECTION B: every key any article actually sets is documented. That catches
-   an author inventing one.
+   DIRECTION B: every key any article actually sets is documented, AND is not
+   marked PLANNED. The first half catches an author inventing a key. The second
+   catches the opposite failure, and it is the one that already happened:
+   `nextreview` sat filled in on the whitepaper while SHORTCODES.md said PLANNED
+   keys "are read by nothing yet" and that the authoring project should not be
+   filling them in. That rule was stated and unenforced, so the run reported the
+   key as pending and passed. A PLANNED key with a value is worse than an empty
+   one: it looks supported, it survives review, and the day the key is wired up
+   nobody knows whether the value was authored against the real behaviour or
+   guessed years earlier against none.
 
    And the cluster set is compared like any other closed set. */
 const FRONTMATTER_EXEMPT = new Set(["title"]);
@@ -526,7 +534,10 @@ const readers = readerFiles.join("\n");
 for (const key of documentedKeys) {
   if (FRONTMATTER_EXEMPT.has(key)) continue;
   if (plannedKeys.has(key)) {
-    notes.push(`frontmatter "${key}": PLANNED, read by nothing yet and not expected to be.`);
+    notes.push(
+      `frontmatter "${key}": PLANNED, read by nothing yet and not expected to be. ` +
+        `Direction B fails if an article fills it in.`
+    );
     continue;
   }
   /* Grepped, which can say a key is read when the word merely appears in a
@@ -560,6 +571,14 @@ for (const [key, where] of authored) {
     fail(
       `frontmatter "${key}" is set in ${where} and is not in SHORTCODES.md's ` +
         `frontmatter block. The authoring project writes against that block.`
+    );
+  } else if (plannedKeys.has(key)) {
+    fail(
+      `frontmatter "${key}" is set in ${where} and is marked PLANNED in ` +
+        `SHORTCODES.md, which means nothing in the build reads it. A PLANNED key ` +
+        `with a value in it reads as supported and is not. Either wire it up and ` +
+        `drop the PLANNED marker in the same commit, or take the key out of the ` +
+        `file.`
     );
   }
 }

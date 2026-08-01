@@ -254,7 +254,7 @@ Reading the tables:
 | `related` | LIVE | `title` | main | P | Contains `item` children. See the note below |
 |   `item` | LIVE | **`kind`** **`title`** **`url`** | | | All three required |
 
-**`related` items are explicit for now.** The entry above described `related` as pulling from a `cluster` frontmatter taxonomy. That taxonomy does not exist: no article declares a cluster, there is no index to query, and nothing maps a cluster to a set of articles. Building the mechanism before the taxonomy would mean inventing both, so each item is written out with its own `kind`, `title` and `url`. When clusters exist, `related` gains a `cluster` argument and the explicit form stays as the override.
+**`related` items are explicit for now.** The entry above described `related` as pulling from a `cluster` frontmatter taxonomy. That taxonomy now exists: seven closed clusters, required on every piece in `src/yelp/`, with `collections.yelp` as an index that can be queried. What does not exist is the step between the two. **Membership is not relatedness.** A cluster is a coverage-map bucket, so every piece in `cost-and-pricing` is not the right set to show at the end of one of them, nothing decides which of them or how many, and `src/library/` carries no cluster at all. So each item is still written out with its own `kind`, `title` and `url`, and the behaviour here is unchanged. The `cluster` argument is designed and not built; when it is built, the explicit form stays as the override.
 
 **Inline:** `{% fn id="bringhurst" %}` places a footnote marker in running prose. One of two inline shortcodes, with `observed`, and the reason neither takes blank lines around it: a blank line closes an HTML block, and a marker separated by one would be lifted out of its paragraph.
 
@@ -364,5 +364,5 @@ An unknown value fails the build everywhere except `pane`, which warns and rende
 ## Open before the authoring project is built
 
 - The `image` block is the only one with an author-set width. Watch whether that stays justified once real articles exist.
-- `related` needs a cluster taxonomy that does not exist yet. Until it does, `related` requires explicit items.
+- `related` still requires explicit items. The cluster taxonomy exists now; the selection rule that would turn membership in one into a chosen set of related pieces does not. See the note under the Article table.
 - The Component Reference has no `container-narrow` counterpart. `pullquote` is settled at measure, from the Reference's own `max-width: none`. `epigraph` is still unverified and inherits the same suspicion: check the Reference before building it rather than assuming narrow.

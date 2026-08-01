@@ -113,10 +113,10 @@ That is safe today only because every block that can reach that state is
 pane-excluded and fails the build. A future block needing to break out from
 *inside* a pane would need the helper to know its context. It does not.
 
-## 6. The verify run, and the four scripts
+## 6. The verify run, and the five scripts
 
 `npm run verify` is self-contained: it runs the contract check, then builds,
-serves `_site` statically on **port 8899**, runs the three browser checks
+serves `_site` statically on **port 8899**, runs the four browser checks
 against it, and tears the server down. It stops at the first failure and exits
 non-zero on any of them, including a failed build or a port already in use.
 `VERIFY_PORT` moves the port.
@@ -178,8 +178,9 @@ throughout at 22 rules. Production never shows this because an element's first
 computed style is already the author's, so there is nothing to animate away from.
 
 `tools/verify/readiness.mjs` asserts both preconditions by name before any
-measurement, and all three checks now return identical results from a production
-build and from `eleventy --serve`.
+measurement, and the three checks that existed then return identical results
+from a production build and from `eleventy --serve`. `verify:contrast` was
+written afterwards against the same assertion and imports it like the rest.
 
 **It deliberately does not wait on `networkidle`.** That would also have made the
 numbers agree, and it is the wrong instrument: Playwright discourages it, and it
@@ -188,7 +189,7 @@ is relied on is that the faces are registered and nothing is still moving. Both
 are observable directly, so both are observed, and a failure names which one was
 missing rather than reporting that something was still busy.
 
-Each answers a different question, and the failure mode all three exist to
+Each answers a different question, and the failure mode they all exist to
 prevent is **a check that passes having measured nothing**.
 
 - **`verify:manifest`** asks *did exactly what we declared render, is it the
@@ -200,7 +201,7 @@ prevent is **a check that passes having measured nothing**.
   matched nothing is indistinguishable from a block nobody asked for. Change the
   fixture, change the manifest, same commit.
 
-  **The typography half closes a blind spot all four scripts shared.** Two
+  **The typography half closes a blind spot every other script shared.** Two
   defects shipped through every one of them: two component stylesheets were
   never imported, and `.cs-article h2` outranked six blocks' labels. Both
   rendered, both counted, both aligned on the prose edge, because an unstyled
@@ -214,6 +215,33 @@ prevent is **a check that passes having measured nothing**.
   Declared minimums per type, so a selector that stops matching fails instead of
   reporting alignment across an empty set. It caught `related` rendering at the
   measure instead of main width.
+- **`verify:contrast`** asks *is every text token legible on every surface it
+  can land on, and is anything landing somewhere nobody declared*. Two halves.
+  The **matrix** is declared: each token names the surfaces it is allowed to
+  reach, and a token with no declared surfaces fails rather than being skipped,
+  so adding one forces the decision instead of deferring it. The **live scan**
+  walks every text-carrying element on all eight built pages, takes its computed
+  colour and the first opaque background above it, composites any alpha, and
+  measures. That is the half that catches a token somewhere the matrix never
+  imagined. Both banned pairs, madder on ink and ink on madder at 1.99:1, are
+  asserted absent rather than assumed absent. Thresholds are WCAG AA, 4.5:1
+  normal and 3:1 for large at 24px or 18.66px bold. Values are read from
+  `main.css`, because a checker holding its own copy of a colour is a third
+  place for it to drift.
+
+  **It exists because every ratio here was computed by hand once and never
+  checked again.** `--text-faint` shipped at `.45`, which is 2.86:1 on paper,
+  failing AA and failing even the large-text exemption that does not apply to
+  text set at 11px, on the byline and captions of five live pages. It was found
+  by reading a token file for an unrelated reason, which is not a process.
+
+  **It found a real defect on its first run that the other four could not
+  see.** `.cs-faq__title` had been given an explicit colour two commits
+  earlier, making it ink on an ink pane at 1.00:1, invisible, and ink on madder
+  at 1.99:1, banned outright. The block rendered, counted, sat on the left edge
+  and measured at its declared type size, so manifest, sweep, fingerprint and
+  contract all passed it. Colour is the one property none of them read. See
+  section 9.
 - **`verify:fingerprint`** asks *did the five marketing pages move*. Typography
   hashes against a committed baseline, with a per-page element floor checked
   before any hash is trusted, because two empty pages hash identically.
@@ -394,12 +422,13 @@ That is the whole answer. Two artefacts cannot be reconciled by writing a third
 document about their differences; they are reconciled by making one of them
 machine-readable.
 
-## 9. Prose rules are scoped, and component elements neutralize the base
+## 9. Prose rules are scoped, components neutralize the base, and an explicit colour stops inheriting
 
 Four defects in a row came from one shape: a rule written for prose reaching
 into a component and outranking the component's own rule. None of them failed a
 check, because the block still rendered, still counted and still sat on the left
-edge. Two rules, both learned the expensive way.
+edge. Two rules came out of that, both learned the expensive way. A third rule
+below is a different shape with the same silence.
 
 **A prose rule is scoped to a direct child of `.cs-prose`.** Not to
 `.cs-article`, which is one class plus one type and therefore beats any
@@ -437,6 +466,37 @@ signature type and layout, so a rule that loses to a broader selector fails the
 manifest instead of waiting for someone to look at the right block at the right
 width. The callout bar was invisible below 469px of block width; the assertion
 catches it at 390 where the eye cannot.
+
+**An element that inherits a colour becomes wrong the moment it is given one.**
+Inheritance follows the surface and a specified value does not. An element with
+no `color` of its own takes the pane's on every surface, correctly and for free,
+and the first person to set an explicit colour on it silently opts it out of all
+of them. Three instances:
+
+- **Prose links inside a pane.** `base/elements.css` gives every `a` the madder
+  link token, which is 1.99:1 on ink. The headings and body copy beside them
+  needed no rule at all, because they had never been given a colour. pane.css
+  maps the link on both deep surfaces and leaves the accent in the underline.
+- **`.cs-qa__a`, the faq answer.** It carried no colour, so it inherited, and it
+  looked deliberate. Correcting it to slate against the Reference was right, and
+  it created the need for an on-deep mapping that had not existed, which is why
+  that rule in faq.css postdates the block it belongs to.
+- **`.cs-faq__title`.** The panel-label change gave it `color: var(--text-body)`,
+  which is ink everywhere: ink on an ink pane at 1.00:1, invisible, and ink on
+  madder at 1.99:1, banned outright. It had inherited the pane's paper before, so
+  faq.css mapped the title's border on deep surfaces and had never needed to map
+  its text.
+
+The defect is not the explicit colour. All three were correct in isolation and
+correct on paper, which is where they were reviewed. The defect is that setting
+a colour is a surface change wearing a typography change's clothes, and nothing
+about writing the line looks like it. So: **a colour added to anything that can
+sit in a pane carries its on-deep and on-accent mappings in the same edit**, and
+a block that paints instead declares `data-no-pane` and is excluded.
+
+**This class is asserted by `verify:contrast` and by nothing else.** The title
+rendered, counted, aligned and measured at its declared size through all four of
+the other checks. See section 6.
 
 ## 10. Open questions
 

@@ -15,8 +15,8 @@
  * fingerprint hashes used to differ against `eleventy --serve`, and that was a
  * measurement race rather than a rendering difference: fonts unregistered and
  * transitions mid flight at the moment of capture. readiness.mjs asserts both
- * preconditions, and the three checks now return identical results from either
- * server. That correction is load bearing, because every visual review on this
+ * preconditions, and the three checks that existed then return identical results
+ * from either server. That correction is load bearing, because every visual review on this
  * project has been done on the dev server, and it means those reviews were of
  * what ships.
  *
@@ -26,7 +26,7 @@
  * not acquire one to start a server.
  *
  * Usage:
- *   npm run verify                 contract, then build, serve, run the three
+ *   npm run verify                 contract, then build, serve, run the four
  *                                  browser checks, tear down
  *   VERIFY_PORT=9001 npm run verify
  *

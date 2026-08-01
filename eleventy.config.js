@@ -1289,11 +1289,14 @@ export default function (eleventyConfig) {
   /* related and item: the second parent-and-child pair, following faq exactly.
 
      ITEMS ARE EXPLICIT FOR NOW. SHORTCODES.md describes related as pulling
-     from a `cluster` frontmatter taxonomy. That taxonomy does not exist: no
-     article declares a cluster, there is no index to query, and nothing maps
-     a cluster to a set of articles. Building the mechanism before the taxonomy
-     would mean inventing both. So each item is written out, and the vocabulary
-     records that this is the interim state rather than the design.
+     from a `cluster` frontmatter taxonomy. That taxonomy exists as of the Yelp
+     Hub work above: seven closed clusters, required in src/yelp/, with
+     collections.yelp as the index. The missing step is the one between them.
+     MEMBERSHIP IS NOT RELATEDNESS: a cluster is a coverage-map bucket, every
+     piece in one is not the right set to show at the end of another, nothing
+     decides which of them or how many, and src/library/ carries no cluster at
+     all. So each item is still written out, and the vocabulary records that
+     this is the interim state rather than the design.
 
      PANE-EXCLUDED for width: it sits at --container-main and reuses
      .cs-mainwidth from table, so the same escape and the same exclusion. */
