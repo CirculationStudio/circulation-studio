@@ -171,6 +171,18 @@
     font-size: var(--text-caption);
     color: var(--text-muted);
   }
+  /* The list's own rules, which it used to take from `.cs-article ol`. That
+     selector is now scoped to prose lists, and a footnotes list is not prose,
+     so it states what it was already getting. Values unchanged. */
+  .cs-footnotes ol {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    margin: 0;
+    padding-left: 20px;
+    list-style: decimal;
+  }
+
   .cs-footnotes li {
     margin-bottom: var(--space-8);
     max-width: var(--container-measure);

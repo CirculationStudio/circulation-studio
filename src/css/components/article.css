@@ -256,8 +256,24 @@
 
      Prose items stay at body size. The 15px li in the Reference belongs to the
      key-takeaways component, not to prose. */
-  .cs-article ul,
-  .cs-article ol {
+  /* ============================================================
+     PROSE LISTS ONLY, and the scoping is load bearing for the same reason it
+     was on h2 and h3.
+     ============================================================
+
+     This was `.cs-article ul, .cs-article ol`, one class plus one type, which
+     outranked every component's own list rule at a single class.
+     .cs-references__list declared gap 12px and padding-left 24px and rendered
+     8px and 20px, so two-digit markers no longer fit the padding they were
+     given and sat flush to the column edge. Nothing failed: a list with the
+     wrong gap is still a list, in the right place, at the right size.
+
+     A prose list is a direct child of a prose container, or a list nested
+     inside one of those. A component's internal list is not prose and keeps
+     its own rules, which is what the component wrote them for. */
+  .cs-prose > ul,
+  .cs-prose > ol,
+  .cs-prose > :is(ul, ol) :is(ul, ol) {
     display: flex;
     flex-direction: column;
     gap: var(--space-8);
@@ -268,8 +284,10 @@
     margin: 0;
     padding-left: 20px;
   }
-  .cs-article ul { list-style: disc }
-  .cs-article ol { list-style: decimal }
+  .cs-prose > ul,
+  .cs-prose > :is(ul, ol) ul { list-style: disc }
+  .cs-prose > ol,
+  .cs-prose > :is(ul, ol) ol { list-style: decimal }
 
   /* LIST RHYTHM, and it is deliberately NOT the 28/28 that would match the
      paragraph, nor the 2.5:1 that headings take. It is the inverse shape.
