@@ -1,6 +1,6 @@
 /* The verify runner: build, serve, check, tear down.
  *
- * WHY THIS EXISTS. Three of the four checks drive a real browser against a real
+ * WHY THIS EXISTS. Four of the five checks drive a real browser against a real
  * URL, and nothing started the server they need. `npm run verify` died on the first
  * script with ERR_CONNECTION_REFUSED, which reads as a broken article system
  * rather than as a missing precondition. CLAUDE.md's build workflow says to run
@@ -47,7 +47,7 @@ const ROOT = fileURLToPath(new URL("../../_site/", import.meta.url));
 /* Static checks read files and need neither a build nor a server, so they run
    first and a mismatch fails the run before a browser is started. */
 const STATIC_CHECKS = ["contract.js"];
-const BROWSER_CHECKS = ["manifest.mjs", "sweep.mjs", "fingerprint.mjs"];
+const BROWSER_CHECKS = ["manifest.mjs", "sweep.mjs", "contrast.mjs", "fingerprint.mjs"];
 
 const TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -179,5 +179,5 @@ if (failure) {
 }
 console.log(
   `\n[verify] all ${STATIC_CHECKS.length + BROWSER_CHECKS.length} checks passed, ` +
-    `the last three against the production build.`
+    `the last four against the production build.`
 );

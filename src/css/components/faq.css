@@ -197,7 +197,15 @@
   .cs-pane--ink .cs-faq .cs-qa {
     border-color: var(--border-on-deep);
   }
+  /* The title is in this rule because it now carries a colour of its own. It
+     did not until the panel-label change: it inherited the pane's paper, so
+     there was nothing to map. Setting color:var(--text-body) on it made it ink
+     everywhere, which on an ink pane is ink on ink at 1.00:1, invisible, and on
+     madder is 1.99:1, the pairing SHORTCODES.md bans outright. Both were caught
+     by the contrast script on its first run and by nothing before it. */
+  .cs-faq--on-deep .cs-faq__title,
   .cs-faq--on-deep .cs-qa__q,
+  .cs-pane--ink .cs-faq .cs-faq__title,
   .cs-pane--ink .cs-faq .cs-qa__q {
     color: var(--text-on-deep);
   }
@@ -223,7 +231,9 @@
   .cs-pane--madder .cs-faq .cs-qa {
     border-color: var(--border-on-accent);
   }
+  .cs-faq--on-accent .cs-faq__title,
   .cs-faq--on-accent .cs-qa__q,
+  .cs-pane--madder .cs-faq .cs-faq__title,
   .cs-pane--madder .cs-faq .cs-qa__q {
     color: var(--text-on-madder);
   }

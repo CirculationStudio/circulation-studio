@@ -10,6 +10,7 @@
     "verify:fingerprint": "node tools/verify/fingerprint.mjs",
     "verify:manifest": "node tools/verify/manifest.mjs",
     "verify:contract": "node tools/verify/contract.js",
+    "verify:contrast": "node tools/verify/contrast.mjs",
     "verify": "node tools/verify/run.mjs"
   },
   "repository": {
