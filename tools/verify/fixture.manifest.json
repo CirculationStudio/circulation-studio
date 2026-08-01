@@ -536,6 +536,18 @@
               "overflowX": "auto"
             }
           }
+        },
+        {
+          "name": "related title",
+          "selector": ".cs-related__title",
+          "source": "proposed amendment to design.md section 2: sentence case for titles in a list",
+          "expect": {
+            "fontSize": "15px",
+            "fontWeight": "600",
+            "fontFamily": "Dual",
+            "textTransform": "none",
+            "letterSpacing": "normal"
+          }
         }
       ]
     },

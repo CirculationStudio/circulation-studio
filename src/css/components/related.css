@@ -58,12 +58,37 @@
     color: var(--text-faint);
   }
 
+  /* SENTENCE CASE, AND IT IS THE ONE PLACE THIS RULE BITES TODAY.
+
+     design.md section 2 sets h1, h2 and h3 in caps without exception. That
+     rule was written for prose, where an uppercase heading arrives every few
+     hundred words and works as punctuation. A list of titles is the opposite
+     shape: three or ten of them stacked, and caps stop being punctuation and
+     become texture. Worse, they spend the only signal left. The kind label
+     above each title is already uppercase display, so an uppercase title
+     underneath it means case distinguishes nothing inside the item, and size
+     is doing all the work alone.
+
+     So: uppercase is reserved for apparatus, the kind label, the eyebrow, the
+     content label, the button. A title that names a piece of content in a list
+     is set in sentence case. Tracking drops with it, because .04em exists to
+     open up caps and does nothing for lower case.
+
+     This is an amendment to design.md section 2 and is flagged as proposed in
+     ARTICLE_SYSTEM.md section 8, not a decision already taken upstream.
+
+     SCOPED TO THE ARTICLE SYSTEM ON PURPOSE. The marketing pages have four
+     more lists that would qualify: service names, team member names, case
+     titles and outcome titles. They are deliberately not changed here. They
+     are a separate review, they move the fingerprint baseline, and the
+     amendment should be accepted before it is applied to pages that are
+     already live. */
   .cs-related__title {
     font-family: var(--font-display);
     font-weight: var(--weight-display);
     font-size: 15px;
-    letter-spacing: .04em;
-    text-transform: uppercase;
+    letter-spacing: normal;
+    text-transform: none;
     color: var(--text-body);
     /* The one interaction: the title draws to madder, matching the nav link
        language rather than inventing a card hover. */
