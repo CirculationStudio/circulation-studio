@@ -113,9 +113,16 @@
      banned outright, which the footnote marker already solved with
      --color-madder-lift.
 
-     160ms is the Reference's and is a literal: the motion scale has --dur-fast
-     at 140ms and --dur-snap at 220ms and nothing at 160. --ease-out is already
-     exactly the Reference's curve, cubic-bezier(.2, .7, .3, 1).
+     THE DURATION IS --dur-fast, 140ms, NOT THE REFERENCE'S 160. Resolved
+     against the design system rather than held as a literal. design.md section
+     5 is LOCKED and says 140ms for colour and border shifts with 220ms
+     reserved for the button snap, and tokens/layout.css carries exactly those
+     two and nothing between. Three artefacts agree and one disagrees.
+
+     The margin is 20ms on a 45 degree rotation, which nobody can see. Adding a
+     third duration to a two-value scale to encode a difference below the
+     perceptual threshold is how a scale stops being one. --ease-out was never
+     in question: it is already exactly cubic-bezier(.2, .7, .3, 1).
 
      It is a flex item, which blockifies it, which is what lets transform apply
      to a pseudo-element at all. */
@@ -126,7 +133,7 @@
     font-size: 20px;
     line-height: 1;
     color: var(--color-madder);
-    transition: transform 160ms var(--ease-out);
+    transition: transform var(--dur-fast) var(--ease-out);
   }
   .cs-qa[open] .cs-qa__q::after {
     transform: rotate(45deg);
