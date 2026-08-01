@@ -346,7 +346,7 @@ person reading the rules gets the answer instead of rediscovering the question.
 `tokens/typography.css`, so `/design-sync` covers them and the reconciliation can
 see them. They had lived only in this repo since the article system was built.
 
-### Three things still open, and the first is the important one
+### Two things still open, and the first is the important one
 
 **`components/components.css` does not carry the on-accent variants.** They are
 named in `design.md` section 6 and running in this build from a local copy in
@@ -357,13 +357,20 @@ ink-press, but a derived value is not a specified one. Naming a variant without
 implementing it is the same failure as implementing one without naming it, in
 the other direction, and `design.md` now says so about itself.
 
-**`tokens/typography.css` still says `--text-base:17px`** while this build ships
-18px, which DESIGN_SYSTEM.md records as Reference drift corrected on 2026-07-30.
-`design.md` section 2 also says 17px. The correction was never taken upstream,
-so the token file and the running site disagree about body size. Left alone
-deliberately: changing a LOCKED value is a bigger call than any of the six, and
-it wants a decision rather than a patch. `--text-faint` has the same shape,
-`.45` upstream against `.65` here.
+**Both LOCKED token corrections are promoted, 2026-08-01.** `--text-base` is
+18px in `tokens/typography.css` and in `design.md` section 2; `--text-faint` is
+`rgba(33,21,35,.65)` in `tokens/colors.css`. Both had been corrected in this
+build on 2026-07-30 and neither correction had reached the design system, so the
+next sync would have pulled both backwards. Each upstream comment records the
+direction: corrected in the build first, promoted after, because the running
+site was the reviewed artefact and the token file was the stale copy.
+
+`--text-faint` was an accessibility correction rather than a preference, and the
+comment carries the measurements so nobody lightens it back for tone. At `.45`
+it was 2.86:1 on paper, 2.80:1 on mist and 2.91:1 on white, failing AA and also
+failing the 3:1 large-text exemption, which does not apply anyway to text set at
+11px to 13px. At `.65` it is 5.28, 5.05 and 5.47. Verified independently here
+before it was written upstream, not taken on report.
 
 **Names still diverge across the boundary.** Upstream is `--track-caps`,
 `--measure`, `--ink`; this repo is `--tracking-caps`, `--container-measure`,
