@@ -142,7 +142,263 @@
           "selector": "[data-provenance='field-observation']",
           "count": 2
         }
-      }
+      },
+      "typography": [
+        {
+          "name": "takeaways label",
+          "selector": ".cs-takeaways__title",
+          "source": "Component Reference",
+          "expect": {
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "fontFamily": "Dual",
+            "letterSpacing": "1.4px"
+          }
+        },
+        {
+          "name": "takeaways item",
+          "selector": ".cs-takeaways li",
+          "source": "Component Reference",
+          "expect": {
+            "fontSize": "15px"
+          }
+        },
+        {
+          "name": "faq title",
+          "selector": ".cs-faq__title",
+          "source": "repo decision: a faq title is a section heading, so it takes the article h2 scale",
+          "expect": {
+            "fontSize": "22px",
+            "fontWeight": "600",
+            "fontFamily": "Dual",
+            "letterSpacing": "1.32px"
+          }
+        },
+        {
+          "name": "qa question",
+          "selector": ".cs-qa__q",
+          "source": "repo decision: set in the body face, see note in the report",
+          "expect": {
+            "fontSize": "16px",
+            "fontWeight": "400",
+            "fontFamily": "Lora"
+          }
+        },
+        {
+          "name": "execsummary label",
+          "selector": ".cs-execsummary__label",
+          "source": "Component Reference",
+          "expect": {
+            "fontSize": "12px",
+            "fontWeight": "600",
+            "fontFamily": "Dual",
+            "letterSpacing": "1.68px"
+          }
+        },
+        {
+          "name": "execsummary body",
+          "selector": ".cs-execsummary p",
+          "source": "Component Reference",
+          "expect": {
+            "fontSize": "18px"
+          }
+        },
+        {
+          "name": "execsummary item",
+          "selector": ".cs-execsummary li",
+          "source": "Component Reference",
+          "expect": {
+            "fontSize": "15px"
+          }
+        },
+        {
+          "name": "methodology title",
+          "selector": ".cs-methodology__title",
+          "source": "Component Reference",
+          "expect": {
+            "fontSize": "12px",
+            "fontWeight": "600",
+            "fontFamily": "Dual",
+            "letterSpacing": "1.2px"
+          }
+        },
+        {
+          "name": "method label",
+          "selector": ".cs-method__label",
+          "source": "Component Reference",
+          "expect": {
+            "fontSize": "11px",
+            "fontWeight": "500",
+            "fontFamily": "Dual",
+            "letterSpacing": "1.32px"
+          }
+        },
+        {
+          "name": "method body",
+          "selector": ".cs-method__body",
+          "source": "Component Reference",
+          "expect": {
+            "fontSize": "15px"
+          }
+        },
+        {
+          "name": "references label",
+          "selector": ".cs-references__label",
+          "source": "Component Reference",
+          "expect": {
+            "fontSize": "12px",
+            "fontWeight": "600",
+            "fontFamily": "Dual",
+            "letterSpacing": "1.68px"
+          }
+        },
+        {
+          "name": "ref item",
+          "selector": ".cs-ref",
+          "source": "Component Reference",
+          "expect": {
+            "fontSize": "14px"
+          }
+        },
+        {
+          "name": "references note",
+          "selector": ".cs-references__note",
+          "source": "Component Reference",
+          "expect": {
+            "fontSize": "13px"
+          }
+        },
+        {
+          "name": "related label",
+          "selector": ".cs-related__label",
+          "source": "Component Reference",
+          "expect": {
+            "fontSize": "11px",
+            "fontWeight": "500",
+            "fontFamily": "Dual",
+            "letterSpacing": "1.54px"
+          }
+        },
+        {
+          "name": "callout label",
+          "selector": ".cs-callout__label",
+          "source": "Component Reference",
+          "expect": {
+            "fontSize": "10px",
+            "fontWeight": "600",
+            "fontFamily": "Dual",
+            "letterSpacing": "1.4px"
+          }
+        },
+        {
+          "name": "callout body",
+          "selector": ".cs-callout__body p",
+          "source": "Component Reference",
+          "expect": {
+            "fontSize": "15px"
+          }
+        },
+        {
+          "name": "stat value",
+          "selector": ".cs-stat__value",
+          "source": "Component Reference",
+          "expect": {
+            "fontSize": "56px",
+            "fontWeight": "200",
+            "fontFamily": "Dual"
+          }
+        },
+        {
+          "name": "stat source",
+          "selector": ".cs-stat__source",
+          "source": "Component Reference",
+          "expect": {
+            "fontSize": "12px"
+          }
+        },
+        {
+          "name": "table number",
+          "selector": ".cs-table__number",
+          "source": "Component Reference",
+          "expect": {
+            "fontSize": "11px",
+            "fontWeight": "600",
+            "fontFamily": "Dual",
+            "letterSpacing": "1.32px"
+          }
+        },
+        {
+          "name": "pullquote",
+          "selector": ".cs-pullquote",
+          "source": "Component Reference",
+          "expect": {
+            "fontSize": "28px",
+            "fontWeight": "300",
+            "fontFamily": "Dual"
+          }
+        },
+        {
+          "name": "pullquote cite",
+          "selector": ".cs-pullquote cite",
+          "source": "Component Reference",
+          "expect": {
+            "fontSize": "12px",
+            "fontWeight": "500",
+            "fontFamily": "Dual",
+            "letterSpacing": "1.68px"
+          }
+        },
+        {
+          "name": "footnote item",
+          "selector": ".cs-footnotes li",
+          "source": "Component Reference",
+          "expect": {
+            "fontSize": "13px"
+          }
+        },
+        {
+          "name": "fn marker",
+          "selector": ".cs-fnref",
+          "source": "Component Reference",
+          "expect": {
+            "fontSize": "11.7px",
+            "fontWeight": "500",
+            "fontFamily": "Dual"
+          }
+        },
+        {
+          "name": "observed",
+          "selector": ".cs-observed",
+          "source": "repo decision, no Reference counterpart",
+          "expect": {
+            "fontSize": "12.6px",
+            "fontWeight": "500",
+            "fontFamily": "Dual",
+            "letterSpacing": "1.764px"
+          }
+        },
+        {
+          "name": "prose h2",
+          "selector": ".cs-article__column > h2",
+          "source": "Component Reference",
+          "expect": {
+            "fontSize": "22px",
+            "fontWeight": "600",
+            "fontFamily": "Dual",
+            "letterSpacing": "1.32px"
+          }
+        },
+        {
+          "name": "prose p",
+          "selector": ".cs-article__column > p",
+          "source": "Component Reference",
+          "expect": {
+            "fontSize": "18px",
+            "fontWeight": "400",
+            "fontFamily": "Lora"
+          }
+        }
+      ]
     },
     {
       "url": "/library/whitepaper-test/",
@@ -175,7 +431,91 @@
           "selector": ".cs-article__deck",
           "count": 0
         }
-      }
+      },
+      "typography": [
+        {
+          "name": "cover kind",
+          "selector": ".cs-cover__kind",
+          "source": "Component Reference",
+          "expect": {
+            "fontSize": "11px",
+            "fontWeight": "600",
+            "fontFamily": "Dual",
+            "letterSpacing": "1.54px"
+          }
+        },
+        {
+          "name": "cover edition",
+          "selector": ".cs-cover__edition",
+          "source": "Component Reference",
+          "expect": {
+            "fontSize": "11px",
+            "fontWeight": "500",
+            "fontFamily": "Dual",
+            "letterSpacing": "1.54px"
+          }
+        },
+        {
+          "name": "cover h1",
+          "selector": ".cs-cover h1",
+          "source": "Component Reference",
+          "expect": {
+            "fontWeight": "600",
+            "fontFamily": "Dual",
+            "textTransform": "uppercase"
+          },
+          "expectAt": {
+            "1440": {
+              "fontSize": "44px",
+              "letterSpacing": "1.76px"
+            },
+            "390": {
+              "fontSize": "30px",
+              "letterSpacing": "1.2px"
+            }
+          }
+        },
+        {
+          "name": "cover deck",
+          "selector": ".cs-cover__deck",
+          "source": "Component Reference",
+          "expect": {
+            "fontWeight": "400",
+            "fontFamily": "Lora",
+            "fontStyle": "italic"
+          },
+          "expectAt": {
+            "1440": {
+              "fontSize": "19px"
+            },
+            "390": {
+              "fontSize": "17px"
+            }
+          }
+        },
+        {
+          "name": "cover meta label",
+          "selector": ".cs-cover__meta dt",
+          "source": "Component Reference",
+          "expect": {
+            "fontSize": "10px",
+            "fontWeight": "500",
+            "fontFamily": "Dual",
+            "letterSpacing": "1.4px"
+          }
+        },
+        {
+          "name": "cover meta value",
+          "selector": ".cs-cover__meta dd",
+          "source": "Component Reference",
+          "expect": {
+            "fontSize": "14px",
+            "fontWeight": "400",
+            "fontFamily": "Lora"
+          }
+        }
+      ]
     }
-  ]
+  ],
+  "_typography": "Each block declares the computed values that would be wrong if its stylesheet never shipped or its rule lost to a broader selector. Both of those happened and all four scripts stayed green, because a block that renders, counts and aligns can still be the wrong size. DECLARED HERE, NOT READ BACK FROM THE CSS: comparing a computed value to the rule that produced it proves only that the browser works. `source` records where each value came from. `expect` holds values asserted at every width; `expectAt` holds the ones that differ by width."
 }

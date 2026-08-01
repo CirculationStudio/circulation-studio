@@ -191,11 +191,23 @@ missing rather than reporting that something was still busy.
 Each answers a different question, and the failure mode all three exist to
 prevent is **a check that passes having measured nothing**.
 
-- **`verify:manifest`** asks *did exactly what we declared render*. Exact counts
-  from `tools/verify/fixture.manifest.json`. It exists because the fixture
-  silently lost a block three times: a markdown edit that matched nothing is
-  indistinguishable from a block nobody asked for. Change the fixture, change
-  the manifest, same commit.
+- **`verify:manifest`** asks *did exactly what we declared render, and is it
+  the size it claims*. Exact counts from `tools/verify/fixture.manifest.json`,
+  plus each block's signature typography measured at 1440 and 390. It exists
+  because the fixture silently lost a block three times: a markdown edit that
+  matched nothing is indistinguishable from a block nobody asked for. Change the
+  fixture, change the manifest, same commit.
+
+  **The typography half closes a blind spot all four scripts shared.** Two
+  defects shipped through every one of them: two component stylesheets were
+  never imported, and `.cs-article h2` outranked six blocks' labels. Both
+  rendered, both counted, both aligned on the prose edge, because an unstyled
+  block is still a block in the right place. Nothing measured whether a block's
+  type was the size it claimed. The declared values live in the manifest and are
+  never read back from the component CSS, because comparing a computed value to
+  the rule that produced it proves only that the browser works. Each entry
+  records where its value came from, the Component Reference or a repo
+  decision.
 - **`verify:sweep`** asks *is every element type present and on one left edge*.
   Declared minimums per type, so a selector that stops matching fails instead of
   reporting alignment across an empty set. It caught `related` rendering at the

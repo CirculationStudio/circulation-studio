@@ -29,20 +29,28 @@ const manifest = JSON.parse(
   readFileSync(new URL("./fixture.manifest.json", import.meta.url), "utf8")
 );
 
+/* Counts do not change with the viewport, so they are taken once. Type does,
+   which is why the typography pass runs at both. */
+const WIDTHS = [1440, 390];
+
 const browser = await chromium.launch();
-const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
-const page = await context.newPage();
 
 const failures = [];
 let declared = 0;
+let asserted = 0;
+
+for (const width of WIDTHS) {
+  const context = await browser.newContext({ viewport: { width, height: 900 } });
+  const page = await context.newPage();
 
 /* One entry per fixture page. The essay fixture and the whitepaper fixture
    declare different blocks, and a count that belongs to one would be a silent
    zero on the other, so each page carries its own. */
 for (const fixture of manifest.pages) {
   await page.goto(BASE + fixture.url, { waitUntil: "domcontentloaded" });
-  await assertReadyToMeasure(page, fixture.url);
+  await assertReadyToMeasure(page, `${fixture.url} @${width}`);
 
+  if (width === WIDTHS[0]) {
   const counts = await page.evaluate(
     (blocks) =>
       Object.fromEntries(
@@ -71,9 +79,83 @@ for (const fixture of manifest.pages) {
       );
     }
   }
+  }
+
+  /* ---- signature typography ----
+
+     Reads only the properties an entry declares, so a block that cares about
+     its label's size and nothing else says so and is not held to values it
+     never claimed. */
+  const type = await page.evaluate(
+    (entries) =>
+      entries.map((entry) => {
+        const el = document.querySelector(entry.selector);
+        if (!el) return { name: entry.name, missing: true };
+        const c = getComputedStyle(el);
+        return {
+          name: entry.name,
+          values: {
+            fontSize: c.fontSize,
+            fontWeight: c.fontWeight,
+            fontFamily: c.fontFamily.split(",")[0].replace(/["']/g, "").trim(),
+            letterSpacing: c.letterSpacing,
+            fontStyle: c.fontStyle,
+            textTransform: c.textTransform
+          }
+        };
+      }),
+    fixture.typography ?? []
+  );
+
+  for (const [i, entry] of (fixture.typography ?? []).entries()) {
+    const got = type[i];
+    const want = { ...entry.expect, ...(entry.expectAt?.[String(width)] ?? {}) };
+
+    if (got.missing) {
+      failures.push(
+        `${fixture.url} @${width} ${entry.name}: nothing matches "${entry.selector}", ` +
+          `so its typography was not measured at all.`
+      );
+      console.log(`  !! ${entry.name.padEnd(20)} @${width} selector matched nothing`);
+      continue;
+    }
+
+    const wrong = Object.entries(want).filter(([prop, value]) => got.values[prop] !== value);
+    asserted += Object.keys(want).length;
+
+    if (wrong.length) {
+      for (const [prop, value] of wrong) {
+        failures.push(
+          `${fixture.url} @${width} ${entry.name}: ${prop} is ${got.values[prop]}, ` +
+            `declared ${value} (${entry.selector}). Either the block's stylesheet is ` +
+            `not shipping, or a broader selector is outranking its rule. ` +
+            `Declared source: ${entry.source}.`
+        );
+      }
+      console.log(
+        `  !! ${entry.name.padEnd(20)} @${width} ` +
+          wrong.map(([p, v]) => `${p} ${got.values[p]} not ${v}`).join(", ")
+      );
+    } else {
+      console.log(`     ${entry.name.padEnd(20)} @${width} ${Object.keys(want).length} value(s) ok`);
+    }
+  }
+}
+
+  await context.close();
 }
 
 await browser.close();
+
+/* A run that asserted no typography has measured nothing about type, which is
+   the whole point of this pass and exactly the shape of the two defects it was
+   written for. */
+if (!asserted) {
+  console.error("MANIFEST FAILED: no typography values were asserted at all.");
+  console.error("  The declarations were dropped or the key was renamed, and the");
+  console.error("  type pass went green having measured nothing.");
+  process.exit(1);
+}
 
 if (failures.length) {
   console.error(`\nMANIFEST FAILED, ${failures.length} mismatch(es):`);
@@ -81,6 +163,7 @@ if (failures.length) {
   process.exit(1);
 }
 console.log(
-  `\nMANIFEST MATCHED. ${declared} block types at their declared counts across ` +
-    `${manifest.pages.length} fixture page(s).`
+  `\nMANIFEST MATCHED. ${declared} block types at their declared counts, and ` +
+    `${asserted} typography values across ${manifest.pages.length} fixture page(s) ` +
+    `at ${WIDTHS.join(" and ")}.`
 );
