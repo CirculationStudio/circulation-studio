@@ -271,6 +271,16 @@ paragraph rule is doing any work.
 
 ## Case five, an h2 as the last element in the body
 
+{% execsummary %}
+The panel that opens a whitepaper. Its label is madder where takeaways is ink,
+because an executive summary outranks a takeaways panel and the accent is what
+says so before anyone reads a word of either.
+
+1. It paints no ground, unlike every other pane-excluded block.
+2. It is excluded anyway, because madder on ink is 1.99:1 and banned.
+3. The build error says label rather than ground, so it is true.
+{% endexecsummary %}
+
 {% related title="Related" %}
 {% item kind="Field Note", title="How the measure was chosen", url="/library/measure/" %}
 {% item kind="Guide", title="Writing for answer engines", url="/library/aeo/" %}

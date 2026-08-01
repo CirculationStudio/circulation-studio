@@ -256,7 +256,7 @@ The build fails on a marker with no note, a note with no marker, or a duplicate 
 
 | Shortcode | Status | Args | Width | P | Notes |
 |---|---|---|---|---|---|
-| `execsummary` | PLANNED | `title` | measure | P | Default title "Executive summary" |
+| `execsummary` | LIVE | `title` | measure | P | Default title "Executive summary". Label is madder, unlike `takeaways` which is ink: an executive summary outranks a takeaways panel |
 | `methodology` | PLANNED | `title` | measure | P | |
 |   `method` | PLANNED | `label` | | P | Sample, Collection, Normalization, Limitations |
 | `figure` | PLANNED | `caption` **`source`** | main | P | Numbered automatically |

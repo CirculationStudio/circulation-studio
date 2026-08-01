@@ -89,6 +89,18 @@
         "related item": {
           "selector": ".cs-related__item",
           "count": 3
+        },
+        "execsummary": {
+          "selector": ".cs-execsummary",
+          "count": 1
+        },
+        "execsummary label": {
+          "selector": ".cs-execsummary__label",
+          "count": 1
+        },
+        "execsummary item": {
+          "selector": ".cs-execsummary li",
+          "count": 3
         }
       }
     },

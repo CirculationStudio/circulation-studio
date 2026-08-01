@@ -1039,6 +1039,29 @@ export default function (eleventyConfig) {
     );
   });
 
+  /* execsummary: the panel that opens a whitepaper.
+
+     PANE-EXCLUDED FOR ITS LABEL, NOT FOR A GROUND. Every other excluded block
+     paints something. This one is a border and text, which is the shape that
+     inherits a surface cleanly, and it is excluded because the label is madder:
+     1.99:1 on ink, banned outright, and invisible on madder. The reason in
+     data-no-pane says so, because the build error quotes it and an error that
+     names the wrong cause is one someone argues with.
+
+     The label is the `title`, and it is an h2 so a whitepaper's outline still
+     reads in order. takeaways does the same. It is set at panel-label size
+     rather than section-heading size, which is why the rule is in
+     execsummary.css rather than inherited. */
+  eleventyConfig.addPairedShortcode("execsummary", function (content, options = {}) {
+    const title = (options && options.title) || "Executive summary";
+    return (
+      `\n<div class="cs-execsummary" data-no-pane="madder label, banned on ink">\n` +
+      `<h2 class="cs-execsummary__label">${escapeHtml(title)}</h2>\n\n` +
+      `${content.trim()}` +
+      `\n\n</div>\n`
+    );
+  });
+
   /* related and item: the second parent-and-child pair, following faq exactly.
 
      ITEMS ARE EXPLICIT FOR NOW. SHORTCODES.md describes related as pulling

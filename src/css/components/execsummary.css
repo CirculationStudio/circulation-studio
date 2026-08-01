@@ -1,0 +1,84 @@
+/* Executive summary: the panel that opens a whitepaper.
+ *
+ * THE LABEL IS MADDER, AND TAKEAWAYS' IS INK. That is deliberate and it is the
+ * whole relationship between the two blocks: an executive summary outranks a
+ * takeaways panel, and the accent is what says so at a glance. Do not
+ * harmonise them later. If one of them has to change, it is a decision about
+ * which block leads a document, not a tidy-up.
+ *
+ * The two differ in ground as well. takeaways sits on mist with a hairline;
+ * this sits on the page with a strong border and no fill at all, which reads as
+ * heavier without being louder.
+ *
+ * PANE-EXCLUDED, AND NOT FOR THE REASON YOU WOULD GUESS. Every other excluded
+ * block is excluded for a painted ground. This one paints nothing: it is a
+ * border and text, which by the test in SHORTCODES.md is exactly the shape that
+ * INHERITS a surface. It is excluded for its label. Madder on ink is 1.99:1 and
+ * banned outright, so on an ink pane the label would be unreadable, and on
+ * madder it would vanish into the ground. The footnote marker had the same
+ * problem and was solved with --color-madder-lift; that is available here too
+ * if this block is ever wanted inside a pane, and it would then inherit
+ * cleanly. Until someone decides that, the exclusion is enforced and the
+ * data-no-pane reason says label rather than ground, because the build error
+ * has to be true.
+ *
+ * RADIUS --radius-control. Flow spacing the standard 40px symmetric: a summary
+ * belongs to neither neighbour.
+ *
+ * ONE ADDITION WITH NO REFERENCE COUNTERPART, marked as the article prose
+ * margins are. The Reference gives the body margin 0, which is right for its
+ * own shape of one paragraph followed by a list. Two consecutive paragraphs
+ * would then collide outright, so p + p carries 16px. The value is the existing
+ * --space-16 rather than a new number, and nothing else depends on it. */
+@layer components {
+  .cs-prose > .cs-execsummary {
+    margin-block: var(--space-40);
+  }
+
+  .cs-execsummary {
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-control);
+    padding: 32px;
+  }
+
+  .cs-execsummary__label {
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 12px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-madder);
+    margin: 0 0 var(--space-16);
+  }
+
+  .cs-execsummary p {
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    line-height: 1.7;
+    color: var(--text-body);
+    margin: 0;
+  }
+  /* The addition described above. */
+  .cs-execsummary p + p {
+    margin-top: var(--space-16);
+  }
+
+  .cs-execsummary ol,
+  .cs-execsummary ul {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 20px 0 0;
+    padding-left: 20px;
+  }
+  .cs-execsummary ol { list-style: decimal }
+  .cs-execsummary ul { list-style: disc }
+
+  .cs-execsummary li {
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-body);
+    margin: 0;
+  }
+}
