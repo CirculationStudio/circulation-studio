@@ -101,6 +101,22 @@
         "execsummary item": {
           "selector": ".cs-execsummary li",
           "count": 3
+        },
+        "methodology": {
+          "selector": ".cs-methodology",
+          "count": 1
+        },
+        "methodology title": {
+          "selector": ".cs-methodology__title",
+          "count": 1
+        },
+        "method": {
+          "selector": ".cs-method",
+          "count": 2
+        },
+        "method label": {
+          "selector": ".cs-method__label",
+          "count": 2
         }
       }
     },

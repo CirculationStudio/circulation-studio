@@ -225,6 +225,16 @@ const CHILD_PAIRS = [
       "which reads as a stray link someone left in the prose"
   },
   {
+    child: "cs-method",
+    parent: "cs-methodology",
+    name: "method",
+    parentName: "methodology",
+    wrapper: "{% methodology %} ... {% endmethodology %}",
+    degradesTo:
+      "a dt and a dd loose in the prose, which a browser renders as an " +
+      "indented line under an unstyled one and no reader reads as a labelled row"
+  },
+  {
     /* The numbering transform pairs a note with its marker and fails on either
        half missing, which is a different question from whether the note is
        inside the list. A note outside `footnotes` still has a marker, so it
@@ -1059,6 +1069,52 @@ export default function (eleventyConfig) {
       `<h2 class="cs-execsummary__label">${escapeHtml(title)}</h2>\n\n` +
       `${content.trim()}` +
       `\n\n</div>\n`
+    );
+  });
+
+  /* methodology and method: the third parent-and-child pair, following faq.
+
+     A DESCRIPTION LIST. Each row is a dt and a dd inside a div, which is the
+     grid row; dl allows that grouping and it keeps the label bound to its body
+     with no styling at all. The div is what carries the class the orphan check
+     matches, so a method can change its wrapper without the check noticing.
+
+     LABEL IS FREE TEXT AND REQUIRED. Free text because the Reference's set
+     (Sample, Collection, Normalization, Limitations) describes a survey, and
+     the first real document through this block uses "Public filings and
+     platform disclosures", "Platform and industry research" and "Field
+     observations". Closing the set would have rejected the document it was
+     built for. Required because a row with no term is a description list with
+     half a row in it.
+
+     PANE-EXCLUDED for the mist header bar, the ordinary painted-ground
+     reason. */
+  eleventyConfig.addPairedShortcode("method", function (content, options = {}) {
+    const label = (options && options.label) || "";
+    if (!String(label).trim()) {
+      throw new Error(
+        `[method] missing required "label" in ${this.page?.inputPath || "unknown file"}. ` +
+          `A row with no term is half a row, and the label is what the reader ` +
+          `scans. Labels are free text, not a closed set. See SHORTCODES.md.`
+      );
+    }
+    return (
+      `\n<div class="cs-method">\n` +
+      `<dt class="cs-method__label">${escapeHtml(label)}</dt>\n` +
+      `<dd class="cs-method__body">\n\n` +
+      `${content.trim()}` +
+      `\n\n</dd>\n</div>\n`
+    );
+  });
+
+  eleventyConfig.addPairedShortcode("methodology", function (content, options = {}) {
+    const title = (options && options.title) || "Methodology";
+    return (
+      `\n<div class="cs-methodology" data-no-pane="mist header bar">\n` +
+      `<h2 class="cs-methodology__title">${escapeHtml(title)}</h2>\n` +
+      `<dl class="cs-methodology__list">\n` +
+      `${content.trim()}` +
+      `\n</dl>\n</div>\n`
     );
   });
 

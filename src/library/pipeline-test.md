@@ -271,6 +271,17 @@ paragraph rule is doing any work.
 
 ## Case five, an h2 as the last element in the body
 
+{% methodology %}
+{% method label="Public filings and platform disclosures" %}
+The Reference's own labels describe a survey. This one describes where evidence
+came from, which is why the set is open.
+{% endmethod %}
+{% method label="Field observations" %}
+A second row, so the divider between rows is exercised and the last row's
+missing border is visible as deliberate rather than as an oversight.
+{% endmethod %}
+{% endmethodology %}
+
 {% execsummary %}
 The panel that opens a whitepaper. Its label is madder where takeaways is ink,
 because an executive summary outranks a takeaways panel and the accent is what

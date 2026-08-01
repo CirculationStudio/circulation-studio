@@ -58,6 +58,8 @@ const EXPECTED = [
   { label: "takeaways",     selector: ".cs-article__column > .cs-takeaways", min: 1, column: true },
   { label: "execsummary",   selector: ".cs-article__column > .cs-execsummary", min: 1, column: true },
   { label: "execsummary li", selector: ".cs-execsummary li",                min: 3, column: false },
+  { label: "methodology",   selector: ".cs-article__column > .cs-methodology", min: 1, column: true },
+  { label: "method",        selector: ".cs-methodology .cs-method",       min: 2, column: false },
   { label: "pullquote",     selector: ".cs-pullquote",                     min: 3, column: true },
   { label: "footnotes",     selector: ".cs-article__column > .cs-footnotes", min: 1, column: true },
   { label: "footnote li",   selector: ".cs-footnotes li",                  min: 5, column: false },

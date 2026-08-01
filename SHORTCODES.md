@@ -257,8 +257,8 @@ The build fails on a marker with no note, a note with no marker, or a duplicate 
 | Shortcode | Status | Args | Width | P | Notes |
 |---|---|---|---|---|---|
 | `execsummary` | LIVE | `title` | measure | P | Default title "Executive summary". Label is madder, unlike `takeaways` which is ink: an executive summary outranks a takeaways panel |
-| `methodology` | PLANNED | `title` | measure | P | |
-|   `method` | PLANNED | `label` | | P | Sample, Collection, Normalization, Limitations |
+| `methodology` | LIVE | `title` | measure | P | Default title "Methodology" |
+|   `method` | LIVE | **`label`** | | P | Free text, NOT a closed set. The Reference's Sample/Collection/Normalization describes a survey; real documents label where the evidence came from |
 | `figure` | PLANNED | `caption` **`source`** | main | P | Numbered automatically |
 | `references` | PLANNED | `title` | measure | P | |
 |   `ref` | PLANNED | | | P | One per source, numbered automatically |

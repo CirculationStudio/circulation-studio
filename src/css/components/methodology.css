@@ -1,0 +1,106 @@
+/* Methodology: a labelled table of how the work was done.
+ *
+ * A DESCRIPTION LIST, NOT A TABLE. Each row is a term and its description,
+ * which is what dl/dt/dd is for, and it means the pairing survives with no
+ * styling at all: read without CSS, or by a parser, it is still a label
+ * attached to a body rather than two cells that happen to be adjacent. The
+ * two-column grid is presentation over that structure, not the structure.
+ *
+ * LABELS ARE NOT A CLOSED SET, and this is the one place the Reference is
+ * actively wrong for the documents this has to carry. It offers Sample,
+ * Collection, Normalization, Limitations, which describe a survey. The real
+ * whitepaper's rows are "Public filings and platform disclosures", "Platform
+ * and industry research" and "Field observations", which describe where
+ * evidence came from. Closing the set would have rejected the first document
+ * through the block. So `label` is free text and the build checks only that it
+ * is there.
+ *
+ * PANE-EXCLUDED, and this one is the ordinary reason: the header bar is mist,
+ * a painted ground is structural, no descendant selector maps it, and the
+ * Reference gives mist no deep counterpart. On an ink pane the bar would stay
+ * light while everything around it went dark.
+ *
+ * ONE JUDGMENT CALL. The Reference gives every row a bottom hairline. Taken
+ * literally the last row draws one, then the list's 24px bottom padding, then
+ * the outer border, which reads as a divider with nothing under it. The last
+ * row's border is dropped, on the reading that the hairline is a separator
+ * between rows rather than a rule under each. Flagged rather than assumed.
+ *
+ * RADIUS --radius-control, with overflow hidden so the mist bar is clipped to
+ * it. Flow spacing the standard 40px symmetric.
+ *
+ * The two tracking values, .1em on the bar and .12em on the labels, are
+ * literals. The scale has no token at either: --tracking-btn-tight is .1em but
+ * is named for buttons, and nothing is .12em. takeaways sets its .1em the same
+ * way. */
+@layer components {
+  .cs-prose > .cs-methodology {
+    margin-block: var(--space-40);
+  }
+
+  .cs-methodology {
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-control);
+    overflow: hidden;
+  }
+
+  .cs-methodology__title {
+    background: var(--surface-panel);
+    padding: var(--space-16) 28px;
+    border-bottom: 1px solid var(--border-hairline);
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 12px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text-body);
+    margin: 0;
+  }
+
+  .cs-methodology__list {
+    margin: 0;
+    padding: var(--space-8) 28px var(--space-24);
+  }
+
+  .cs-method {
+    display: grid;
+    grid-template-columns: 170px minmax(0, 1fr);
+    gap: var(--space-24);
+    border-bottom: 1px solid var(--border-hairline);
+    padding: var(--space-16) 0;
+  }
+  /* The judgment call described above. */
+  .cs-method:last-child {
+    border-bottom: 0;
+  }
+
+  .cs-method__label {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .cs-method__body {
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-body);
+    margin: 0;
+  }
+  .cs-method__body p {
+    margin: 0;
+  }
+  .cs-method__body p + p {
+    margin-top: var(--space-16);
+  }
+
+  @media (max-width: 767px) {
+    .cs-method {
+      grid-template-columns: 1fr;
+      gap: var(--space-8);
+    }
+  }
+}
