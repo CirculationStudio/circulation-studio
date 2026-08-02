@@ -45,8 +45,29 @@ export default {
      a temporary Cloudflare hostname into the Organization's @id would have to
      be unpicked at cutover, after search engines had already resolved the
      entity against it. Worth confirming the preview host stays noindexed until
-     the cutover so the two are never both crawlable. */
-  url: "https://circulationstudio.com",
+     the cutover so the two are never both crawlable.
+
+     WWW, AND THE HOST IS PART OF THE ORIGIN. This read
+     https://circulationstudio.com until 2026-08-02, while production serves
+     www and self-canonicalises to it: the live /yelp-partners page emits
+     <link rel="canonical" href="https://www.circulationstudio.com/yelp-partners">.
+     So every page this repo built was declaring a canonical origin that
+     production redirects away from, and the JSON-LD was resolving the
+     Organization and WebSite @ids against a host that 308s.
+
+     A canonical pointing at a redirect is not a small error. It asks the
+     crawler to consolidate signals onto a URL that immediately sends it
+     somewhere else, on every page at once, and it would have shipped at
+     cutover on the pages with the most to lose. Non-www still resolves and
+     redirects, so no link is broken by this; the declaration just now matches
+     what the server does.
+
+     Everything absolute is built from this one value. The canonical tag goes
+     through the absoluteUrl filter, and schema.njk concatenates it for the
+     Organization @id, the WebSite @id, the logo, the breadcrumb root and every
+     worksFor and provider reference. That is why this is one line rather than
+     a search and replace. */
+  url: "https://www.circulationstudio.com",
 
   /* The brand mark, at a STABLE unhashed path. Pages reference the icon
      through /brand/, which Vite fingerprints into /assets/<name>-<hash>.svg;
