@@ -1,29 +1,27 @@
 /* Yelp Partners. Page-scoped, same reasoning as the other pages.
  *
- * TOKENS. Every colour in the comp resolved to one that already exists here,
- * under the local spellings: --paper to --color-paper, --ink to --surface-deep
- * or --color-ink, --madder to --accent, --slate to --text-muted, --white to
- * --surface-card, --mist to --surface-panel. Twenty-two references, nothing
- * invented. All seventeen border-radius declarations in the comp are
- * var(--radius-control), so there is no 8px drawing default to argue with this
- * time.
+ * REBUILT 2026-08-02 TO FOLLOW THE COMP. The first version kept the comp's copy
+ * and rebuilt its layout in a house idiom. Seven of eleven sections diverged:
+ * a two-column direct answer instead of one bordered mist panel, an HTML table
+ * instead of the comparison's chip rows, two columns where the comp draws four,
+ * no ink card in the party row, bare badges instead of white chips, and three
+ * identical pricing cards instead of a 2px ink lead. The structures below are
+ * the comp's, measured off its markup.
  *
- * SIZES BELOW 15px ARE px, matching the other five page stylesheets. The scale
- * tokens stop at --text-caption and a marketing page's 9, 10, 11 and 12px
- * labels have never had tokens.
+ * TOKENS. Every colour resolved to one that already exists here, and all
+ * seventeen border-radius declarations in the comp are var(--radius-control).
  *
- * ONE INK PANE AND ONE MADDER PANE. .cs-yp-cost is the deep one, .cs-yp-route
- * the accent one. Both are painted here in CSS rather than emitted by a
- * shortcode, so the article transform's one-per-page check cannot see them:
- * on a page template that budget is enforced by verify:contrast measuring the
- * grounds. See ARTICLE_SYSTEM.md section 6.
+ * THREE INK GROUNDS, AND THAT IS THE COMP. A full ink pane on cost, an ink
+ * chip as the middle party card, and a 2px ink outline on the lead pricing
+ * tier. design.md section 1 allows one deep PANE per view; a card and an
+ * outline are not panes. One madder pane, the routing band.
  */
 @layer components {
 
   /* ---- rhythm ---- */
 
   .cs-yp-section { padding-bottom: var(--space-96) }
-  .cs-yp-section--first { padding-top: var(--space-96) }
+  .cs-yp-section--first { padding-top: var(--space-96); padding-bottom: var(--space-64) }
 
   /* ---- shared type ---- */
 
@@ -32,20 +30,11 @@
     font-size: var(--text-article-h2);
     letter-spacing: var(--tracking-caps);
   }
+  .cs-yp-h2--rule { border-top: 1px solid var(--border-strong); padding-top: var(--space-16) }
   .cs-yp-lede {
-    margin: 20px 0 32px;
-    font-size: 15px;
-    color: var(--text-muted);
+    margin: var(--space-16) 0 32px;
+    font-size: var(--text-base);
     max-width: 74ch;
-  }
-  .cs-yp-kicker {
-    margin: var(--space-24) 0 0;
-    max-width: none;
-    font-family: var(--font-display);
-    font-weight: var(--weight-display);
-    font-size: 18px;
-    letter-spacing: .04em;
-    color: var(--color-ink);
   }
   .cs-yp-accent { color: var(--accent) }
   .cs-yp-head {
@@ -57,37 +46,32 @@
     padding-top: var(--space-16);
     margin-bottom: 28px;
   }
+  /* The comp opens What partners get on 2px ink: it is the section the page
+     turns on, and the heaviest rule marks it. */
+  .cs-yp-head--strong { border-top: 2px solid var(--color-ink) }
   .cs-yp-source {
     margin: 0;
     max-width: none;
-    font-family: var(--font-body);
-    font-size: 12px;
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
     color: var(--text-faint);
   }
   .cs-yp-source a { color: var(--accent); text-decoration: none }
   .cs-yp-source a:hover { color: var(--accent-hover) }
 
-  /* ---- 1 hero ---- */
+  /* ---- 1 hero: 1fr 320px ---- */
 
-  .cs-yp-hero__badge {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 0;
-    max-width: none;
+  .cs-yp-hero {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: var(--space-64);
+    align-items: start;
   }
-  /* multiply drops the badge artwork's white ground into paper. Without it the
-     file's #FFFFFF shows as a rectangle against paper's #F4F5F4. */
-  .cs-yp-hero__badge img {
-    width: 56px;
-    height: 56px;
-    object-fit: contain;
-    display: block;
-    mix-blend-mode: multiply;
-  }
-  .cs-yp-hero__badge .cs-eyebrow { margin: 0 }
   .cs-yp-hero__head {
-    margin: var(--space-24) 0 0;
+    margin: var(--space-16) 0 0;
     font-size: var(--text-h3);
     line-height: 1.4;
     max-width: 30ch;
@@ -105,9 +89,57 @@
     flex-wrap: wrap;
     margin-top: var(--space-40);
   }
+  /* The badge is the right column at full width, not an inline chip beside a
+     label. multiply drops its white ground into paper. */
+  .cs-yp-hero__aside {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-top: var(--space-8);
+  }
+  .cs-yp-hero__aside img {
+    width: 100%;
+    max-width: 320px;
+    aspect-ratio: 1;
+    object-fit: contain;
+    display: block;
+    mix-blend-mode: multiply;
+  }
   .cs-yp-hero__note {
-    margin: var(--space-16) 0 0;
+    margin: 0;
     max-width: none;
+    border-top: 1px solid var(--border-strong);
+    padding-top: 12px;
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 10px;
+    line-height: 1.5;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  /* ---- 2 direct answer: ONE bordered mist panel ---- */
+
+  .cs-yp-answer {
+    background: var(--surface-panel);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-control);
+    padding: 48px;
+  }
+  /* 21px, the comp's own value. Larger than the page's body copy because this
+     paragraph IS the direct answer, the thing an answer engine lifts. */
+  .cs-yp-answer__body {
+    margin: var(--space-24) 0 0;
+    font-size: 21px;
+    line-height: 1.6;
+    max-width: 80ch;
+  }
+  .cs-yp-answer__label {
+    margin: 32px 0 0;
+    max-width: none;
+    border-top: 1px solid var(--border-strong);
+    padding-top: 20px;
     font-family: var(--font-display);
     font-weight: var(--weight-medium);
     font-size: 11px;
@@ -115,42 +147,46 @@
     text-transform: uppercase;
     color: var(--text-faint);
   }
-
-  /* ---- 2 direct answer ---- */
-
-  .cs-yp-answer {
+  .cs-yp-answer__grid {
     display: grid;
-    grid-template-columns: 1.3fr 1fr;
-    gap: var(--space-64);
-    align-items: start;
-  }
-  .cs-yp-answer__body { margin: var(--space-24) 0 0; font-size: 16px }
-  .cs-yp-requires {
-    background: var(--surface-panel);
-    padding: 28px;
-  }
-  .cs-yp-requires .cs-eyebrow { margin: 0 0 var(--space-16) }
-  .cs-yp-requires__list {
-    margin: 0;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin: var(--space-24) 0 0;
     padding: 0;
     list-style: none;
   }
-  .cs-yp-requires__list li {
-    border-top: 1px solid var(--border-hairline);
-    padding: 12px 0;
+  .cs-yp-answer__grid li {
     font-family: var(--font-body);
-    font-size: 14px;
+    font-size: 16px;
     line-height: 1.6;
     color: var(--color-ink);
   }
-
-  /* ---- 2b in plain terms ---- */
-
-  .cs-yp-prose { margin-top: var(--space-16) }
-  .cs-yp-prose p {
-    margin: 0 0 var(--space-16);
-    max-width: var(--container-measure);
+  .cs-yp-answer__grid li + li {
+    border-left: 1px solid var(--border-hairline);
+    padding-left: var(--space-24);
+    margin-left: var(--space-24);
   }
+
+  /* ---- 2b in plain terms: 280px label column ---- */
+
+  .cs-yp-plain {
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: var(--space-64);
+    align-items: start;
+  }
+  .cs-yp-plain__kicker {
+    margin: var(--space-16) 0 0;
+    max-width: none;
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 15px;
+    line-height: 1.35;
+    letter-spacing: .01em;
+    color: var(--accent);
+  }
+  .cs-yp-plain__prose p { margin: 0 0 var(--space-16); max-width: 78ch }
+  .cs-yp-plain__prose p:last-child { margin-bottom: 0 }
+
   .cs-yp-triad {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -167,91 +203,103 @@
     color: var(--text-muted);
   }
 
-  /* ---- 3 what partners get ---- */
+  /* ---- 3 what partners get: FOUR columns ---- */
 
-  .cs-yp-numbered {
+  .cs-yp-four {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     margin: 0;
     padding: 0;
     list-style: none;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 32px var(--space-64);
   }
-  .cs-yp-numbered li {
-    display: grid;
-    grid-template-columns: 40px minmax(0, 1fr);
-    gap: var(--space-16);
-    align-items: start;
+  .cs-yp-four li { padding-top: 4px }
+  .cs-yp-four li + li {
+    border-left: 1px solid var(--border-hairline);
+    padding: 4px 0 0 32px;
+    margin-left: 32px;
   }
-  /* Dual 200, which design.md section 2 names for stat values. The number is a
-     marker rather than content, so it is aria-hidden and the list carries the
-     order semantically. */
-  .cs-yp-numbered__n {
+  /* Dual 200 at 40px, the comp's value and the stat-value weight design.md
+     section 2 names. */
+  .cs-yp-four__n {
+    display: block;
     font-family: var(--font-display);
     font-weight: var(--weight-thin);
-    font-size: 32px;
+    font-size: 40px;
     line-height: 1;
     color: var(--accent);
   }
-  .cs-yp-numbered__name {
+  .cs-yp-four__name {
     display: block;
+    margin-top: var(--space-16);
     font-family: var(--font-display);
     font-weight: var(--weight-display);
-    font-size: 16px;
+    font-size: 15px;
+    line-height: 1.35;
     letter-spacing: .01em;
     color: var(--color-ink);
   }
-  .cs-yp-numbered__body {
+  .cs-yp-four__body {
     display: block;
-    margin-top: 6px;
+    margin-top: var(--space-8);
     font-family: var(--font-body);
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.6;
     color: var(--text-muted);
   }
 
-  /* ---- 4 comparison table ---- */
+  /* ---- 4 comparison: three-column rows, partner cell is a mist chip ---- */
 
-  .cs-yp-table {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
-  }
-  .cs-yp-table th,
-  .cs-yp-table td {
-    text-align: left;
-    vertical-align: top;
-    border-bottom: 1px solid var(--border-hairline);
-    padding: var(--space-16) var(--space-16) var(--space-16) 0;
-  }
-  .cs-yp-table thead th {
+  .cs-yp-cmp__head {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--space-24);
     border-bottom: 1px solid var(--border-strong);
+    padding-bottom: 12px;
+  }
+  .cs-yp-cmp__head span {
     font-family: var(--font-display);
     font-weight: var(--weight-display);
     font-size: 11px;
     letter-spacing: var(--tracking-wide);
     text-transform: uppercase;
     color: var(--color-ink);
-    padding-top: 0;
   }
-  .cs-yp-table tbody th {
-    width: 20%;
+  .cs-yp-cmp__rows { margin: 0 }
+  .cs-yp-cmp__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--space-24);
+    align-items: start;
+    border-bottom: 1px solid var(--border-hairline);
+    padding: var(--space-24) 0;
+  }
+  .cs-yp-cmp__row dt {
     font-family: var(--font-display);
     font-weight: var(--weight-medium);
     font-size: 14px;
+    line-height: 1.4;
     letter-spacing: .01em;
     color: var(--color-ink);
   }
-  .cs-yp-table td {
+  .cs-yp-cmp__row dd { margin: 0 }
+  .cs-yp-cmp__a {
     font-family: var(--font-body);
     font-size: 14px;
     line-height: 1.6;
     color: var(--text-muted);
   }
-  /* The partner column is the answer, so it carries ink rather than slate.
-     Colour is the only difference and the column header already says which is
-     which, so nothing depends on colour alone. */
-  .cs-yp-table__b { color: var(--color-ink) }
+  /* The partner answer is a mist chip, which is what the comp draws and what
+     makes the column readable as the answer rather than as a second column of
+     the same weight. */
+  .cs-yp-cmp__b {
+    background: var(--surface-panel);
+    border-radius: var(--radius-control);
+    padding: var(--space-16) 20px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-ink);
+  }
 
   /* ---- 4b THE ONE MADDER PANE ---- */
 
@@ -260,7 +308,7 @@
     color: var(--text-on-madder);
     padding: 56px;
     display: grid;
-    grid-template-columns: 1.3fr 1fr;
+    grid-template-columns: 1.15fr 1fr;
     gap: var(--space-64);
     align-items: start;
   }
@@ -338,19 +386,34 @@
     color: var(--text-on-madder);
   }
 
-  /* ---- 4c who you get at yelp ---- */
+  /* ---- 4c who you get: three cards with connectors, middle one ink ---- */
 
   .cs-yp-parties {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--space-24);
+    grid-template-columns: 1fr 40px 1fr 40px 1fr;
+    align-items: center;
+    margin-bottom: var(--space-40);
   }
   .cs-yp-parties__card {
-    border-top: 2px solid var(--color-ink);
-    padding-top: var(--space-16);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-control);
+    padding: var(--space-24);
+    align-self: stretch;
+  }
+  /* The middle card is us, and it is ink. A card, not a pane: design.md's one
+     deep pane per view is about a full band, and the comp draws this. */
+  .cs-yp-parties__card--ours {
+    background: var(--surface-deep);
+    border-color: var(--surface-deep);
+    color: var(--text-on-deep);
+  }
+  .cs-yp-parties__link {
+    height: 1px;
+    background: var(--border-strong);
+    display: block;
   }
   .cs-yp-parties__party {
-    margin: 0 0 var(--space-8);
+    margin: 0;
     max-width: none;
     font-family: var(--font-display);
     font-weight: var(--weight-display);
@@ -359,29 +422,34 @@
     text-transform: uppercase;
     color: var(--color-ink);
   }
-  .cs-yp-parties__card .cs-eyebrow { margin: 0 0 var(--space-8) }
+  .cs-yp-parties__card--ours .cs-yp-parties__party { color: var(--text-on-deep) }
+  .cs-yp-parties__role {
+    margin: var(--space-8) 0 var(--space-8);
+    max-width: none;
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  .cs-yp-parties__card--ours .cs-yp-parties__role { color: var(--color-madder-lift) }
   .cs-yp-parties__body {
     margin: 0;
     font-size: 14px;
     line-height: 1.6;
     color: var(--text-muted);
   }
+  .cs-yp-parties__card--ours .cs-yp-parties__body { color: var(--text-on-deep-muted) }
 
   .cs-yp-versus {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-40);
-    margin-top: var(--space-40);
+    grid-template-columns: 1fr 1fr;
   }
-  .cs-yp-versus__col {
-    background: var(--surface-panel);
-    padding: 28px;
-  }
-  /* The partner column sits on white against the other's mist, so the two read
-     as a pair with one of them foregrounded rather than as two panels. */
-  .cs-yp-versus__col--ours {
-    background: var(--surface-card);
-    border: 1px solid var(--border-strong);
+  .cs-yp-versus__col { padding: 28px var(--space-40) 28px 0 }
+  .cs-yp-versus__col + .cs-yp-versus__col {
+    border-left: 1px solid var(--border-hairline);
+    padding: 28px 0 28px var(--space-40);
   }
   .cs-yp-versus__col .cs-eyebrow { margin: 0 }
   .cs-yp-versus__who {
@@ -393,14 +461,10 @@
     letter-spacing: .01em;
     color: var(--color-ink);
   }
-  .cs-yp-versus__col ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
+  .cs-yp-versus__col ul { margin: 0; padding: 0; list-style: none }
   .cs-yp-versus__col li {
     border-top: 1px solid var(--border-hairline);
-    padding: 12px 0;
+    padding: 11px 0;
     font-family: var(--font-body);
     font-size: 14px;
     line-height: 1.6;
@@ -477,7 +541,6 @@
     color: var(--text-on-deep-muted);
     max-width: 72ch;
   }
-  /* madder-lift, not madder: madder on ink is 1.99:1 and banned. */
   .cs-yp-cost__cta {
     font-family: var(--font-display);
     font-weight: var(--weight-display);
@@ -489,23 +552,27 @@
   }
   .cs-yp-cost__cta:hover { color: var(--text-on-deep) }
 
-  /* ---- 6 credentials ---- */
+  /* ---- 6 credentials: badge in a white chip ---- */
 
   .cs-yp-creds {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr 1fr;
     gap: var(--space-40);
     margin-top: 28px;
   }
   .cs-yp-creds__card {
     display: grid;
-    grid-template-columns: 72px minmax(0, 1fr);
+    grid-template-columns: auto minmax(0, 1fr);
     gap: var(--space-24);
     align-items: start;
-    border-top: 1px solid var(--border-strong);
-    padding-top: var(--space-24);
   }
-  .cs-yp-creds__card img {
+  .cs-yp-creds__chip {
+    background: var(--surface-card);
+    border: 1px solid var(--border-hairline);
+    padding: 12px;
+    display: block;
+  }
+  .cs-yp-creds__chip img {
     width: 72px;
     height: 72px;
     object-fit: contain;
@@ -536,7 +603,6 @@
     gap: var(--space-40);
   }
   .cs-yp-stats__item { border-top: 1px solid var(--border-strong); padding-top: var(--space-16) }
-  /* Dual 200, the stat-value weight design.md section 2 names. */
   .cs-yp-stats__value {
     margin: 0;
     max-width: none;
@@ -585,7 +651,7 @@
     color: var(--text-muted);
   }
 
-  /* ---- 9 pricing ---- */
+  /* ---- 9 pricing: the lead tier carries 2px ink ---- */
 
   .cs-yp-tiers {
     display: grid;
@@ -594,11 +660,13 @@
   }
   .cs-yp-tiers__card {
     background: var(--surface-card);
-    border: 1px solid var(--border-strong);
-    padding: 32px;
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-control);
+    padding: 36px;
     display: flex;
     flex-direction: column;
   }
+  .cs-yp-tiers__card--lead { border: 2px solid var(--color-ink) }
   .cs-yp-tiers__card .cs-eyebrow { margin: 0 0 var(--space-16) }
   .cs-yp-tiers__name {
     margin: 0;
@@ -650,9 +718,6 @@
 
   /* ---- 10 faq ---- */
 
-  /* details/summary, so a closed answer is still in the document. The FAQPage
-     block renders from the same array, so the visible answer and the declared
-     one are one string. */
   .cs-yp-faq__item { border-bottom: 1px solid var(--border-hairline) }
   .cs-yp-faq__item summary {
     list-style: none;
@@ -700,7 +765,6 @@
     gap: 80px;
     align-items: start;
   }
-  /* Dual 300, the closing-statement exception design.md section 2 names. */
   .cs-yp-close__statement {
     margin: 0;
     max-width: none;
@@ -726,44 +790,46 @@
 
   @media (max-width: 1120px) {
     .cs-yp-section { padding-bottom: 56px }
-    .cs-yp-section--first { padding-top: 36px }
+    .cs-yp-section--first { padding-top: 36px; padding-bottom: 48px }
 
+    .cs-yp-hero { grid-template-columns: minmax(0, 1fr); gap: 32px }
     .cs-yp-hero__head { font-size: 21px; line-height: 1.42; max-width: 26ch }
     .cs-yp-hero__lede { font-size: 16px }
     .cs-yp-hero__actions .cs-btn { width: 100%; min-height: 48px; box-sizing: border-box }
+    .cs-yp-hero__aside img { max-width: 200px }
 
-    .cs-yp-answer,
+    .cs-yp-answer { padding: 28px }
+    .cs-yp-answer__body { font-size: 18px }
+    .cs-yp-answer__grid { grid-template-columns: minmax(0, 1fr) }
+    .cs-yp-answer__grid li + li {
+      border-left: 0;
+      border-top: 1px solid var(--border-hairline);
+      padding: 12px 0 0;
+      margin: 12px 0 0;
+    }
+
+    .cs-yp-plain,
     .cs-yp-triad,
-    .cs-yp-numbered,
-    .cs-yp-parties,
-    .cs-yp-versus,
     .cs-yp-creds,
     .cs-yp-grid,
     .cs-yp-tiers,
     .cs-yp-close { grid-template-columns: minmax(0, 1fr) }
-    .cs-yp-answer,
-    .cs-yp-versus,
+    .cs-yp-plain { gap: var(--space-24) }
     .cs-yp-close { gap: 32px }
-    .cs-yp-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-24) }
-    .cs-yp-stats__value { font-size: 40px }
 
-    .cs-yp-route,
-    .cs-yp-cost { padding: 28px }
-    .cs-yp-route { grid-template-columns: minmax(0, 1fr); gap: 32px }
-    .cs-yp-route__title { font-size: 21px }
-    .cs-yp-route__cta { width: 100%; min-height: 48px; box-sizing: border-box }
-    .cs-yp-cost__facts { grid-template-columns: minmax(0, 1fr); gap: var(--space-24) }
+    .cs-yp-four { grid-template-columns: minmax(0, 1fr) }
+    .cs-yp-four li + li {
+      border-left: 0;
+      border-top: 1px solid var(--border-hairline);
+      padding: 20px 0 0;
+      margin: 20px 0 0;
+    }
 
-    /* A seven-row comparison cannot hold three columns on a phone, so the
-       header row is dropped and each cell is labelled by its own column name
-       instead. The table stays a table for anything reading the markup. */
-    .cs-yp-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0) }
-    .cs-yp-table tr { display: block; border-bottom: 1px solid var(--border-strong); padding: var(--space-16) 0 }
-    .cs-yp-table th,
-    .cs-yp-table td { display: block; border: 0; padding: 0 }
-    .cs-yp-table tbody th { width: auto; margin-bottom: var(--space-8) }
-    .cs-yp-table td { margin-top: var(--space-8) }
-    .cs-yp-table td::before {
+    /* The three-column row stacks: label, then each answer with its column
+       name restored, since the header row is hidden on a phone. */
+    .cs-yp-cmp__head { display: none }
+    .cs-yp-cmp__row { grid-template-columns: minmax(0, 1fr); gap: var(--space-8) }
+    .cs-yp-cmp__row dd::before {
       content: attr(data-col);
       display: block;
       margin-bottom: 4px;
@@ -774,6 +840,26 @@
       text-transform: uppercase;
       color: var(--text-faint);
     }
+
+    .cs-yp-parties { grid-template-columns: minmax(0, 1fr); gap: var(--space-16) }
+    .cs-yp-parties__link { display: none }
+    .cs-yp-versus { grid-template-columns: minmax(0, 1fr) }
+    .cs-yp-versus__col { padding: 20px 0 }
+    .cs-yp-versus__col + .cs-yp-versus__col {
+      border-left: 0;
+      border-top: 1px solid var(--border-strong);
+      padding: 20px 0;
+    }
+
+    .cs-yp-route,
+    .cs-yp-cost { padding: 28px }
+    .cs-yp-route { grid-template-columns: minmax(0, 1fr); gap: 32px }
+    .cs-yp-route__title { font-size: 21px }
+    .cs-yp-route__cta { width: 100%; min-height: 48px; box-sizing: border-box }
+    .cs-yp-cost__facts { grid-template-columns: minmax(0, 1fr); gap: var(--space-24) }
+
+    .cs-yp-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-24) }
+    .cs-yp-stats__value { font-size: 40px }
 
     .cs-yp-close__statement { font-size: 24px }
   }

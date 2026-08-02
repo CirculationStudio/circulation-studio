@@ -321,35 +321,29 @@ closing:
 {#
   YELP PARTNERS, at /yelp-partners/ AT ROOT LEVEL.
 
-  NOT under /yelp/. That directory is the article tier: its 11tydata.js makes
-  every file in it a spoke at /yelp/<slug>/ with the article layout, cluster and
-  summary required. This is a page template and, more to the point, the URL is
-  the asset: it ranks for a Tier 1 keyword on the live site and moving it under
-  /yelp/ would throw that away for tidiness.
+  NOT under /yelp/. That directory is the article tier and this is a page
+  template, but more to the point the URL is the asset: it ranks for a Tier 1
+  keyword on the live site.
 
-  ONE INK PANE, ONE MADDER PANE, spent once each. design.md section 1 LOCKED
-  allows one deep pane per view, and one madder pane per page as amended
-  2026-08-01. The cost section is the ink one; the sales-call routing band is
-  the madder one, and its button is cs-btn--on-accent-primary, the filled
-  primary for an accent ground. A page-level primary there would put ink on
-  madder, which is 1.99:1 and banned outright. The comp gets this right; it is
-  restated here because the last comp that got it wrong shipped.
+  REBUILT 2026-08-02 TO FOLLOW THE COMP. The first version took the comp's copy
+  and rebuilt the layout in a house idiom: a two-column direct answer instead of
+  the comp's bordered mist panel, a table instead of the comparison's chip rows,
+  two columns where the comp draws four, and no ink card in the party row. The
+  comp is the authority on layout, hierarchy and spacing, and it was not
+  followed. The structures below are the comp's.
 
-  THE FAQ ANSWERS ARE IN THE DOM WHETHER OR NOT AN ITEM IS OPEN. details/summary
-  keeps closed content in the document rather than removing it, so the answer a
-  crawler reads and the answer FAQPage schema declares are the same string, from
-  the same frontmatter array, and cannot drift.
+  GROUNDS, AND THERE ARE THREE INK ONES IN THE COMP. The cost section is a full
+  ink pane, the middle party card is an ink chip, and pricing's lead tier is
+  outlined in 2px ink. design.md section 1 allows one deep PANE per view; a
+  small ink card is not a pane, and the comp draws all three. Shipped as drawn.
+  The one madder pane is the routing band, and its button is
+  cs-btn--on-accent-primary, the filled primary for an accent ground.
 #}
 
-{#- 1 HERO -#}
+{#- 1 HERO. 1fr 320px, the badge is the right column at full width. -#}
 {% call container(class="cs-yp-hero cs-yp-section cs-yp-section--first") %}
   <div>
-    <p class="cs-yp-hero__badge">
-      <img src="{{ site.cdn }}{{ credentials.items[0].image }}"
-           alt="{{ credentials.items[0].alt }}"
-           width="56" height="56" loading="eager" fetchpriority="high" decoding="async">
-      <span class="cs-eyebrow">{{ hero.eyebrow }}</span>
-    </p>
+    <p class="cs-eyebrow">{{ hero.eyebrow }}</p>
     <h1 class="cs-yp-hero__head">
       {{ hero.headBefore }} <span class="cs-yp-accent">{{ hero.headAccent }}</span> {{ hero.headAfter }}
     </h1>
@@ -358,32 +352,38 @@ closing:
       {{ button(hero.primary, href="/contact/") }}
       {{ button(hero.secondary, href="#cost", variant="secondary") }}
     </div>
+  </div>
+  <div class="cs-yp-hero__aside">
+    <img src="{{ site.cdn }}{{ credentials.items[0].image }}"
+         alt="{{ credentials.items[0].alt }}"
+         width="320" height="320" loading="eager" fetchpriority="high" decoding="async">
     <p class="cs-yp-hero__note">{{ hero.note }}</p>
   </div>
 {% endcall %}
 
-{#- 2 DIRECT ANSWER -#}
+{#- 2 DIRECT ANSWER. One bordered mist panel, with the four requirements as a
+    four-column grid inside it. -#}
 {% call container(class="cs-yp-section") %}
   <div class="cs-yp-answer">
-    <div>
-      <h2 class="cs-yp-h2">{{ answer.title }}</h2>
-      <p class="cs-yp-answer__body">{{ answer.body }}</p>
-    </div>
-    <div class="cs-yp-requires">
-      <p class="cs-eyebrow">{{ answer.requiresTitle }}</p>
-      <ul class="cs-yp-requires__list">
-        {%- for item in answer.requires %}<li>{{ item }}</li>{% endfor %}
-      </ul>
-    </div>
+    <h2 class="cs-yp-h2">{{ answer.title }}</h2>
+    <p class="cs-yp-answer__body">{{ answer.body }}</p>
+    <p class="cs-yp-answer__label">{{ answer.requiresTitle }}</p>
+    <ul class="cs-yp-answer__grid">
+      {%- for item in answer.requires %}<li>{{ item }}</li>{% endfor %}
+    </ul>
   </div>
 {% endcall %}
 
-{#- 2b IN PLAIN TERMS -#}
+{#- 2b IN PLAIN TERMS. 280px label column, then prose, then a three-up. -#}
 {% call container(class="cs-yp-section") %}
-  <h2 class="cs-yp-h2">{{ plain.title }}</h2>
-  <p class="cs-yp-kicker">{{ plain.subtitle }}</p>
-  <div class="cs-yp-prose">
-    {%- for p in plain.body %}<p>{{ p }}</p>{% endfor %}
+  <div class="cs-yp-plain">
+    <div>
+      <h2 class="cs-yp-h2">{{ plain.title }}</h2>
+      <p class="cs-yp-plain__kicker">{{ plain.subtitle }}</p>
+    </div>
+    <div class="cs-yp-plain__prose">
+      {%- for p in plain.body %}<p>{{ p }}</p>{% endfor %}
+    </div>
   </div>
   <div class="cs-yp-triad">
     {%- for card in plain.cards %}
@@ -395,50 +395,48 @@ closing:
   </div>
 {% endcall %}
 
-{#- 3 WHAT PARTNERS GET -#}
+{#- 3 WHAT PARTNERS GET. Four columns, Dual 200 at 40px, rule dividers. -#}
 {% call container(class="cs-yp-section") %}
-  <div class="cs-yp-head">
+  <div class="cs-yp-head cs-yp-head--strong">
     <h2 class="cs-yp-h2">{{ partnersGet.title }}</h2>
     <p class="cs-yp-source">{{ partnersGet.source }}</p>
   </div>
-  <ol class="cs-yp-numbered">
+  <ol class="cs-yp-four">
     {%- for item in partnersGet.items %}
     <li>
-      <span class="cs-yp-numbered__n" aria-hidden="true">{{ loop.index }}</span>
-      <span>
-        <span class="cs-yp-numbered__name">{{ item.name }}</span>
-        <span class="cs-yp-numbered__body">{{ item.body }}</span>
-      </span>
+      <span class="cs-yp-four__n" aria-hidden="true">{{ loop.index }}</span>
+      <span class="cs-yp-four__name">{{ item.name }}</span>
+      <span class="cs-yp-four__body">{{ item.body }}</span>
     </li>
     {%- endfor %}
   </ol>
 {% endcall %}
 
-{#- 4 WHAT IT MEANS FOR THE CLIENT -#}
+{#- 4 WHAT IT MEANS FOR THE CLIENT. Three-column rows, and the partner cell is
+    a mist chip. A dl rather than a table: it is seven label/value/value rows
+    read top to bottom, not a grid anyone scans by column header. -#}
 {% call container(class="cs-yp-section") %}
   <h2 class="cs-yp-h2">{{ compare.title }}</h2>
   <p class="cs-yp-lede">{{ compare.lede }}</p>
-  <table class="cs-yp-table">
-    <thead>
-      <tr>
-        <th scope="col"><span class="sr-only">What changes</span></th>
-        <th scope="col">{{ compare.colA }}</th>
-        <th scope="col">{{ compare.colB }}</th>
-      </tr>
-    </thead>
-    <tbody>
+  <div class="cs-yp-cmp">
+    <div class="cs-yp-cmp__head" aria-hidden="true">
+      <span></span>
+      <span>{{ compare.colA }}</span>
+      <span>{{ compare.colB }}</span>
+    </div>
+    <dl class="cs-yp-cmp__rows">
       {%- for row in compare.rows %}
-      <tr>
-        <th scope="row">{{ row.label }}</th>
-        <td data-col="{{ compare.colA }}">{{ row.a }}</td>
-        <td class="cs-yp-table__b" data-col="{{ compare.colB }}">{{ row.b }}</td>
-      </tr>
+      <div class="cs-yp-cmp__row">
+        <dt>{{ row.label }}</dt>
+        <dd class="cs-yp-cmp__a" data-col="{{ compare.colA }}">{{ row.a }}</dd>
+        <dd class="cs-yp-cmp__b" data-col="{{ compare.colB }}">{{ row.b }}</dd>
+      </div>
       {%- endfor %}
-    </tbody>
-  </table>
+    </dl>
+  </div>
 {% endcall %}
 
-{#- 4b THE ONE MADDER PANE -#}
+{#- 4b THE ONE MADDER PANE. 1.15fr 1fr. -#}
 {% call container(class="cs-yp-section") %}
   <div class="cs-yp-route">
     <div>
@@ -457,22 +455,24 @@ closing:
   </div>
 {% endcall %}
 
-{#- 4c WHO YOU GET AT YELP -#}
+{#- 4c WHO YOU GET AT YELP. Three party cards with connectors between them, and
+    the middle one is ink because it is us. Then the two-column comparison. -#}
 {% call container(class="cs-yp-section") %}
   <h2 class="cs-yp-h2">{{ whoTitle }}</h2>
   <p class="cs-yp-lede">{{ whoLede }}</p>
   <div class="cs-yp-parties">
     {%- for p in whoTable %}
-    <div class="cs-yp-parties__card">
+    <div class="cs-yp-parties__card{{ " cs-yp-parties__card--ours" if loop.index == 2 }}">
       <p class="cs-yp-parties__party">{{ p.party }}</p>
-      <p class="cs-eyebrow">{{ p.role }}</p>
+      <p class="cs-yp-parties__role">{{ p.role }}</p>
       <p class="cs-yp-parties__body">{{ p.body }}</p>
     </div>
+    {%- if not loop.last %}<span class="cs-yp-parties__link" aria-hidden="true"></span>{% endif %}
     {%- endfor %}
   </div>
   <div class="cs-yp-versus">
     {%- for col in whoCompare %}
-    <div class="cs-yp-versus__col{{ " cs-yp-versus__col--ours" if loop.last }}">
+    <div class="cs-yp-versus__col">
       <p class="cs-eyebrow">{{ col.title }}</p>
       <p class="cs-yp-versus__who">{{ col.who }}</p>
       <ul>
@@ -483,7 +483,7 @@ closing:
   </div>
 {% endcall %}
 
-{#- 5 COST, THE ONE INK PANE -#}
+{#- 5 COST, THE ONE INK PANE. Three facts across. -#}
 {% call container(class="cs-yp-section") %}
   <div class="cs-yp-cost" id="cost">
     <p class="cs-yp-cost__eyebrow">{{ cost.eyebrow }}</p>
@@ -503,14 +503,16 @@ closing:
   </div>
 {% endcall %}
 
-{#- 6 CREDENTIALS -#}
+{#- 6 CREDENTIALS. Each badge sits in a white chip. -#}
 {% call container(class="cs-yp-section") %}
-  <h2 class="cs-yp-h2">{{ credentials.title }}</h2>
+  <h2 class="cs-yp-h2 cs-yp-h2--rule">{{ credentials.title }}</h2>
   <div class="cs-yp-creds">
     {%- for c in credentials.items %}
     <div class="cs-yp-creds__card">
-      <img src="{{ site.cdn }}{{ c.image }}" alt="{{ c.alt }}"
-           width="72" height="72" loading="lazy" decoding="async">
+      <span class="cs-yp-creds__chip">
+        <img src="{{ site.cdn }}{{ c.image }}" alt="{{ c.alt }}"
+             width="72" height="72" loading="lazy" decoding="async">
+      </span>
       <div>
         <p class="cs-yp-creds__name">{{ c.name }}</p>
         <p class="cs-yp-creds__body">{{ c.body }}</p>
@@ -520,7 +522,7 @@ closing:
   </div>
 {% endcall %}
 
-{#- 7 PROOF -#}
+{#- 7 PROOF. Four across. -#}
 {% call container(class="cs-yp-section") %}
   <div class="cs-yp-head">
     <h2 class="cs-yp-h2">{{ proof.title }}</h2>
@@ -537,9 +539,9 @@ closing:
   </div>
 {% endcall %}
 
-{#- 8 WHAT WE DO -#}
+{#- 8 WHAT WE DO. Three across. -#}
 {% call container(class="cs-yp-section") %}
-  <h2 class="cs-yp-h2">{{ managed.title }}</h2>
+  <h2 class="cs-yp-h2 cs-yp-h2--rule">{{ managed.title }}</h2>
   <div class="cs-yp-grid">
     {%- for item in managed.items %}
     <div class="cs-yp-grid__item">
@@ -550,7 +552,7 @@ closing:
   </div>
 {% endcall %}
 
-{#- 9 PRICING -#}
+{#- 9 PRICING. The first tier is the lead and carries a 2px ink outline. -#}
 {% call container(class="cs-yp-section") %}
   <div class="cs-yp-head" id="pricing">
     <h2 class="cs-yp-h2">{{ pricing.title }}</h2>
@@ -558,7 +560,7 @@ closing:
   </div>
   <div class="cs-yp-tiers">
     {%- for tier in pricing.tiers %}
-    <div class="cs-yp-tiers__card">
+    <div class="cs-yp-tiers__card{{ " cs-yp-tiers__card--lead" if loop.first }}">
       <p class="cs-eyebrow">{{ tier.kicker }}</p>
       <p class="cs-yp-tiers__name">{{ tier.name }}</p>
       <p class="cs-yp-tiers__price">{{ tier.price }}<span class="cs-yp-tiers__unit">{{ tier.unit }}</span></p>
@@ -602,9 +604,7 @@ closing:
   </div>
 {% endcall %}
 
-{#- FAQPage, built from the SAME array the visible FAQ renders from, so the
-    two cannot drift. details keeps closed answers in the DOM, so what a
-    crawler reads and what this declares are one string. -#}
+{#- FAQPage, from the SAME array the visible FAQ renders from. -#}
 {%- set faqEntities = [] -%}
 {%- for item in faq -%}
   {%- set _ = faqEntities.push({
