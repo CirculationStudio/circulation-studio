@@ -60,3 +60,26 @@
 #   /blog/*  /library/  301
 #
 # That rule goes LAST once real rules exist, or it will swallow them.
+
+
+# ============================================================
+# LIVE RULES. Everything above this line is still commentary.
+# ============================================================
+#
+# Both sources are live and indexed on the current site, confirmed against its
+# sitemap.xml. Both destinations carry a trailing slash, because the build
+# canonicalises to the slash form and Cloudflare 308s to it: a non-slash
+# destination would make every one of these a two-hop redirect.
+#
+# The rank tracking rule is required rather than optional. The old site serves
+# BOTH /yelp-rank-tracking-tool and /yelp-rank-tracking-landing-page, each
+# self-canonicalising to itself, so the two have been splitting signals. The
+# tool URL is the one that survives: its title is a real title, the other reads
+# "Yelp Rank Tracking Landing Page", which is an internal label that leaked into
+# a public one, and its copy is a launch announcement rather than a service
+# page.
+/yelp-rank-tracking-landing-page  /yelp-rank-tracking-tool/  301
+
+# The accessibility statement kept the footer's URL rather than the live site's,
+# so this is a rename. /accessibility is live and indexed today.
+/accessibility  /accessibility-statement/  301
