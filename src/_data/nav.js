@@ -15,13 +15,23 @@ export default {
      badges, per the locked design. */
   footer: [
     { label: "Library", url: "/library/" },
-    { label: "Yelp Hub", url: "/yelp/" },
-    /* Reference rather than a service page, so footer only. Someone who wants
-       to know what the other practices are, or who found one of them and is
-       working out how they relate. A top-level nav slot would be spent on
-       something almost nobody arrives looking for. */
-    { label: "The Circulation Network", url: "/network/" },
-    { label: "Privacy Policy", url: "/privacy-policy/" },
-    { label: "Accessibility Statement", url: "/accessibility-statement/" }
+    { label: "Yelp Hub", url: "/yelp/" }
+  ],
+
+  /* THE TWO POLICY LINKS SHARE ONE ROW. Kept apart from `footer` above because
+     they render as one list item with a separator between them, not as two
+     rows, and a loop that produced both shapes would need a flag per entry.
+
+     The separator is NOT part of either link. An anchor whose accessible name
+     reads "Privacy /" is the defect this arrangement avoids, so the slash is a
+     pseudo-element on the list item and is aria-hidden by virtue of being
+     generated content. */
+  /* The entity page, rendered beside the NAP in the colophon rather than as a
+     row in the footer nav. Not an array, because there is one of it. */
+  network: { label: "The Circulation Network", url: "/network/" },
+
+  footerPolicy: [
+    { label: "Privacy", url: "/privacy-policy/" },
+    { label: "Accessibility", url: "/accessibility-statement/" }
   ]
 };

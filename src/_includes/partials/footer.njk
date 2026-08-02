@@ -27,6 +27,7 @@
        touch targets with a rule between them, and a <br>-separated run gives
        nothing to size. Both spans are display:block, so the four lines render
        exactly as before at every width above the phone breakpoint. #}
+    <div class="cs-colophon__identity">
     <address class="cs-colophon__address">
       <span class="cs-colophon__postal">
         {{ site.nap.streetAddress }}<br>
@@ -38,6 +39,21 @@
       </span>
     </address>
 
+    {# THE NETWORK LINK SITS BESIDE THE NAP, not in the footer nav list. It
+       names the entity this studio belongs to, which is the same register as
+       the address: who and where, rather than a policy or a service. It is
+       OUTSIDE the <address> element on purpose, since an entity page is not
+       contact information for this page.
+
+       It reuses the colophon's existing inline link treatment rather than
+       introducing one: .cs-colophon__address a already defines colour, hover
+       and focus for a link on this pane, and the selector is extended to cover
+       this one. #}
+    <p class="cs-colophon__entity">
+      <a href="{{ nav.network.url }}">{{ nav.network.label }}</a>
+    </p>
+    </div>
+
     <p class="cs-colophon__tagline">
       Get Built.<br>Get F<span class="alt-dot">o</span>und.
     </p>
@@ -47,6 +63,13 @@
         {% for item in nav.footer %}
           <li><a href="{{ item.url }}">{{ item.label }}</a></li>
         {% endfor %}
+        {# One list item, two anchors, and the separator belongs to neither.
+           See nav.js, footerPolicy. #}
+        <li class="cs-colophon__pair">
+          {% for item in nav.footerPolicy %}
+            <a href="{{ item.url }}">{{ item.label }}</a>
+          {% endfor %}
+        </li>
       </ul>
     </nav>
   </div>

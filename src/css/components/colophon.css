@@ -33,12 +33,29 @@
     margin: 0;
     max-width: none;
   }
-  .cs-colophon__address a {
+  /* The colophon's ONE inline link treatment. The entity link beside the NAP
+     joins this selector rather than getting a rule of its own: it sits in the
+     same register and on the same ground, so a second treatment would be a
+     second thing to keep in step. */
+  .cs-colophon__address a,
+  .cs-colophon__entity a {
     color: inherit;
     text-decoration: none;
     transition: color var(--dur-fast) var(--ease-out);
   }
-  .cs-colophon__address a:hover { color: var(--color-paper) }
+  .cs-colophon__address a:hover,
+  .cs-colophon__entity a:hover { color: var(--color-paper) }
+
+  /* Beside the NAP, in the address's own face and colour. --space-16 is the
+     scale's step, not a new value. */
+  .cs-colophon__entity {
+    margin: var(--space-16) 0 0;
+    max-width: none;
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: var(--leading-body);
+    color: color-mix(in srgb, var(--color-paper) 75%, transparent);
+  }
 
   /* The address is two blocks (postal lines, then the two contact links)
      rather than one run of <br>s, because the phone turns the contact links
@@ -91,6 +108,23 @@
     color: color-mix(in srgb, var(--color-paper) 70%, transparent);
   }
 
+  /* TWO ANCHORS, ONE ROW, AND THE SLASH BELONGS TO NEITHER. Generated content
+     on the list item, so it is never part of a link's accessible name: an
+     anchor reading "Privacy /" is exactly what this avoids.
+
+     12px is the gap .cs-colophon__nav already sets between its rows, reused
+     here between inline items rather than introducing a second value. */
+  .cs-colophon__pair {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .cs-colophon__pair a + a::before {
+    content: "/";
+    margin-right: 12px;
+    color: color-mix(in srgb, var(--color-paper) 45%, transparent);
+  }
+
   .cs-colophon a:focus-visible {
     outline: 2px solid var(--color-paper);
     outline-offset: 3px;
@@ -140,13 +174,16 @@
       font-size: 34px;
       line-height: 1.18;
     }
-    .cs-colophon__address {
+    .cs-colophon__identity {
       grid-column: 1;
       grid-row: 2;
       margin-top: 28px;
+    }
+    .cs-colophon__address {
       font-size: 15px;
       line-height: 1.8;
     }
+    .cs-colophon__entity { font-size: 15px }
     .cs-colophon__links {
       grid-column: 2;
       grid-row: 1 / span 2;
@@ -167,6 +204,22 @@
       font-size: 12px;
     }
     .cs-colophon__nav li:last-child a { border-bottom: 0 }
+
+    /* THE PAIR IS WHERE THE PHONE LAYOUT WOULD BREAK. Every nav anchor becomes
+       a 52px bordered row here, which would give this item two stacked rows
+       and a rule through the middle of one link pair. So the ROW moves to the
+       list item and the anchors go back to being inline inside it. */
+    .cs-colophon__pair {
+      min-height: 52px;
+      border-bottom: 1px solid var(--border-on-deep);
+      align-items: center;
+    }
+    .cs-colophon__pair a {
+      display: inline;
+      min-height: 0;
+      border-bottom: 0;
+    }
+    .cs-colophon__nav li:last-child.cs-colophon__pair { border-bottom: 0 }
 
     .cs-colophon__base { margin-top: 48px }
   }
