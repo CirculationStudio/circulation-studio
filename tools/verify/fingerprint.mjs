@@ -69,11 +69,15 @@ const WIDTHS = [1440, 390];
 /* Element counts at the time the baseline was taken. Anything below these
    means the page did not render, not that it changed. */
 const MIN_ELEMENTS = {
-  home: 133,
-  who: 151,
-  what: 149,
-  results: 149,
-  contact: 117,
+  /* Every floor rose by exactly 2 on 2026-08-02: nav.footer gained The
+     Circulation Network, and a footer link is an li plus an a on every page of
+     the site. The fingerprint caught all twelve combinations at once, which is
+     what a frame change is supposed to look like here. */
+  home: 135,
+  who: 153,
+  what: 151,
+  results: 151,
+  contact: 119,
   /* The hub is DATA-DRIVEN and this floor will rise. Every article added to
      src/yelp/ adds elements to the coverage map, so a run that drops below the
      floor means the page stopped rendering rather than that content was
@@ -83,7 +87,7 @@ const MIN_ELEMENTS = {
      207 until the rank card was rebuilt as a wrapper div around its table,
      which added two elements. The fingerprint caught that change and the five
      marketing hashes did not move, which is the split this file exists for. */
-  yelphub: 209
+  yelphub: 211
 };
 
 const browser = await chromium.launch();

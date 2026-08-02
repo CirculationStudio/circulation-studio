@@ -16,6 +16,11 @@ export default {
   footer: [
     { label: "Library", url: "/library/" },
     { label: "Yelp Hub", url: "/yelp/" },
+    /* Reference rather than a service page, so footer only. Someone who wants
+       to know what the other practices are, or who found one of them and is
+       working out how they relate. A top-level nav slot would be spent on
+       something almost nobody arrives looking for. */
+    { label: "The Circulation Network", url: "/network/" },
     { label: "Privacy Policy", url: "/privacy-policy/" },
     { label: "Accessibility Statement", url: "/accessibility-statement/" }
   ]

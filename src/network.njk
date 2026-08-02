@@ -1,0 +1,318 @@
+---
+layout: layouts/base.njk
+title: "The Circulation Network: four practices, four markets"
+description: "Four independent marketing practices working under one set of standards, each owning a single market and a single discipline."
+permalink: /network/index.html
+
+hero:
+  eyebrow: Four practices, four markets
+  title: The Circulation Network
+  lede: >-
+    The Circulation Network is four independent marketing practices working under
+    one set of standards. Each owns a single market and a single discipline:
+    search and local search in the United States, dental marketing in the United
+    States, design and branding in Peru, and full-service marketing in Mexico.
+    Each is staffed by people who live and work in the market it serves.
+
+practicesTitle: The practices
+practicesNote: One market, one discipline, each
+practices:
+  - name: Circulation Studio
+    place: Laguna Beach, California
+    since: This site
+    what: >-
+      Search, local search and Yelp advertising for US service businesses.
+      Websites built to be found, campaigns measured against booked work rather
+      than impressions.
+    note: Working with US service businesses since 2011.
+    href: /what-we-do/
+    label: What we do
+    external: false
+  - name: Circulation Dental
+    place: United States
+    since: Founded 2021
+    what: >-
+      Digital marketing built for dental practices: new patient acquisition,
+      treatment-specific campaigns, and the review and referral work a practice
+      depends on.
+    note: >-
+      One discipline, deliberately narrow. A dental practice is a different
+      business from a plumbing company, and the marketing is different enough to
+      be run by people who only do it.
+    href: https://circulationdental.com
+    label: circulationdental.com
+    external: true
+  - name: La Ventana Gris
+    place: Lima, Peru
+    since: Founded 2021 by Vanessa Pacheco
+    what: >-
+      Branding, graphic design, interior design and visual merchandising. A design
+      practice in the full sense, working from identity through to how a space is
+      arranged and how a shelf is set.
+    note: Peruvian clients, work made in Lima, and a studio you can walk into.
+    href: https://laventanagris.com
+    label: laventanagris.com
+    sub: Site in Spanish
+    external: true
+  - name: Elūvia Marketing
+    place: San Miguel de Allende, Mexico
+    since: Also Queretaro and Mexico City
+    what: >-
+      Bilingual full-service marketing for the Mexican market, with a focus on
+      hospitality, real estate and cultural organisations.
+    note: >-
+      Campaigns written and run in Spanish and in English by a team living in the
+      country, for clients across San Miguel de Allende, Queretaro and Mexico
+      City.
+    href: https://emkt.mx
+    label: emkt.mx
+    sub: Site in Spanish and English
+    external: true
+
+partnersTitle: Platform partnerships
+partnersNote: Held across the network
+partnersLede: >-
+  Certifications and platform partnerships are held at the network level, so the
+  practice doing the work has the access, the training and the support behind it
+  regardless of which one you are speaking to.
+partners:
+  - name: Google Partner
+    body: Search and performance campaigns, with Google's partner support behind the account.
+  - name: Yelp Advertising Partner
+    body: Certified to buy and manage Yelp advertising, with partner tools and client promotions.
+  - name: Brizy Partner
+    body: The build platform behind client sites, with partner level access and support.
+  - name: Shopify Partner
+    body: Storefront builds and maintenance for clients selling online.
+  - name: UserWay Authorized Affiliate
+    body: Accessibility tooling on client sites, licensed rather than bolted on.
+
+why:
+  eyebrow: Reference
+  title: Why it is structured this way
+  body:
+    - >-
+      Each practice operates where its people live. Local presence, local
+      language, local accountability, and a client base in the same market as the
+      office. A campaign for a hotel in San Miguel de Allende is written by people
+      who eat in that town. Design work made in Lima answers to Peruvian clients
+      who can walk into the studio.
+    - >-
+      All four practices run on Velu, our proprietary agency operating system. It
+      holds the standards, the process and the institutional knowledge, which is
+      why the work looks the same from Laguna Beach as it does from Lima.
+  muted: >-
+    Each practice has its own clients, its own leadership and its own market to
+    answer to. That is why the work is good: a studio that has to keep its own
+    city happy gets better at its discipline than a department that only has to
+    keep another office happy.
+  holdTitle: What holds them together
+  holds:
+    - One standard for how work is scoped, measured and reported.
+    - Shared people, in the places where two disciplines meet.
+    - One founder accountable across all four, and one place a client escalation lands.
+
+means:
+  title: What this means for a Circulation Studio client
+  lede: Three things you can ask for, on the day you need them.
+  items:
+    - name: Design capacity when a project needs it
+      body: >-
+        A brand system, a print piece or an environment is work a design practice
+        does better than a search agency. When a project calls for it, we say so
+        and bring it in.
+    - name: Creative direction beyond the campaign
+      body: >-
+        A second set of eyes on identity and art direction, from people who spend
+        all day on it rather than between reporting cycles.
+    - name: Reach into two more markets
+      body: >-
+        If your business needs to speak to a Mexican or Peruvian audience, there
+        is a team in that country to write it, place it and answer the phone.
+
+pages:
+  eyebrow: Also in the network, not a practice
+  name: Elūvia Pages
+  kicker: A product, not an agency
+  body: >-
+    Mobile-first swipeable microsites for campaigns and promotions. Built to be
+    handed to a phone, not browsed on a desktop.
+  href: https://eluvia.page
+  label: eluvia.page
+---
+{% from "components/container.njk" import container %}
+
+{#
+  THE CIRCULATION NETWORK, at /network/. FOOTER NAVIGATION ONLY.
+
+  It is reference rather than a service page: someone who wants to know what the
+  other practices are, or who found one of them and is working out how they
+  relate. Putting it in the main nav would spend a top-level slot on something
+  almost nobody arrives looking for. nav.js carries it in `footer` only.
+
+  CIRCULATION STUDIO IS LAGUNA BEACH. Elūvia Marketing is the practice in San
+  Miguel de Allende, and saying so here is the opposite of the bleed-over
+  CLAUDE.md bans: that rule exists because earlier docs described THIS studio as
+  Mexico-based. Naming a different practice's real market is what makes the two
+  distinguishable, which is the whole point of the page.
+
+  ENGLISH ONLY. The two "Site in Spanish" labels describe what a reader will
+  find if they follow the link, in English. Nothing here is a Spanish mirror,
+  and there is no language switcher.
+
+  ONE INK PANE, and no madder pane at all. The "why" section is the deep one.
+#}
+
+{% call container(class="cs-net-crumbs") %}
+  <nav aria-label="Breadcrumb">
+    <ol class="cs-net-crumbs__list">
+      <li><a href="/">Home</a></li>
+      <li aria-current="page">The Circulation Network</li>
+    </ol>
+  </nav>
+{% endcall %}
+
+{#- 1 HERO -#}
+{% call container(class="cs-net-section cs-net-section--first") %}
+  <p class="cs-eyebrow">{{ hero.eyebrow }}</p>
+  <h1 class="cs-net-hero__title">{{ hero.title }}</h1>
+  <p class="cs-net-hero__lede">{{ hero.lede }}</p>
+{% endcall %}
+
+{#- 2 THE FOUR PRACTICES -#}
+{% call container(class="cs-net-section") %}
+  <div class="cs-net-head cs-net-head--strong">
+    <h2 class="cs-net-h2">{{ practicesTitle }}</h2>
+    <p class="cs-net-meta">{{ practicesNote }}</p>
+  </div>
+  {%- for p in practices %}
+  <div class="cs-net-band">
+    <div>
+      <p class="cs-net-band__name">{{ p.name }}</p>
+      <p class="cs-net-band__place">{{ p.place }}</p>
+      <p class="cs-net-band__since">{{ p.since }}</p>
+    </div>
+    <div class="cs-net-band__what">
+      <p class="cs-net-band__lede">{{ p.what }}</p>
+      <p class="cs-net-band__note">{{ p.note }}</p>
+    </div>
+    <div class="cs-net-band__go">
+      <a href="{{ p.href }}"{% if p.external %} target="_blank" rel="noopener"{% endif %}>
+        {{ p.label }}
+        {%- if p.external %}
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="butt" stroke-linejoin="miter" aria-hidden="true"><path d="M11 5H6a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5"></path><path d="M13 11l8-8"></path><path d="M15 3h6v6"></path></svg>
+        <span class="sr-only">Opens in a new tab</span>
+        {%- else %}<span aria-hidden="true">&rarr;</span>{% endif %}
+      </a>
+      {%- if p.sub %}<span class="cs-net-band__sub">{{ p.sub }}</span>{% endif %}
+    </div>
+  </div>
+  {%- endfor %}
+{% endcall %}
+
+{#- 2b PLATFORM PARTNERSHIPS -#}
+{% call container(class="cs-net-section") %}
+  <div class="cs-net-head">
+    <h2 class="cs-net-h2">{{ partnersTitle }}</h2>
+    <p class="cs-net-meta">{{ partnersNote }}</p>
+  </div>
+  <p class="cs-net-lede">{{ partnersLede }}</p>
+  <div class="cs-net-partners">
+    {%- for p in partners %}
+    <div class="cs-net-partners__item">
+      <p class="cs-net-partners__name">{{ p.name }}</p>
+      <p class="cs-net-partners__body">{{ p.body }}</p>
+    </div>
+    {%- endfor %}
+  </div>
+{% endcall %}
+
+{#- 3 WHY, THE ONE INK PANE. Full bleed, so it is the only band that leaves
+    the container. -#}
+<div class="cs-net-why">
+  {% call container(class="cs-net-why__inner") %}
+    <p class="cs-net-why__eyebrow">{{ why.eyebrow }}</p>
+    <h2 class="cs-net-why__title">{{ why.title }}</h2>
+    <div class="cs-net-why__grid">
+      <div>
+        {%- for p in why.body %}<p class="cs-net-why__body">{{ p }}</p>{% endfor %}
+        <p class="cs-net-why__muted">{{ why.muted }}</p>
+      </div>
+      <div class="cs-net-why__hold">
+        <p class="cs-net-why__hold-title">{{ why.holdTitle }}</p>
+        <ul>
+          {%- for h in why.holds %}<li>{{ h }}</li>{% endfor %}
+        </ul>
+      </div>
+    </div>
+  {% endcall %}
+</div>
+
+{#- 4 WHAT THIS MEANS -#}
+{% call container(class="cs-net-section") %}
+  <div class="cs-net-head cs-net-head--stack">
+    <h2 class="cs-net-h2">{{ means.title }}</h2>
+    <p class="cs-net-lede cs-net-lede--tight">{{ means.lede }}</p>
+  </div>
+  <div class="cs-net-means">
+    {%- for item in means.items %}
+    <div class="cs-net-means__item">
+      <p class="cs-net-means__name">{{ item.name }}</p>
+      <p class="cs-net-means__body">{{ item.body }}</p>
+    </div>
+    {%- endfor %}
+  </div>
+{% endcall %}
+
+{#- 5 ELUVIA PAGES -#}
+{% call container(class="cs-net-section") %}
+  <p class="cs-eyebrow cs-net-pages__eyebrow">{{ pages.eyebrow }}</p>
+  <div class="cs-net-pages">
+    <div>
+      <p class="cs-net-pages__name">{{ pages.name }}</p>
+      <p class="cs-net-pages__kicker">{{ pages.kicker }}</p>
+    </div>
+    <p class="cs-net-pages__body">{{ pages.body }}</p>
+    <a class="cs-net-pages__go" href="{{ pages.href }}" target="_blank" rel="noopener">
+      {{ pages.label }}
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="butt" stroke-linejoin="miter" aria-hidden="true"><path d="M11 5H6a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5"></path><path d="M13 11l8-8"></path><path d="M15 3h6v6"></path></svg>
+      <span class="sr-only">Opens in a new tab</span>
+    </a>
+  </div>
+{% endcall %}
+
+{#- SCHEMA. FOUR SIBLING ORGANIZATIONS AND ONE PERSON. NO HIERARCHY.
+
+    Deliberately no parentOrganization and no subOrganization. Those assert a
+    corporate structure that has not been confirmed, and schema is not the place
+    to guess at one: an ownership claim in structured data is a claim, and
+    unpicking it after a search engine has resolved the entities against it is
+    far harder than adding it later.
+
+    So each practice is its own Organization identified by its own site through
+    sameAs, and the founder is one Person with sameAs including stevelepore.me.
+    What relates them on this page is the prose, which is accurate, rather than
+    a graph edge that would be an invention. -#}
+{%- set orgs = [] -%}
+{%- for p in practices -%}
+  {%- set _ = orgs.push({
+    "@type": "Organization",
+    "@id": (page.url | absoluteUrl) + "#" + (p.name | lower | replace(" ", "-") | replace("ū", "u")),
+    "name": p.name,
+    "description": p.what,
+    "areaServed": p.place,
+    "sameAs": [ p.external and p.href or site.url + "/" ]
+  }) -%}
+{%- endfor %}
+<script type="application/ld+json">
+{{ {
+  "@context": "https://schema.org",
+  "@graph": orgs.concat([{
+    "@type": "Person",
+    "@id": (page.url | absoluteUrl) + "#founder",
+    "name": authors.steve.name,
+    "jobTitle": authors.steve.role,
+    "sameAs": ["https://stevelepore.me"]
+  }])
+} | jsonld | safe }}
+</script>

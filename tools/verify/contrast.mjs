@@ -61,7 +61,11 @@ const PAGES = [
      carrying an on-accent-primary button, and the cost section on ink. Those
      are the pairings the article transform cannot see, because both grounds
      are painted in CSS rather than emitted by a shortcode. */
-  "/yelp-partners/"
+  "/yelp-partners/",
+  /* Network carries one full-bleed ink pane and uses madder as a line accent
+     on four place labels, which is the on-paper accent use design.md reserves
+     it for. */
+  "/network/"
 ];
 
 /* Which surfaces a text token is allowed to land on. This is the contract: a

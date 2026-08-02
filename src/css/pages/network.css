@@ -1,0 +1,420 @@
+/* The Circulation Network. Page-scoped, same reasoning as the other pages.
+ *
+ * REFERENCE, NOT A SERVICE PAGE. It is quieter than Partners on purpose: one
+ * ink pane, no madder pane, and madder used only as a line accent on the four
+ * place labels and the outbound links, which is exactly what design.md section
+ * 1 reserves it for outside a pane.
+ *
+ * Every colour resolved to an existing token. The comp's single border-radius
+ * is var(--radius-control).
+ */
+@layer components {
+
+  .cs-net-section { padding-bottom: var(--space-96) }
+  .cs-net-section--first { padding-top: var(--space-96); padding-bottom: var(--space-64) }
+
+  /* ---- breadcrumb ---- */
+
+  .cs-net-crumbs {
+    border-bottom: 1px solid var(--border-hairline);
+    padding: 12px 0;
+  }
+  .cs-net-crumbs__list {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cs-net-crumbs__list li {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 11px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  .cs-net-crumbs__list li + li::before {
+    content: "/";
+    font-family: var(--font-body);
+    letter-spacing: 0;
+    margin-right: 12px;
+  }
+  .cs-net-crumbs__list li[aria-current] {
+    font-weight: var(--weight-display);
+    color: var(--color-ink);
+  }
+  .cs-net-crumbs__list a { color: var(--text-faint); text-decoration: none }
+  .cs-net-crumbs__list a:hover { color: var(--accent) }
+
+  /* ---- hero ---- */
+
+  .cs-net-hero__title {
+    margin: var(--space-16) 0 0;
+    font-size: var(--text-h3);
+    line-height: 1.4;
+    max-width: 30ch;
+    text-wrap: pretty;
+  }
+  .cs-net-hero__lede {
+    margin: var(--space-24) 0 0;
+    font-size: var(--text-base);
+    max-width: var(--container-measure);
+  }
+
+  /* ---- shared heads ---- */
+
+  .cs-net-h2 {
+    margin: 0;
+    font-size: var(--text-article-h2);
+    letter-spacing: var(--tracking-caps);
+  }
+  .cs-net-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-24);
+    border-top: 1px solid var(--border-strong);
+    padding-top: var(--space-16);
+  }
+  /* 2px ink opens the practices, which is the page's subject. Everything after
+     it takes the .34 hairline, so the list reads as the thing and the rest as
+     support. */
+  .cs-net-head--strong { border-top: 2px solid var(--color-ink) }
+  .cs-net-head--stack { display: block }
+  .cs-net-meta {
+    margin: 0;
+    max-width: none;
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  .cs-net-lede {
+    margin: var(--space-16) 0 0;
+    font-size: var(--text-base);
+    max-width: 74ch;
+  }
+  .cs-net-lede--tight { max-width: 70ch }
+
+  /* ---- the four practice bands ---- */
+
+  .cs-net-band {
+    display: grid;
+    grid-template-columns: 300px minmax(0, 1fr) 200px;
+    gap: 56px;
+    align-items: start;
+    border-bottom: 1px solid var(--border-hairline);
+    padding: 36px 0;
+  }
+  .cs-net-band__name {
+    margin: 0;
+    max-width: none;
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 20px;
+    line-height: 1.25;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+  /* The market is the accent. It is the one thing that distinguishes the four
+     practices from each other, so it carries the only colour in the band. */
+  .cs-net-band__place {
+    margin: 10px 0 0;
+    max-width: none;
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 11px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .cs-net-band__since {
+    margin: 6px 0 0;
+    max-width: none;
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 11px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  .cs-net-band__what {
+    border-left: 1px solid var(--border-hairline);
+    padding-left: var(--space-40);
+  }
+  .cs-net-band__lede { margin: 0; font-size: 17px; line-height: var(--leading-body) }
+  .cs-net-band__note {
+    margin: 12px 0 0;
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--text-muted);
+  }
+  .cs-net-band__go {
+    justify-self: end;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    text-align: right;
+  }
+  .cs-net-band__go a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-8);
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    white-space: nowrap;
+    text-decoration: none;
+  }
+  .cs-net-band__go a:hover { color: var(--accent-hover) }
+  .cs-net-band__sub {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  /* ---- platform partnerships ---- */
+
+  .cs-net-partners {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    margin-top: 32px;
+    border-top: 1px solid var(--border-hairline);
+  }
+  .cs-net-partners__item {
+    border-left: 1px solid var(--border-hairline);
+    padding: var(--space-24);
+  }
+  .cs-net-partners__item:first-child { border-left: 0; padding-left: 0 }
+  .cs-net-partners__item:last-child { padding-right: 0 }
+  .cs-net-partners__name {
+    margin: 0;
+    max-width: none;
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 15px;
+    line-height: 1.3;
+    letter-spacing: .01em;
+    color: var(--color-ink);
+  }
+  .cs-net-partners__body {
+    margin: var(--space-8) 0 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+
+  /* ---- THE ONE INK PANE ---- */
+
+  /* Full bleed, the only band that leaves the container, so the page has one
+     structural break in it rather than a run of equal sections. */
+  .cs-net-why {
+    background: var(--surface-deep);
+    color: var(--text-on-deep);
+    margin-bottom: var(--space-96);
+  }
+  .cs-net-why__inner { padding: 80px 0 }
+  .cs-net-why__eyebrow {
+    margin: 0;
+    max-width: none;
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 11px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-madder-lift);
+  }
+  .cs-net-why__title {
+    margin: var(--space-16) 0 0;
+    font-size: var(--text-h3);
+    line-height: 1.35;
+    letter-spacing: var(--tracking-caps);
+    color: var(--text-on-deep);
+    max-width: 26ch;
+  }
+  .cs-net-why__grid {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: var(--space-64);
+    margin-top: 32px;
+    align-items: start;
+  }
+  .cs-net-why__body {
+    margin: 0 0 var(--space-16);
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--text-on-deep);
+  }
+  .cs-net-why__body:first-child { font-size: var(--text-base) }
+  .cs-net-why__muted {
+    margin: 0;
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--text-on-deep-muted);
+  }
+  .cs-net-why__hold {
+    border-left: 1px solid var(--border-on-deep);
+    padding-left: 56px;
+  }
+  .cs-net-why__hold-title {
+    margin: 0;
+    max-width: none;
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 11px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-on-deep-faint);
+    border-bottom: 1px solid var(--border-on-deep);
+    padding-bottom: 12px;
+  }
+  .cs-net-why__hold ul { margin: 0; padding: 0; list-style: none }
+  .cs-net-why__hold li {
+    border-bottom: 1px solid var(--border-on-deep);
+    padding: 14px 0;
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--text-on-deep);
+  }
+  .cs-net-why__hold li:last-child { border-bottom: 0 }
+
+  /* ---- what this means ---- */
+
+  .cs-net-means {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 48px;
+    margin-top: 32px;
+  }
+  .cs-net-means__item + .cs-net-means__item {
+    border-left: 1px solid var(--border-hairline);
+    padding-left: var(--space-40);
+  }
+  .cs-net-means__name {
+    margin: 0;
+    max-width: none;
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 16px;
+    line-height: 1.35;
+    letter-spacing: .01em;
+    color: var(--color-ink);
+  }
+  .cs-net-means__body {
+    margin: 10px 0 0;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--text-muted);
+  }
+
+  /* ---- eluvia pages ---- */
+
+  .cs-net-pages__eyebrow {
+    border-top: 1px solid var(--border-hairline);
+    padding-top: var(--space-16);
+  }
+  .cs-net-pages {
+    background: var(--surface-panel);
+    border-radius: var(--radius-control);
+    padding: 32px var(--space-40);
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr) auto;
+    gap: var(--space-40);
+    align-items: center;
+  }
+  .cs-net-pages__name {
+    margin: 0;
+    max-width: none;
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 16px;
+    line-height: 1.3;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+  }
+  .cs-net-pages__kicker {
+    margin: var(--space-8) 0 0;
+    max-width: none;
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 10px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  .cs-net-pages__body { margin: 0; font-size: 16px; line-height: 1.65 }
+  .cs-net-pages__go {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-8);
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    white-space: nowrap;
+    text-decoration: none;
+  }
+  .cs-net-pages__go:hover { color: var(--accent-hover) }
+
+  /* ---- phone ---- */
+
+  @media (max-width: 1120px) {
+    .cs-net-section { padding-bottom: 56px }
+    .cs-net-section--first { padding-top: 36px; padding-bottom: 48px }
+    .cs-net-hero__title { font-size: 21px; line-height: 1.42; max-width: 24ch }
+    .cs-net-hero__lede { font-size: 17px; max-width: 100% }
+
+    .cs-net-band {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-16);
+      padding: 28px 0;
+    }
+    .cs-net-band__what { border-left: 0; padding-left: 0 }
+    .cs-net-band__go { justify-self: start; align-items: flex-start; text-align: left; min-height: 44px }
+
+    .cs-net-partners { grid-template-columns: minmax(0, 1fr) }
+    .cs-net-partners__item {
+      border-left: 0;
+      border-bottom: 1px solid var(--border-hairline);
+      padding: 20px 0;
+    }
+
+    .cs-net-why { margin-bottom: 56px }
+    .cs-net-why__inner { padding: 56px 0 }
+    .cs-net-why__grid { grid-template-columns: minmax(0, 1fr); gap: 28px }
+    .cs-net-why__body:first-child { font-size: 20px }
+    .cs-net-why__hold { border-left: 0; padding-left: 0 }
+
+    .cs-net-means { grid-template-columns: minmax(0, 1fr); gap: 0 }
+    .cs-net-means__item + .cs-net-means__item {
+      border-left: 0;
+      border-top: 1px solid var(--border-hairline);
+      padding-left: 0;
+      padding-top: 20px;
+      margin-top: 20px;
+    }
+
+    .cs-net-pages {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 20px;
+      padding: 28px var(--space-24);
+    }
+  }
+}
