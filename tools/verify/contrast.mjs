@@ -65,7 +65,10 @@ const PAGES = [
   /* Network carries one full-bleed ink pane and uses madder as a line accent
      on four place labels, which is the on-paper accent use design.md reserves
      it for. */
-  "/network/"
+  "/network/",
+  /* Rank Tracking puts a paper input field on the madder pane and a white
+     report card on paper, neither of which any other page produces. */
+  "/yelp-rank-tracking-tool/"
 ];
 
 /* Which surfaces a text token is allowed to land on. This is the contract: a
