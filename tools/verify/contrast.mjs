@@ -56,7 +56,12 @@ const PAGES = [
   /* The three pages written to give the footer real targets. Two of them carry
      migrated policy text on a mist banner, which is a token pairing no other
      page produces. */
-  "/library/", "/privacy-policy/", "/accessibility-statement/"
+  "/library/", "/privacy-policy/", "/accessibility-statement/",
+  /* Yelp Partners spends both budgets on one page: the routing band on madder
+     carrying an on-accent-primary button, and the cost section on ink. Those
+     are the pairings the article transform cannot see, because both grounds
+     are painted in CSS rather than emitted by a shortcode. */
+  "/yelp-partners/"
 ];
 
 /* Which surfaces a text token is allowed to land on. This is the contract: a
