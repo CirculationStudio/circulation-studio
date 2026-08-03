@@ -28,8 +28,28 @@
      one disqualifying reason: GRID ITEMS DO NOT COLLAPSE MARGINS. The whole
      prose rhythm depends on collapsing, and a grid would turn every measured
      gap into the sum of two margins. Plain blocks throughout. */
+  /* THE VERTICAL RHYTHM MOVED OFF py-24 AND ONTO THIS RULE, so the bottom half
+     of it can be conditional. A utility cannot be: Tailwind emits py-24 into
+     the utilities layer, which outranks every layered component rule, so a
+     component could not have removed the padding it sets. Same 96px, the
+     section-level step, now owned by the component that needs to vary it. */
   .cs-article {
     width: 100%;
+    padding-top: var(--space-96);
+    padding-bottom: var(--space-96);
+  }
+
+  /* A CTA RUNS TO THE FOOTER WITH NO SEAM. The cta is the madder pane that
+     ends a piece, and 96px of paper between it and the ink colophon reads as
+     the page having stopped twice. When it is the last block, the article's
+     closing step is the footer's own top padding instead.
+
+     Scoped to .cs-cta rather than to any trailing pane, deliberately. An ink
+     pane ending an article would butt the ink footer and the two grounds would
+     merge into one field with no seam at all, which is a different and worse
+     problem. The cta is madder against ink, so the join reads as a join. */
+  .cs-article:has(> .cs-cta:last-child) {
+    padding-bottom: 0;
   }
 
   /* THE COLUMN IS ESTABLISHED ONCE, HERE, AND NOWHERE ELSE.
