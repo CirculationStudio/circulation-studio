@@ -757,7 +757,7 @@
     },
     {
       "url": "/yelp/",
-      "_note": "The hub is a PAGE TEMPLATE, not a fixture. Its counts are what the current content produces: two published spokes, two populated clusters, five in preparation, no FAQ files. Several are deliberately ZERO, which is the assertion that an empty thing stays omitted rather than rendering empty. Change the content, change these, same commit. map entry went 1 to 2 and map pending 6 to 5 on 2026-08-02, when the personal-vs-business article landed in mechanics-and-how-to.",
+      "_note": "The hub is a PAGE TEMPLATE, not a fixture. Its counts are what the current content produces: two published spokes plus two enrolled page templates, four populated clusters, three in preparation, no FAQ files. Several are deliberately ZERO, which is the assertion that an empty thing stays omitted rather than rendering empty. Change the content, change these, same commit. map entry went 1 to 2 and map pending 6 to 5 on 2026-08-02, when the personal-vs-business article landed in mechanics-and-how-to. On 2026-08-03 hubentry landed: /yelp-partners/ took the Start here band, which had asserted 0 since the band was built and had never rendered, and it and /yelp-rank-tracking-tool/ filled partners-and-management and value-and-results, so map entry went 2 to 4 and map pending 5 to 3.",
       "blocks": {
         "hub intro": {
           "selector": ".cs-hub-intro",
@@ -769,7 +769,7 @@
         },
         "start here band": {
           "selector": ".cs-starthere",
-          "count": 0
+          "count": 1
         },
         "browse head": {
           "selector": ".cs-browse__head",
@@ -797,11 +797,11 @@
         },
         "map entry": {
           "selector": ".cs-map__entry",
-          "count": 2
+          "count": 4
         },
         "map pending": {
           "selector": ".cs-map__pending",
-          "count": 5
+          "count": 3
         },
         "map faq link": {
           "selector": ".cs-map__faq",

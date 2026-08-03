@@ -46,6 +46,13 @@ const HUB_EXPECTED = [
   { label: "hub headline",  selector: ".cs-hub-intro__headline", min: 1, column: true },
   { label: "hub lede",      selector: ".cs-hub-intro__lede",  min: 1, column: true },
   { label: "hub badge",     selector: ".cs-hub-badge",        min: 1, column: false },
+  /* Added 2026-08-03, when the band rendered for the first time. It was left
+     out because it drew nothing: no piece could declare `starthere` until
+     /yelp-partners/ enrolled through `hubentry`, and a floor of 1 on a block
+     that renders zero by design would have failed every run. Now that it draws,
+     it takes the container edge like every other full-width section, and a
+     floor here is what catches the band silently emptying again. */
+  { label: "start here",    selector: ".cs-starthere",        min: 1, column: true },
   { label: "browse head",   selector: ".cs-browse__head",     min: 1, column: true },
   { label: "browse feature",selector: ".cs-browse__feature",  min: 1, column: true },
   { label: "feature title", selector: ".cs-browse__feature-title", min: 1, column: false },

@@ -288,9 +288,13 @@ export const YELP_CLUSTERS = new Map([
   ["industry-verticals", "Industry verticals"]
 ]);
 
-/* Frontmatter every piece in src/yelp/ must carry, with what breaks without it.
+/* Frontmatter every hub piece must carry, with what breaks without it.
    Enforced in the collection below, where every item is visible at once, so a
-   build reports all the offenders rather than the first. */
+   build reports all the offenders rather than the first.
+
+   "Piece" means everything yelpPieces() returns: the src/yelp/ article tier,
+   plus any page template that has enrolled itself with YELP_HUB_ENTRY. Both
+   render into the same slots, so both answer to the same requirements. */
 export const YELP_FRONTMATTER = [
   ["cluster", "the coverage map has nowhere to put it, so it publishes invisible"],
   ["summary", "the coverage map and the browse layer have no line to show under the title"]
@@ -315,6 +319,42 @@ export const YELP_FRONTMATTER = [
    filled with a placeholder, because a placeholder card is indistinguishable
    from a real one to a reader and to a crawler. */
 export const YELP_STARTHERE = "starthere";
+
+/* A PAGE TEMPLATE ENROLLING ITSELF AS A HUB ENTRY.
+
+   THE PROBLEM. Every section of the hub reads one glob, src/yelp/*.md. That is
+   the article tier and it is the right rule for an article: membership follows
+   location, so nobody can half enrol one by forgetting a tag, which is the
+   reasoning recorded on the two tier collections below and in
+   tools/eleventy/article-directory-data.js.
+
+   But /yelp-partners/ and /yelp-rank-tracking-tool/ are page templates at src
+   root, with bespoke layouts and their own permalinks, and their URLs are the
+   asset: both rank on the live site and neither can move under /yelp/. So
+   neither is in the glob, neither can be, and both shipped invisible on the one
+   page that exists to list them. The Start here band in particular rendered
+   nothing at all, because the piece it was drawn for could never declare
+   itself.
+
+   THE RULE. A page template outside src/yelp/ declares `hubentry: true` and
+   then carries the SAME keys an article carries for the slots it occupies:
+   cluster, summary, kind, updated, and starthere if it is the way in. It joins
+   the pieces list and every existing rule applies to it unchanged, including
+   the closed cluster set, the closed kind set, at-most-one Start here, and the
+   coverage map's newest-first ordering.
+
+   THERE IS NO SECOND VOCABULARY, and that is the whole design. The alternative
+   was a data file of non-article entries listing a url, a title and a line,
+   which is a second copy of strings the page already holds and would drift the
+   first time one was retitled, silently. The piece declares itself here exactly
+   as it does in src/yelp/; only the way it is FOUND differs, because a page
+   template has no directory to be found in.
+
+   ENROLMENT IS EXPLICIT AND CARRIES A COST. A page that declares it and omits
+   cluster or summary fails the build. That is the point: the keys are what the
+   hub renders, and a page enrolled without them is the invisible publish this
+   constant exists to stop. */
+export const YELP_HUB_ENTRY = "hubentry";
 
 /* THE BROWSE SHELF. Five ranks, three slots, and the rank is the only thing an
    article declares.
@@ -387,14 +427,24 @@ export function imageOrientation(filename) {
    in SHORTCODES.md while the page shows something a reader would write.
 
    `article` is the generic case and its absence was an oversight. The Yelp Hub
-   comp labels an entry "Article" and no value produced it. */
+   comp labels an entry "Article" and no value produced it.
+
+   `service` IS NOT AN ARTICLE KIND AND THAT IS WHY IT IS HERE. It labels a
+   page template enrolled through YELP_HUB_ENTRY: /yelp-partners/ and
+   /yelp-rank-tracking-tool/ are the studio's own offers, written up at length,
+   and neither is an article. Labelling either "Guide" would tell a reader
+   scanning the coverage map that they were about to read a neutral how-to, and
+   the index is more honest with the offer marked as one. The word is already
+   the hub's own: the rank tracking panel's eyebrow reads "Service, from the
+   studio". */
 export const ARTICLE_KINDS = new Map([
   ["article", "Article"],
   ["essay", "Essay"],
   ["fieldnote", "Field note"],
   ["guide", "Guide"],
   ["faq", "FAQ"],
-  ["whitepaper", "Whitepaper"]
+  ["whitepaper", "Whitepaper"],
+  ["service", "Service"]
 ]);
 
 
@@ -1537,12 +1587,41 @@ export default function (eleventyConfig) {
      step. A template that genuinely wants both tiers and nothing else writes
      `collections.yelp.concat(collections.library)`, which is one expression
      and cannot fall out of date. */
-  /* The Yelp tier, with its frontmatter enforced here rather than per page.
-     A collection callback sees every item at once, so a build names all the
-     offenders instead of stopping at the first, and it runs whether or not a
-     template happens to consume the collection. */
+  /* The Yelp tier plus its enrolled pages, with the frontmatter enforced here
+     rather than per page. A collection callback sees every item at once, so a
+     build names all the offenders instead of stopping at the first, and it runs
+     whether or not a template happens to consume the collection.
+
+     IT IS THE PIECES LIST, NOT THE DIRECTORY, and that widened when
+     YELP_HUB_ENTRY landed. Every check below is about what the hub renders, so
+     running it over the articles alone would exempt exactly the entries that
+     have no directory to enforce anything else on them. */
+  /* EVERY PIECE THE HUB CAN RENDER, and the ONE definition of that set.
+
+     The article tier, found by location, plus any page template that has
+     enrolled itself. See YELP_HUB_ENTRY above for why a page template cannot be
+     found by location and must declare instead.
+
+     A FUNCTION RATHER THAN A COLLECTION THE OTHERS DEPEND ON, because a
+     collection callback cannot read another collection that has not been built
+     yet, and the four readers below would then be order-dependent on their own
+     registration. This is one expression evaluated per caller, which cannot go
+     stale between them.
+
+     Articles win a tie on inputPath, so an article that also declared
+     `hubentry` appears once rather than twice. It would be a redundant
+     declaration rather than an error: the piece is already in the glob. */
+  const yelpPieces = (collectionApi) => {
+    const articles = collectionApi.getFilteredByGlob("src/yelp/*.md");
+    const seen = new Set(articles.map((item) => item.inputPath));
+    const enrolled = collectionApi
+      .getAll()
+      .filter((item) => item.data[YELP_HUB_ENTRY] && !seen.has(item.inputPath));
+    return [...articles, ...enrolled];
+  };
+
   eleventyConfig.addCollection("yelp", (collectionApi) => {
-    const items = collectionApi.getFilteredByGlob("src/yelp/*.md");
+    const items = yelpPieces(collectionApi);
     const problems = [];
 
     for (const item of items) {
@@ -1669,7 +1748,7 @@ export default function (eleventyConfig) {
 
     if (problems.length) {
       throw new Error(
-        `[yelp] ${problems.length} frontmatter problem(s) in src/yelp/:\n` +
+        `[yelp] ${problems.length} frontmatter problem(s) among the hub's pieces:\n` +
           problems.map((p) => `    ${p}`).join("\n") +
           `\n  See SHORTCODES.md, Frontmatter.`
       );
@@ -1680,14 +1759,13 @@ export default function (eleventyConfig) {
   /* The Start here piece, or nothing. A collection rather than a filter so the
      template asks for it by name and never re-derives the rule. */
   eleventyConfig.addCollection("yelpStartHere", (collectionApi) =>
-    collectionApi.getFilteredByGlob("src/yelp/*.md").filter((item) => item.data[YELP_STARTHERE])
+    yelpPieces(collectionApi).filter((item) => item.data[YELP_STARTHERE])
   );
 
   /* The shelf, in rank order. Validated in the yelp collection above, so this
      only sorts. */
   eleventyConfig.addCollection("yelpShelf", (collectionApi) =>
-    collectionApi
-      .getFilteredByGlob("src/yelp/*.md")
+    yelpPieces(collectionApi)
       .filter((item) => SHELF_SLOTS.has(item.data.shelf))
       .sort((a, b) => a.data.shelf - b.data.shelf)
   );
@@ -1706,7 +1784,7 @@ export default function (eleventyConfig) {
      it means a cluster's lead changes when the cluster is added to, which is
      what "last added" already promises the reader. */
   eleventyConfig.addCollection("yelpMap", (collectionApi) => {
-    const items = collectionApi.getFilteredByGlob("src/yelp/*.md");
+    const items = yelpPieces(collectionApi);
 
     /* FAQ COUNTS, COUNTED FROM CONTENT. One file per question in
        src/yelp/faq/, each declaring the cluster it answers under, and the

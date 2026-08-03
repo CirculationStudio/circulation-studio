@@ -87,9 +87,12 @@ const MIN_ELEMENTS = {
      207 until the rank card was rebuilt as a wrapper div around its table,
      which added two elements. 211 until the personal-vs-business article
      landed on 2026-08-02: a cluster moved from in-preparation to populated,
-     which trades one pending line for a full entry. Each time the five
-     marketing hashes did not move, which is the split this file exists for. */
-  yelphub: 216
+     which trades one pending line for a full entry. 216 until hubentry landed
+     on 2026-08-03, the largest single jump so far: the Start here band
+     rendered for the first time since it was built, and two more clusters
+     traded a pending line for a full entry. Each time the five marketing
+     hashes did not move, which is the split this file exists for. */
+  yelphub: 232
 };
 
 const browser = await chromium.launch();

@@ -153,7 +153,7 @@ These are frontmatter or frame. They are listed so the authoring project knows n
 ---
 title: The Yelp Ads benchmark report
 deck: Here's what a dollar of Yelp Ads actually bought.
-kind: whitepaper        # article | essay | fieldnote | guide | faq | whitepaper
+kind: whitepaper        # article | essay | fieldnote | guide | faq | whitepaper | service
 header: feature         # standard | feature | compact | cover | glyph
 author: connor          # keyed to a data file, never a free-text name
 updated: 2026-07-30
@@ -198,7 +198,7 @@ changelog: /library/.../changes/   # PLANNED
 
 ### Article kinds
 
-A closed set of six. `kind` is the type label the coverage map and the browse layer print above a title, so an unknown value publishes an entry labelled with whatever was typed. The build rejects anything not in this table.
+A closed set of seven. `kind` is the type label the coverage map and the browse layer print above a title, so an unknown value publishes an entry labelled with whatever was typed. The build rejects anything not in this table.
 
 **`article` is the generic case**, for a piece that is none of the other five. Its absence was an oversight rather than a decision: the Yelp Hub comp labels an entry "Article", and there was no value that produced it.
 
@@ -210,6 +210,28 @@ A closed set of six. `kind` is the type label the coverage map and the browse la
 | `guide` | Guide | Step by step, and the only kind `callout` label="Watch out" is legal in |
 | `faq` | FAQ | A question and answer piece |
 | `whitepaper` | Whitepaper | Long, sourced, with a methodology |
+| `service` | Service | An enrolled page template, never an article. See Hub entries below |
+
+**`service` is the one value an article must not take.** It labels a page template that has enrolled itself as a hub entry: the studio's own offer, written up at length. `/yelp-partners/` and `/yelp-rank-tracking-tool/` are both. Labelling either "Guide" would tell a reader scanning the coverage map they were about to read a neutral how-to, and the index is more honest with an offer marked as one.
+
+### Hub entries that are not articles
+
+Every section of the Yelp Hub reads one glob, `src/yelp/*.md`. That is right for an article, where membership follows location and there is no tag to forget. It leaves nothing for a page template: `/yelp-partners/` and `/yelp-rank-tracking-tool/` are bespoke layouts at src root whose URLs are the asset, both rank on the live site, and neither can move under `/yelp/`. Both shipped invisible on the one page that exists to list them, and the Start here band rendered nothing at all, because the piece it was drawn for could never declare itself.
+
+`hubentry: true` enrols a page template. It then carries the same keys an article carries for the slots it occupies, read by the same collections:
+
+| Key | Required | Why |
+|---|---|---|
+| `hubentry` | yes | The enrolment itself. Page templates only; an article is already in the glob |
+| `cluster` | yes | Which coverage-map column it sits under. Same closed set of seven |
+| `summary` | yes | The line under the title, in the map and in the Start here band |
+| `kind` | yes | The type label above the title. `service` for both entries today |
+| `updated` | yes | The map sorts newest first and derives "Last added" from it |
+| `starthere` | no | Names this page the way in. At most one across all pieces |
+
+**There is no second vocabulary, and that is the design.** The alternative was a data file listing a url, a title and a line per non-article entry, which is a second copy of strings the page already holds and would drift the first time one was retitled, silently. The piece declares itself exactly as it does in `src/yelp/`; only the way it is FOUND differs, because a page template has no directory to be found in.
+
+**Enrolment is explicit and carries a cost.** A page that declares `hubentry` and omits `cluster` or `summary` fails the build, the same as an article missing them. The keys are what the hub renders, and a page enrolled without them is the invisible publish this key exists to stop.
 
 The label is not the key. `fieldnote` renders "Field note" and `faq` renders "FAQ", so the set stays lowercase and single word like every other name in this file while the page prints something a reader would write.
 
