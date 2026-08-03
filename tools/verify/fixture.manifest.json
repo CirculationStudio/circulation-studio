@@ -54,6 +54,30 @@
           "selector": ".cs-footnotes",
           "count": 1
         },
+        "image block": {
+          "selector": ".cs-imgblock",
+          "count": 2
+        },
+        "image slot": {
+          "selector": ".cs-imgslot",
+          "count": 3
+        },
+        "image slot frame": {
+          "selector": ".cs-imgslot__frame",
+          "count": 3
+        },
+        "image caption": {
+          "selector": ".cs-imgcap",
+          "count": 3
+        },
+        "image measure": {
+          "selector": ".cs-imgwide--measure",
+          "count": 2
+        },
+        "image main": {
+          "selector": ".cs-imgwide--main",
+          "count": 3
+        },
         "pullquote": {
           "selector": ".cs-pullquote",
           "count": 3

@@ -118,7 +118,18 @@ const EXPECTED = [
   { label: "fn marker",     selector: "a.cs-fnref",                        min: 5, column: false },
   { label: "observed",      selector: "span.cs-observed",                  min: 2, column: false },
   { label: "table",         selector: ".cs-article > .cs-table",           min: 2, column: false },
-  { label: "table caption", selector: ".cs-article > .cs-table > .cs-table__caption", min: 2, column: false }
+  { label: "table caption", selector: ".cs-article > .cs-table > .cs-table__caption", min: 2, column: false },
+  /* Imagery. The measure-width image is the only one held to the column edge;
+     the rest are main by definition and are measured without being held to it,
+     the same treatment the table and the related grid get. The slot count is
+     the one that matters here: a placeholder that stopped rendering would leave
+     an article silently missing a block it was written around. */
+  { label: "image measure", selector: ".cs-article__column > .cs-imgblock", min: 1, column: true },
+  { label: "image wide",    selector: ".cs-article > .cs-imgwide--main",    min: 1, column: false },
+  { label: "slot",          selector: ".cs-imgslot",                        min: 3, column: false },
+  { label: "slot frame",    selector: ".cs-imgslot__frame",                 min: 3, column: false },
+  { label: "slot label",    selector: ".cs-imgslot__label",                 min: 3, column: false },
+  { label: "image caption", selector: ".cs-imgcap",                         min: 3, column: false }
 ];
 
 const browser = await chromium.launch();

@@ -273,6 +273,33 @@ paragraph rule is doing any work.
 
 ## Case five, an h2 as the last element in the body
 
+## Imagery, both states and all three widths
+
+The finished state first, in the reading column, which is where a `width` an
+author forgot leaves it.
+
+{% image src="cs-img-field-1-landscape.webp", alt="Field rows, repeatable growth at scale", caption="A real file at measure width. The only thing this half of the block does is get out of the way." %}
+
+The placeholder state at main width, which is the one this pair of blocks was
+built for. It reserves the shape the file will take rather than a rectangle
+somebody guessed at, so nothing moves when the art lands.
+
+{% image src="[cs-img-portfolio-setup-01-landscape.webp]", alt="The setup screen after the second step, one row of the table legible", brief="Wide crop of the dashboard. One row of the table has to be readable at this size, and the sidebar can be cropped out entirely.", width="main" %}
+
+A portrait slot, so the ratio really does come off the token rather than off a
+default, and a decorative image declaring `alt=""` rather than omitting it.
+
+{% image src="[cs-img-founder-portrait.webp]", alt="", brief="Half-length, seated, window light from the left. Not a headshot." %}
+
+A screenshot, which is fixed at main and takes a number in its own sequence.
+
+{% screenshot src="[cs-img-dashboard-empty-square.webp]", alt="The reporting dashboard with no campaigns connected", brief="The empty state, before any account is linked. Crop to the panel, not the whole window.", caption="The empty state is what a new account sees first." %}
+
+And a second one, so the numbering is visibly a sequence rather than a label
+that happens to say one.
+
+{% screenshot src="cs-img-rings-square.webp", alt="Concentric rings, a system seen from above", caption="A real file, so the finished and unfinished states can be compared side by side at the same width." %}
+
 {% methodology %}
 {% method label="Public filings and platform disclosures" %}
 The Reference's own labels describe a survey. This one describes where evidence

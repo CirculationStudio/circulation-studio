@@ -155,6 +155,7 @@ const {
   TABLE_KINDS,
   CALLOUT_LABELS,
   CHILD_PAIRS,
+  IMAGE_WIDTHS,
   YELP_CLUSTERS,
   YELP_FRONTMATTER,
   ARTICLE_KINDS,
@@ -184,7 +185,8 @@ if (!registered.size) {
 const CLOSED_SET_BINDING = {
   "pane.surface": () => [...PANE_SURFACES],
   "table.kind": () => [...TABLE_KINDS],
-  "callout.label": () => [...CALLOUT_LABELS.keys()]
+  "callout.label": () => [...CALLOUT_LABELS.keys()],
+  "image.width": () => [...IMAGE_WIDTHS]
 };
 
 const defaultFor = (shortcode, argument) =>
@@ -193,12 +195,25 @@ const defaultFor = (shortcode, argument) =>
 const valuesFor = (shortcode, argument) =>
   specClosedSets.find((s) => s.shortcode === shortcode && s.argument === argument)?.values ?? null;
 
+/* Arguments whose value has to satisfy a FORMAT before the block will render at
+   all, the same problem the closed sets have and the same fix. `src` is checked
+   for the orientation token that gives an image block its aspect ratio, so a
+   bare "probe" throws and every argument probe for that shortcode then reports
+   a required-argument failure that is really a malformed-input failure.
+
+   This is a test input rather than a fact about the contract, which is why it
+   may live here when a value from the other side may not. Same standing as
+   PROBE_CONTEXT's kind=guide below. */
+const PROBE_VALUES = {
+  src: "cs-img-probe-01-landscape.webp"
+};
+
 /* A value the implementation will accept, so a probe fails for the reason
    being probed and not because a closed set rejected a dummy string. */
 function probeValue(shortcode, argument) {
   const values = valuesFor(shortcode, argument);
   if (values && values.length) return defaultFor(shortcode, argument) ?? values[0];
-  return "probe";
+  return PROBE_VALUES[argument] ?? "probe";
 }
 
 function optionsProxy(shortcode, { omit = null, record = null } = {}) {

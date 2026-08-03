@@ -418,6 +418,62 @@ export function imageOrientation(filename) {
   return token && /^[a-z]+$/.test(token) ? token : null;
 }
 
+/* THE ONE WIDTH AN AUTHOR PICKS. A closed set, same shape as PANE_SURFACES.
+
+   SHORTCODES.md makes width a property of the block everywhere else, because
+   letting it be set per instance is how a system stops being a system. `image`
+   is the stated exception: in-article imagery legitimately varies by intent,
+   a portrait in the reading column and a landscape across the page are
+   different editorial acts, and there is no property of "an image" that
+   decides between them.
+
+   `measure` IS THE DEFAULT and it is the conservative one. A forgotten width
+   keeps the image inside the reading column, where it composes with everything
+   and cannot escape a pane. The two wider values are opt-in. */
+export const IMAGE_WIDTHS = new Set(["measure", "main", "bleed"]);
+
+/* Orientation token to aspect ratio, and the ONE place either block gets a
+   shape from.
+
+   design.md section 10 makes the filename's orientation token the source of
+   truth for ratio, and the shelf check already reads it that way. This is the
+   same rule applied to article imagery, which needs it for a reason the shelf
+   does not have: the block reserves space for a file the build has never seen.
+   A CDN image is fetched by the browser, so the build cannot measure it, and an
+   image with no reserved box is a layout shift on every article that carries
+   one.
+
+   THE RATIOS ARE THE BOX'S, NOT A CLAIM ABOUT THE FILE. They say what shape to
+   reserve, which is exactly what a width and height attribute pair does in a
+   modern browser. So the block emits aspect-ratio rather than invented pixel
+   dimensions: reserving the right shape is honest, and asserting an intrinsic
+   size nobody measured is not.
+
+   A file outside the convention has no declared ratio and fails the build, the
+   same way and with the same reasoning as a shelved piece whose image carries
+   no token. Nothing can reserve space for a shape nobody stated. */
+export const IMAGE_RATIOS = new Map([
+  ["landscape", "3 / 2"],
+  ["square", "1 / 1"],
+  ["portrait", "2 / 3"]
+]);
+
+/* A BRACKETED VALUE IS THE HOUSE SIGNAL FOR "NOT SETTLED YET", and it predates
+   these blocks. `stat` already passes value="[XX%]" through untouched, on the
+   rule that the build does not validate what is inside brackets and must not,
+   or the signal stops being usable while a number is still being chased.
+
+   This extends the same convention to imagery, where it does more work: a
+   number can be bracketed and still read as a sentence, while an image cannot
+   be bracketed and still be an image. So a bracketed src does not render an
+   img at all. It renders the slot itself, at the shape the asset will take,
+   carrying everything a person needs to commission it and everything a reader
+   needs to judge it in place.
+
+   Anchored both ends, so a caption containing brackets is not mistaken for one
+   and a src is either wholly a slot or wholly a filename. */
+export const BRACKETED_VALUE = /^\[[^\]]*\]$/;
+
 /* Article kinds. A closed set, same shape as YELP_CLUSTERS and for the same
    reason: `kind` is the type label printed above a title on the hub, so an
    unknown value publishes an entry labelled with whatever was typed.
@@ -889,13 +945,13 @@ export default function (eleventyConfig) {
        than Table 1 then Figure 2. The label is what a reader searches for, so
        the number has to be unique within its label rather than within the
        page. Each counts in document order of its own kind. */
-    const counters = { table: 0, figure: 0 };
+    const counters = { table: 0, figure: 0, screenshot: 0 };
+    const LABELS = { table: "Table", figure: "Figure", screenshot: "Screenshot" };
     content = content.replace(
-      /<span class="cs-table__number" data-autonumber="(table|figure)"><\/span>/g,
+      /<span class="cs-table__number" data-autonumber="(table|figure|screenshot)"><\/span>/g,
       (_, kind) => {
         counters[kind] += 1;
-        const label = kind === "table" ? "Table" : "Figure";
-        return `<span class="cs-table__number">${label} ${counters[kind]}</span>`;
+        return `<span class="cs-table__number">${LABELS[kind]} ${counters[kind]}</span>`;
       }
     );
 
@@ -1040,6 +1096,151 @@ export default function (eleventyConfig) {
         `${content.trim()}` +
         `\n\n</div>\n${figcaption}\n</figure>`
     );
+  });
+
+  /* image and screenshot: the two imagery blocks, and the placeholder state
+     that is the point of both.
+
+     ============================================================
+     AN ARTICLE MUST BE ABLE TO SHIP BEFORE ITS ART DOES.
+     ============================================================
+
+     Writing and illustration run on different clocks. Until now a block that
+     needed a file it did not have could only be left out, which means the
+     article is written around a hole nobody can see, or pointed at a filename
+     that does not exist, which renders a broken image on a published page.
+     Both failures are silent to everyone except a reader.
+
+     So a bracketed src renders the SLOT. It reserves the real shape, it names
+     itself, it carries the brief and the alt text, and it is styled to be
+     impossible to read as art direction. An article full of them is obviously
+     an article waiting for art, at a glance, while every other thing about it
+     is finishable.
+
+     `brief` IS PLACEHOLDER-ONLY AND IS IGNORED THE MOMENT THE FILE LANDS. It
+     is a note to whoever makes the asset, not a caption, and nothing in the
+     published page should carry it. Read unconditionally so the contract sees
+     it as an argument either way; used only on the placeholder path.
+
+     WHAT THE TWO BLOCKS SHARE AND WHERE THEY PART. Everything below is one
+     implementation because the placeholder state, the ratio rule and the
+     caption are identical. They part on two things only: width, which `image`
+     takes from the author and `screenshot` fixes at main, and numbering, which
+     screenshot gets and image does not. SHORTCODES.md names the auto-numbered
+     blocks as table, figure, chart, screenshot and footnote; image is not one,
+     because an inline illustration is not reference material a reader is sent
+     back to by number. */
+  const IMAGE_PATHS = { image: "illustration", screenshot: "screenshot" };
+
+  /* Widths, expressed as the two things a width decides: whether the block
+     leaves the reading column, and what it is capped at once it has. */
+  const WIDTH_CLASS = { measure: "", main: "cs-mainwidth", bleed: "cs-imgwide--bleed" };
+
+  function imageFigure(block, width, options, where) {
+    const { src, alt, caption, brief } = options || {};
+    const path = IMAGE_PATHS[block];
+
+    /* SRC AND ALT ARE REQUIRED AND ALT MAY BE EMPTY, which is one rule and not
+       two. A block with no src is nothing at all, not a smaller block. And alt
+       has to be STATED: CLAUDE.md asks for alt text on every meaningful image
+       and an empty alt on a decorative one, which is a decision an author makes
+       rather than one a default can make for them. `alt=""` is that decision
+       written down and passes; omitting alt entirely is the decision not made
+       and fails. Undefined is the test, not emptiness. */
+    if (!src || !String(src).trim()) {
+      throw new Error(
+        `[${block}] missing required "src" in ${where}. A ${block} with no ` +
+          `source is nothing at all. Use a bracketed slot id, for example ` +
+          `src="[cs-img-name-01-landscape.webp]", for art that has not landed. ` +
+          `See SHORTCODES.md.`
+      );
+    }
+    if (alt === undefined || alt === null) {
+      throw new Error(
+        `[${block}] missing required "alt" in ${where}. Alt text is a decision ` +
+          `and not a default: write it for a meaningful image, or write alt="" ` +
+          `for a decorative one. An empty string passes and an absent argument ` +
+          `does not, because the empty one is the decision made. See SHORTCODES.md.`
+      );
+    }
+
+    const raw = String(src).trim();
+    const placeholder = BRACKETED_VALUE.test(raw);
+    const slot = placeholder ? raw.slice(1, -1).trim() : raw;
+
+    const orientation = imageOrientation(slot);
+    const ratio = orientation && IMAGE_RATIOS.get(orientation);
+    if (!ratio) {
+      throw new Error(
+        `[${block}] "${slot}" in ${where} carries no usable orientation token. ` +
+          `design.md section 10 makes the last hyphenated segment the source of ` +
+          `truth for ratio, and this block reserves space for a file the build ` +
+          `never sees, so a name outside the convention leaves nothing to ` +
+          `reserve and shifts the layout when the image arrives. Known: ` +
+          `${[...IMAGE_RATIOS.keys()].join(", ")}. See SHORTCODES.md.`
+      );
+    }
+
+    /* The number is a placeholder the numbering transform fills, exactly as
+       table's is, and for the same reason: inserting a screenshot mid-document
+       would renumber every one after it. */
+    const number =
+      block === "screenshot"
+        ? `<span class="cs-table__number" data-autonumber="screenshot"></span>`
+        : "";
+    const text = caption ? `<span class="cs-imgcap__text">${escapeHtml(caption)}</span>` : "";
+    const figcaption =
+      number || text ? `<figcaption class="cs-imgcap">${number}${text}</figcaption>` : "";
+
+    /* main and bleed leave the reading column and take no constraint from it,
+       which is the pane exclusion SHORTCODES.md already states for every
+       main-width block. measure carries none: it sits in the column like prose
+       and composes on a pane exactly as the prose around it does. */
+    const wide = width !== "measure";
+    const marks = wide ? ` data-no-pane="${width} width"` : "";
+    const widthClass = WIDTH_CLASS[width] ? ` ${WIDTH_CLASS[width]}` : "";
+
+    const body = placeholder
+      ? `<figure class="cs-imgslot${widthClass} cs-imgwide--${width}"${marks} ` +
+        `data-placeholder="${escapeHtml(path)}" data-slot="${escapeHtml(slot)}">\n` +
+        `<div class="cs-imgslot__frame" style="aspect-ratio: ${ratio}">\n` +
+        `<p class="cs-imgslot__label">Placeholder, ${escapeHtml(path)}</p>\n` +
+        `<dl class="cs-imgslot__fields">\n` +
+        `<div><dt>Slot</dt><dd>${escapeHtml(slot)}</dd></div>\n` +
+        `<div><dt>Brief</dt><dd>${brief ? escapeHtml(brief) : "No brief written"}</dd></div>\n` +
+        `<div><dt>Alt</dt><dd>${alt ? escapeHtml(alt) : "Empty, marked decorative"}</dd></div>\n` +
+        `</dl>\n</div>\n${figcaption}\n</figure>`
+      : `<figure class="cs-imgblock${widthClass} cs-imgwide--${width}"${marks}>\n` +
+        `<img class="cs-imgblock__img" src="${escapeHtml(site.cdn + slot)}" ` +
+        `alt="${escapeHtml(alt)}" style="aspect-ratio: ${ratio}" ` +
+        `loading="lazy" decoding="async">\n${figcaption}\n</figure>`;
+
+    /* measure stays where it is. Anything wider goes through the same escape
+       table uses, so a main block lands as a direct child of the full-width
+       article and .cs-mainwidth can resolve against it. */
+    return wide ? outsideColumn(body) : `\n${body}\n`;
+  }
+
+  eleventyConfig.addShortcode("image", function (options = {}) {
+    const width = (options && options.width) || "measure";
+    const where = this.page?.inputPath || "unknown file";
+
+    if (!IMAGE_WIDTHS.has(width)) {
+      throw new Error(
+        `[image] unknown width "${width}" in ${where}. The set is closed: ` +
+          `${[...IMAGE_WIDTHS].join(", ")}. Width is a property of every other ` +
+          `block and an author choice only here, so a typo is a silent width ` +
+          `change rather than a missing one. See SHORTCODES.md, Widths.`
+      );
+    }
+    return imageFigure("image", width, options, where);
+  });
+
+  /* screenshot is main and only main. It is evidence rather than illustration:
+     a capture the reader is meant to read, at the width the rest of the
+     reference material sits at. There is no width argument to get wrong. */
+  eleventyConfig.addShortcode("screenshot", function (options = {}) {
+    return imageFigure("screenshot", "main", options, this.page?.inputPath || "unknown file");
   });
 
   /* faq and qa: the FIRST parent-and-child pair, and the pattern methodology,

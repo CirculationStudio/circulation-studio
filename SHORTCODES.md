@@ -99,6 +99,8 @@ Any block that paints therefore needs explicit surface variants or must be exclu
 - On `madder`, nothing carries ink or madder. Everything is paper. Enforced by CSS, not by the author.
 - **A pane contains reading-column content only.** Blocks that sit at `--container-main` (`table`, `chart`, `figure`, `metrics`, `screenshot`, `related`) cannot go inside one and fail the build.
 
+  `image` is on that list conditionally, and it is the only block that is. At `width="main"` or `width="bleed"` it fails inside a pane like any other wide block; at `width="measure"` it sits in the reading column and is allowed, placeholder state included. The placeholder was deliberately built to paint no ground so that this stays true: a block that fails the build inside a pane only while its asset is missing would block the author it exists to unblock.
+
   Two reasons. The Component Reference specifies only measure-width components on ink and madder: heading, prose, inline link, buttons, source line, content label, stat, pull-quote. It gives no deep surface treatment for a table header, a figure border or a chart ground, so any would be invented. And a pane is at most one per page, reserved for the single most important moment, which is not where reference material belongs.
 
 - **A pane must be a top-level element in the article body.** It cannot sit inside a list item, a blockquote, or any other markdown block. The build wraps prose in a column and a pane closes that column before emitting itself, so a pane written inside another block makes markdown-it end the enclosing element early. The pane then renders correctly, as valid HTML, but it lands *after* the list or quote rather than inside it. This is an authoring rule and not a build check, because nothing in the output is malformed: a misplaced pane is indistinguishable from a correctly placed one once rendered.
@@ -277,7 +279,7 @@ Each meta column renders only if its key has a value, so a piece without a readi
 
 ## The vocabulary
 
-**Only LIVE shortcodes may be used in articles.** A PLANNED row describes intended behaviour and is not implemented. Reaching for one does not degrade, it fails the build: an unknown Nunjucks tag throws at parse time. Forty are designed here and twenty exist, so the distinction is half the table. `verify:contract` prints both counts on every run, which is the only reason to trust the numbers in this sentence.
+**Only LIVE shortcodes may be used in articles.** A PLANNED row describes intended behaviour and is not implemented. Reaching for one does not degrade, it fails the build: an unknown Nunjucks tag throws at parse time. Forty are designed here and twenty-two exist, so the distinction is half the table. `verify:contract` prints both counts on every run, which is the only reason to trust the numbers in this sentence.
 
 PLANNED rows are not deletable. They are the vocabulary design and the roadmap, and they are what stops the same block being reinvented under a different name later.
 
@@ -300,8 +302,8 @@ Reading the tables:
 | `chart` | PLANNED | `title` **`source`** `caption` | main | P | Content is a markdown table of label/value rows |
 | `table` | LIVE | `caption` **`source`** `kind` | main | P | `source` is required for `kind="data"` only, and `data` is the default, so a forgotten `kind` fails for a missing source. Content is a markdown table |
 | `pullquote` | LIVE | `attribution` | measure | P | Fills the reading column, see note below |
-| `screenshot` | PLANNED | `src` `alt` `caption` | main | | Unretouched captures only |
-| `image` | PLANNED | `src` `alt` `caption` `width` | varies | | Only block with author-set width |
+| `screenshot` | LIVE | **`src`** **`alt`** `caption` `brief` | main | | Unretouched captures only. Numbered automatically. `brief` is placeholder-only, see Placeholder imagery |
+| `image` | LIVE | **`src`** **`alt`** `caption` `width` `brief` | varies | | Only block with author-set width. `brief` is placeholder-only, see Placeholder imagery |
 | `aside` | PLANNED | `author` `label` | measure | P | Personal voice. Keeps its madder edge bar |
 | `tool` | PLANNED | `name` `description` `url` `label` | measure | | Default label "Open the tool" |
 | `faq` | LIVE | `title` | measure | P | |
@@ -391,6 +393,37 @@ It emits `data-provenance="field-observation"`, so the distinction is available 
 
 The personal `aside` is not a callout. Callouts are informational and carry a label bar. Asides are a named human speaking and carry a madder edge bar. Keeping them separate is the reason both read as deliberate.
 
+### Placeholder imagery
+
+**An article must be able to ship before its art does.** Writing and illustration run on different clocks, and until `image` and `screenshot` existed a block that needed a file nobody had made yet could only be left out, so the article was written around a hole nobody could see, or pointed at a filename that did not exist, so a published page rendered a broken image. Both fail silently to everyone except a reader.
+
+**A bracketed `src` renders the slot instead of the image.**
+
+```
+{% image src="[cs-img-portfolio-setup-01-landscape.webp]"
+         alt="The setup screen after the second step"
+         brief="Wide crop of the dashboard, one row of the table legible"
+         width="main" %}
+```
+
+That renders a visibly unfinished frame at the aspect ratio the filename's orientation token implies, carrying four things: the slot id, the path (`illustration` for `image`, `screenshot` for `screenshot`), the brief, and the alt text so it can be read and judged in place rather than in a spreadsheet. Nothing is fetched and no `img` is emitted.
+
+**Brackets are the house signal and this is not a new one.** `stat` already passes `value="[XX%]"` through untouched, on the rule that the build does not validate what is inside brackets and must not, or the signal stops being usable while a number is still being chased. Imagery needed the convention more than numbers did: a bracketed number still reads as a sentence, and a bracketed filename cannot be an image.
+
+**`brief` is placeholder-only.** It is a note to whoever makes the asset, not a caption. The moment `src` names a real file the argument is ignored and nothing about it reaches the page.
+
+**The orientation token is required and the build fails without a usable one.** `design.md` section 10 makes the last hyphenated segment the source of truth for aspect ratio, which is the same rule the Yelp Hub shelf enforces on its cards. These blocks need it for a reason the shelf does not have: the build never sees the file, because it is fetched from the CDN by the browser, so the ratio is the only way to reserve the right space. `landscape`, `square` and `portrait` are the tokens with ratios.
+
+| Token | Ratio reserved |
+|---|---|
+| `landscape` | 3 / 2 |
+| `square` | 1 / 1 |
+| `portrait` | 2 / 3 |
+
+The ratios are the box's and not a claim about the file. They say what shape to reserve, which is exactly what a `width` and `height` attribute pair does in a modern browser, so the block emits `aspect-ratio` rather than pixel dimensions nobody measured.
+
+**`src` and `alt` are required, and `alt=""` passes.** That is one rule and not two. A block with no source is nothing at all. Alt text is a decision rather than a default: `alt=""` is the decision that an image is decorative, written down, and it renders; omitting `alt` is the decision not made, and it fails the build. Undefined is the test, not emptiness.
+
 ### Closed sets
 
 Every argument whose value comes from a fixed list, gathered so both sides can be compared against one place rather than against prose scattered through the file. `tools/verify/contract.js` checks each LIVE row against the set the build actually enforces, values and default alike.
@@ -400,7 +433,7 @@ Every argument whose value comes from a fixed list, gathered so both sides can b
 | `pane` | `surface` | LIVE | `paper`, `ink`, `madder` | `paper` |
 | `table` | `kind` | LIVE | `comparison`, `data` | `data` |
 | `callout` | `label` | LIVE | `Note`, `Tip`, `Caveat`, `Watch out` | |
-| `image` | `width` | PLANNED | `measure`, `main`, `bleed` | |
+| `image` | `width` | LIVE | `measure`, `main`, `bleed` | `measure` |
 | `exit` | `kind` | PLANNED | `guide`, `tool`, `us` | |
 
 A PLANNED row has nothing to compare against yet and is reported as pending rather than checked. It becomes enforced the moment its shortcode goes LIVE, which is the point of writing it down now: the set is the design, and building the block later should not be the moment it gets invented.
