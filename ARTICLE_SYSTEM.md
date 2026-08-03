@@ -526,7 +526,56 @@ a block that paints instead declares `data-no-pane` and is excluded.
 rendered, counted, aligned and measured at its declared size through all four of
 the other checks. See section 6.
 
-## 10. Open questions
+## 10. The audit strip, and why it is not a check
+
+A panel at the foot of every article listing what that page still owes:
+placeholder image slots, bracketed values with the sentence around each one,
+`observed` markers with the claim each one marks, and frontmatter fields that
+are bracketed or missing.
+
+**It is gated on `deploy.indexable`, the same condition the noindex meta tag
+uses**, and that reuse is the point. There is exactly one place in this repo
+that decides which deploy this is, `src/_data/deploy.js`, and it throws rather
+than guessing when it cannot tell. A second switch could disagree with the
+first, and the failure mode of that disagreement is the strip shipping. Proved
+in all three modes rather than reasoned about: the production branch carries it
+on zero pages, a preview branch and a local build carry it on every article.
+
+**It is split across a template and a transform, which is the same split every
+other output rule in this repo makes.** Three of the four sections read the
+built page, because a placeholder slot, a bracketed value and an `observed`
+marker do not exist while a template is rendering: a bracketed value can arrive
+from frontmatter, from prose, or from inside another block, and a marker sits in
+the middle of a sentence no template sees as a sentence. The frontmatter section
+is computed in the data cascade instead, because it is the one thing the built
+page cannot answer. A missing field leaves no trace to find.
+
+**It scans the article and not the page.** The frame is identical everywhere, so
+anything found in it is reported on every article, and a worklist that repeats
+itself on every entry is a worklist nobody reads. The first run reported `[at]`
+on every article, out of the colophon's email obfuscation. Scoping to the
+article also excludes the strip from its own scan, which matters because it
+reports bracketed values and therefore contains them.
+
+**It is a sibling of the article, not its last child.** It is not article
+content, it is scaffolding about the article. And `article.css` matches
+`.cs-article:has(> .cs-cta:last-child)` to close the seam to the footer, so a
+strip inside would displace a trailing `cta` from `:last-child` and reopen that
+gap on preview only.
+
+**Nothing in it fails a build, and that is the difference between it and
+everything else in section 6.** The five checks are contracts and they throw.
+This is a worklist: it makes outstanding work visible and has no opinion about
+whether the page should ship. A gate that blocked on an unwritten brief would
+stop the articles the placeholder state exists to unblock.
+
+**Its frontmatter list is `SHORTCODES.md`'s frontmatter block, transcribed.** A
+key added there and not to `AUDIT_FRONTMATTER` is a key the strip will not
+check. `verify:contract` does not catch that, because it checks documented keys
+are *read by the build*, and a field this list omits is still read wherever it
+was read before. Stated here rather than left to be discovered.
+
+## 11. Open questions
 
 Not decided. Do not resolve any of these silently.
 
