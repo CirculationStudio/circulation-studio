@@ -85,9 +85,11 @@ const MIN_ELEMENTS = {
      same commit that changes it.
 
      207 until the rank card was rebuilt as a wrapper div around its table,
-     which added two elements. The fingerprint caught that change and the five
+     which added two elements. 211 until the personal-vs-business article
+     landed on 2026-08-02: a cluster moved from in-preparation to populated,
+     which trades one pending line for a full entry. Each time the five
      marketing hashes did not move, which is the split this file exists for. */
-  yelphub: 211
+  yelphub: 216
 };
 
 const browser = await chromium.launch();

@@ -53,7 +53,12 @@ const HUB_EXPECTED = [
   { label: "map",           selector: ".cs-map",              min: 1, column: true },
   { label: "map cluster",   selector: ".cs-map__cluster",     min: 7, column: false },
   { label: "map entry",     selector: ".cs-map__entry",       min: 1, column: false },
-  { label: "map pending",   selector: ".cs-map__pending",     min: 6, column: false },
+  /* map pending is NOT swept, on purpose. A minimum is a floor that content
+     growth must never break, and the in-preparation count does the opposite:
+     it falls by one every time a cluster gets its first article and reaches
+     zero when the map is complete. Asserting a floor on it would turn writing
+     an article into a test failure. Its exact count lives in the manifest,
+     which is updated in the same commit as the content that changes it. */
   { label: "rank panel",    selector: ".cs-rank",             min: 1, column: true },
   { label: "rank row",      selector: ".cs-rank__report tbody tr", min: 4, column: false },
   { label: "closing",       selector: ".cs-hub-close",        min: 1, column: true },

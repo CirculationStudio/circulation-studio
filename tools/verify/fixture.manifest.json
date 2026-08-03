@@ -757,7 +757,7 @@
     },
     {
       "url": "/yelp/",
-      "_note": "The hub is a PAGE TEMPLATE, not a fixture. Its counts are what the current content produces: one shelved piece, one populated cluster, six in preparation, no FAQ files. Several are deliberately ZERO, which is the assertion that an empty thing stays omitted rather than rendering empty. Change the content, change these, same commit.",
+      "_note": "The hub is a PAGE TEMPLATE, not a fixture. Its counts are what the current content produces: two published spokes, two populated clusters, five in preparation, no FAQ files. Several are deliberately ZERO, which is the assertion that an empty thing stays omitted rather than rendering empty. Change the content, change these, same commit. map entry went 1 to 2 and map pending 6 to 5 on 2026-08-02, when the personal-vs-business article landed in mechanics-and-how-to.",
       "blocks": {
         "hub intro": {
           "selector": ".cs-hub-intro",
@@ -797,11 +797,11 @@
         },
         "map entry": {
           "selector": ".cs-map__entry",
-          "count": 1
+          "count": 2
         },
         "map pending": {
           "selector": ".cs-map__pending",
-          "count": 6
+          "count": 5
         },
         "map faq link": {
           "selector": ".cs-map__faq",

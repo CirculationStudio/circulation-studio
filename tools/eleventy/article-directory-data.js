@@ -42,13 +42,40 @@
  * exactly one article carried it. `description` now means the meta description
  * everywhere, `summary` means the map line, and no page reads both.
  */
+
+// Migrated articles that keep their live root-level URL.
+// CLOSED SET. These four pages rank at root today and the URL is the
+// asset. New spokes get nested URLs. Do not add to this list for
+// convenience; that is how the no-frontmatter-permalink guard is
+// lost by accretion.
+//
+// A SET RATHER THAN A MAP, DELIBERATELY. A map would let someone type the
+// wrong destination, which relocates the failure this rule exists to prevent
+// rather than removing it: a bad permalink still ships, at the wrong URL, and
+// still looks like a content decision. Membership is the only thing declarable
+// here and the destination is derived, so there is no second value to get
+// wrong. Include or exclude, nothing else.
+const ROOT_URL_SLUGS = new Set([
+  "difference-between-yelp-personal-business-account",
+  "why-does-yelp-filter-reviews",
+  "is-yelp-advertising-worth-it",
+  "yelp-enhanced-profile"
+]);
+
 export default function articleDirectory(segment) {
   return {
     layout: "layouts/article.njk",
 
     /* A function rather than a template string, so the tier comes from the
        argument above and the slug from the file name, with no template engine
-       in between to get the escaping or the trailing slash wrong. */
-    permalink: (data) => `/${segment}/${data.page.fileSlug}/`
+       in between to get the escaping or the trailing slash wrong.
+
+       The URL stays a fact about the BUILD rather than about the file, which
+       is what keeps verify:contract's frontmatter guard intact: an article
+       still cannot declare its own permalink, so a typo in one cannot ship. */
+    permalink: (data) =>
+      ROOT_URL_SLUGS.has(data.page.fileSlug)
+        ? `/${data.page.fileSlug}/`
+        : `/${segment}/${data.page.fileSlug}/`
   };
 }
