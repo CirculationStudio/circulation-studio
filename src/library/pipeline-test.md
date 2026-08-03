@@ -4,6 +4,11 @@ deck: A test fixture for the markdown pipeline, written about the thing it is te
 kind: essay
 author: steve
 updated: 2026-07-30
+# A bracketed frontmatter value, so the audit strip's fourth section has
+# something to report. This one renders nowhere: the standard header does not
+# show `reviewed` and only the cover treatment does, which is exactly why the
+# strip reads frontmatter as data rather than scanning the page for it.
+reviewed: "[Not yet read for accuracy]"
 ---
 
 {% pane surface="paper" %}

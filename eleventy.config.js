@@ -969,6 +969,183 @@ export default function (eleventyConfig) {
     );
   });
 
+  /* THE AUDIT STRIP, output half. A worklist that travels with the page.
+     ============================================================
+
+     Three of its four sections are here rather than in the layout, for the
+     reason every transform in this file exists: they are facts about the BUILT
+     page and do not exist while it is rendering. A placeholder slot is emitted
+     by a shortcode, a bracketed value can arrive from frontmatter or from prose
+     or from inside another block, and an observed marker sits in the middle of
+     a sentence a template never sees as a sentence. The rendered page is the
+     first and only place all three are visible at once.
+
+     It runs on the marker the layout emits and on nothing else, so the gate is
+     stated once, in one place, on the same condition the noindex uses. A
+     production build emits no marker and this returns on the first line.
+
+     IT SCANS THE ARTICLE AND NOT THE PAGE, which is one decision doing two
+     jobs. The frame is identical on every page, so anything found in it would
+     be reported on every article and a worklist that repeats itself on every
+     entry is a worklist nobody reads. Measured rather than assumed: the first
+     run reported `[at]` on every article, out of the colophon's email
+     obfuscation, which is not work anybody owes. And because the strip is a
+     SIBLING of the article rather than its last child, scoping this way also
+     excludes the strip from its own scan for free. That mattered: it reports
+     bracketed values, so it contains them, and the frontmatter section is
+     already rendered by the time this runs.
+
+     NOTHING HERE FAILS A BUILD. Every other check in this file throws, because
+     every other check is a contract. This one is a worklist: it makes
+     outstanding work visible on a preview and has no opinion about whether the
+     page should ship. A gate that blocked on an unwritten brief would stop the
+     articles this whole mechanism exists to unblock. */
+
+  /* Tags out, and the two inline marks kept as sentinels first.
+
+     Both are inline and both butt up against the prose around them, so
+     stripping their tags naively glues "Observed" onto the end of the sentence
+     it annotates. A sentinel that cannot occur in copy keeps the position
+     without adding a word, and the sentence reads back as the author wrote it. */
+  const OBSERVED_MARK = " obs ";
+
+  function articleText(html) {
+    return html
+      .replace(/<span class="cs-observed"[^>]*>.*?<\/span>/g, OBSERVED_MARK)
+      .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/g, " ")
+      .replace(/<[^>]+>/g, " ")
+      .replace(/&nbsp;/g, " ")
+      .replace(/&amp;/g, "&")
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/[ \t]+/g, " ");
+  }
+
+  /* The sentence a position sits in. Bounded by sentence punctuation followed
+     by a space, or by a line break, which is what a heading or a list item ends
+     on once the tags are gone. Trimmed and collapsed, because the source is
+     wrapped prose and a worklist entry should read as one line. */
+  function sentenceAround(text, from, to) {
+    const before = text.slice(0, from);
+    const after = text.slice(to);
+    const start = Math.max(
+      before.lastIndexOf("\n"),
+      ...[". ", "? ", "! "].map((p) => {
+        const at = before.lastIndexOf(p);
+        return at < 0 ? -1 : at + p.length - 1;
+      })
+    );
+    const ends = [after.indexOf("\n"), ...[". ", "? ", "! "].map((p) => after.indexOf(p))]
+      .filter((i) => i >= 0);
+    const end = ends.length ? Math.min(...ends) + 1 : after.length;
+    return (before.slice(start + 1) + text.slice(from, to) + after.slice(0, end))
+      .replace(new RegExp(OBSERVED_MARK, "g"), " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  /* The claim an observed marker annotates, which is the sentence RUNNING UP TO
+     it and never the one after.
+
+     A separate function rather than sentenceAround, because the marker is
+     written at the end of the claim it marks and expanding in both directions
+     swallows the next sentence with it. Measured: two markers in consecutive
+     sentences both reported the same two-sentence string, so the strip listed
+     one claim twice and the other not at all. */
+  function claimBefore(text, at) {
+    const before = text.slice(0, at).replace(new RegExp(OBSERVED_MARK, "g"), " ");
+    const parts = before.split(/(?<=[.!?])\s+|\n/).filter((part) => part.trim());
+    return (parts.pop() || "").replace(/\s+/g, " ").trim();
+  }
+
+  const auditRow = (parts) =>
+    `<li>${parts.filter(Boolean).join(" ")}</li>`;
+  const auditSection = (heading, rows, clear) =>
+    `<section class="cs-audit__section">` +
+    `<h2 class="cs-audit__heading">${escapeHtml(heading)}</h2>` +
+    (rows.length
+      ? `<ul class="cs-audit__list">${rows.join("")}</ul>`
+      : `<p class="cs-audit__clear">${escapeHtml(clear)}</p>`) +
+    `</section>`;
+
+  eleventyConfig.addTransform("auditStrip", function (content, outputPath) {
+    if (!outputPath || !outputPath.endsWith(".html")) return content;
+    if (!content.includes("data-audit")) return content;
+
+    const [inner] = elementsWithClass(content, "cs-audit__inner");
+    const [article] = elementsWithClass(content, "cs-article");
+    if (!inner || !article) return content;
+    const innerHtml = sliceElement(content, inner.index, inner.tag);
+    const scanned = sliceElement(content, article.index, article.tag);
+    if (!innerHtml || !scanned) return content;
+
+    const text = articleText(scanned);
+
+    /* 1. Placeholder slots, off the attributes the blocks already emit. No
+       second marking invented for this: data-slot and data-placeholder are
+       what the shortcode writes, so a slot cannot reach the page unlisted. */
+    const slots = [];
+    for (const m of scanned.matchAll(
+      /data-placeholder="([^"]*)"\s+data-slot="([^"]*)"/g
+    )) {
+      slots.push(
+        auditRow([
+          `<span class="cs-audit__key">${m[2]}</span>`,
+          `<span class="cs-audit__state">${m[1]}</span>`
+        ])
+      );
+    }
+
+    /* 2. Bracketed values in the rendered prose, each with the sentence it sits
+       in, because "[XX%]" on its own tells nobody which claim is waiting on it.
+       Read from the text rather than the markup, so an attribute that happens
+       to carry brackets is not reported as copy. */
+    const brackets = [];
+    for (const m of text.matchAll(/\[[^\]\n]{1,160}\]/g)) {
+      brackets.push(
+        auditRow([
+          `<span class="cs-audit__value">${escapeHtml(m[0])}</span>`,
+          `<span class="cs-audit__why">${escapeHtml(
+            sentenceAround(text, m.index, m.index + m[0].length)
+          )}</span>`
+        ])
+      );
+    }
+
+    /* 3. Observed markers, each with the claim it marks. The marker is written
+       at the END of the claim it annotates, so the claim is the sentence
+       running up to it rather than the one after. */
+    const observed = [];
+    let at = text.indexOf(OBSERVED_MARK);
+    while (at >= 0) {
+      observed.push(
+        auditRow([
+          `<span class="cs-audit__why">${escapeHtml(claimBefore(text, at))}</span>`
+        ])
+      );
+      at = text.indexOf(OBSERVED_MARK, at + OBSERVED_MARK.length);
+    }
+
+    const filled =
+      auditSection("Placeholder imagery", slots, "No placeholder slots.") +
+      auditSection("Bracketed values", brackets, "No bracketed values.") +
+      auditSection("Field observations", observed, "No observed markers.");
+
+    /* Appended inside the inner wrapper, after the frontmatter section the
+       layout rendered, so the order reads frontmatter, then imagery, then copy.
+
+       Both replacements take a FUNCTION rather than a string. String.replace
+       reads $&, $1 and $` in a string replacement, and this one is a whole page
+       of arbitrary HTML: a $& anywhere in the copy would splice the match back
+       into itself. A function replacement is returned verbatim. */
+    const closing = `</${inner.tag}>`;
+    const rebuilt =
+      innerHtml.slice(0, innerHtml.lastIndexOf(closing)) + filled + closing;
+    return content.replace(innerHtml, () => rebuilt);
+  });
+
   /* stat: a single figure with its label and its source.
 
      Not paired, so there is no markdown inside it and the three arguments are

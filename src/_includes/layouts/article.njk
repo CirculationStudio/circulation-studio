@@ -62,3 +62,56 @@ layout: layouts/base.njk
   {{ content | safe }}
   </div>
 </article>
+
+{#- THE AUDIT STRIP. A worklist that travels with the page, on the preview host
+    and never on production.
+
+    GATED ON deploy.indexable, WHICH IS THE SAME CONDITION THE NOINDEX USES.
+    Not a second switch and not an environment variable of its own: there is
+    exactly one place in this repo that decides which deploy this is, and it
+    already throws rather than guessing. Reusing it means the strip cannot end
+    up on the live site while the robots tag says preview, or the reverse. See
+    src/_data/deploy.js.
+
+    Local builds are not indexable either, so the strip is on in development,
+    which is where it is most useful.
+
+    A SIBLING OF THE ARTICLE, NOT ITS LAST CHILD. Two reasons, and either alone
+    would settle it. It is not article content: it is scaffolding about the
+    article, which is what an aside outside the article says. And the seam rule
+    in article.css matches `.cs-article:has(> .cs-cta:last-child)`, so a strip
+    inside would displace a trailing cta from :last-child and reopen the gap
+    that rule was written to close, on preview only, which is exactly the kind
+    of difference nobody would think to look for.
+
+    THREE OF THE FOUR SECTIONS ARE FILLED BY A TRANSFORM, because a placeholder
+    slot, a bracketed value and an observed marker only exist once the page is
+    rendered. The frontmatter section is here because it is the one the built
+    page cannot answer: a missing field leaves no trace to find. See the
+    auditStrip transform in eleventy.config.js. -#}
+{%- if not deploy.indexable %}
+<aside class="cs-audit" aria-label="Preview audit strip">
+  {#- data-audit is on the INNER element, because that is where the transform
+      appends. Appending before the aside's own close would drop three sections
+      outside the wrapper that gives the strip its width. -#}
+  <div class="cs-audit__inner" data-audit>
+    <p class="cs-audit__title">Audit strip</p>
+    <p class="cs-audit__note">Preview and local builds only. Never rendered on production. What this page still owes.</p>
+
+    <section class="cs-audit__section">
+      <h2 class="cs-audit__heading">Frontmatter</h2>
+      {%- if auditFrontmatter.length %}
+      <ul class="cs-audit__list">
+        {%- for item in auditFrontmatter %}
+        <li><span class="cs-audit__key">{{ item.field }}</span> <span class="cs-audit__state">{{ item.state }}</span>
+          {%- if item.value %} <span class="cs-audit__value">{{ item.value }}</span>{% endif %}
+          <span class="cs-audit__why">{{ item.why }}</span></li>
+        {%- endfor %}
+      </ul>
+      {%- else %}
+      <p class="cs-audit__clear">Nothing outstanding.</p>
+      {%- endif %}
+    </section>
+  </div>
+</aside>
+{%- endif %}
