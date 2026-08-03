@@ -17,7 +17,7 @@ summary: What each Yelp account can and cannot do
 - A claimed page can revert to unclaimed after 90 days without a sign-in.
 {% endtakeaways %}
 
-A Yelp personal account and a Yelp business account are two separate accounts. They have two separate sets of credentials, they sign in at two different addresses, and Yelp will not combine them. Per Yelp's Support Center article "Can I merge my business account with my personal user account," accessed August 2, 2026, the two cannot be merged, and a business owner cannot use a personal account to manage a business page.
+A Yelp personal account and a Yelp business account are two separate accounts. They have two separate sets of credentials, they sign in at two different addresses, and Yelp will not combine them. Per Yelp's Support Center article "[Can I merge my business account with my personal user account](https://biz.yelp.com/support-center/article/Can-I-merge-my-business-account-with-my-personal-user-account)," accessed August 2, 2026, the two cannot be merged, and a business owner cannot use a personal account to manage a business page.
 
 That single fact resolves most of the confusion around these accounts, because the confusion is almost never about how to create one.
 
@@ -29,7 +29,7 @@ The question that arrives with them is not about signing up. It is about the rel
 
 A personal account is the consumer side of Yelp. Yelp requires one for anything past searching: writing reviews, posting photos, bookmarking businesses into collections, and following other users.
 
-The limit is written into what the account is for. Yelp's Support Center article "What is a user account," accessed August 2, 2026, states that a user account is for personal, non-commercial use and should not be used to promote a business. Yelp permits business owners to hold personal accounts, but those accounts cannot promote the owner's business, and Yelp's guidance is that owners should not review businesses they engage with as part of their own work.
+The limit is written into what the account is for. Yelp's Support Center article "[What is a user account](https://www.yelp-support.com/article/What-is-a-user-account?l=en_US)," accessed August 2, 2026, states that a user account is for personal, non-commercial use and should not be used to promote a business. Yelp permits business owners to hold personal accounts, but those accounts cannot promote the owner's business, and Yelp's guidance is that owners should not review businesses they engage with as part of their own work.
 
 In practice that rules out the two things owners most often try. You cannot answer a review on your own page from your personal account, and you cannot use it to leave reviews for the suppliers, subcontractors, or referral partners you work with.
 
@@ -40,7 +40,7 @@ A business account manages the pages it has claimed. From it you can update your
 Two limits are worth stating plainly, because both get assumed the wrong way round.
 
 {% callout label="Caveat" %}
-Claiming is free, and a claimed page is not an advertising account. Yelp's Yelp Business Page product page, accessed August 2, 2026, states that claiming costs nothing and that a claimed page does not mean the business is a paid advertiser. The same page puts more than 20 free features behind the claim. Nothing about holding a business account commits you to spending, and nothing about spending is required to get the page working.
+Claiming is free, and a claimed page is not an advertising account. Yelp's [Yelp Business Page product page](https://business.yelp.com/products/business-page/), accessed August 2, 2026, states that claiming costs nothing and that a claimed page does not mean the business is a paid advertiser. The same page puts more than 20 free features behind the claim. Nothing about holding a business account commits you to spending, and nothing about spending is required to get the page working.
 {% endcallout %}
 
 The account is also not a Yelp login. It manages your pages and does nothing else. It will not let you browse, bookmark, or review.
@@ -62,7 +62,7 @@ The account is also not a Yelp login. It manages your pages and does nothing els
 
 Yelp added the ability to link the two accounts, which is the piece most owners have never been told about.
 
-Per Yelp's Support Center article "How do I link my Yelp for business account with my consumer user account," accessed August 2, 2026, linking gives a business account holder a view of their own page as a prospective customer sees it. Linked accounts carry an access level Yelp labels "Business," "Consumer," or "Business & Consumer," visible from the User Management page on the business side or from Account Settings on the consumer side. Yelp's system will prompt you to link if you are signed in to a claimed business's consumer account.
+Per Yelp's Support Center article "[How do I link my Yelp for business account with my consumer user account](https://biz.yelp.com/support-center/article/How-do-I-link-my-Yelp-for-business-account-with-my-consumer-user-account)," accessed August 2, 2026, linking gives a business account holder a view of their own page as a prospective customer sees it. Linked accounts carry an access level Yelp labels "Business," "Consumer," or "Business & Consumer," visible from the User Management page on the business side or from Account Settings on the consumer side. Yelp's system will prompt you to link if you are signed in to a claimed business's consumer account.
 
 What linking does not do is the important half. It does not connect the two sets of login credentials, it does not merge the accounts, and it does not give the personal account any ability to manage the page. It is a view, not a permission. Yelp also states the feature is available only in the US.
 
@@ -78,9 +78,9 @@ The two accounts are often registered to different email addresses. A page that 
 
 ## Getting a business account, if the page is unclaimed
 
-The claim flow starts at biz.yelp.com/claim, where the button currently reads "Verify my free listing." You search for the business, confirm it is yours, and create business credentials.
+The claim flow starts at [biz.yelp.com/claim](https://biz.yelp.com/claim), where the button currently reads "Verify my free listing." You search for the business, confirm it is yours, and create business credentials.
 
-The step that actually stops people is verification. Per Yelp's article "How to add a business to Yelp," updated October 2025, claiming completes with a verification by phone call, text message, or an email address on the business's own domain. That means the phone number Yelp already has on the listing needs to be a number you can answer. If it is a disconnected line or an old answering service, the claim stalls there and no amount of retrying the form fixes it. Yelp states most new pages are approved within 24 hours once the process completes.
+The step that actually stops people is verification. Per Yelp's article "[How to add a business to Yelp](https://business.yelp.com/resources/articles/how-to-add-a-business-to-yelp/)," updated October 2025, claiming completes with a verification by phone call, text message, or an email address on the business's own domain. That means the phone number Yelp already has on the listing needs to be a number you can answer. If it is a disconnected line or an old answering service, the claim stalls there and no amount of retrying the form fixes it. Yelp states most new pages are approved within 24 hours once the process completes.
 
 The specific screens change, and Yelp's own help pages do not always agree with each other about them, so read the current steps from Yelp's claim page rather than from any description of it, including this one.
 
