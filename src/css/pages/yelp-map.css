@@ -1,0 +1,259 @@
+/* /yelp-map/. Internal tool, page-scoped like every other page stylesheet.
+ *
+ * NO NEW COMPONENTS AND NO NEW TOKENS, which the brief asks for and which is
+ * also the right call for a page nobody outside the studio will see. Every
+ * colour below is a token that already exists, every face is --font-display or
+ * --font-body, and the only sizes are the ones a dense list needs. Nothing here
+ * is promotable and nothing here should be reused: this is layout for one page.
+ *
+ * DENSE AND PLAIN. The page is read the way a spreadsheet is read, scanning a
+ * column for the rows that need work, so the rules below are about making a row
+ * scannable and nothing else. No cards, no grounds, no radius, one hairline per
+ * row and one madder mark for the only thing that matters.
+ *
+ * MADDER MEANS ONE THING HERE: this needs work before it can ship. It is on the
+ * dev-only state, on a non-zero bracket or placeholder count, on a
+ * disagreement, and on a cluster with no linkable FAQs. Nowhere else. On a page
+ * this dense an accent that means two things means nothing.
+ */
+@layer components {
+  .cs-map-page {
+    padding-block: var(--space-64) var(--space-96);
+  }
+
+  /* ---- head ---- */
+
+  .cs-map-h1 {
+    margin: var(--space-8) 0 var(--space-16);
+    font-size: var(--text-h3);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+  .cs-map-lede {
+    margin: 0 0 var(--space-24);
+    max-width: 80ch;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+  .cs-map-lede code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 13px;
+  }
+
+  .cs-map-totals {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-8) var(--space-40);
+    margin: 0 0 var(--space-64);
+    padding-block: var(--space-16);
+    border-block: 1px solid var(--border-hairline);
+  }
+  .cs-map-totals > div { display: flex; align-items: baseline; gap: var(--space-8) }
+  .cs-map-totals dt {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  .cs-map-totals dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 15px;
+    color: var(--color-ink);
+  }
+
+  /* ---- sections ---- */
+
+  .cs-map-section { margin-bottom: var(--space-64) }
+  .cs-map-section--last { margin-bottom: 0 }
+
+  .cs-map-h2 {
+    margin: 0 0 var(--space-8);
+    border-top: 2px solid var(--color-ink);
+    padding-top: var(--space-16);
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 15px;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+
+  .cs-map-section__note {
+    margin: 0 0 var(--space-16);
+    max-width: 88ch;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+
+  .cs-map-cluster__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-16);
+    margin: 0 0 var(--space-8);
+    max-width: none;
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  /* ---- one row ---- */
+
+  .cs-map-row {
+    border-top: 1px solid var(--border-hairline);
+    padding: 10px 0 10px 12px;
+    border-left: 2px solid transparent;
+  }
+  /* The one place a row is marked. Left edge rather than a ground, so a run of
+     flagged rows reads as a column of marks down the page. */
+  .cs-map-row--flag { border-left-color: var(--color-madder) }
+
+  .cs-map-row__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-8);
+    margin: 0;
+    max-width: none;
+  }
+  .cs-map-row__title {
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 14px;
+    color: var(--color-ink);
+  }
+  a.cs-map-row__title { text-decoration: underline; text-underline-offset: 3px }
+
+  .cs-map-state {
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 9px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    min-width: 68px;
+  }
+  .cs-map-state--ok { color: var(--color-ink) }
+  .cs-map-state--dev { color: var(--color-madder) }
+  .cs-map-state--plan { color: var(--text-faint) }
+
+  /* Where a state came from. Kept beside it because the file's own header makes
+     the point that `plan` means asserted and not confirmed. */
+  .cs-map-src {
+    font-family: var(--font-display);
+    font-size: 9px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  .cs-map-tag {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 9px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border: 1px solid var(--border-hairline);
+    padding: 1px 6px;
+  }
+
+  .cs-map-row__meta,
+  .cs-map-row__counts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-16);
+    margin: 4px 0 0;
+    max-width: none;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .cs-map-url,
+  .cs-map-kw {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px;
+  }
+  .cs-map-kw { color: var(--text-faint) }
+
+  .cs-map-row__note,
+  .cs-map-row__flag {
+    margin: 4px 0 0;
+    max-width: 96ch;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+  .cs-map-row__flag { color: var(--color-madder) }
+
+  .cs-map-flag { color: var(--color-madder) }
+
+  /* ---- the worklist ---- */
+
+  .cs-map-blockers {
+    margin: 0;
+    padding-left: var(--space-24);
+    max-width: none;
+    /* Stated, because Tailwind's preflight sets list-style:none on ol and the
+       list shipped unnumbered. The numbers are the point of an ordered list
+       here: this is 23 items long and gets referred to by position. */
+    list-style: decimal;
+  }
+  .cs-map-blockers li::marker {
+    font-family: var(--font-display);
+    font-size: 11px;
+    color: var(--text-faint);
+  }
+  .cs-map-blockers li {
+    border-top: 1px solid var(--border-hairline);
+    padding: 10px 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+  .cs-map-blockers__what {
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 13px;
+    color: var(--color-ink);
+    margin-right: var(--space-8);
+  }
+  .cs-map-blockers__gates { display: block; margin-top: 2px }
+
+  .cs-map-kind {
+    display: inline-block;
+    min-width: 66px;
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 9px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  .cs-map-kind--measured { color: var(--color-madder) }
+
+  .cs-map-owner {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+    margin-left: var(--space-8);
+  }
+  .cs-map-owner--none { color: var(--text-faint) }
+
+  @media (max-width: 767px) {
+    .cs-map-totals { gap: var(--space-8) var(--space-24) }
+    .cs-map-row__meta,
+    .cs-map-row__counts { gap: var(--space-8) }
+    .cs-map-kind, .cs-map-state { min-width: 0 }
+  }
+}

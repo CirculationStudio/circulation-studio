@@ -68,7 +68,14 @@ const PAGES = [
   "/network/",
   /* Rank Tracking puts a paper input field on the madder pane and a white
      report card on paper, neither of which any other page produces. */
-  "/yelp-rank-tracking-tool/"
+  "/yelp-rank-tracking-tool/",
+  /* /yelp-map/ is an internal tool and carries a noindex on every deploy, which
+     is exactly why it is scanned. Nobody outside the studio will see it, so
+     nobody outside will notice a token pairing that fails, and it is the
+     densest page on the site: madder on paper at four sizes down to 9px, used
+     as a state marker rather than as an accent. An unreadable state on a page
+     read as a worklist is a worklist that gets misread. */
+  "/yelp-map/"
 ];
 
 /* Which surfaces a text token is allowed to land on. This is the contract: a

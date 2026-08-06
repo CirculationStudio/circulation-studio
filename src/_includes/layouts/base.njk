@@ -25,7 +25,15 @@
 {#- Emitted on every deploy that is not the production branch, and on nothing
     else. The production host carries NO robots meta tag at all, which is the
     safe shape: there is no state to get stuck in. See src/_data/deploy.js. -#}
-{%- if not deploy.indexable %}
+{#- `noindex: true` in a page's front matter is the OTHER way in, and it is
+    about a page rather than about a deploy. An internal tool like /yelp-map/
+    must carry the directive on production too, where deploy.indexable is true
+    and this block would otherwise emit nothing.
+
+    OR, NOT A SEPARATE BLOCK. One tag, two reasons to emit it, so the two can
+    never both fire and write it twice. A page opting in on a preview build is
+    already covered and stays covered. -#}
+{%- if not deploy.indexable or noindex %}
   <meta name="robots" content="noindex, nofollow">
 {%- endif %}
 

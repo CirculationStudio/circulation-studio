@@ -37,11 +37,26 @@ eleventyExcludeFromCollections: true
   So the preview's protection is the noindex meta tag on every page, and this
   file exists to let the crawler reach it.
 -#}
+{#-
+  INTERNAL TOOLS ARE DISALLOWED ON EVERY DEPLOY, and that is not a
+  contradiction of the reasoning above. That argument is about the preview HOST,
+  which serves pages that exist on production and may already be indexed, so
+  Disallow there would hide the noindex that has to be read to clear them.
+
+  Neither applies to /yelp-map/. It has never been linked from anywhere, never
+  submitted, and never indexed, so there is no listing for a crawler to need to
+  reach a directive about. The noindex meta tag on the page is still the real
+  mechanism; this is the second layer, and it is the one that keeps the URL out
+  of a crawl even if it is guessed.
+-#}
+{%- set internalOnly = ["/yelp-map/"] -%}
 # robots.txt for Circulation Studio
 {% if deploy.indexable -%}
-# Production deploy. Nothing is restricted.
+# Production deploy. Nothing is restricted except internal tools.
 User-agent: *
 Allow: /
+{% for tool in internalOnly %}Disallow: {{ tool }}
+{% endfor -%}
 {%- else -%}
 # NOT the production deploy ({{ deploy.branch or "local build" }}).
 # This origin serves the same pages as the production host and must not compete
@@ -49,6 +64,9 @@ Allow: /
 # noindex meta tag, and a crawler has to be able to fetch the page to read it.
 # Disallow would hide the directive rather than enforce it. Pages here also
 # carry a canonical pointing at production. See src/_data/deploy.js.
+# Internal tools are Disallowed here too, for the reason in the template.
 User-agent: *
 Allow: /
+{% for tool in internalOnly %}Disallow: {{ tool }}
+{% endfor -%}
 {%- endif %}

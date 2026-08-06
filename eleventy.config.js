@@ -1,4 +1,5 @@
 import path from "node:path";
+import { existsSync } from "node:fs";
 import EleventyVitePlugin from "@11ty/eleventy-plugin-vite";
 import tailwindcss from "@tailwindcss/vite";
 import icons from "./src/_data/icons.js";
@@ -473,6 +474,68 @@ export const IMAGE_RATIOS = new Map([
    Anchored both ends, so a caption containing brackets is not mistaken for one
    and a src is either wholly a slot or wholly a filename. */
 export const BRACKETED_VALUE = /^\[[^\]]*\]$/;
+
+/* The same signal found in PROSE rather than in a field. Not anchored, because
+   here it is one token inside a sentence, and bounded in length so an unclosed
+   bracket does not swallow a paragraph and report it as one finding. */
+export const BRACKET_IN_PROSE = /\[[^\]\n]{1,160}\]/g;
+
+/* ============================================================
+   READING A RENDERED ARTICLE. Two readers, one definition.
+   ============================================================
+
+   The audit strip reports these per page at the foot of the article. The Yelp
+   map at /yelp-map/ counts the same things across every built spoke at once, to
+   answer one question the plan data cannot: whether a page that calls itself
+   SHIPPED actually is. Both have to mean exactly the same thing by "a bracketed
+   value", or the strip and the map disagree about the same article and there is
+   no way to tell which is right.
+
+   So the reading lives here, once, and both call it. */
+
+/* Tags out, and the inline mark kept as a sentinel first.
+
+   `observed` is inline and butts up against the prose around it, so stripping
+   its tags naively glues "Observed" onto the end of the sentence it annotates.
+   A sentinel that cannot occur in copy keeps the position without adding a
+   word, and the sentence reads back as the author wrote it. */
+export const OBSERVED_MARK = " obs ";
+
+export function articleText(html) {
+  return String(html || "")
+    .replace(/<span class="cs-observed"[^>]*>.*?<\/span>/g, OBSERVED_MARK)
+    .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/g, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/[ \t]+/g, " ");
+}
+
+/* What a rendered article is carrying, as four numbers.
+
+   COUNTED OFF THE MARKINGS THE BLOCKS ALREADY EMIT, never off a second
+   annotation invented for counting. `data-placeholder` is written by image and
+   screenshot when src is bracketed, so a placeholder slot cannot reach a page
+   uncounted; `cs-observed` is written by the observed shortcode. A page that
+   stopped emitting either would show zero here AND render nothing, which is one
+   failure rather than a count that quietly disagrees with the page.
+
+   Words are counted from the text with the sentinel removed, so an observed
+   marker does not add a word to the article's length. */
+export function articleSignals(html) {
+  const source = String(html || "");
+  const text = articleText(source);
+  return {
+    words: text.split(new RegExp(OBSERVED_MARK, "g")).join(" ").split(/\s+/).filter(Boolean).length,
+    brackets: (text.match(BRACKET_IN_PROSE) || []).length,
+    observed: (source.match(/class="cs-observed"/g) || []).length,
+    placeholders: (source.match(/data-placeholder="/g) || []).length
+  };
+}
 
 /* Article kinds. A closed set, same shape as YELP_CLUSTERS and for the same
    reason: `kind` is the type label printed above a title on the hub, so an
@@ -1001,27 +1064,11 @@ export default function (eleventyConfig) {
      page should ship. A gate that blocked on an unwritten brief would stop the
      articles this whole mechanism exists to unblock. */
 
-  /* Tags out, and the two inline marks kept as sentinels first.
-
-     Both are inline and both butt up against the prose around them, so
-     stripping their tags naively glues "Observed" onto the end of the sentence
-     it annotates. A sentinel that cannot occur in copy keeps the position
-     without adding a word, and the sentence reads back as the author wrote it. */
-  const OBSERVED_MARK = " obs ";
-
-  function articleText(html) {
-    return html
-      .replace(/<span class="cs-observed"[^>]*>.*?<\/span>/g, OBSERVED_MARK)
-      .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/g, " ")
-      .replace(/<[^>]+>/g, " ")
-      .replace(/&nbsp;/g, " ")
-      .replace(/&amp;/g, "&")
-      .replace(/&lt;/g, "<")
-      .replace(/&gt;/g, ">")
-      .replace(/&quot;/g, '"')
-      .replace(/&#39;/g, "'")
-      .replace(/[ \t]+/g, " ");
-  }
+  /* OBSERVED_MARK and articleText are at module scope now, because /yelp-map/
+     counts the same signals across every built spoke, and the two readers have
+     to mean the same thing by "a bracketed value" or the strip and the map
+     disagree about the same article with no way to tell which is right. See
+     articleSignals above. */
 
   /* The sentence a position sits in. Bounded by sentence punctuation followed
      by a space, or by a line break, which is what a heading or a list item ends
@@ -2134,6 +2181,32 @@ export default function (eleventyConfig) {
     return items;
   });
 
+  /* THE ARTICLE TIER ALONE, WITH NO getAll() ANYWHERE IN IT, and that is the
+     entire reason it exists separately from `yelp`.
+
+     /yelp-map/ reads templateContent off these, which Eleventy only permits
+     when its dependency graph can order the consumer after the members.
+     `collections.yelp` cannot be ordered: yelpPieces() calls getAll() to find
+     enrolled page templates, so the collection depends on every template in the
+     project and Eleventy gives up rather than resolve it. The build failed with
+     TemplateContentPrematureUseError on the whitepaper, which is a real article
+     that was always going to be in the collection.
+
+     This is the same glob the tier has always been, so nothing about what an
+     article IS has changed. It is the getAll() that a templateContent consumer
+     cannot live with. */
+  eleventyConfig.addCollection("yelpArticles", (collectionApi) =>
+    collectionApi.getFilteredByGlob("src/yelp/*.md")
+  );
+
+  /* Every URL the build wrote, as plain strings. /yelp-map/ asks two separate
+     questions of the build, and this answers the cheap one: does a page exist
+     at this URL. Strings only, no templateContent, so getAll() here costs the
+     ordering nothing. */
+  eleventyConfig.addCollection("builtUrls", (collectionApi) =>
+    collectionApi.getAll().map((item) => item.url)
+  );
+
   /* The Start here piece, or nothing. A collection rather than a filter so the
      template asks for it by name and never re-derives the rule. */
   eleventyConfig.addCollection("yelpStartHere", (collectionApi) =>
@@ -2218,6 +2291,201 @@ export default function (eleventyConfig) {
       value instanceof Date ? value : new Date(`${String(value).slice(0, 10)}T00:00:00Z`);
     if (Number.isNaN(date.getTime())) return String(value);
     return date.toLocaleDateString("en-US", { timeZone: "UTC", month: "short", year: "numeric" });
+  });
+
+  /* ============================================================
+     THE YELP MAP'S ONE RULE: DERIVE, DO NOT TRUST.
+     ============================================================
+
+     src/_data/yelpMap.js is a hand-maintained plan and it says so about itself:
+     several states are marked source: "plan", meaning asserted and not
+     confirmed, and the file records that the plan has been wrong at least once.
+
+     So for any spoke whose url matches a page the build actually produced, the
+     BUILD WINS and the file's state is not consulted at all. What comes back is
+     measured off the rendered article: how long it is, how many bracketed
+     values it still carries, how many field observations it makes, and how many
+     image slots are still placeholders.
+
+     THE DISTINCTION THIS EXISTS TO SHOW is the last two. Zero brackets and zero
+     placeholders is a page that can be published. Either one above zero is a
+     page that renders, looks finished, passes every check in verify, and must
+     not go out. Nothing else on the site draws that line, and it is invisible
+     from a URL.
+
+     WHERE THE FILE SAYS SHIPPED AND THE BUILD HAS NO SUCH PAGE, NOTHING PICKS A
+     WINNER. The filter returns null and the template shows the disagreement,
+     because the file being wrong and the build being incomplete are different
+     problems with different fixes, and a page that silently resolved one into
+     the other would be the plan data all over again.
+
+     templateContent RATHER THAN THE BUILT FILE. It is the article's own body,
+     rendered, without the frame and without the audit strip, which is exactly
+     the scope both counts want. Read at render time from a filter, which is
+     after every collection is built, so there is no too-early access. */
+  /* MEASURED OFF ARTICLES AND ONLY ARTICLES, and the reason is not a
+     limitation, it is what the counts mean.
+
+     collections.yelp holds the article tier PLUS the page templates that
+     enrolled themselves with `hubentry`. A page template is bespoke layout with
+     none of the article vocabulary in it: no shortcodes emitting brackets, no
+     observed markers, no image slots, and a "word count" over its frontmatter
+     driven markup would be a number about the template rather than about the
+     writing. So a row matches here only if it is a markdown article.
+
+     IT IS ALSO THE FIX FOR A REAL BUILD ERROR. Reading templateContent off
+     src/yelp-partners.njk threw TemplateContentPrematureUseError: it joined the
+     collection through getAll() rather than as an ordinary member, so Eleventy's
+     dependency graph does not know to render it before this page. The .md test
+     removes the cause rather than working around the symptom. Whether a page
+     EXISTS is a separate lookup against collections.all, below, which reads
+     nothing but urls and cannot be too early. */
+  const deriveSpoke = (items, url) => {
+    const built = (items || []).find(
+      (item) => item.url === url && String(item.inputPath || "").endsWith(".md")
+    );
+    if (!built) return null;
+
+    const signals = articleSignals(built.html);
+
+    /* COMPANION FILES, CHECKED BESIDE THE ARTICLE. `<slug>-images.md` and
+       `<slug>-blocked.md` are the image brief and the blocker note for a piece,
+       and they live next to it because a companion in another tree is one
+       nobody finds. Neither exists yet anywhere in the repo, so this reports
+       false for every article today, which is the honest answer and not a
+       broken lookup: the check is here so the first one dropped in shows up
+       with no edit. Same reasoning the FAQ glob on the hub was written with. */
+    const dir = path.dirname(built.inputPath);
+    const slug = path.basename(built.inputPath).replace(/\.[^.]+$/, "");
+    const companion = (suffix) => existsSync(path.join(dir, `${slug}-${suffix}.md`));
+
+    return {
+      url: built.url,
+      inputPath: built.inputPath,
+      ...signals,
+      /* The line the whole page is drawn to show. */
+      publishable: signals.brackets === 0 && signals.placeholders === 0,
+      images: companion("images"),
+      blocked: companion("blocked")
+    };
+  };
+
+  /* ONE FILTER, ONE PASS, AND THE TEMPLATE ONLY RENDERS.
+
+     Everything the map shows is derived here: the per-entry measurements, the
+     disagreements, the aggregated blocker list and the totals. The alternative
+     was four filters and a page of Nunjucks push-into-an-array, which puts the
+     one rule this page has, derive over trust, in a template where nobody would
+     look for it and where it cannot be read in one piece. */
+  eleventyConfig.addFilter("yelpMapReport", (map, articles, urls) => {
+    const collection = articles || [];
+    const allUrls = new Set(urls || []);
+
+    /* An entry is the file's row plus whatever the build knows, and the build
+       knows two separate things about it.
+
+       DOES THE PAGE EXIST is asked of collections.all, which is every URL the
+       build wrote. WHAT IS IN IT is asked of the article tier, which is a
+       narrower set. Conflating them was the first version's bug: a page
+       template that genuinely exists would have been reported as a
+       disagreement, because nothing measured it. */
+    const resolve = (entry) => {
+      const derived = deriveSpoke(collection, entry.url);
+      const exists = allUrls.has(entry.url);
+      return {
+        ...entry,
+        derived,
+        /* Built, real, and not an article, so there is nothing to count and
+           nothing wrong. Said out loud rather than left as an empty row. */
+        builtNotArticle: exists && !derived,
+        /* Not resolved into a winner. The file being wrong and the build being
+           incomplete are different problems with different fixes, and this page
+           exists because the file has been wrong before. */
+        disagreement:
+          entry.state === "SHIPPED" && !exists
+            ? "File says SHIPPED. The build produced no page at this URL."
+            : null
+      };
+    };
+
+    const templates = (map.templates || []).map(resolve);
+    const clusters = (map.clusters || []).map((cluster) => ({
+      ...cluster,
+      spokes: (cluster.spokes || []).map(resolve)
+    }));
+    const pillar = resolve(map.pillar || {});
+
+    const everyEntry = [pillar, ...templates, ...clusters.flatMap((c) => c.spokes)];
+    const spokes = clusters.flatMap((c) => c.spokes);
+
+    /* THE AGGREGATED LIST, and the order is the order of certainty.
+
+       Derived first: those are measured off pages that already exist, so they
+       are the only lines here that cannot be out of date. Global second,
+       because they carry owners and gate the most. Per-spoke last, because
+       every one of them is a plan assertion and the file says the plan has been
+       wrong at least once. */
+    const blockers = [];
+
+    for (const entry of everyEntry) {
+      const d = entry.derived;
+      if (!d) continue;
+      if (d.brackets) {
+        blockers.push({
+          kind: "measured",
+          what: `${d.brackets} bracketed value${d.brackets === 1 ? "" : "s"} still in the copy`,
+          owner: null,
+          gates: `${entry.title}. Renders and passes verify. Not publishable.`,
+          url: entry.url
+        });
+      }
+      if (d.placeholders) {
+        blockers.push({
+          kind: "measured",
+          what: `${d.placeholders} image slot${d.placeholders === 1 ? "" : "s"} still a placeholder`,
+          owner: null,
+          gates: `${entry.title}. Art not delivered.`,
+          url: entry.url
+        });
+      }
+    }
+
+    for (const global of map.globalBlockers || []) {
+      blockers.push({ kind: "global", ...global, url: null });
+    }
+
+    for (const entry of everyEntry) {
+      if (!entry.blocker) continue;
+      blockers.push({
+        kind: "planned",
+        what: entry.blocker,
+        owner: null,
+        gates: entry.title,
+        url: entry.url
+      });
+    }
+
+    const built = everyEntry.filter((e) => e.derived);
+    return {
+      pillar,
+      templates,
+      clusters,
+      blockers,
+      faqs: map.faqs,
+      totals: {
+        clusters: clusters.length,
+        spokes: spokes.length,
+        templates: templates.length,
+        built: built.length,
+        publishable: built.filter((e) => e.derived.publishable).length,
+        onDevOnly: built.filter((e) => !e.derived.publishable).length,
+        migration: everyEntry.filter((e) => e.migration).length,
+        disagreements: everyEntry.filter((e) => e.disagreement).length,
+        blockers: blockers.length,
+        faqLinkable: clusters.reduce((n, c) => n + (c.faqLinkable || 0), 0),
+        faqInClusters: clusters.reduce((n, c) => n + (c.faqCount || 0), 0)
+      }
+    };
   });
 
   eleventyConfig.addCollection("library", (collectionApi) =>

@@ -1,0 +1,219 @@
+---
+layout: layouts/base.njk
+title: "Yelp topical authority map"
+description: "Internal tool. The Yelp content plan against what the build actually produced."
+permalink: /yelp-map/index.html
+
+# NOINDEX, WAY ONE OF FOUR. Read by base.njk, which ORs it with the deploy
+# rule, so this page carries the directive on production too, where every other
+# page carries none.
+noindex: true
+
+# NOINDEX, WAY TWO. Out of collections.all, which is the set any sitemap
+# iterates. There is no sitemap.xml in this repo yet; this is what keeps the
+# page out of the one that gets written, with no edit to it and nobody having
+# to remember. Same key robots.njk uses, for the same reason.
+eleventyExcludeFromCollections: true
+---
+{% from "components/container.njk" import container %}
+
+{#
+  THE YELP MAP, at /yelp-map/. INTERNAL TOOL. Not for publication.
+
+  ============================================================
+  DERIVE, DO NOT TRUST. That is the whole design.
+  ============================================================
+
+  src/_data/yelpMap.js is a hand-maintained plan and it says so about itself:
+  several rows are marked source: "plan", meaning asserted and not confirmed,
+  and the file records that the plan has been wrong at least once. So for any
+  entry whose url matches a page the build produced, the build wins and the
+  file's state is not consulted. See the yelpMapReport filter, where all of it
+  is computed; this template only renders.
+
+  THE ONE DISTINCTION THIS PAGE EXISTS TO SHOW is publishable against not.
+  A page with zero brackets and zero placeholder slots can go out. A page with
+  either renders, looks finished, and passes all five checks in verify, and must
+  not. Nothing else on the site draws that line and it is invisible from a URL.
+
+  WHERE THE FILE AND THE BUILD DISAGREE, BOTH ARE SHOWN. Nothing here resolves
+  one into the other: a row that claims SHIPPED with no page behind it is either
+  a wrong plan or an incomplete build, and those have different fixes.
+
+  NO NEW COMPONENTS AND NO NEW TOKENS. Everything below is .cs-eyebrow, the type
+  scale and the colour tokens that already exist. The page-scoped rules in
+  yelp-map.css are layout only.
+
+  FOUR-WAY NOINDEX, and the two that are not in the front matter above:
+  robots.njk Disallows /yelp-map/ on every deploy, and nothing anywhere links
+  here. The nav is in src/_data/nav.js and the footer reads the same file; this
+  URL is in neither, and being out of collections.all means no future listing
+  can pick it up either.
+#}
+
+{#- THE templateContent READ IS HERE, IN THE TEMPLATE, AND NOT IN THE FILTER.
+
+    That is not a style choice. Eleventy only defers a page until the pages it
+    measures have rendered when it sees `templateContent` read in the template's
+    own source; the same read inside a filter is invisible to its dependency
+    graph, and the build fails with TemplateContentPrematureUseError on the
+    first article it reaches. Measured: identical filter, one line moved, exit 1
+    to exit 0.
+
+    So the template gathers rendered bodies and the filter measures them. The
+    filter never touches templateContent, which also means it can be handed any
+    list of {url, html} and stays testable. -#}
+{%- set rendered = [] %}
+{%- for article in collections.yelpArticles %}
+  {%- set rendered = (rendered.push({
+        url: article.url,
+        inputPath: article.inputPath,
+        html: article.templateContent
+      }), rendered) %}
+{%- endfor %}
+
+{%- set report = yelpMap | yelpMapReport(rendered, collections.builtUrls) %}
+
+{% call container(class="cs-map-page") %}
+
+  <header class="cs-map-head">
+    <p class="cs-eyebrow">Internal tool, not for publication</p>
+    <h1 class="cs-map-h1">Yelp topical authority map</h1>
+    <p class="cs-map-lede">
+      The content plan in <code>src/_data/yelpMap.js</code> against what the build
+      actually produced. Where a URL matches a built page, every number on this
+      row is measured off the rendered article and the file's own state is
+      ignored.
+    </p>
+
+    <dl class="cs-map-totals">
+      <div><dt>Clusters</dt><dd>{{ report.totals.clusters }}</dd></div>
+      <div><dt>Spokes</dt><dd>{{ report.totals.spokes }}</dd></div>
+      <div><dt>Page templates</dt><dd>{{ report.totals.templates }}</dd></div>
+      <div><dt>Built</dt><dd>{{ report.totals.built }}</dd></div>
+      <div><dt>Publishable</dt><dd>{{ report.totals.publishable }}</dd></div>
+      <div><dt>Dev only</dt><dd class="cs-map-flag">{{ report.totals.onDevOnly }}</dd></div>
+      <div><dt>Migration</dt><dd>{{ report.totals.migration }}</dd></div>
+      <div><dt>Disagreements</dt><dd class="cs-map-flag">{{ report.totals.disagreements }}</dd></div>
+      <div><dt>Blockers</dt><dd class="cs-map-flag">{{ report.totals.blockers }}</dd></div>
+      <div><dt>FAQs</dt><dd>{{ report.faqs.total }}, {{ report.faqs.linkableToday }} linkable</dd></div>
+    </dl>
+  </header>
+
+  {#- ---- ONE ROW, USED BY EVERY SECTION ----
+
+      A macro rather than the same twenty lines three times. It renders what is
+      KNOWN about an entry, which means the derived half when there is one and
+      the file's half when there is not, and it never merges the two. -#}
+  {%- macro row(entry, kind) %}
+  <div class="cs-map-row{{ " cs-map-row--flag" if entry.disagreement or (entry.derived and not entry.derived.publishable) }}">
+    <p class="cs-map-row__head">
+      {#- STATE. Derived where the build knows, and labelled as derived, so a
+          reader can tell a measurement from an assertion at a glance. -#}
+      {%- if entry.derived %}
+      <span class="cs-map-state{{ " cs-map-state--ok" if entry.derived.publishable else " cs-map-state--dev" }}">
+        {{- "Shipped" if entry.derived.publishable else "Dev only" -}}
+      </span>
+      <span class="cs-map-src">measured</span>
+      {%- elif entry.builtNotArticle %}
+      {#- The page exists and is not an article, so there is nothing to count.
+          Said out loud: an empty counts row would read as zero words. -#}
+      <span class="cs-map-state cs-map-state--ok">Built</span>
+      <span class="cs-map-src">page template, not measured</span>
+      {%- else %}
+      <span class="cs-map-state cs-map-state--plan">{{ entry.state }}</span>
+      <span class="cs-map-src">{{ entry.source }}</span>
+      {%- endif %}
+
+      {%- if entry.derived or entry.builtNotArticle %}
+      <a class="cs-map-row__title" href="{{ entry.url }}">{{ entry.title }}</a>
+      {%- else %}
+      <span class="cs-map-row__title">{{ entry.title }}</span>
+      {%- endif %}
+
+      {#- MIGRATION IS MARKED SEPARATELY FROM NEW WRITING, because they are
+          different work: one is a rewrite against a live URL that already
+          ranks, the other is a blank page. -#}
+      {%- if entry.migration %}<span class="cs-map-tag">Migration</span>{% endif %}
+      {%- if kind %}<span class="cs-map-tag">{{ kind }}</span>{% endif %}
+    </p>
+
+    <p class="cs-map-row__meta">
+      <span class="cs-map-url">{{ entry.url }}</span>
+      <span class="cs-map-kw">{{ entry.keyword }}</span>
+    </p>
+
+    {%- if entry.derived %}
+    <p class="cs-map-row__counts">
+      <span>{{ entry.derived.words }} words</span>
+      <span class="{{ "cs-map-flag" if entry.derived.brackets }}">{{ entry.derived.brackets }} bracketed</span>
+      <span class="{{ "cs-map-flag" if entry.derived.placeholders }}">{{ entry.derived.placeholders }} placeholder slots</span>
+      <span>{{ entry.derived.observed }} observed</span>
+      <span>images brief {{ "yes" if entry.derived.images else "no" }}</span>
+      <span>blocker note {{ "yes" if entry.derived.blocked else "no" }}</span>
+    </p>
+    {%- endif %}
+
+    {%- if entry.disagreement %}
+    <p class="cs-map-row__flag">Disagreement. {{ entry.disagreement }}</p>
+    {%- endif %}
+
+    {%- if entry.blocker %}<p class="cs-map-row__note">Blocker. {{ entry.blocker }}</p>{% endif %}
+    {%- if entry.note %}<p class="cs-map-row__note">{{ entry.note }}</p>{% endif %}
+  </div>
+  {%- endmacro %}
+
+  {#- ---- PILLAR AND PAGE TEMPLATES FIRST, because the clusters hang off them
+      and neither is visible in collections.yelp as a plan row. ---- -#}
+  <section class="cs-map-section">
+    <h2 class="cs-map-h2">Pillar</h2>
+    {{ row(report.pillar, "Pillar") }}
+  </section>
+
+  <section class="cs-map-section">
+    <h2 class="cs-map-h2">Page templates</h2>
+    <p class="cs-map-section__note">Not articles. Listed because the clusters hang off them.</p>
+    {%- for entry in report.templates %}{{ row(entry) }}{% endfor %}
+  </section>
+
+  {#- ---- SEVEN CLUSTERS, IN FILE ORDER. Not sorted: the file's order is the
+      coverage map's order, which the comp fixes. ---- -#}
+  {%- for cluster in report.clusters %}
+  <section class="cs-map-section">
+    <h2 class="cs-map-h2" id="{{ cluster.slug }}">{{ cluster.name }}</h2>
+    <p class="cs-map-cluster__meta">
+      <span>{{ cluster.intent }}</span>
+      <span>{{ cluster.spokes.length }} spokes</span>
+      <span>{{ cluster.faqCount }} FAQs</span>
+      <span class="{{ "cs-map-flag" if not cluster.faqLinkable }}">{{ cluster.faqLinkable }} can link today</span>
+    </p>
+    {%- if cluster.note %}<p class="cs-map-section__note">{{ cluster.note }}</p>{% endif %}
+    {%- for spoke in cluster.spokes %}{{ row(spoke) }}{% endfor %}
+  </section>
+  {%- endfor %}
+
+  {#- ---- THE WORKLIST. Everything blocking, in one list, ordered by how much
+      it can be trusted: measured off a built page, then the file's global
+      blockers which carry owners, then per-spoke assertions. ---- -#}
+  <section class="cs-map-section cs-map-section--last">
+    <h2 class="cs-map-h2">Blockers, all sources</h2>
+    <p class="cs-map-section__note">
+      Measured first, because those are counted off pages that already exist and
+      cannot be out of date. Then the file's global blockers, which carry owners.
+      Then per-spoke, every one of which is a plan assertion.
+    </p>
+    <ol class="cs-map-blockers">
+      {%- for blocker in report.blockers %}
+      <li>
+        <span class="cs-map-kind cs-map-kind--{{ blocker.kind }}">{{ blocker.kind }}</span>
+        <span class="cs-map-blockers__what">{{ blocker.what }}</span>
+        {%- if blocker.owner %}<span class="cs-map-owner">{{ blocker.owner }}</span>
+        {%- else %}<span class="cs-map-owner cs-map-owner--none">unassigned</span>{% endif %}
+        <span class="cs-map-blockers__gates">{{ blocker.gates }}</span>
+        {%- if blocker.url %}<span class="cs-map-url">{{ blocker.url }}</span>{% endif %}
+      </li>
+      {%- endfor %}
+    </ol>
+  </section>
+
+{% endcall %}
