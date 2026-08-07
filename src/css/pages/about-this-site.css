@@ -49,14 +49,23 @@
   }
   .cs-about__essay p:last-child { margin-bottom: 0 }
 
-  /* The 2011 capture. A hairline, because the screenshot's own ground is close
-     to paper and without one the image bleeds into the page and stops reading
-     as a picture of something. width and height on the element reserve the box;
-     these two lines only let it scale down. */
+  /* The 2011 capture, at thumbnail size. A hairline, because the screenshot's
+     own ground is close to paper and without one the image bleeds into the page
+     and stops reading as a picture of something.
+
+     280px IS THE DISPLAY SIZE, NOT THE FILE. width and height on the element
+     stay the file's real 1594 by 1432, which is what reserves the right shape
+     and keeps the box from moving when the image lands. This only caps how wide
+     it is allowed to draw. */
   .cs-about__og { margin: 0 0 var(--space-24) }
+  /* THE CAP IS ON THE IMAGE, NOT THE FIGURE. On the figure it also caps the
+     caption, which then wrapped "captured October / 2011" across two lines
+     under a 280px thumbnail. The caption is a line of text and should take the
+     width it needs. */
   .cs-about__og img {
     display: block;
     width: 100%;
+    max-width: 280px;
     height: auto;
     border: 1px solid var(--border-hairline);
   }

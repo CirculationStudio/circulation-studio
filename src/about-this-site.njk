@@ -3,10 +3,6 @@ layout: layouts/base.njk
 title: "About this site"
 description: "What this site is built with, why it is built the way it is, and the measured numbers behind it."
 permalink: /about-this-site/index.html
-
-# The 2011 capture sits inside the first viewport and is the largest thing in
-# it, so it is this page's LCP element. base.njk emits the preload from here.
-preloadImage: the-og-circulation-studio.webp
 ---
 {% from "components/container.njk" import container %}
 {% from "components/heading.njk" import heading %}
@@ -111,10 +107,13 @@ preloadImage: the-og-circulation-studio.webp
         two sections down. An image that moved the copy under it would be
         visible in a number the page prints about itself.
 
-        EAGER AND HIGH PRIORITY, with a preload from the front matter, because
-        it lands inside the first viewport at 1440 by 900 and is the largest
-        thing in it. Lazy loading an in-viewport image delays the paint the page
-        is measured on. Measured after adding rather than assumed.
+        EAGER, AND NOTHING MORE THAN EAGER. It sits inside the first viewport
+        at 1440 by 900, so lazy loading it would delay a paint a reader is
+        already looking at. It is no longer the largest thing in that viewport
+        now that it draws at 280px, so the fetchpriority and the front-matter
+        preload it carried at full width both came off: those are the treatment
+        for an LCP element and this is not one. Measured after the change rather
+        than assumed.
 
         THE CAPTION DOES NOT DESCRIBE THE DESIGN. The Wayback link above it is
         the joke and describing the old site would spend it. The ALT TEXT does
@@ -123,7 +122,7 @@ preloadImage: the-og-circulation-studio.webp
     <figure class="cs-about__og">
       <img src="{{ site.cdn }}the-og-circulation-studio.webp"
            alt="The circulationstudio.com home page as the Wayback Machine captured it on 9 October 2011. Concentric grey and dark red rings fill the left half behind the words circulation studio, now open. A stacked lowercase navigation runs down the right: home, web design, seo, photo, print media, news, about us, portfolio, contact us. Below sit four columns headed Web Design, SEO, Photography and Customer Service."
-           width="1594" height="1432" loading="eager" fetchpriority="high" decoding="async">
+           width="1594" height="1432" loading="eager" decoding="async">
       <figcaption>The first one, captured October 2011.</figcaption>
     </figure>
     <p>
