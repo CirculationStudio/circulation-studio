@@ -130,6 +130,25 @@ and tag only. Size is a rendering concern, so it is handled in CSS.
 D, E, H, J, O and R, which is why activation must stay per-character and never
 word-level.
 
+**The alternates are CAPITAL-ONLY, and a swap in a mixed-case container renders
+nothing.** `ss01` substitutes `A` and not `a`; `ss10` substitutes `O` and not
+`o`. Measured 2026-08-06 by rendering each at 120px with the feature on and off
+and hashing the pixels: `A` and `O` differ, `a` and `o` come back
+byte-identical.
+
+This is a silent failure and it is easy to walk into. Every alt-glyph span in
+the repo is written on a lowercase letter, because every one of them sits in a
+container with `text-transform: uppercase`, so the shaper sees a capital and the
+device renders. That makes the working pattern look like it works on lowercase,
+which it does not.
+
+**So: before adding a swap, check the container uppercases.** If it does not,
+either the swap is dead or the letter has to be a real capital in the source.
+Nothing in the build catches this, because `glyphSwaps` is size-blind and
+case-blind by design and CSS cannot report what the shaper did. It was found by
+adding a swap to a mixed-case `dt` on `/about-this-site/` and noticing the
+before and after screenshots were identical.
+
 ### The O device: scoped by adjacency, not banned outright
 
 design.md section 9 retires the O device. Refined 2026-07-27: **the retirement

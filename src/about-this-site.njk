@@ -5,6 +5,7 @@ description: "What this site is built with, why it is built the way it is, and t
 permalink: /about-this-site/index.html
 ---
 {% from "components/container.njk" import container %}
+{% from "components/heading.njk" import heading %}
 
 {#
   ABOUT THIS SITE. Footer link only, never the main nav: it is a colophon, and
@@ -46,9 +47,33 @@ permalink: /about-this-site/index.html
 {% call container(class="cs-about") %}
 
   {#- ---- 1. THE ESSAY ---- -#}
+  {#- ss01, THE CROSSBAR-LESS A.
+
+      NO ADJACENCY RULE APPLIES. DESIGN_SYSTEM.md scopes the O device by
+      nearness to the isotype and says nothing of the kind about ss01, which is
+      correct: the wordmark carries the crossbar-less A directly beside the icon
+      in the masthead on every page of the site. The heading is 36px, well clear
+      of the 15px floor below which the alternate stops reading as a letterform
+      and starts reading as a broken A.
+
+      ONE SWAP, AND IT IS THE WEAKER OF THE TWO ON THIS PAGE. The bar the
+      heading macro sets is that the letterform reinforces what the word means,
+      and who-we-are enforced it by dropping a swap from its "The Team" h2 on
+      the grounds that a crossbar-less A says nothing about a team. The
+      justification here is that this is the page where the site explains its own
+      construction, the crossbar-less A is the letterform that most identifies
+      the face it is set in, and the first character of the document is where
+      the typeface introduces itself. If that reads as thin, drop it: zero swaps
+      is always fine and the O below stands on its own.
+
+      IT GOES THROUGH THE MACRO, which is the enforcement path. glyphSwaps
+      checks the cap of two, checks the tag is h1 or h2, and checks the letter
+      falls inside the named word, then warns and renders plain rather than
+      failing silently. -#}
   <header class="cs-about__head">
     <p class="cs-eyebrow">Colophon</p>
-    <h1 class="cs-about__title">About this site</h1>
+    {{ heading("About this site", as="h1", class="cs-about__title",
+               swaps={ word: "About", letter: "A", flavor: "alt-soft" }) }}
   </header>
 
   <div class="cs-about__essay">
@@ -103,11 +128,28 @@ permalink: /about-this-site/index.html
         <dt>Git</dt>
         <dd>The source of truth. Every word and every rule on this site has a commit behind it.</dd>
       </div>
+      {#- THE ALTERNATE IS NOT DEMONSTRATED HERE AND THE FIRST VERSION TRIED TO.
+
+          Setting the A of `Dual` with ss01 in this row was the obvious move:
+          the typeface named in the row that says what the page is set in, which
+          is the who-we-are precedent of quoting a term while defining it. It
+          rendered nothing at all. ss01 substitutes the CAPITAL A only, this dt
+          is mixed case, and the lowercase a has no alternate in the face.
+          Proved by rendering both at 120px and hashing the pixels rather than
+          squinting at 15px: a and o come back byte-identical with the feature
+          on and off, A and O differ.
+
+          Every other alt-glyph span on the site sits inside a container that
+          uppercases, so all of them are live and none of this was visible
+          before. The dd below points at the two that do render. -#}
       <div>
         <dt>Dual and Lora</dt>
         <dd>
           Display and body. Dual is self-hosted from this origin. Lora is served
-          by Google Fonts, which is the third-party request counted below.
+          by Google Fonts, which is the third-party request counted below. The A
+          in the heading at the top of this page is Dual's ss01, the
+          crossbar-less alternate, and the first O in the heading below is ss10,
+          the target.
         </dd>
       </div>
     </dl>
@@ -130,7 +172,39 @@ permalink: /about-this-site/index.html
 
   {#- ---- 3. THE SCOREBOARD ---- -#}
   <section class="cs-about__section">
-    <h2 class="cs-about__h2">Measured</h2>
+    {#- ss10, THE O TARGET, AND THE ONE PLACE ON THIS PAGE IT IS LEGAL.
+
+        DESIGN_SYSTEM.md retires the O device in any headline sharing a visual
+        field with the isotype, and permits it where the icon is not present.
+        Measured rather than assumed: at 1440 by 900 the isotype sits at y 28
+        and the h1 at y 339, both inside one viewport, so the h1 is retired
+        ground however much its A-B-O-U-T would like the glyph. This heading is
+        roughly three thousand pixels down, with the masthead long gone.
+
+        THE SWAP IS JUSTIFIED BY MEANING, which is the bar the heading macro's
+        own note sets and which who-we-are enforced by dropping a swap that was
+        available rather than meaningful. A target device on the O of Scoreboard
+        is the closest meaning match anywhere on this site: the glyph is a
+        scoring mark and the word is the score.
+
+        ONE SWAP, NOT TWO. Scoreboard carries two Os and the cap is two, so the
+        build would allow both. Both is the thing the rules exist to prevent:
+        the device stops reading as a decision at volume.
+
+        THE HEADING GOES THROUGH THE MACRO rather than being hand-written like
+        the one above it, because the macro is the enforcement path. glyphSwaps
+        checks the cap, checks the tag is h1 or h2, and checks the letter falls
+        inside the named word, and it warns and renders plain rather than
+        failing silently.
+
+        THE WORD CHANGED FROM "Measured" TO "Scoreboard", and that is a copy
+        edit I am flagging rather than burying. Scoreboard is the brief's own
+        word for this section. It is also what gave the device a legal home,
+        which is the wrong reason to rename a heading, so it is only defensible
+        because the first reason stands on its own. Reverse it and the glyph
+        goes with it. -#}
+    {{ heading("Scoreboard", as="h2", class="cs-about__h2",
+               swaps={ word: "Scoreboard", letter: "o", flavor: "alt-dot" }) }}
     <p class="cs-about__note">
       Nothing below is typed by hand. Rows marked <span class="cs-about__src">derived</span>
       are recomputed on every build. Rows marked
