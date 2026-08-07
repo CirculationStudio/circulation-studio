@@ -1,0 +1,248 @@
+---
+layout: layouts/base.njk
+title: "About this site"
+description: "What this site is built with, why it is built the way it is, and the measured numbers behind it."
+permalink: /about-this-site/index.html
+---
+{% from "components/container.njk" import container %}
+
+{#
+  ABOUT THIS SITE. Footer link only, never the main nav: it is a colophon, and
+  a colophon that competes with Contact for attention has misunderstood itself.
+
+  THREE PARTS, ONE PAGE, IN ORDER. An essay saying what the site is for, a
+  colophon saying what it is made of, and a scoreboard saying what that costs.
+  Each one earns the next: the claim, the method, the evidence.
+
+  ============================================================
+  EVERY NUMBER ON THIS PAGE IS DERIVED OR MEASURED. NONE IS TYPED.
+  ============================================================
+
+  Two sources and the page labels which is which on every row.
+
+  DERIVED, live, at build time: the article counts, straight off the
+  collections. These cannot go stale, because they are recomputed on every
+  build from the same data that builds the articles themselves.
+
+  MEASURED, dated, from src/_data/siteStats.json: everything that needs a
+  browser or a stopwatch. Bytes, requests, timings. Written by
+  `npm run measure:stats`, which builds the site, serves it, loads every page in
+  headless Chromium and records what actually arrived. Re-run it and the numbers
+  move; that is the point.
+
+  THE EMBARRASSING ONES ARE ON HERE TOO, which is the only reason the rest are
+  worth reading. Three third-party requests on the median page and not one page
+  at zero, because Lora is served by Google Fonts. A worst-case CLS above zero
+  on every page. A median page weight north of 300 KB, most of it the six
+  self-hosted weights of the display face. A reader with devtools open will find
+  all three in about a minute, and a scoreboard that had quietly omitted them
+  would be worth nothing.
+
+  NO NEW TOKENS. The layout has more personality than the marketing pages,
+  which the brief allows, but every value in about-this-site.css resolves to a
+  token that already exists.
+#}
+
+{% call container(class="cs-about") %}
+
+  {#- ---- 1. THE ESSAY ---- -#}
+  <header class="cs-about__head">
+    <p class="cs-eyebrow">Colophon</p>
+    <h1 class="cs-about__title">About this site</h1>
+  </header>
+
+  <div class="cs-about__essay">
+    <p>
+      We used to run this site the way we run a client's. A service page for
+      every service, titles built to be found, the words arranged so a search
+      engine would know exactly which aisle we were standing in. That is real
+      work and we still do it, because plenty of clients need to be found and
+      being found is the job.
+    </p>
+    <p>
+      We have been lucky enough to stay busy through clients and friends who
+      send people our way. Which means this site does not have to go out and get
+      the work. It only has to be true.
+    </p>
+    <p>
+      So it turned into the place we get to build properly. Tooling we wanted an
+      excuse to try, design decisions argued down to the last pixel, and a way of
+      writing the work up that sounds like people talking rather than a brochure.
+      We closed the social accounts. We have never advertised. Nobody here has to
+      write "Welcome to our Laguna Beach SEO Agency in Laguna Beach" ever again.
+    </p>
+    <p>
+      One honest exception. The Yelp material is not marketing for the work. It
+      is the work, written down, with the parts we are still unsure about marked
+      as unsure.
+    </p>
+  </div>
+
+  {#- ---- 2. THE COLOPHON. Facts, no adjectives. ---- -#}
+  <section class="cs-about__section">
+    <h2 class="cs-about__h2">Built with</h2>
+
+    <dl class="cs-about__colophon">
+      <div>
+        <dt>Eleventy</dt>
+        <dd>Static site generator. Every page is HTML on disk before a reader asks for it.</dd>
+      </div>
+      <div>
+        <dt>Vite</dt>
+        <dd>Asset pipeline. Hashes and bundles the one stylesheet and the one script.</dd>
+      </div>
+      <div>
+        <dt>Tailwind</dt>
+        <dd>Utility layer under hand-written component CSS, not instead of it.</dd>
+      </div>
+      <div>
+        <dt>Cloudflare Pages</dt>
+        <dd>Hosting. A push to the main branch is the deploy.</dd>
+      </div>
+      <div>
+        <dt>Git</dt>
+        <dd>The source of truth. Every word and every rule on this site has a commit behind it.</dd>
+      </div>
+      <div>
+        <dt>Dual and Lora</dt>
+        <dd>
+          Display and body. Dual is self-hosted from this origin. Lora is served
+          by Google Fonts, which is the third-party request counted below.
+        </dd>
+      </div>
+    </dl>
+
+    <ul class="cs-about__not">
+      <li>No CMS</li>
+      <li>No database</li>
+      <li>No plugins</li>
+      <li>No cookies</li>
+      <li>No tracking pixels</li>
+      <li>No third-party scripts</li>
+    </ul>
+
+    <p class="cs-about__note">
+      Structured data on every page, matching what is visible on it. Sources
+      dated on every article. Pages corrected when the facts move, rather than
+      left standing because they already ranked.
+    </p>
+  </section>
+
+  {#- ---- 3. THE SCOREBOARD ---- -#}
+  <section class="cs-about__section">
+    <h2 class="cs-about__h2">Measured</h2>
+    <p class="cs-about__note">
+      Nothing below is typed by hand. Rows marked <span class="cs-about__src">derived</span>
+      are recomputed on every build. Rows marked
+      <span class="cs-about__src">measured {{ siteStats.measuredAt }}</span> come from
+      <code>npm run measure:stats</code>, which builds the site, serves it, and
+      loads every page in headless Chromium. {{ siteStats.how }}
+    </p>
+
+    <div class="cs-about__stats">
+
+      <div class="cs-about__stat">
+        <p class="cs-about__figure">{{ siteStats.build.pagesWritten }}</p>
+        <p class="cs-about__label">Pages built</p>
+        <p class="cs-about__src">measured {{ siteStats.measuredAt }}</p>
+      </div>
+
+      {#- DERIVED LIVE, one per tier and never summed. Adding them would make
+          one number out of two different things: the Yelp Hub tier is published
+          writing, and the library tier today is the two build fixtures
+          ARTICLE_SYSTEM.md has marked for deletion. A total would hide that. -#}
+      <div class="cs-about__stat">
+        <p class="cs-about__figure">{{ collections.yelpArticles | length }}</p>
+        <p class="cs-about__label">Articles, Yelp Hub tier</p>
+        <p class="cs-about__src">derived</p>
+      </div>
+
+      <div class="cs-about__stat">
+        <p class="cs-about__figure">{{ collections.library | length }}</p>
+        <p class="cs-about__label">Articles, library tier</p>
+        <p class="cs-about__src">derived</p>
+      </div>
+
+      <div class="cs-about__stat">
+        <p class="cs-about__figure">{{ siteStats.build.ms }}<span class="cs-about__unit">ms</span></p>
+        <p class="cs-about__label">Full build, cold</p>
+        <p class="cs-about__src">measured {{ siteStats.measuredAt }}</p>
+      </div>
+
+      <div class="cs-about__stat">
+        <p class="cs-about__figure">{{ siteStats.js.bytes }}<span class="cs-about__unit">bytes</span></p>
+        <p class="cs-about__label">
+          JavaScript shipped, every page. {{ siteStats.js.gzipBytes }} bytes gzipped.
+        </p>
+        <p class="cs-about__src">measured {{ siteStats.measuredAt }}</p>
+      </div>
+
+      <div class="cs-about__stat">
+        <p class="cs-about__figure">{{ siteStats.weight.medianGzipKb }}<span class="cs-about__unit">KB</span></p>
+        <p class="cs-about__label">
+          Median page, gzipped as production serves it. {{ siteStats.weight.medianKb }} KB uncompressed.
+        </p>
+        <p class="cs-about__src">measured {{ siteStats.measuredAt }}</p>
+      </div>
+
+      <div class="cs-about__stat">
+        <p class="cs-about__figure">{{ siteStats.weight.medianRequests }}</p>
+        <p class="cs-about__label">Requests to this origin, median page</p>
+        <p class="cs-about__src">measured {{ siteStats.measuredAt }}</p>
+      </div>
+
+      {#- THE ONE WE WOULD RATHER NOT PRINT. It goes on because the page is only
+          worth reading if the numbers are checkable, and this one is checkable
+          in about a minute with a network panel open. -#}
+      <div class="cs-about__stat cs-about__stat--flag">
+        <p class="cs-about__figure">{{ siteStats.thirdParty.medianRequestsPerPage }}</p>
+        <p class="cs-about__label">
+          Third-party requests, median page. {{ siteStats.thirdParty.maxRequestsOnAPage }} at
+          the worst, and {{ siteStats.thirdParty.pagesWithNone }} pages at zero. Every host
+          contacted anywhere on the site: {% for host in siteStats.thirdParty.hosts %}{{ host.host }}{% if not loop.last %}, {% endif %}{% endfor %}.
+        </p>
+        <p class="cs-about__src">measured {{ siteStats.measuredAt }}</p>
+      </div>
+
+      <div class="cs-about__stat">
+        <p class="cs-about__figure">{{ siteStats.vitals.lcpMedianMs }}<span class="cs-about__unit">ms</span></p>
+        <p class="cs-about__label">
+          Largest contentful paint, median page. {{ siteStats.vitals.lcpWorstMs }} ms at the worst.
+        </p>
+        <p class="cs-about__src">measured {{ siteStats.measuredAt }}, lab</p>
+      </div>
+
+      <div class="cs-about__stat cs-about__stat--flag">
+        <p class="cs-about__figure">{{ siteStats.vitals.clsWorst }}</p>
+        <p class="cs-about__label">
+          Worst cumulative layout shift of any page. {{ siteStats.vitals.pagesAtZeroCls }} pages at zero.
+        </p>
+        <p class="cs-about__src">measured {{ siteStats.measuredAt }}, lab</p>
+      </div>
+
+      <div class="cs-about__stat">
+        <p class="cs-about__figure">{{ siteStats.weight.heaviest.gzipKb }}<span class="cs-about__unit">KB</span></p>
+        <p class="cs-about__label">
+          Heaviest page, gzipped: <a href="{{ siteStats.weight.heaviest.url }}">{{ siteStats.weight.heaviest.url }}</a>
+        </p>
+        <p class="cs-about__src">measured {{ siteStats.measuredAt }}</p>
+      </div>
+
+      <div class="cs-about__stat">
+        <p class="cs-about__figure">{{ siteStats.weight.lightest.gzipKb }}<span class="cs-about__unit">KB</span></p>
+        <p class="cs-about__label">
+          Lightest page, gzipped: <a href="{{ siteStats.weight.lightest.url }}">{{ siteStats.weight.lightest.url }}</a>
+        </p>
+        <p class="cs-about__src">measured {{ siteStats.measuredAt }}</p>
+      </div>
+
+    </div>
+
+    <p class="cs-about__note cs-about__note--last">
+      {{ siteStats.vitals.note }} The page weight is dominated by six self-hosted
+      weights of the display face, which is a choice we made with our eyes open
+      and which the number above will keep reminding us about.
+    </p>
+  </section>
+
+{% endcall %}

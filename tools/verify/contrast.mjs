@@ -75,7 +75,11 @@ const PAGES = [
      densest page on the site: madder on paper at four sizes down to 9px, used
      as a state marker rather than as an accent. An unreadable state on a page
      read as a worklist is a worklist that gets misread. */
-  "/yelp-map/"
+  "/yelp-map/",
+  /* The colophon page sets a figure at the display face's thin weight at 44px
+     and pairs it with a 10px tracked label, which is the widest size spread on
+     any page here, and it puts a madder link inside body copy on paper. */
+  "/about-this-site/"
 ];
 
 /* Which surfaces a text token is allowed to land on. This is the contract: a

@@ -1,0 +1,198 @@
+/* /about-this-site/. The colophon page.
+ *
+ * MORE PERSONALITY THAN THE MARKETING PAGES, AND NOT ONE NEW VALUE. The brief
+ * allows this page a louder layout, so the figures are set at the display
+ * face's thin weight at a size nothing else on the site uses for a number, and
+ * the essay runs at a wider measure than a marketing page's body copy. Every
+ * one of those values is a token that already exists. Nothing here is invented;
+ * if something needed inventing it would be flagged rather than added.
+ *
+ * THE THREE PARTS READ AS THREE, and the ordering is the argument: the essay
+ * makes a claim, the colophon says what the claim is made of, the scoreboard
+ * says what it costs. So the essay is the only part set as prose, the colophon
+ * is a definition list, and the scoreboard is a grid of figures. Three shapes,
+ * because they do three different jobs, and a reader should be able to tell
+ * which one they are in without reading a heading.
+ *
+ * MADDER MEANS ONE THING: this is a number we would rather not print. It is on
+ * the third-party request count and on the worst-case layout shift, and nowhere
+ * else on the page. An accent that also decorated the good numbers would make
+ * the bad ones invisible, which is the opposite of why they are here.
+ */
+@layer components {
+  .cs-about {
+    padding-block: var(--space-96);
+  }
+
+  /* ---- 1. the essay ---- */
+
+  .cs-about__title {
+    margin: var(--space-8) 0 var(--space-40);
+    font-size: var(--text-h2);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+
+  /* Wider than the marketing pages' body copy and narrower than main. An essay
+     that opens a colophon is read in one sitting rather than scanned, so it
+     takes the reading measure the article system uses rather than the shorter
+     one a marketing page uses to sit beside a figure. */
+  .cs-about__essay {
+    max-width: var(--container-measure);
+    margin-bottom: var(--space-96);
+  }
+  .cs-about__essay p {
+    margin: 0 0 var(--space-24);
+    font-size: var(--text-base);
+    line-height: 1.7;
+    color: var(--text-body);
+  }
+  .cs-about__essay p:last-child { margin-bottom: 0 }
+
+  /* ---- shared section furniture ---- */
+
+  .cs-about__section { margin-bottom: var(--space-96) }
+  .cs-about__section:last-child { margin-bottom: 0 }
+
+  .cs-about__h2 {
+    margin: 0 0 var(--space-24);
+    border-top: 2px solid var(--color-ink);
+    padding-top: var(--space-16);
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: var(--text-h3);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+
+  .cs-about__note {
+    max-width: 84ch;
+    margin: 0 0 var(--space-40);
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text-muted);
+  }
+  .cs-about__note--last { margin: var(--space-40) 0 0 }
+  .cs-about__note code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 13px;
+  }
+
+  /* ---- 2. the colophon ---- */
+
+  .cs-about__colophon {
+    margin: 0 0 var(--space-40);
+    display: grid;
+    gap: 0;
+  }
+  .cs-about__colophon > div {
+    display: grid;
+    grid-template-columns: 200px minmax(0, 1fr);
+    gap: var(--space-24);
+    border-top: 1px solid var(--border-hairline);
+    padding: var(--space-16) 0;
+  }
+  .cs-about__colophon dt {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: 15px;
+    letter-spacing: .01em;
+    color: var(--color-ink);
+  }
+  .cs-about__colophon dd {
+    margin: 0;
+    max-width: 66ch;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+
+  /* The absences, set as a row of labels rather than a list of sentences. What
+     is NOT here is a shorter claim than what is, and it should read that way. */
+  .cs-about__not {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-8) var(--space-24);
+    margin: 0 0 var(--space-24);
+    padding: var(--space-16) 0;
+    border-block: 1px solid var(--border-hairline);
+    list-style: none;
+  }
+  .cs-about__not li {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 11px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  /* ---- 3. the scoreboard ---- */
+
+  .cs-about__stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0;
+    border-top: 1px solid var(--border-hairline);
+  }
+
+  .cs-about__stat {
+    border-bottom: 1px solid var(--border-hairline);
+    padding: var(--space-24) var(--space-40) var(--space-24) 0;
+    border-left: 2px solid transparent;
+    padding-left: 14px;
+  }
+  /* The only accent on the page. See the header. */
+  .cs-about__stat--flag { border-left-color: var(--color-madder) }
+
+  .cs-about__figure {
+    margin: 0;
+    max-width: none;
+    font-family: var(--font-display);
+    font-weight: var(--weight-thin);
+    font-size: 44px;
+    line-height: 1;
+    color: var(--color-ink);
+  }
+  .cs-about__unit {
+    margin-left: var(--space-8);
+    font-weight: var(--weight-medium);
+    font-size: 12px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  .cs-about__label {
+    margin: var(--space-16) 0 0;
+    max-width: 52ch;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-body);
+  }
+  .cs-about__label a { color: var(--color-madder) }
+
+  .cs-about__src {
+    margin: var(--space-8) 0 0;
+    max-width: none;
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  /* Inline in the note above the grid, where it names the two row types. */
+  .cs-about__note .cs-about__src { display: inline; margin: 0 }
+
+  @media (max-width: 767px) {
+    .cs-about { padding-block: var(--space-64) }
+    .cs-about__essay { margin-bottom: var(--space-64) }
+    .cs-about__section { margin-bottom: var(--space-64) }
+    .cs-about__colophon > div { grid-template-columns: minmax(0, 1fr); gap: 4px }
+    .cs-about__stats { grid-template-columns: minmax(0, 1fr) }
+    .cs-about__stat { padding-right: 0 }
+    .cs-about__figure { font-size: 34px }
+  }
+}

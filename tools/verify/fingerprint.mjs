@@ -72,12 +72,17 @@ const MIN_ELEMENTS = {
   /* Every floor rose by exactly 2 on 2026-08-02: nav.footer gained The
      Circulation Network, and a footer link is an li plus an a on every page of
      the site. The fingerprint caught all twelve combinations at once, which is
-     what a frame change is supposed to look like here. */
-  home: 135,
-  who: 153,
-  what: 151,
-  results: 151,
-  contact: 119,
+     what a frame change is supposed to look like here.
+
+     AND AGAIN BY 2 ON 2026-08-06, when nav.footer gained About This Site. Same
+     cause, same shape, all twelve hashes moved at once and every floor rose by
+     exactly two. A frame change that moved SOME of them would be the
+     interesting result. */
+  home: 137,
+  who: 155,
+  what: 153,
+  results: 153,
+  contact: 121,
   /* The hub is DATA-DRIVEN and this floor will rise. Every article added to
      src/yelp/ adds elements to the coverage map, so a run that drops below the
      floor means the page stopped rendering rather than that content was
@@ -92,7 +97,7 @@ const MIN_ELEMENTS = {
      rendered for the first time since it was built, and two more clusters
      traded a pending line for a full entry. Each time the five marketing
      hashes did not move, which is the split this file exists for. */
-  yelphub: 232
+  yelphub: 234
 };
 
 const browser = await chromium.launch();

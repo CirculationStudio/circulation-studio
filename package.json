@@ -6,6 +6,7 @@
   "scripts": {
     "start": "eleventy --serve",
     "build": "eleventy",
+    "measure:stats": "node tools/measure/site-stats.mjs",
     "verify:sweep": "node tools/verify/sweep.mjs",
     "verify:fingerprint": "node tools/verify/fingerprint.mjs",
     "verify:manifest": "node tools/verify/manifest.mjs",

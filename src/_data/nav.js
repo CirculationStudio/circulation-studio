@@ -15,7 +15,11 @@ export default {
      badges, per the locked design. */
   footer: [
     { label: "Library", url: "/library/" },
-    { label: "Yelp Hub", url: "/yelp/" }
+    { label: "Yelp Hub", url: "/yelp/" },
+    /* The colophon page. FOOTER ONLY AND DELIBERATELY NOT `primary`: it is a
+       page about the site rather than about the work, and a colophon competing
+       with Contact in the masthead has misunderstood itself. */
+    { label: "About This Site", url: "/about-this-site/" }
   ],
 
   /* THE TWO POLICY LINKS SHARE ONE ROW. Kept apart from `footer` above because
