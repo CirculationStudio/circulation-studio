@@ -2,24 +2,24 @@
   "measuredAt": "2026-08-06",
   "how": "Built with npx eleventy, served from _site by a static server with no compression, and loaded in headless Chromium at 1440 by 900 with no throttling. Bytes are what the browser received. The figures describe the build they were taken from, which is the one before the build you are reading, because writing them is what changed it.",
   "build": {
-    "ms": 573,
+    "ms": 687,
     "pagesWritten": 18
   },
   "weight": {
-    "medianBytes": 356880,
-    "medianGzipBytes": 224971,
-    "medianKb": 348.5,
-    "medianGzipKb": 219.7,
+    "medianBytes": 373954,
+    "medianGzipBytes": 248221,
+    "medianKb": 365.2,
+    "medianGzipKb": 242.4,
     "medianRequests": 8,
     "heaviest": {
       "url": "/yelp/",
-      "kb": 748.3,
-      "gzipKb": 617.1
+      "kb": 748.8,
+      "gzipKb": 617.2
     },
     "lightest": {
       "url": "/library/",
-      "kb": 227.6,
-      "gzipKb": 111.1
+      "kb": 228.1,
+      "gzipKb": 111.2
     }
   },
   "js": {
@@ -45,8 +45,8 @@
     ]
   },
   "vitals": {
-    "lcpMedianMs": 150,
-    "lcpWorstMs": 188,
+    "lcpMedianMs": 148,
+    "lcpWorstMs": 184,
     "clsWorst": 0.0143,
     "pagesAtZeroCls": 0,
     "note": "Lab figures from headless Chromium on localhost, not field data. INP is not listed because it requires a real interaction to exist."

@@ -49,6 +49,27 @@
   }
   .cs-about__essay p:last-child { margin-bottom: 0 }
 
+  /* The 2011 capture. A hairline, because the screenshot's own ground is close
+     to paper and without one the image bleeds into the page and stops reading
+     as a picture of something. width and height on the element reserve the box;
+     these two lines only let it scale down. */
+  .cs-about__og { margin: 0 0 var(--space-24) }
+  .cs-about__og img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--border-hairline);
+  }
+  .cs-about__og figcaption {
+    margin-top: var(--space-8);
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 11px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
   /* ---- shared section furniture ---- */
 
   .cs-about__section { margin-bottom: var(--space-96) }
