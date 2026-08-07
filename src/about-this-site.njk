@@ -84,6 +84,14 @@ permalink: /about-this-site/index.html
       work and we still do it, because plenty of clients need to be found and
       being found is the job.
     </p>
+    {#- 2011 AND THE LINK IS THE JOKE. No description of the earlier versions:
+        a reader who wants to know can look, and telling them first would spend
+        the punchline. -#}
+    <p>
+      It has been through a few versions since 2011.
+      <a href="https://web.archive.org/web/20260000000000*/circulationstudio.com">They
+      are all still on the Wayback Machine</a>.
+    </p>
     <p>
       We have been lucky enough to stay busy through clients and friends who
       send people our way. Which means this site does not have to go out and get
@@ -124,6 +132,18 @@ permalink: /about-this-site/index.html
         <dt>Cloudflare Pages</dt>
         <dd>Hosting. A push to the main branch is the deploy.</dd>
       </div>
+      {#- ALREADY IN USE, JUST NEVER NAMED. site.cdn resolves to
+          cdn.circulationstudio.com and both Yelp partner badges come from it.
+          It sits on our own registrable domain, which is why the scoreboard
+          does not count it as a third party. See the note there. -#}
+      <div>
+        <dt>Bunny CDN</dt>
+        <dd>
+          Images, at cdn.circulationstudio.com. Our own subdomain, so the
+          scoreboard counts it as first party and its bytes are inside the page
+          weight below.
+        </dd>
+      </div>
       <div>
         <dt>Git</dt>
         <dd>The source of truth. Every word and every rule on this site has a commit behind it.</dd>
@@ -146,13 +166,21 @@ permalink: /about-this-site/index.html
         <dt>Dual and Lora</dt>
         <dd>
           Display and body. Dual is self-hosted from this origin. Lora is served
-          by Google Fonts, which is the third-party request counted below. The A
-          in the heading at the top of this page is Dual's ss01, the
-          crossbar-less alternate, and the first O in the heading below is ss10,
-          the target.
+          by Google Fonts, which is the third-party request counted below. We
+          use Dual's alternate glyphs, the O-target and the crossbar-less A,
+          because they are fun.
         </dd>
       </div>
     </dl>
+
+    {#- THE TOOLING, NAMED AND NOT ARGUED ABOUT. One line, sitting under the
+        stack it belongs to, so it reads as two more entries in a list of tools
+        rather than as a claim about who did the work. No position on what any
+        of it means for design, because the page is a colophon and a colophon
+        lists what was used. -#}
+    <p class="cs-about__note cs-about__note--tight">
+      Designed in Claude Design and built with Claude Code.
+    </p>
 
     <ul class="cs-about__not">
       <li>No CMS</li>
@@ -261,7 +289,9 @@ permalink: /about-this-site/index.html
 
       <div class="cs-about__stat">
         <p class="cs-about__figure">{{ siteStats.weight.medianRequests }}</p>
-        <p class="cs-about__label">Requests to this origin, median page</p>
+        {#- "This origin" was wrong the moment the CDN was reclassified: it is a
+            different origin on the same domain, and it is counted here. -#}
+        <p class="cs-about__label">Requests to hosts we control, median page. This origin plus the CDN.</p>
         <p class="cs-about__src">measured {{ siteStats.measuredAt }}</p>
       </div>
 
@@ -271,9 +301,12 @@ permalink: /about-this-site/index.html
       <div class="cs-about__stat cs-about__stat--flag">
         <p class="cs-about__figure">{{ siteStats.thirdParty.medianRequestsPerPage }}</p>
         <p class="cs-about__label">
-          Third-party requests, median page. {{ siteStats.thirdParty.maxRequestsOnAPage }} at
-          the worst, and {{ siteStats.thirdParty.pagesWithNone }} pages at zero. Every host
-          contacted anywhere on the site: {% for host in siteStats.thirdParty.hosts %}{{ host.host }}{% if not loop.last %}, {% endif %}{% endfor %}.
+          Third-party requests, median page, costing
+          {{ siteStats.thirdParty.medianKbPerPage }} KB.
+          {{ siteStats.thirdParty.maxRequestsOnAPage }} at the worst, and
+          {{ siteStats.thirdParty.pagesWithNone }} pages at zero. Every host contacted
+          anywhere on the site: {% for host in siteStats.thirdParty.hosts %}{{ host.host }}{% if not loop.last %}, {% endif %}{% endfor %}.
+          {{ siteStats.thirdParty.definition }}
         </p>
         <p class="cs-about__src">measured {{ siteStats.measuredAt }}</p>
       </div>

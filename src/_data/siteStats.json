@@ -2,19 +2,19 @@
   "measuredAt": "2026-08-06",
   "how": "Built with npx eleventy, served from _site by a static server with no compression, and loaded in headless Chromium at 1440 by 900 with no throttling. Bytes are what the browser received. The figures describe the build they were taken from, which is the one before the build you are reading, because writing them is what changed it.",
   "build": {
-    "ms": 556,
+    "ms": 573,
     "pagesWritten": 18
   },
   "weight": {
-    "medianBytes": 320103,
-    "medianGzipBytes": 183035,
-    "medianKb": 312.6,
-    "medianGzipKb": 178.7,
+    "medianBytes": 356880,
+    "medianGzipBytes": 224971,
+    "medianKb": 348.5,
+    "medianGzipKb": 219.7,
     "medianRequests": 8,
     "heaviest": {
-      "url": "/yelp/state-of-yelp-advertising-2026/",
-      "kb": 400.4,
-      "gzipKb": 253.8
+      "url": "/yelp/",
+      "kb": 748.3,
+      "gzipKb": 617.1
     },
     "lightest": {
       "url": "/library/",
@@ -28,8 +28,10 @@
     "sameOnEveryPage": true
   },
   "thirdParty": {
-    "medianRequestsPerPage": 3,
-    "maxRequestsOnAPage": 5,
+    "definition": "A host on a registrable domain other than circulationstudio.com. Our own CDN subdomain is not one.",
+    "medianRequestsPerPage": 2,
+    "medianKbPerPage": 50.6,
+    "maxRequestsOnAPage": 3,
     "pagesWithNone": 0,
     "hosts": [
       {
@@ -39,16 +41,12 @@
       {
         "host": "fonts.googleapis.com",
         "requests": 18
-      },
-      {
-        "host": "cdn.circulationstudio.com",
-        "requests": 13
       }
     ]
   },
   "vitals": {
-    "lcpMedianMs": 148,
-    "lcpWorstMs": 180,
+    "lcpMedianMs": 150,
+    "lcpWorstMs": 188,
     "clsWorst": 0.0143,
     "pagesAtZeroCls": 0,
     "note": "Lab figures from headless Chromium on localhost, not field data. INP is not listed because it requires a real interaction to exist."

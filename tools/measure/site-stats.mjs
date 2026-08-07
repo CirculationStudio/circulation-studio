@@ -23,9 +23,25 @@
  * misleading in one direction or the other, so both are recorded and the page
  * labels which is which. Gzip is computed here with zlib rather than guessed.
  *
- * THIRD PARTY MEANS ANY HOST THAT IS NOT THE ORIGIN SERVING THE PAGE. Our own
- * image CDN counts. Google Fonts counts. The point of the number is what a
- * reader's browser is made to contact, not who owns it.
+ * THIRD PARTY MEANS A HOST ON A DIFFERENT REGISTRABLE DOMAIN, not a different
+ * origin. That distinction was wrong in the first version and it inflated the
+ * number it exists to report.
+ *
+ * The first version compared against the origin serving the page, so
+ * cdn.circulationstudio.com counted as third party. It is our own subdomain,
+ * on our own domain, serving our own images. Counting it made the site look
+ * like it contacts three outside parties when it contacts one.
+ *
+ * The correction cuts both ways and that is how you know it is the right one.
+ * The third-party count goes DOWN, which flatters us, and the page weight goes
+ * UP, because CDN image bytes were being left out of a figure that claims to
+ * say what a page costs. A reclassification that only ever helped would be a
+ * reclassification worth distrusting.
+ *
+ * The registrable domain is taken as the last two labels of site.url's host,
+ * which is correct for a .com and would be wrong for a .co.uk. Stated rather
+ * than solved: a public suffix list is a dependency, and this project owns one
+ * domain.
  *
  * THE VITALS ARE LAB NUMBERS AND THE PAGE SAYS SO. Headless Chromium on
  * localhost, no throttling, no network latency worth the name. That is not
@@ -50,11 +66,19 @@ import { gzipSync } from "node:zlib";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
+import site from "../../src/_data/site.js";
 
 const ROOT = fileURLToPath(new URL("../../_site/", import.meta.url));
 const OUT = fileURLToPath(new URL("../../src/_data/siteStats.json", import.meta.url));
 const PORT = Number(process.env.MEASURE_PORT || 8901);
 const KEEP = process.argv.includes("--keep");
+
+/* The registrable domain the site is served from. Anything under it is ours.
+   See the header: last two labels, correct for a .com, and this project owns
+   one domain. */
+const SITE_DOMAIN = new URL(site.url).host.split(".").slice(-2).join(".");
+const ours = (host) =>
+  host === `localhost:${PORT}` || host === SITE_DOMAIN || host.endsWith(`.${SITE_DOMAIN}`);
 
 const TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -166,7 +190,7 @@ for (const url of urls) {
 
   page.on("response", async (response) => {
     const host = new URL(response.url()).host;
-    const first = response.url().startsWith(origin);
+    const first = ours(host);
     let body;
     try {
       body = await response.body();
@@ -294,7 +318,11 @@ const stats = {
     sameOnEveryPage: scriptSizes.size === 1
   },
   thirdParty: {
+    definition:
+      `A host on a registrable domain other than ${SITE_DOMAIN}. Our own CDN ` +
+      `subdomain is not one.`,
     medianRequestsPerPage: median(measured.map((m) => m.thirdPartyRequests)),
+    medianKbPerPage: kb(median(measured.map((m) => m.thirdPartyBytes))),
     maxRequestsOnAPage: Math.max(...measured.map((m) => m.thirdPartyRequests)),
     pagesWithNone: measured.filter((m) => m.thirdPartyRequests === 0).length,
     hosts: [...thirdPartyHosts.entries()]

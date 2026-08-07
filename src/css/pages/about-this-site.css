@@ -73,6 +73,9 @@
     color: var(--text-muted);
   }
   .cs-about__note--last { margin: var(--space-40) 0 0 }
+  /* The tooling line sits against the stack it belongs to rather than floating
+     between two blocks, so it reads as part of the list above it. */
+  .cs-about__note--tight { margin: calc(var(--space-24) * -1) 0 var(--space-24) }
   .cs-about__note code {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     font-size: 13px;
