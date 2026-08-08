@@ -101,11 +101,19 @@ permalink: /about-this-site/index.html
         the shortcode requires an orientation token in the filename and this
         file carries none. See the note in the report.
 
-        WIDTH AND HEIGHT ARE THE FILE'S REAL PIXELS, 1594 by 1432, read off the
-        asset rather than guessed. They are what reserves the box before the
-        image arrives, and this page publishes its own worst-case layout shift
-        two sections down. An image that moved the copy under it would be
-        visible in a number the page prints about itself.
+        WIDTH AND HEIGHT ARE THE FILE'S REAL PIXELS, 560 by 503, read off the
+        asset on the CDN rather than guessed. They are what reserves the box
+        before the image arrives, and this page publishes its own worst-case
+        layout shift two sections down. An image that moved the copy under it
+        would be visible in a number the page prints about itself.
+
+        THEY WERE 1594 BY 1432 UNTIL THE ASSET WAS RE-EXPORTED. The old file was
+        96,640 bytes to draw at 280px, roughly six times the pixels needed. It
+        is now 20,464 bytes at 560 wide, which is 2x for retina at the size it
+        actually renders. Fixed at the source rather than by turning on a CDN
+        transform layer: an optimizer would have added a moving part to every
+        asset in the zone, and this page's whole argument is that there are not
+        any. A correctly sized export needs one.
 
         LAZY, AND THE ONE FACT THAT COMPLICATES IT IS RECORDED HERE. The image
         sits at y 618, which is inside the first viewport at every laptop height
@@ -128,7 +136,7 @@ permalink: /about-this-site/index.html
     <figure class="cs-about__og">
       <img src="{{ site.cdn }}the-og-circulation-studio.webp"
            alt="The circulationstudio.com home page as the Wayback Machine captured it on 9 October 2011. Concentric grey and dark red rings fill the left half behind the words circulation studio, now open. A stacked lowercase navigation runs down the right: home, web design, seo, photo, print media, news, about us, portfolio, contact us. Below sit four columns headed Web Design, SEO, Photography and Customer Service."
-           width="1594" height="1432" loading="lazy" decoding="async">
+           width="560" height="503" loading="lazy" decoding="async">
       <figcaption>The first one, captured October 2011.</figcaption>
     </figure>
     <p>
