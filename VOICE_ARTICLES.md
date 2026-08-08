@@ -1,7 +1,11 @@
 # Article Voice
 
 Circulation Studio. How articles are written.
-Version 1.0, 2026-08-01.
+Version 1.1, 2026-08-03. Supersedes 1.0.
+
+Changes in 1.1: `article` added to the register table and defined by what
+it is rather than by what it is not; a note on how a citation reads added
+under rule 6.
 
 ## What this covers
 
@@ -189,6 +193,21 @@ Fewer advertisers, paying more.
 Citation density follows format. Heavy in a whitepaper, absent in a
 40-word FAQ answer.
 
+**A citation is a publisher and a date, not a bibliography.** The
+mechanics live in 06; the register point is that a citation is part of
+the sentence and has to read like one. Name who published it and when
+they published it, and let the link carry everything else. A document
+title dropped into running prose is the writer showing their work at the
+reader's expense.
+
+**Yes.** Yelp's business support center puts the ceiling at 8000 by 8000
+pixels, and its consumer site says 5000. The business-side number is the
+one that governs a business account.
+
+**No.** According to the Yelp for Business Support Center article "How
+do I post photos of my business to Yelp?", accessed August 3, 2026, the
+image dimensions should be smaller than 8000 by 8000px.
+
 ### 7. Cut the line rather than rewrite it
 
 The failure mode in this voice is not filler. It is overwriting: a
@@ -212,11 +231,21 @@ The frontmatter `kind` value sets the scaffolding, not the voice.
 
 | kind | Reader | Scaffolding | Citation density |
 |---|---|---|---|
+| article | Either | Prose, takeaways, and the blocks the document earns | Light to moderate, sourced where a claim needs it |
 | whitepaper | Considered | Cover, exec summary, methodology, references | Heavy, every figure sourced inline |
 | essay | Either | Prose, occasional pull quote | Light, sourced where a claim needs it |
 | fieldnote | Operational | Prose, one or two blocks | Light |
 | guide | Operational | Steps, before you start, watch out | Minimal, the procedure is the content |
 | faq | Operational | Question and answer | Usually none. Answer in 40 to 80 words |
+
+`article` is the default and the most common kind. It is the shape of a
+piece that has to answer a decision and a procedure in the same
+document: what this is, whether it applies to you, what it costs, then
+how to do it. It opens on mechanics per rule 1, carries no scaffolding it
+has not earned, and cites where a claim needs it rather than throughout.
+
+`guide` is the exception, not the ceiling. It is for a reader who has
+already decided and wants step one.
 
 An FAQ answer with no statistic in it is correct. Fast, conditional,
 done.

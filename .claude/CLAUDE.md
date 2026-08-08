@@ -145,6 +145,26 @@ Key principles:
    - VOICE_ARTICLES.md for the register articles are written in
    - SHORTCODES.md and ARTICLE_SYSTEM.md before touching the article system
 
+## The shared documents travel in both directions
+
+**VOICE_ARTICLES.md, SEO_LAYER.md and SHORTCODES.md are edited in two places,
+so a change to any of them in the article project gets committed to this repo
+in the same session, and a change made here gets re-uploaded to the project in
+the same session.**
+
+Only the second half of that was ever practised, which is why the rule is
+written down now. `VOICE_ARTICLES.md` went to 1.1 in the article project during
+the Pass 1 review of `/why-does-yelp-filter-reviews/` and arrived in this
+working tree unannounced, where it sat uncommitted across several unrelated
+sessions and read as a stray edit nobody could account for. Drift from the
+project towards the repo is the direction nothing was watching.
+
+**SEO_LAYER.md is not in this repo at all.** It has never been committed, on
+any branch, and the list above does not name it. It is not drift, it is absent,
+and it is the one of the three carrying the most accumulated corrections. Until
+it lands here it cannot be read before making changes, which is what step 1
+above asks for.
+
 2. Make changes following all constraints above
 
 3. Verify accessibility, performance, and brand compliance
