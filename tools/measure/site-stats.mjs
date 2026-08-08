@@ -97,9 +97,9 @@ const TYPES = {
   ".xml": "application/xml"
 };
 
-function run(command, args) {
+function run(command, args, env) {
   return new Promise((resolve, reject) => {
-    const child = spawn(command, args, { stdio: "inherit" });
+    const child = spawn(command, args, { stdio: "inherit", env: { ...process.env, ...env } });
     child.on("error", reject);
     child.on("close", (code) =>
       code === 0 ? resolve() : reject(new Error(`${command} exited ${code}`))
@@ -142,7 +142,18 @@ function resolveFile(url) {
 let buildMs = null;
 if (!KEEP) {
   const started = Date.now();
-  await run("npx", ["eleventy"]);
+  /* BUILT AS PRODUCTION, NOT AS A LOCAL BUILD, and the difference is real.
+     The audit strip renders on every deploy that is not production, so a local
+     build ships 1 to 2 KB of extra HTML on each of the four article pages that
+     no reader ever receives. Measuring that and publishing it as page weight
+     would be reporting bytes nobody downloads, on the one page whose whole
+     argument is that its numbers are checkable.
+
+     Same reasoning fingerprint.mjs already states for its baseline: the record
+     should describe the artifact that ships. Both halves of deploy.js are set
+     because it throws when it is on Pages with no branch, which is correct and
+     would otherwise fail here. */
+  await run("npx", ["eleventy"], { CF_PAGES: "1", CF_PAGES_BRANCH: "main" });
   buildMs = Date.now() - started;
   console.log(`\n[measure] build ${buildMs} ms`);
 } else {

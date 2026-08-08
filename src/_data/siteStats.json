@@ -1,13 +1,13 @@
 {
-  "measuredAt": "2026-08-07",
+  "measuredAt": "2026-08-08",
   "how": "Built with npx eleventy, served from _site by a static server with no compression, and loaded in headless Chromium at 1440 by 900 with no throttling. Bytes are what the browser received. The figures describe the build they were taken from, which is the one before the build you are reading, because writing them is what changed it.",
   "build": {
-    "ms": 803,
+    "ms": 565,
     "pagesWritten": 18
   },
   "weight": {
-    "medianBytes": 373887,
-    "medianGzipBytes": 248207,
+    "medianBytes": 373836,
+    "medianGzipBytes": 248194,
     "medianKb": 365.1,
     "medianGzipKb": 242.4,
     "medianRequests": 8,
@@ -18,7 +18,7 @@
     },
     "lightest": {
       "url": "/library/",
-      "kb": 228.1,
+      "kb": 228,
       "gzipKb": 111.2
     }
   },
@@ -45,8 +45,8 @@
     ]
   },
   "vitals": {
-    "lcpMedianMs": 148,
-    "lcpWorstMs": 180,
+    "lcpMedianMs": 144,
+    "lcpWorstMs": 176,
     "clsWorst": 0.0143,
     "pagesAtZeroCls": 0,
     "note": "Lab figures from headless Chromium on localhost, not field data. INP is not listed because it requires a real interaction to exist."
