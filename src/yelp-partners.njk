@@ -570,7 +570,25 @@ closing:
   </div>
 {% endcall %}
 
-{#- 9 PRICING. The first tier is the lead and carries a 2px ink outline. -#}
+{#- 9 PRICING. The first tier is the LEAD and the comp gives it three things,
+    not one: the 2px ink outline, a madder eyebrow, and the madder-filled
+    button. The 2026-08-02 rebuild caught the outline and missed the other two,
+    so the lead card read as an ordinary card with a heavier border.
+
+    THE BUTTON IS PRIMARY ON THE LEAD ONLY. button.njk reserves the madder fill
+    for the single CTA moment, and three filled buttons in a row would flatten
+    the hierarchy the outline exists to build. Same scarcity the hub follows
+    with its one madder eyebrow.
+
+    EVERY UNIT CARRIES ITS FOOTNOTE MARKER. There are three footnotes and three
+    tiers and they correspond one to one: per-location pricing on setup, the
+    minimum spend behind the $0 management fee, the monthly billing terms on
+    review management. Until now the list sat at the bottom attached to nothing,
+    which is a qualifier a reader has no way to connect to the number it
+    qualifies. The marker reuses .cs-fnref, the article system's own, so the
+    two read identically; it is hand-numbered rather than transform-numbered
+    because the transform matches `data-fn` markers only and there is no
+    document order to discover here, the tier's own index is the number. -#}
 {% call container(class="cs-yp-section") %}
   <div class="cs-yp-head" id="pricing">
     <h2 class="cs-yp-h2">{{ pricing.title }}</h2>
@@ -581,14 +599,17 @@ closing:
     <div class="cs-yp-tiers__card{{ " cs-yp-tiers__card--lead" if loop.first }}">
       <p class="cs-eyebrow">{{ tier.kicker }}</p>
       <p class="cs-yp-tiers__name">{{ tier.name }}</p>
-      <p class="cs-yp-tiers__price">{{ tier.price }}<span class="cs-yp-tiers__unit">{{ tier.unit }}</span></p>
+      <p class="cs-yp-tiers__price">
+        <span class="cs-yp-tiers__figure">{{ tier.price }}</span>
+        <span class="cs-yp-tiers__unit">{{ tier.unit }}<a class="cs-fnref cs-yp-tiers__marker" href="#yp-note-{{ loop.index }}" role="doc-noteref" aria-label="Note {{ loop.index }}">{{ loop.index }}</a></span>
+      </p>
       <p class="cs-yp-tiers__body">{{ tier.body }}</p>
-      {{ button(pricing.cta, href="/contact/", variant="secondary", class="cs-yp-tiers__cta") }}
+      {{ button(pricing.cta, href="/contact/", variant=("primary" if loop.first else "secondary"), class="cs-yp-tiers__cta") }}
     </div>
     {%- endfor %}
   </div>
   <ol class="cs-yp-footnotes">
-    {%- for note in pricing.footnotes %}<li>{{ note }}</li>{% endfor %}
+    {%- for note in pricing.footnotes %}<li id="yp-note-{{ loop.index }}" role="doc-endnote">{{ note }}</li>{% endfor %}
   </ol>
 {% endcall %}
 

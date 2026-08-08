@@ -668,6 +668,10 @@
   }
   .cs-yp-tiers__card--lead { border: 2px solid var(--color-ink) }
   .cs-yp-tiers__card .cs-eyebrow { margin: 0 0 var(--space-16) }
+  /* The lead's eyebrow is madder and every other eyebrow on the page is faint.
+     Same scarcity rule as the hub's rank panel, where one madder eyebrow marks
+     the single commercial offer. 8.81:1 on the card. */
+  .cs-yp-tiers__card--lead .cs-eyebrow { color: var(--color-madder) }
   .cs-yp-tiers__name {
     margin: 0;
     max-width: none;
@@ -677,9 +681,23 @@
     letter-spacing: .01em;
     color: var(--color-ink);
   }
+  /* THE UNIT SITS BESIDE THE FIGURE ON ITS BASELINE, which is the comp, and it
+     was stacked beneath it. The row is the flex container and the figure is its
+     own span rather than an anonymous item, so the baseline both align to is
+     stated rather than inferred.
+
+     12px is not on the spacing scale. It is the comp's, and it is the second
+     off-scale value in the repo after the hub intro's 56px close. Written here
+     rather than rounded to 8 or 16, both of which are visibly wrong beside a
+     44px figure. */
   .cs-yp-tiers__price {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
     margin: var(--space-16) 0 0;
     max-width: none;
+  }
+  .cs-yp-tiers__figure {
     font-family: var(--font-display);
     font-weight: var(--weight-thin);
     font-size: 44px;
@@ -687,14 +705,21 @@
     color: var(--color-ink);
   }
   .cs-yp-tiers__unit {
-    display: block;
-    margin-top: var(--space-8);
+    /* Stated rather than inherited. It used to come down from the price, which
+       carried the display face for the figure's sake; moving that onto the
+       figure dropped the unit to the body serif with nothing to announce it. */
+    font-family: var(--font-display);
     font-weight: var(--weight-medium);
     font-size: 10px;
     letter-spacing: .12em;
     text-transform: uppercase;
     color: var(--text-faint);
+    white-space: nowrap;
   }
+  /* .cs-fnref sizes itself at .65em, which off a 10px label is 6.5px and below
+     the point a single digit stays legible. The marker keeps the component's
+     madder and its superscript rise and takes its own size. */
+  .cs-yp-tiers__marker { font-size: 8px }
   .cs-yp-tiers__body {
     margin: var(--space-24) 0 var(--space-24);
     font-size: 14px;
