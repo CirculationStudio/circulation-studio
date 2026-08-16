@@ -113,15 +113,26 @@
      case and rhythm. The 22px h3 instances elsewhere in that file are a later
      addition and are not evidence. */
   /* ============================================================
-     PROMOTED UPSTREAM 2026-08-01. These are no longer repo-only.
+     STILL REPO-ONLY. THE 2026-08-01 PROMOTION DID NOT LAND. CORRECTED 08-15.
      ============================================================
 
-     All fourteen now live in tokens/typography.css in the design system, so
-     /design-sync covers them and the reconciliation can finally see them. They
-     had lived only here since the article system was built, taken by hand from
-     a Component Reference that keeps its values inline in markup, which is how
+     This block used to say all fourteen had been promoted upstream and now
+     lived in tokens/typography.css, so /design-sync covered them. Read against
+     the design system directly on 2026-08-15: that file carries the locked
+     marketing scale and nothing else. No --text-article-*, no --text-deck, no
+     article leading or tracking. The promotion was recorded here as done and
+     was not.
+
+     So these fourteen are still the only implementation, /design-sync will not
+     deliver them, and the reconciliation still cannot see them. They have lived
+     only here since the article system was built, taken by hand from a
+     Component Reference that keeps its values inline in markup, which is how
      --text-article-h3 sat at a wrong holding value for several commits with
      nothing to check it against.
+
+     A comment asserting a promotion happened is worse than no comment, because
+     the next reader stops looking. Do not mark this closed again without
+     opening tokens/typography.css and seeing the tokens in it.
 
      ONE THING TO WATCH AT THE NEXT SYNC: the upstream names are
      --track-article-h1 and --track-article-h3, matching its --track-caps and
@@ -267,6 +278,29 @@
      No transition: all, it wrecks INP. */
   --dur-fast: 140ms;
   --dur-snap: 220ms;
+  /* ============================================================
+     THREE DURATIONS OUTSIDE THE SCALE. REPO-ONLY. AMENDMENT OWED TO design.md.
+     ============================================================
+
+     design.md section 5 is LOCKED and says outright: "140 and 220 are the ONLY
+     durations in the system. There is no third, and a component that seems to
+     want one takes 140 ... encoding it would stop the scale being a scale."
+     These three contradict that rule directly. They are here because the
+     Header Condense comp needs them and the call was made to ship it, NOT
+     because the rule was overlooked.
+
+     The header is compound motion: the mark covers 37px of descent AND a scale
+     change while the nav covers 44px of slide and nothing else. At a shared 220
+     the mark reads hurried and the text reads fine, so it needs two values at
+     once and both longer than the scale has. That is what the comp calls a real
+     amendment rather than a rounding.
+
+     WHERE THIS BELONGS IS SECTION 5, not this comment. Until it lands there,
+     /design-sync will not deliver these and nothing upstream knows they exist,
+     which is exactly the shape of the article-token drift recorded below. */
+  --dur-long: 320ms;   /* the nav row's slide */
+  --dur-longer: 400ms; /* the mark's descent and scale */
+  --dur-lead: 100ms;   /* delay before the scale starts, so it moves then shrinks */
   --ease-out: cubic-bezier(.2, .7, .3, 1);
   --ease-snap: cubic-bezier(.3, 1.4, .4, 1);
 

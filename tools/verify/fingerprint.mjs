@@ -91,13 +91,22 @@ const MIN_ELEMENTS = {
      All twelve hashes moved together, which is correct here and is the opposite
      of the split this file usually watches for: a component every page renders
      changed, not one page's content. */
-  home: 143,
-  who: 157,
+  /* AND AGAIN BY 4 ON 2026-08-15, all six, when the Header Condense comp
+     replaced a static rail plus a fixed sticky bar plus a sentinel with one
+     header that condenses into itself. Net +4 per page: the mark gained two
+     nesting spans for its two-speed descent, the nav gained a wrapper and a
+     rule, a spacer replaced the sentinel, and the rail element went.
+
+     Uniform across all six is the signature of a frame change, the same shape
+     as the two footer-link rises above. A page that moved by a different amount
+     would be the interesting result. */
+  home: 147,
+  who: 161,
   /* what carries both: 153 -> 159 for the two services added the same day, then
      159 -> 161 for its one button. */
-  what: 161,
-  results: 155,
-  contact: 123,
+  what: 165,
+  results: 159,
+  contact: 127,
   /* The hub is DATA-DRIVEN and this floor will rise. Every article added to
      src/yelp/ adds elements to the coverage map, so a run that drops below the
      floor means the page stopped rendering rather than that content was
@@ -112,7 +121,7 @@ const MIN_ELEMENTS = {
      rendered for the first time since it was built, and two more clusters
      traded a pending line for a full entry. Each time the five marketing
      hashes did not move, which is the split this file exists for. */
-  yelphub: 236
+  yelphub: 240
 };
 
 const browser = await chromium.launch();

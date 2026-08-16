@@ -2,26 +2,126 @@
 // and extract it to a hashed <link> at build time. Keeps CSS on one pipeline.
 import "/src/css/main.css";
 
-/* Collapsed sticky masthead.
+/* ============================================================
+   THE MASTHEAD CONDENSE.
+   ============================================================
 
-   Driven by an IntersectionObserver on a zero-height sentinel sitting just
-   below the masthead, not by a scroll handler. The observer fires twice per
-   scroll pass (out, then back in) instead of on every frame, so there is no
-   per-frame main-thread work and nothing here reads layout. That matters for
-   the INP budget in CLAUDE.md.
+   Two jobs: flip the condensed state on scroll, and derive where the four nav
+   items have to land once they part around the mark.
 
-   Visibility is a class toggle; all the motion and the removal from the
-   accessibility tree live in CSS. */
+   WHY THIS REPLACED AN IntersectionObserver. The observer watched a sentinel
+   and could express exactly one threshold, so it flipped on the same line it
+   flipped back. The design wants HYSTERESIS: condense past 96px, expand back
+   above 48px, deliberately apart so it cannot flicker when someone rests on the
+   boundary. That needs two numbers, which a single sentinel cannot carry.
+
+   The listener is passive and does nothing but compare a number until the
+   threshold is actually crossed, so the per-frame cost is a read of scrollY and
+   a comparison. Nothing here reads layout on scroll. */
+const masthead = document.querySelector("[data-masthead]");
 const stickybar = document.querySelector("[data-sticky-masthead]");
-const sentinel = document.querySelector("[data-masthead-sentinel]");
+const navlist = document.querySelector("[data-masthead-nav]");
 
-if (stickybar && sentinel && "IntersectionObserver" in window) {
-  new IntersectionObserver(
-    ([entry]) => {
-      stickybar.classList.toggle("is-visible", !entry.isIntersecting);
-    },
-    { threshold: 0 }
-  ).observe(sentinel);
+const CONDENSE_AT = 96;
+const EXPAND_AT = 48;
+
+if (masthead || stickybar) {
+  let condensed = null;
+
+  const setCondensed = (next) => {
+    if (next === condensed) return;
+    condensed = next;
+    if (masthead) masthead.setAttribute("data-cond", next ? "true" : "false");
+    // The mobile bar takes the same state, so the site has ONE threshold pair.
+    if (stickybar) stickybar.classList.toggle("is-visible", next);
+  };
+
+  const onScroll = () => {
+    const y = window.scrollY || document.documentElement.scrollTop;
+    if (!condensed && y > CONDENSE_AT) setCondensed(true);
+    else if (condensed && y < EXPAND_AT) setCondensed(false);
+  };
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+  setCondensed(false);
+  onScroll();
+
+  /* ----------------------------------------------------------
+     THE DERIVED OFFSET, AND THE FONT-LOAD TRAP.
+     ----------------------------------------------------------
+
+     Who We Are and What We Do are wider together than Results and Contact, so
+     equal gaps around the mark put the middle gap's centre right of the
+     viewport axis. The mark holds the axis it had expanded and the RUN carries
+     the difference instead, because the alternative slides the composition's
+     one fixed point off the axis on the way down.
+
+     Hand-tuned gaps were the other option and they are worse than a cost, they
+     are a liability: rename Results to Case Studies and the right pair becomes
+     the wider one, so a tuned correction does not go stale, it INVERTS, and
+     nothing in the code would say so. This measures instead.
+
+     THE TRAP THIS CLOSES. A measurement taken against a fallback face is wrong
+     for the life of the page and silently so: Dual and the fallback set the
+     same ten characters to different widths, so the run would settle at a
+     plausible but incorrect position and nothing would ever recompute it. Dual
+     is self-hosted with font-display:swap, so the fallback IS what paints
+     first. Three hooks close it: once on mount, again when document.fonts.ready
+     resolves, and again on every loadingdone event, which is what catches a
+     late or cached-cold Dual. Plus resize.
+
+     Until the first measurement lands the CSS falls back to a symmetric 44px
+     split, which is wrong by the same amount but is a designed position rather
+     than an accident.
+
+     Measurement comes from offsetLeft and offsetWidth, which report
+     UNTRANSFORMED layout, so a reading stays valid whichever state the header
+     is in.
+
+     NOTE FOR ANYONE CHANGING THE NAV: this assumes the mark is the middle item
+     of five, so four labels. A fifth destination needs the derivation rewritten
+     rather than retuned, which is the right kind of fragility: it fails at the
+     length check below rather than quietly at a rename.
+
+     The comp this came from queried an attribute its own markup did not carry,
+     so its measurement never ran and it always used the fallback. The
+     data-masthead-nav hook exists so that cannot happen here silently. */
+  const MARK_HALF = 22;
+  const GAP_MARK = 28;
+  const GAP_PAIR = 40;
+
+  let applied = null;
+
+  const measure = () => {
+    if (!navlist || !masthead) return;
+    if (!masthead.clientWidth) return;
+    const items = Array.prototype.slice.call(navlist.children);
+    if (items.length !== 4) return;
+    const w = items.map((el) => el.offsetWidth);
+    if (w.some((x) => !x)) return;
+
+    const axis = masthead.clientWidth / 2;
+    const target = [];
+    target[1] = axis - MARK_HALF - GAP_MARK - w[1];
+    target[0] = target[1] - GAP_PAIR - w[0];
+    target[2] = axis + MARK_HALF + GAP_MARK;
+    target[3] = target[2] + w[2] + GAP_PAIR;
+
+    const tx = items.map(
+      (el, k) => Math.round((target[k] - el.offsetLeft) * 100) / 100
+    );
+    const key = tx.join(",");
+    if (key === applied) return;
+    applied = key;
+    tx.forEach((v, k) => navlist.style.setProperty(`--cs-tx${k + 1}`, `${v}px`));
+  };
+
+  measure();
+  if (document.fonts) {
+    document.fonts.ready.then(measure);
+    document.fonts.addEventListener("loadingdone", measure);
+  }
+  window.addEventListener("resize", measure);
 }
 
 /* Mobile menu: the full-pane ink overlay behind the bar's rule icon.
