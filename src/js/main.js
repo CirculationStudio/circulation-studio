@@ -99,11 +99,15 @@ if (masthead || stickybar) {
      at all. A ratio is also the thing that survives the lockup being resized,
      which a pixel target does not: wordmark.css derives every size in the
      stacked lockup from --cs-wordmark-size and font-metric ratios, so a literal
-     here would silently stop meaning "smaller" the moment that moved. */
-  const COND_MARK_RATIO = 0.6;
-  /* Caps carry their optical centre above the line box, so a circle centred by
-     geometry beside them reads low. Both corrections run the same way. */
-  const OPTICAL_LIFT = 2;
+     here would silently stop meaning "smaller" the moment that moved.
+
+     .38 puts the mark at 18.9px against a 9.3px cap height and a 20px label
+     line box, so it sits as a PEER of the nav labels rather than as the tallest
+     thing in the row. Deliberately a shade under a geometric match to the line
+     box, because a solid circular mark carries more visual mass than caps of
+     the same height and reads larger than it measures. Chosen by rendering the
+     row at .60, .48, .42, .38, .34 and .30 and looking, not by arithmetic. */
+  const COND_MARK_RATIO = 0.38;
 
   /* ALWAYS WALK THE CHAIN. offsetTop and offsetLeft are relative to
      offsetParent, and offsetParent MOVES between the two states: a transformed
@@ -193,8 +197,12 @@ if (masthead || stickybar) {
     const condMark = markH * COND_MARK_RATIO;
     out["--cs-mark-scale"] = COND_MARK_RATIO;
     // transform-origin is top center, so the translate places the scaled top
-    out["--cs-ty-mark"] =
-      (COND_H - condMark) / 2 - OPTICAL_LIFT - topWithin(mark, masthead);
+    /* Equal air above and below. The 2px optical lift carried over from the
+       comp is gone: it was written for a mark that dominated the row, where
+       nudging it up read as levelling it against the caps. At a size that is
+       already a peer of the labels it only made the row look off-centre, 14.1
+       above against 18.0 below. */
+    out["--cs-ty-mark"] = (COND_H - condMark) / 2 - topWithin(mark, masthead);
     out["--cs-ty-nav"] =
       (COND_H - navlist.offsetHeight) / 2 - topWithin(navlist, masthead);
     out["--cs-ty-book"] =

@@ -188,9 +188,25 @@
      seen before the first measurement lands, and they are deliberately
      conservative rather than tuned: a wrong fallback should look unfinished,
      not plausible. */
+  /* 98 PERCENT, NOT THE COMP'S 92. At 92 the page behind the bar was legible
+     through it: measured 1.091:1 against the paper ground in the empty left
+     third of the condensed row, which on Contact meant reading that page's own
+     headline and availability line as ghosts inside the header. The blur softens
+     it but does not stop it being words.
+
+     Measured across candidates against the ground: 92 gives 1.091:1, 95 gives
+     1.055, 97 gives 1.036, 98 gives 1.027 and 100 gives 1.000. 98 is where it
+     stops being perceptible.
+
+     WORTH KNOWING: this all but retires the frosted-glass quality the comp asked
+     for. Two percent of translucency and an 8px blur is functionally an opaque
+     bar. That is a deliberate trade, because a header you can read the page
+     through is a header with dirt on it, and it was reported twice as a bug. If
+     the frost is wanted back it needs a different answer than opacity, most
+     likely a much heavier blur, and the ghost would still be there as a wash. */
   .cs-masthead[data-cond="true"] {
     height: var(--cs-masthead-h-cond);
-    background: color-mix(in srgb, var(--color-paper) 92%, transparent);
+    background: color-mix(in srgb, var(--color-paper) 98%, transparent);
     backdrop-filter: blur(8px);
   }
   .cs-masthead[data-cond="true"] .cs-masthead__location,
@@ -199,7 +215,7 @@
   .cs-masthead[data-cond="true"] .cs-masthead__nav { border-top-color: transparent }
 
   .cs-masthead[data-cond="true"] .cs-masthead__markpos { transform: translateY(var(--cs-ty-mark, -40px)) }
-  .cs-masthead[data-cond="true"] .cs-masthead__markscale { transform: scale(var(--cs-mark-scale, .6)) }
+  .cs-masthead[data-cond="true"] .cs-masthead__markscale { transform: scale(var(--cs-mark-scale, .38)) }
   .cs-masthead[data-cond="true"] .cs-masthead__booking { transform: translateY(var(--cs-ty-book, -50px)) }
   .cs-masthead[data-cond="true"] .cs-masthead__navlist { transform: translateY(var(--cs-ty-nav, -155px)) }
   .cs-masthead[data-cond="true"] .cs-masthead__navlist > :nth-child(1) { transform: translateX(var(--cs-tx1, -44px)) }
@@ -366,7 +382,7 @@
     }
     .cs-stickybar.is-visible {
       height: var(--cs-bar-height-compact);
-      background: color-mix(in srgb, var(--color-paper) 92%, transparent);
+      background: color-mix(in srgb, var(--color-paper) 98%, transparent);
       backdrop-filter: blur(8px);
     }
 
@@ -433,7 +449,7 @@
 
     .cs-masthead {
       height: var(--cs-masthead-h-cond);
-      background: color-mix(in srgb, var(--color-paper) 92%, transparent);
+      background: color-mix(in srgb, var(--color-paper) 98%, transparent);
       backdrop-filter: blur(8px);
     }
     .cs-masthead__location,
