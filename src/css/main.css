@@ -234,7 +234,43 @@
   --accent-quiet: rgba(143, 29, 46, .09);
   --link: var(--color-madder);
   --link-hover: var(--color-madder-deep);
-  --focus-ring: rgba(143, 29, 46, .45);
+  /* ============================================================
+     .7, NOT .45. A LIVE 1.4.11 FAILURE, CORRECTED 2026-08-15.
+     ============================================================
+
+     WCAG 2.1 SC 1.4.11 asks 3:1 of the visual information that identifies a
+     control's state, and a focus indicator is exactly that. At .45 this ring
+     composited to 2.37:1 on paper, 2.30:1 on mist and 2.42:1 on white. It
+     failed on every ground it is used on, on a site that publishes an
+     accessibility statement.
+
+     Measured, not estimated, at each candidate:
+
+       alpha    paper   mist   white
+       .45       2.37   2.30   2.42   fails
+       .55       2.96   2.85   3.05   fails
+       .60       3.32   3.17   3.44   clears, by 0.17 on mist
+       .70       4.19   3.95   4.39   clears with room
+       1.0       8.06   7.23   8.81   solid accent
+
+     .70 rather than .60 because .60 passes mist by less than two tenths, which
+     is not a margin, it is a coincidence waiting for a ground to change. At .70
+     the measured value off rendered pixels is 4.23:1 on paper, against 4.19
+     computed. And
+     rather than solid, because a translucent ring is the point: solid madder is
+     the accent itself, and a 2px accent line around every focusable thing reads
+     as a component rather than a state.
+
+     MIST IS THE CONSTRAINT, not paper. It is the darkest ground the ring sits
+     on, so it sets the floor; testing on paper alone would have passed .60
+     comfortably and shipped a ring that fails on every quiet panel.
+
+     The buttons no longer use this at all. They took registration marks in the
+     Button States commit, measured at 8.06:1 and up. This ring now carries
+     .cs-link, cards, the wordmark, FAQ toggles, breadcrumbs, the skip link and
+     the masthead nav. The ink and madder panes override it with paper, which
+     measures 16.06:1 and 8.03:1 and was never the problem. */
+  --focus-ring: rgba(143, 29, 46, .7);
 
   --border-hairline: rgba(33, 21, 35, .14);
   --border-strong: rgba(33, 21, 35, .34);
