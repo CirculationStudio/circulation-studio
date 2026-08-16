@@ -247,3 +247,65 @@ for (const node of document.querySelectorAll("[data-email-user][data-email-domai
 for (const form of document.querySelectorAll("[data-form-mockup]")) {
   form.addEventListener("submit", (event) => event.preventDefault());
 }
+
+/* ============================================================
+   CONTACT PROMPTS. Four topics that light as the message is written.
+   ============================================================
+
+   ENTIRELY CLIENT SIDE. No request is made, nothing is sent before submit, and
+   nothing about this touches the network. That matters beyond privacy: the
+   third-party request count published on /about-this-site/ is measured from a
+   real page load, and adding a call here would move a number the site publishes
+   about itself.
+
+   THE SUBMIT IS NEVER GATED. No disabled state, no count, no threshold. Send it
+   with all four unlit and the form behaves identically. The rows are guidance,
+   not a form control, which is also why they are list items rather than
+   checkboxes: a checkbox implies something is being submitted.
+
+   TEMPLATE SHAPES ONLY EVER SUPPRESS, and are never named on screen. If the
+   message reads like a cold outreach template, no row lights, and nothing tells
+   the sender why. Saying so would teach anyone sending them how to get past it.
+
+   THE LOCATION MATCH IS A WEAK HEURISTIC and is known to be. A place name not
+   on the list leaves the row unlit on a perfectly complete message. That is
+   survivable precisely because nothing is gated: a wrong guess costs a grey
+   tick, not a blocked form. */
+const promptGroup = document.querySelector("[data-prompts]");
+const promptSource = document.querySelector("[data-prompts-source]");
+
+if (promptGroup && promptSource) {
+  const BIZ = ["dentist","dental","orthodont","plumb","hvac","heating","air conditioning","roof","electrician","electrical","landscap","law firm","attorney","lawyer","med spa","medspa","salon","restaurant","contractor","remodel","veterinar","chiroprac","clinic","practice","dealership","auto repair","body shop","pest control","movers","moving company","flooring","pool service","garage door","locksmith","optometr","dermatolog","physical therapy","urgent care","accounting","bookkeeping","insurance agency","real estate","realtor","bakery","brewery","cafe","gym","boutique","hotel","property management","cleaning service","junk removal","solar","window","fencing","paving","septic","tree service","catering","photograph","daycare","tutoring","storage","franchise","dispensary","barber","tattoo","florist"];
+  const GEO = ["california","orange county","los angeles","san diego","laguna","irvine","newport","costa mesa","anaheim","long beach","san francisco","sacramento","riverside","san bernardino","ventura","pasadena","texas","arizona","nevada","florida","oregon","washington","colorado","utah","new york","chicago","phoenix","seattle","portland","denver","austin","dallas","houston","atlanta","boston","miami","nashville","charlotte"];
+  const WANT = ["seo","yelp","google ads","ppc","paid search","ads","website","web design","redesign","new site","reviews","reputation","ranking","rank","leads","calls","phone","traffic","visibility","map pack","conversion","bookings","appointments","more customers","more clients","grow","found"];
+  const MONEY = ["budget","per month","a month","monthly spend","retainer","price range","ballpark","what do you charge","how much","invest","spend"];
+  const TEMPLATE = ["hope this email finds you well","came across your website","came across your site","increase your traffic","first page of google","guest post","link building","dear sir","to whom it may concern","we are a leading","affordable seo","white label","free audit","no obligation","i am reaching out to offer","dofollow"];
+
+  const rows = new Map();
+  for (const row of promptGroup.querySelectorAll("[data-prompt]")) {
+    rows.set(row.getAttribute("data-prompt"), row);
+  }
+
+  const update = () => {
+    const t = (promptSource.value || "").toLowerCase();
+    const any = (list) => list.some((k) => t.indexOf(k) !== -1);
+    const suppressed = any(TEMPLATE);
+
+    const on = {
+      what: any(BIZ),
+      where:
+        any(GEO) ||
+        /\b[a-z]+,\s?(ca|ny|tx|fl|az|nv|or|wa|co|ut|il|ga|ma|nc|tn)\b/.test(t) ||
+        /\b\d{5}\b/.test(t),
+      want: any(WANT),
+      money: any(MONEY) || /\$\s?\d/.test(t)
+    };
+
+    for (const [id, row] of rows) {
+      row.setAttribute("data-on", on[id] && !suppressed ? "true" : "false");
+    }
+  };
+
+  promptSource.addEventListener("input", update);
+  update();
+}

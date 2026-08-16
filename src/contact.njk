@@ -16,6 +16,26 @@ fields:
   - id: email
     label: Email
     type: email
+
+# Direction B. Four rows is the ceiling: a fifth turns a light touch into a
+# checklist, which is why the listing became a field rather than a fifth prompt.
+# Timeline is read for too and changes nothing on screen.
+promptsIntro: Recommended topics to cover so we can provide a better answer
+prompts:
+  - id: what
+    label: What you do
+    hint: The trade or practice, so we know the category we would be competing in.
+  - id: where
+    label: Where you are
+    hint: City or service area. Local results differ street by street.
+  - id: want
+    label: What you are after
+    hint: More calls, a new site, better reviews, or something you cannot name yet.
+  - id: money
+    label: Roughly what you have to spend
+    hint: >-
+      A range in a sentence is plenty. It decides whether the honest answer is us
+      or someone else.
 ---
 {#
   Contact.
@@ -66,11 +86,17 @@ fields:
         {% endfor %}
       </div>
 
+      {#- The listing REPLACED Company / business, per direction B. People paste
+          these, and it is the fastest thing anyone can give us: we can read the
+          listing before replying. Deliberately not validated beyond type=url's
+          own check, because a failed check on a correct paste is worse than no
+          check at all. -#}
       <p class="cs-field m-0">
-        <label class="cs-field__label" for="field-company">
-          Company / business <span class="cs-field__optional">· Optional</span>
+        <label class="cs-field__label" for="field-listing">
+          Website or Yelp listing <span class="cs-field__optional">· Optional</span>
         </label>
-        <input class="cs-input" type="text" id="field-company" name="company" autocomplete="organization">
+        <input class="cs-input" type="url" id="field-listing" name="listing"
+               autocomplete="url" placeholder="yourbusiness.com, or the Yelp page">
       </p>
 
       <p class="cs-field m-0">
@@ -78,8 +104,39 @@ fields:
         {#- rows 3, down from 5. At 5 the control read as an empty box even
             once the box was gone, because the empty space was the loudest
             thing in the form. The grip is killed in form.css. -#}
-        <textarea class="cs-input" id="field-message" name="message" rows="3"></textarea>
+        <textarea class="cs-input" id="field-message" name="message" rows="3"
+                  aria-describedby="prompts-intro" data-prompts-source></textarea>
       </p>
+
+      {#- THE PROMPTS. Four rows that light as the message is typed, matched
+          entirely in the browser. No request is made, nothing is sent before
+          submit, and the submit is NEVER GATED: there is no disabled state, no
+          count, no threshold. Send it with all four unlit and the form works
+          exactly the same.
+
+          The ticks are aria-hidden and the state is visual only. A screen
+          reader gets the guidance line and the four topics, which is the part
+          that carries meaning; the lit state is redundant feedback on a thing
+          that gates nothing. Announcing it would mean a live region firing on
+          every keystroke.
+
+          aria-describedby ties the group's line to the textarea, so the
+          guidance is reachable from the field it describes rather than only
+          from reading order. -#}
+      <div class="cs-prompts" data-prompts>
+        <p class="cs-prompts__intro" id="prompts-intro">{{ promptsIntro }}</p>
+        <ul class="cs-prompts__list">
+          {%- for prompt in prompts %}
+          <li class="cs-prompt" data-prompt="{{ prompt.id }}">
+            <span class="cs-prompt__mark" aria-hidden="true"></span>
+            <span>
+              <span class="cs-prompt__label">{{ prompt.label }}</span>
+              <span class="cs-prompt__hint">{{ prompt.hint }}</span>
+            </span>
+          </li>
+          {%- endfor %}
+        </ul>
+      </div>
 
       <div>{{ button("Start the conversation", type="submit") }}</div>
     </form>

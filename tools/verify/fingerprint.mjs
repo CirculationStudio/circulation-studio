@@ -106,7 +106,12 @@ const MIN_ELEMENTS = {
      159 -> 161 for its one button. */
   what: 165,
   results: 159,
-  contact: 127,
+  /* CONTACT ALONE ROSE 127 -> 150 ON 2026-08-15, and alone is the point: the
+     prompt group is one page's content, not the frame, so the other five did
+     not move. +23 is the group's wrapper, its line and its list, plus five
+     elements for each of four rows. The listing field replaced Company /
+     business one for one and contributed nothing. */
+  contact: 150,
   /* The hub is DATA-DRIVEN and this floor will rise. Every article added to
      src/yelp/ adds elements to the coverage map, so a run that drops below the
      floor means the page stopped rendering rather than that content was

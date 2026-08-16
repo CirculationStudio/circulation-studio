@@ -166,7 +166,98 @@
       inset 0 0 0 100px var(--color-paper);
   }
 
+  /* ============================================================
+     THE PROMPTS. Four topics that light as the message is written.
+     ============================================================
+
+     Not a progress meter and not a gate. Each unlit row is a specific
+     answerable thing rather than a gap in a bar, there is no fifth state to
+     chase, no congratulation at four, and the submit never changes. That is the
+     whole reason the pattern is tolerable: it costs nothing to ignore.
+
+     The group's one line does the work a form would normally spend on "all
+     fields required", and it is placed where that line would go, so it is the
+     first thing read when the eye reaches the group rather than the last. */
+  .cs-prompts { display: flex; flex-direction: column; gap: var(--space-8) }
+  .cs-prompts__intro {
+    margin: 0;
+    max-width: none;
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 11px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  .cs-prompts__list { margin: 0; padding: 0; list-style: none }
+
+  .cs-prompt {
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
+    padding: 10px 0;
+    border-top: 1px solid var(--border-hairline);
+  }
+  /* An engraved-plate box, 2px corners like everything else, with the check
+     drawn as two borders rotated rather than a glyph, so it inherits no font. */
+  .cs-prompt__mark {
+    position: relative;
+    width: 18px;
+    height: 18px;
+    margin-top: 3px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-control);
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      background-color var(--dur-fast) var(--ease-out);
+  }
+  .cs-prompt__mark::after {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 7px;
+    width: 8px;
+    height: 4px;
+    border-left: 1.5px solid var(--color-paper);
+    border-bottom: 1.5px solid var(--color-paper);
+    transform: rotate(-45deg);
+    opacity: 0;
+    transition: opacity var(--dur-fast) var(--ease-out);
+  }
+  .cs-prompt__label {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 12px;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--text-faint);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .cs-prompt__hint {
+    display: block;
+    margin-top: 2px;
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+
+  /* Lit. Colour and a check appearing, so the state is not carried by colour
+     alone. Nothing here changes a layout box: the box is 18px in both states
+     and the check is an opacity. */
+  .cs-prompt[data-on="true"] .cs-prompt__mark {
+    background-color: var(--accent);
+    border-color: var(--accent);
+  }
+  .cs-prompt[data-on="true"] .cs-prompt__mark::after { opacity: 1 }
+  .cs-prompt[data-on="true"] .cs-prompt__label { color: var(--color-ink) }
+
   @media (prefers-reduced-motion: reduce) {
-    .cs-input { transition: none }
+    .cs-input,
+    .cs-prompt__mark,
+    .cs-prompt__mark::after,
+    .cs-prompt__label { transition: none }
   }
 }
