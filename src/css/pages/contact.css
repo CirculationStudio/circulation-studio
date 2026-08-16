@@ -31,8 +31,27 @@
     gap: var(--space-96);
     align-items: start;
   }
+  /* NO RULE ON THESE, AND THAT IS THE POINT.
+   *
+   * Both columns used to open with a 1px --border-strong rule. It was drawn to
+   * separate the intro from a form made of boxed fields; once the fields became
+   * underlines, the top of this section had hairlines doing three different
+   * jobs within a hundred pixels of each other, structure and input reading the
+   * same weight.
+   *
+   * The right-hand one was the worse of the two. It sat directly above THE
+   * STUDIO with the same weight and offset the field rules use, so it read as
+   * an underline belonging to a field that does not exist.
+   *
+   * The padding stays and the whitespace does the separating: 64px from the
+   * intro's own bottom padding plus this 40px is 104px of air above both
+   * columns, which is more than the rule was contributing.
+   *
+   * IF A DIVIDER IS EVER WANTED BACK it goes on .cs-contact__grid as one
+   * full-width rule spanning both columns, never two column-width ones. A rule
+   * that stops at a column edge reads as belonging to that column, which is
+   * exactly how the right-hand one turned into a stray field underline. */
   .cs-contact__panel {
-    border-top: 1px solid var(--border-strong);
     padding-top: var(--space-40);
   }
   .cs-contact__aside {

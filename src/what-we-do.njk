@@ -15,7 +15,10 @@ outcomes:
     icon: get-found
     glyph: true
     services:
-      - name: SEO
+      # Names both kinds of search without the acronym. AEO is a term the
+      # trade uses and the buyer does not, and a heading is the wrong place to
+      # teach one. The description already carries the AI half.
+      - name: SEO and AI Search
         desc: Visibility across Google, AI-driven results, and local map searches.
       - name: Yelp Ads
         desc: "Certified-partner campaigns reaching high-intent local customers."
@@ -32,6 +35,14 @@ outcomes:
         desc: >-
           Modern, fast, secure sites built for conversion and SEO-readiness, on
           a static platform with no bloated plugins.
+      # Deliberately describes the OUTCOME, not the mechanism. How it is
+      # structured for a model is our problem, and naming it here would read as
+      # jargon to the person buying.
+      - name: Brand DNA Development
+        desc: >-
+          The way your business talks and what it stands for, documented so
+          that people and AI tools produce work that sounds like you rather
+          than like everyone else.
       - name: Branding
         desc: Brand identity from visual design to strategic positioning.
   - title: Stay Ahead
@@ -43,6 +54,10 @@ outcomes:
         desc: >-
           Positioning your business to be found and cited as generative AI
           reshapes how customers discover services.
+      - name: Workflows and Automation
+        desc: >-
+          The repetitive parts of running a business, handed to systems that do
+          them the same way every time.
 statement: >-
   We consider the whole business before any single channel, and we work as
   partners, not order-takers. That is the counsel referrals send their friends
@@ -51,6 +66,13 @@ close: If any of this is what your business needs next, booking for Q3 is open.
 ---
 {#
   What We Do. Composes the frame and locked components; copy in front matter.
+
+  OPENING: the figure breaks the container and runs to the right edge of the
+  viewport, starts a step below the text, and a madder hairline crosses out of
+  the text column into it. The image attributes are the file's TRUE intrinsic
+  size, 1280x853, not the 440x320 box it used to be drawn in: the frame no
+  longer fixes a height, so the attribute ratio is what reserves the space, and
+  the old pair reserved a 1.375 box for a 1.5 image. See the page CSS.
 
   ALT-GLYPH: exactly one on this page, the O in the "Get Found" group header.
   It is the earned swap: found means located, and the target device is the mark
@@ -70,16 +92,16 @@ close: If any of this is what your business needs next, booking for Q3 is open.
 {% from "components/button.njk" import button %}
 {% from "components/icon.njk" import icon %}
 
-{% call section(containerClass="cs-intro") %}
+{% call section(class="cs-intro-band", containerClass="cs-intro") %}
   <div>
     <h1 class="cs-intro__headline">{{ intro.headline }}</h1>
     <p class="cs-intro__lede">{{ intro.lede }}</p>
+    <div class="cs-intro__accent" aria-hidden="true"></div>
   </div>
   <div class="cs-intro__figure">
     <img src="{{ site.cdn }}cs-img-bee-1-landscape.webp"
          alt="Bee finding the bloom, reach and being found"
-         width="440" height="320" loading="eager" fetchpriority="high" decoding="async">
-    <div class="cs-rule cs-rule--intro-h" aria-hidden="true"></div>
+         width="1280" height="853" loading="eager" fetchpriority="high" decoding="async">
     <div class="cs-rule cs-rule--intro-v" aria-hidden="true"></div>
   </div>
 {% endcall %}

@@ -2,14 +2,38 @@
    the component set, so patterns stay here until a second page earns them a
    promotion. */
 @layer components {
-  /* OPENING: proposition left, figure right, with survey rules running off the
-     figure into the margin and downward. */
+  /* OPENING: proposition left, figure right. The figure breaks the container
+     and runs to the right edge of the viewport, it starts a step below the
+     text so the two columns no longer square off at the top, and a madder
+     hairline crosses out of the text column into it.
+
+     The second track stays 440px. It is not the figure's width any more, it is
+     the figure's LEFT EDGE and the text column's measure, both of which the
+     bleed leaves alone: the figure overflows this track rightward and nothing
+     about the text's position changes. */
   .cs-intro {
     display: grid;
     grid-template-columns: 1fr 440px;
     gap: var(--space-96);
-    align-items: center;
+    align-items: start;
   }
+
+  /* The band is the section, and it exists only to clip the bleed.
+
+     The bleed width below is spelled in viewport units, and 100vw counts the
+     classic scrollbar while the container's percentage width does not. On a
+     platform with overlay scrollbars (macOS, where this is reviewed) the two
+     agree and the figure lands exactly on the page edge. On Windows and Linux
+     100vw runs about half a scrollbar wide, so the figure would overshoot by
+     ~7px and put a horizontal scrollbar on the page, which is the failure this
+     file already fixed once for the dashed rule that used to live here.
+
+     overflow-x: clip rather than hidden, deliberately: clip is the one value
+     that leaves the other axis genuinely visible, so .cs-rule--intro-v still
+     drops out of the bottom of the section. The cost is those ~7px trimmed off
+     the right of the image on scrollbar platforms, which is the cheaper of the
+     two, and it is a clamp on the frame rather than a crop of the asset. */
+  .cs-intro-band { overflow-x: clip }
   .cs-intro__headline {
     margin: 0;
     font-size: var(--text-h3);
@@ -19,52 +43,97 @@
   }
   .cs-intro__lede { margin: var(--space-24) 0 0 }
 
+  /* THE BLEED.
+
+     --page-gutter is the page gutter, derived from the formula the container
+     uses rather than picked to look right at one viewport. container.css sets
+     width: min(--container-main, 100% - 80px), so the gutter is half of
+     whatever the container does not occupy, and stated that way it tracks both
+     regimes: the 40px gutter while the container is still shrinking with the
+     viewport, and the growing gutter once it locks at 1120. The figure is the
+     last grid column, so its right edge sits on the container's right edge and
+     the gutter is exactly the room between it and the page edge. 440px plus
+     that gutter therefore lands the figure on the viewport's right edge and
+     not one pixel past it.
+
+     This formula was already in this file, on the dashed rule that used to run
+     out of the frame into the margin. That rule is GONE, and the reason is
+     that the image now does its job: it carried the eye from the frame to the
+     page edge, and the frame reaches the page edge on its own. Left in place
+     it would also have been actively harmful, since it hangs off left: 100% of
+     this figure and would have started at the viewport edge and run a full
+     gutter past it.
+
+     The viewport-relative spelling is forced. The sibling rules on this page
+     and the other four (trellis, espalier, graft, fruit, sowing) express the
+     same gutter as calc(50% - 560px), which works because they hang off a
+     FULL-WIDTH relative wrapper where 50% is half the page. This is a grid item
+     inside the 1120 container, so a percentage would resolve against the 440px
+     track. See .cs-intro-band for what that costs and what pays it.
+
+     THE OFFSET is --space-64, a step off the scale, against the 96px column
+     gap. Not a number measured off a mock: the brief is that the figure starts
+     lower than the text, and the smallest scale step that reads as deliberate
+     rather than as a rounding error is the right one. align-items went from
+     center to start so there is a shared top for it to be an offset FROM. */
   .cs-intro__figure {
+    --page-gutter: calc((100vw - min(var(--container-main), 100vw - 80px)) / 2);
     position: relative;
-    width: 440px;
-    height: 320px;
+    width: calc(440px + var(--page-gutter));
+    margin-top: var(--space-64);
   }
+  /* NO object-fit, and no fixed height. The frame is now whatever the bleed
+     makes it, so a fixed 320px height would have meant cover cropping harder
+     the wider the viewport got: the source is 1280x853, a 1.5 ratio, and a
+     600x320 frame at 1440 would have cut a fifth off the top and bottom. The
+     brief says do not crop, so the frame takes the file's ratio and the image
+     is drawn whole. This also drops the ~8% that cover was already trimming
+     off the sides in the old 440x320 box, and it is what the stacked layout
+     below 1120 has always done.
+
+     It never upscales. The figure passes 1280px wide only past a 2400px
+     viewport, and the container's gutters mean every page here already leaves
+     that much air. */
   .cs-intro__figure img {
-    width: 440px;
-    height: 320px;
-    object-fit: cover;
+    width: 100%;
+    height: auto;
     display: block;
   }
-  /* Continues out of the frame toward the page edge, and STOPS there.
+  /* Drops below the frame, tying it to the groups underneath.
 
-     The length is the page gutter, derived from the same formula the container
-     uses, not a width picked to look right at one viewport. It was 50vw, which
-     is unrelated to the space actually available: the figure is the last grid
-     column, so its right edge sits on the container's right edge, and the only
-     room to its right is the gutter. 50vw is half the viewport, which at every
-     width above 1120 overshoots that gutter by exactly 560px (half the
-     container), so the rule pushed the document 560px wider than the viewport
-     and put a horizontal scrollbar on the page.
-
-     container.css sets width: min(--container-main, 100% - 80px), so the gutter
-     is half of whatever the container does not occupy. Stated that way it
-     tracks both regimes: the 40px gutter while the container is still shrinking
-     with the viewport, and the growing gutter once it locks at 1120.
-
-     The sibling rules on this page and the other four (trellis, espalier,
-     graft, fruit, sowing) express the same gutter as calc(50% - 560px), which
-     works because they hang off a FULL-WIDTH relative wrapper where 50% is half
-     the page. This one cannot use that form: it is anchored to the 440px figure
-     so it can meet the image at a measured height, and a percentage here would
-     resolve against 440px. Hence the viewport-relative spelling of the same
-     quantity. */
-  .cs-rule--intro-h {
-    top: 116px;
-    left: 100%;
-    width: calc((100vw - min(var(--container-main), 100vw - 80px)) / 2);
-    border-top: 1px dashed var(--border-hairline);
-  }
-  /* Drops below the frame, tying it to the groups underneath. */
+     left is a percentage, not the 193px it was, because the frame now scales
+     with the viewport and a fixed offset would point at a different part of
+     the photograph at every width. 44% is where 193px pointed: in the old
+     cropped box the image was drawn at 480px wide with 20px lost off each
+     side, so 193px in was 568px into a 1280px source, and 568/1280 is 44.4%. */
   .cs-rule--intro-v {
     top: 100%;
-    left: 193px;
+    left: 44%;
     height: var(--space-96);
     border-left: 1px solid var(--border-hairline);
+  }
+
+  /* THE MADDER HAIRLINE. Runs from the text column's left edge, across the
+     gap, and into the image.
+
+     In flow, inside the text block and after the lede, rather than absolutely
+     positioned like the survey rules. That is what makes "below the paragraph"
+     a real relationship instead of a top offset measured off one screenshot:
+     the paragraph reflows at every width and the hairline follows it.
+
+     Every length is a scale step. --space-96 clears the column gap exactly,
+     because it IS the column gap, and --space-64 is how far it then reaches
+     into the image. z-index because the figure is positioned and would
+     otherwise paint over a line that is meant to cross it.
+
+     Madder, not the hairline grey the survey rules use. It is the page's one
+     accent in the opening and it answers the red bar inside the photograph. */
+  .cs-intro__accent {
+    position: relative;
+    z-index: 1;
+    width: calc(100% + var(--space-96) + var(--space-64));
+    margin-top: var(--space-40);
+    border-top: 1px solid var(--accent);
   }
 
   /* THREE OUTCOME GROUPS
@@ -186,8 +255,27 @@
     .cs-rule { display: none }
 
     .cs-intro { grid-template-columns: 1fr; gap: var(--space-40) }
-    .cs-intro__figure,
-    .cs-intro__figure img { width: 100%; height: auto }
+    /* STACKED, AND BOTH CHANGES STILL HAVE TO MEAN SOMETHING HERE.
+
+       The bleed does, and it gets exact: below 1200 the container is
+       100% - 80px, so the gutter is 40px flat, which is --space-40 on the
+       scale. 100% of the single column plus that lands on the page edge with
+       no viewport unit involved, so the scrollbar arithmetic that .cs-intro-band
+       guards against upstairs cannot arise down here at all.
+
+       The offset does not. It was a stagger between two columns and there are
+       no columns now; carried over it would read as a wrong gap above the
+       image, competing with the 40px the grid already sets. So it goes, and
+       the grid gap does the separating.
+
+       The hairline stays and re-aims: it can no longer run INTO the image, so
+       it runs to the same page edge the image below it runs to, and the two
+       right edges line up. */
+    .cs-intro__figure {
+      width: calc(100% + var(--space-40));
+      margin-top: 0;
+    }
+    .cs-intro__accent { width: calc(100% + var(--space-40)) }
 
     .cs-outcomes { grid-template-columns: 1fr; gap: var(--space-64) }
     .cs-trellis__figure { height: 400px }

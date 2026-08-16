@@ -48,7 +48,80 @@
   .cs-net-crumbs__list a { color: var(--text-faint); text-decoration: none }
   .cs-net-crumbs__list a:hover { color: var(--accent) }
 
-  /* ---- hero ---- */
+  /* ---- hero ----
+   *
+   * The mirror of the What We Do opening. That one is text left and a figure
+   * bleeding off the RIGHT edge; this one is a figure bleeding off the LEFT
+   * with the type STRADDLING its right edge.
+   *
+   * THE STRADDLE is the composition. The copy is one 440px column whose right
+   * edge lands on the container's right edge, and the photograph's right edge
+   * cuts through it 20% along: a fifth of the column sits on the paper inside
+   * the picture, the rest on the page's own ground. The type crossing that
+   * boundary is the device. Sitting wholly inside the picture was the first
+   * attempt and it read as a caption in a box.
+   *
+   * 440px because that is the width of the figure column What We Do gives its
+   * image. The pair inverts literally: the same measure carries the picture
+   * there and the words here. It is a hardcoded value in what-we-do.css and it
+   * is a hardcoded value here, which is the honest way to hold two pages in
+   * step until it earns a token.
+   *
+   * THE FRAME therefore stops SHORT of the container's right edge, by exactly
+   * the part of the column that hangs onto the page:
+   *
+   *   50%                                   half the page
+   *   + min(--container-main, 100% - 80px)  the container width, from
+   *     / 2                                 container.css, halved
+   *                                         = the container's right edge
+   *   - --copy-on-page                      back off the overhang
+   *
+   * Percentages, not the viewport-unit spelling pages/what-we-do.css is forced
+   * into: this is a block child of a full-width band, so 100% is the page
+   * width and EXCLUDES the classic scrollbar, where 100vw counts it. Same
+   * arithmetic, but it cannot drift by half a scrollbar, so this band needs no
+   * overflow clamp.
+   *
+   * The 80px is container.css's viewport gutter. It is not a token there
+   * either; restating it is the same debt what-we-do.css already carries.
+   *
+   * WHAT THE OVERLAP LANDS ON, measured off the file at 1200x672 rather than
+   * assumed. The photograph fills the left, the tonal edge to paper falls at
+   * 43%, and the only mark that fails 4.5:1 against ink anywhere right of 67%
+   * is a dashed annotation rule at 49.6% of the height, which stops at 75.4%
+   * across. The copy overlaps only the rightmost ~9% of the picture, so that
+   * rule ends well clear of it and cannot pass behind a line of type at any
+   * width. The red bar is at 62.6%-64.9%, further left still.
+   *
+   * Narrowing the overlap is what fixed the strike-through the full-width
+   * overlay had, and it fixed it by composition rather than by a scrim.
+   */
+
+  .cs-net-hero {
+    /* the copy column, and how it is split by the picture's right edge */
+    --copy-width: 440px;
+    --copy-on-image: calc(var(--copy-width) * 0.2);
+    --copy-on-page: calc(var(--copy-width) - var(--copy-on-image));
+  }
+
+  .cs-net-hero__frame {
+    position: relative;
+    width: calc(
+      50% + min(var(--container-main), 100% - 80px) / 2 - var(--copy-on-page)
+    );
+  }
+  .cs-net-hero__figure {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .cs-net-hero__copy {
+    position: absolute;
+    top: 50%;
+    left: calc(100% - var(--copy-on-image));
+    transform: translateY(-50%);
+    width: var(--copy-width);
+  }
 
   .cs-net-hero__title {
     margin: var(--space-16) 0 0;
@@ -380,6 +453,28 @@
     .cs-net-section--first { padding-top: 36px; padding-bottom: 48px }
     .cs-net-hero__title { font-size: 21px; line-height: 1.42; max-width: 24ch }
     .cs-net-hero__lede { font-size: 17px; max-width: 100% }
+
+    /* STACKED, AND THE OVERLAY IS ABANDONED RATHER THAN SHRUNK. A third of a
+       narrow viewport is not a column, and type over a photograph stops being
+       legible long before it stops fitting. Image over type, no overlap.
+
+       The frame goes inert and full width, the figure keeps the left bleed on
+       its own, and the copy returns to the flow.
+
+       --space-40 twice, and both are exact rather than approximate. Below
+       1200 the container is 100% - 80px, so the page gutter is a flat 40px
+       for this whole range: 100% - 40px puts the figure's right edge on the
+       container's right edge, and margin-inline of 40px reproduces the
+       container measure for the copy without restating container.css's
+       formula. */
+    .cs-net-hero__frame { width: 100% }
+    .cs-net-hero__figure { width: calc(100% - var(--space-40)) }
+    .cs-net-hero__copy {
+      position: static;
+      transform: none;
+      width: auto;
+      margin: var(--space-40) var(--space-40) 0;
+    }
 
     .cs-net-band {
       grid-template-columns: minmax(0, 1fr);

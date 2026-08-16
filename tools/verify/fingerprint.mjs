@@ -80,7 +80,13 @@ const MIN_ELEMENTS = {
      interesting result. */
   home: 137,
   who: 155,
-  what: 153,
+  /* WHAT ROSE ALONE, 153 -> 159, and that is the shape of a content change
+     rather than a frame change: two services were added to the three-outcome
+     section, Brand DNA Development under Get Built and Workflows and
+     Automation under Stay Ahead, and a service is an li plus two p on the one
+     page that has them. The other five floors did not move, which is what
+     says this was the page and not the frame. */
+  what: 159,
   results: 153,
   contact: 121,
   /* The hub is DATA-DRIVEN and this floor will rise. Every article added to

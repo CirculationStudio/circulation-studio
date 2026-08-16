@@ -75,7 +75,10 @@ fields:
 
       <p class="cs-field m-0">
         <label class="cs-field__label" for="field-message">What are you looking for?</label>
-        <textarea class="cs-input" id="field-message" name="message" rows="5"></textarea>
+        {#- rows 3, down from 5. At 5 the control read as an empty box even
+            once the box was gone, because the empty space was the loudest
+            thing in the form. The grip is killed in form.css. -#}
+        <textarea class="cs-input" id="field-message" name="message" rows="3"></textarea>
       </p>
 
       <div>{{ button("Start the conversation", type="submit") }}</div>

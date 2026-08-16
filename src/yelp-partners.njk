@@ -281,25 +281,61 @@ faq:
   - q: Should I hire an agency or manage Yelp Ads myself?
     a: >-
       Manage it yourself if your budget is small and you have time to watch it
-      weekly. Below roughly a thousand dollars a month in ad spend, a management
-      fee eats the advantage. Above that, or if nobody on staff will look at the
-      dashboard, an agency usually returns more than it costs, and a certified
-      partner adds credits and support you cannot get on your own.
+      weekly. Below roughly a thousand dollars a month in ad spend, the one-time
+      setup and optimization fee is hard to justify, the account will not qualify
+      for the best partner incentives, and there is not enough click volume to
+      tell what is working from what is noise. Above that, or if nobody on staff
+      will open the dashboard, a certified partner adds credits, support, and
+      tuning you cannot get on your own.
   - q: What do agencies charge to manage Yelp Ads?
     a: >-
       Most charge either a flat monthly fee or a percentage of ad spend, commonly
       10 to 20 percent. We charge neither. There is a one-time setup and
-      optimization fee, and after that we are paid by Yelp's rebate on managed
-      spend, so ad management carries no monthly fee. Review management is the one
-      exception, billed monthly and optional. Ask any agency whether they take the
-      rebate as well as a management fee. Most partners do.
+      optimization fee, which is real money and the point at which most of the
+      work happens, and after that we are paid by Yelp's rebate on managed spend.
+      Some work sits outside that: review management, API and CRM connections,
+      and creative production like graphics or video are quoted separately. Ask
+      any agency whether they take the rebate as well as a management fee. Most
+      partners do.
+  # BLANK LINES IN THESE FOLDED SCALARS ARE PARAGRAPH BREAKS AND ARE LOAD-BEARING.
+  # A folded scalar keeps a blank line as a newline, and the FAQ body splits on
+  # it. Reflowing one of these answers into a single block silently loses the
+  # author's paragraphing.
   - q: Do Yelp Ads require a contract?
     a: >-
-      Yelp sells both non-contract and term agreements, and the terms differ by
-      market and by who sold it to you. Read the cancellation clause before
-      signing, particularly on anything sold as a discount for a twelve month
-      commitment. Our management agreement is separate from your Yelp agreement
-      and runs month to month.
+      Yelp Ads do not require a contract, and on a self-serve account you can
+      turn them on or off at any point in the month with a pro-rated bill.
+
+      Managed accounts work differently. We bill centrally, which is how the
+      partner pricing and credits are applied in the first place, so we pay Yelp
+      and you pay us. That means changes are not instant the way clicking a
+      toggle is. It also means pausing mid-month, or mid-promotion, can cost you
+      a promotional rate you were partway through earning. Tell us before you
+      want something off and we will handle the timing.
+
+      Our management agreement runs on a three-month commitment.
+  - q: How does billing work with a certified partner?
+    a: >-
+      Two ways. Centralized, which is the default, means we are billed by Yelp
+      for the ad spend across every account we manage and you are billed by us.
+      Decentralized means you pay Yelp directly and we manage the account without
+      touching the money.
+
+      Centralized is how the partner program is designed to work. One invoice to
+      one agency replaces a hundred separate accounts, and Yelp's sales and
+      accounts receivable teams work with a single point of contact instead of
+      managing each one individually. That efficiency is part of what the partner
+      pricing and the client credits are paid for.
+
+      What it means in practice: your spend runs through us, changes go through
+      us rather than through a toggle you click, and the account qualifies for
+      pricing and promotions a self-serve advertiser cannot get.
+
+      We can manage a decentralized account in some circumstances, usually where
+      a business has a billing structure that will not accommodate it. Ask. But a
+      decentralized account sits outside the partner program's pricing, and the
+      promotional rates, ad credits, and bundled offers that come with it are not
+      available on spend we do not bill.
   - q: Should I buy Yelp Ads from a sales call?
     a: >-
       Not on the call itself. Yelp's sales team works to a quota and the offer will
@@ -312,7 +348,10 @@ faq:
       A review comes down only if it breaks Yelp's content guidelines, and that
       call is Yelp's. Any agency promising review removal is either misreading the
       program or lying about it, and paying for ads does not change what the filter
-      does either.
+      does either. What we can do is tell you whether a review is worth flagging
+      and on what grounds, and how to respond in public so the next reader sees a
+      business that handles problems well. Fifteen years of doing this is mostly
+      knowing which fights are worth having.
   - q: Who owns the account if we stop working together?
     a: >-
       You do, in every case. The Yelp account is yours, the ad spend is billed by
@@ -620,10 +659,23 @@ closing:
     <p class="cs-yp-source"><a href="/yelp/">{{ faqLink }} <span aria-hidden="true">&rarr;</span></a></p>
   </div>
   <div class="cs-yp-faq">
+    {#- One <p> PER PARAGRAPH, not one per answer. Two of these answers are
+        written in several paragraphs and the folded scalars keep the breaks as
+        newlines; rendering item.a into a single <p> collapsed them to spaces
+        and turned a four-paragraph answer on billing into a wall.
+
+        The schema below still reads item.a whole, so the encoded answer and the
+        visible answer remain the same text, which is what CLAUDE.md requires.
+
+        The answer text is in the DOM for every item, open or closed. <details>
+        hides its content by styling, not by removing it, so a crawler and a
+        screen reader both see all seven answers. -#}
     {%- for item in faq %}
     <details class="cs-yp-faq__item">
       <summary>{{ item.q }}</summary>
-      <div class="cs-yp-faq__a"><p>{{ item.a }}</p></div>
+      <div class="cs-yp-faq__a">
+        {%- for para in item.a.split("\n") %}{% if para | trim %}<p>{{ para | trim }}</p>{% endif %}{% endfor %}
+      </div>
     </details>
     {%- endfor %}
   </div>
