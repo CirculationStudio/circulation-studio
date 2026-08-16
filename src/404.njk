@@ -1,0 +1,81 @@
+---
+layout: layouts/base.njk
+title: "Page not found"
+description: "That address does not exist on this site. The main sections are listed here."
+permalink: /404.html
+noindex: true
+eleventyExcludeFromCollections: true
+---
+{% from "components/container.njk" import container %}
+
+{#
+  THE 404 PAGE, AND ITS REAL JOB IS THE STATUS CODE.
+
+  Before this file existed there was no 404 page at all, in src or in the
+  output, and that is not a cosmetic gap. Cloudflare Pages serves a custom
+  404.html from the output root with a 404 status when one exists, and with none
+  present it falls back to serving index.html with a 200 for every unmatched
+  path. So every nonsense address returned 200 and the home page, at an
+  unlimited number of addresses. Measured 2026-08-16 on
+  circulation-studio.pages.dev: /sitemap.xml and an invented path both returned
+  200 with the home page body.
+
+  WHY THAT COMPOUNDS, AND WHY IT HAD TO BE FIXED BEFORE CUTOVER. src/_redirects
+  still carries no migration map. At cutover, every old indexed URL with no rule
+  would have returned 200 and the home page, so Search Console would report them
+  as live pages and the missing redirects would be invisible. A 404 is the
+  signal the map is collected FROM. Serving a 200 in its place does not just
+  fail to help, it destroys the evidence.
+
+  PERMALINK IS /404.html AND NOT /public/404.html, WHICH IS THE OPPOSITE OF
+  robots.txt, _headers AND _redirects. Those three route through public/ because
+  Vite discards unreferenced files from the output root, and publicDir is copied
+  verbatim. Verbatim is exactly wrong here: this is an HTML page, and every HTML
+  file in Eleventy's output IS a Vite input, so it gets its stylesheet and script
+  references rewritten to the hashed /assets/ builds like any other page. Routed
+  through public/ it would be copied unprocessed and would ship pointing at
+  /src/css/main.css, which does not exist in the output. It would render
+  unstyled. Confirmed by building it both ways, see DEPLOYMENT.md.
+
+  The rule is about file type, not about location: non-HTML goes through
+  public/, HTML does not.
+
+  noindex: true, on every deploy including production. The 404 RESPONSE carries
+  the status code and needs no help, but /404.html is itself a real file at a
+  real address that returns 200 if anyone requests it directly, and a page
+  reading "page not found" is not one to have in an index. base.njk's `noindex`
+  front matter is the per-page way in, separate from the per-deploy rule, which
+  is why this survives cutover.
+
+  FULL CHROME, deliberately. Someone arriving here came from a search result or
+  a link that used to work, and this is the only chance to keep them. The
+  masthead and colophon come from the layout, so every destination on the site
+  is already one click away; what this page adds is the four sections named in
+  the reader's own terms rather than as a nav bar they have to notice.
+
+  No search box, because there is no search on this site and a box that goes
+  nowhere is worse than no box. No "sorry", because the reader wants the page
+  and not an apology.
+#}
+
+{% call container(class="cs-notfound") %}
+  <p class="cs-notfound__code">404</p>
+  <h1 class="cs-notfound__headline">That page is not here.</h1>
+  <p class="cs-notfound__lede">
+    The address may have changed, or it may never have existed. Nothing is
+    broken on your end. Here is the rest of the site.
+  </p>
+
+  <ul class="cs-notfound__list">
+    {% for item in nav.primary %}
+      <li>
+        <a href="{{ item.url }}">{{ item.label }}</a>
+      </li>
+    {% endfor %}
+    {% for item in nav.footer %}
+      <li>
+        <a href="{{ item.url }}">{{ item.label }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endcall %}

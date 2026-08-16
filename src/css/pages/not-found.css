@@ -1,0 +1,88 @@
+/* The 404 page. Page-scoped like every other page in this folder: design.md
+   locks the component set, so a pattern stays here until a second page earns it
+   a promotion.
+
+   THE WHOLE PAGE IS EXISTING TOKENS AND ONE NEW IDEA, which is the numeral set
+   large and quiet above the headline. Everything else is the type scale and the
+   spacing scale this repo already has. A 404 is not the place to introduce a
+   visual language, and a page nobody plans to visit is the worst place to
+   maintain one. */
+@layer components {
+  .cs-notfound {
+    padding-top: var(--space-96);
+    padding-bottom: var(--space-96);
+    max-width: 60ch;
+  }
+
+  /* Set at the display size and dropped to the hairline tone, so it reads as a
+     label on the page rather than as the page's message. The headline is the
+     message. Slate rather than madder: madder is the accent this site spends on
+     one thing per page, and spending it on an error code would make the error
+     the most emphatic thing a reader has seen on the site. */
+  .cs-notfound__code {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: var(--text-h2);
+    letter-spacing: .1em;
+    color: var(--text-faint);
+  }
+
+  .cs-notfound__headline {
+    margin: var(--space-16) 0 0;
+    font-size: var(--text-h2);
+    line-height: 1.2;
+    text-wrap: pretty;
+  }
+
+  .cs-notfound__lede {
+    margin: var(--space-24) 0 0;
+    color: var(--text-muted);
+  }
+
+  /* The destinations. A plain list, because they are peers and the reader is
+     scanning for a word rather than being sold a route.
+
+     Rules between rather than around: the first item takes no top border, so
+     the group opens against the lede's air instead of boxing itself. Same
+     reasoning as .cs-services on What We Do, where proximity does the work a
+     border would otherwise do badly. */
+  .cs-notfound__list {
+    margin: var(--space-64) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cs-notfound__list li {
+    border-top: 1px solid var(--border-hairline);
+  }
+  .cs-notfound__list li:first-child {
+    border-top: 0;
+  }
+  /* Block-level target, so the whole row is clickable rather than just the
+     word. The padding is on the anchor and not the item for exactly that
+     reason. Inline links elsewhere carry the base underline treatment; this one
+     is a destination in a list, so it takes the display face and drops the
+     rule, matching how the colophon sets its nav. */
+  .cs-notfound__list a {
+    display: block;
+    padding: var(--space-16) 0;
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
+    font-size: var(--text-base);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+  .cs-notfound__list a:hover {
+    color: var(--accent);
+  }
+
+  @media (max-width: 1120px) {
+    .cs-notfound {
+      padding-top: var(--space-64);
+      padding-bottom: var(--space-64);
+    }
+    .cs-notfound__list { margin-top: var(--space-40) }
+  }
+}

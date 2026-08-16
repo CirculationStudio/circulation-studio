@@ -76,6 +76,13 @@ const PAGES = [
      as a state marker rather than as an accent. An unreadable state on a page
      read as a worklist is a worklist that gets misread. */
   "/yelp-map/",
+  /* The 404, and it is scanned for the same reason /yelp-map/ is: nobody
+     arrives here on purpose, so nobody reports it. It is also the one page a
+     reader reaches while already frustrated, and it sets the error numeral in
+     --text-faint, which every other page uses at body size and this one uses at
+     36px. Measured 5.30:1 on paper, which clears the 4.5:1 body threshold and
+     not just the 3:1 large-text one it is entitled to. */
+  "/404.html",
   /* The colophon page sets a figure at the display face's thin weight at 44px
      and pairs it with a 10px tracked label, which is the widest size spread on
      any page here, and it puts a madder link inside body copy on paper. */
