@@ -70,20 +70,17 @@
     margin: 0;
     max-width: none;
   }
-  /* Scoped to this page's NAP block on purpose. The assembled email link used
-     to be styled through a bare `.cs-email a`, which leaks: the same component
-     now renders inside the ink colophon, where madder measures 1.99:1 against
-     ink and fails AA badly. The email span sits inside .cs-contact__nap here,
-     so this selector already covers it, and in the colophon the link inherits
-     paper from .cs-colophon__address at 16.06:1. Never style .cs-email by
-     itself; style the context it sits in. */
-  .cs-contact__nap a {
-    color: var(--color-madder);
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 3px;
-  }
-  .cs-contact__nap a:hover { color: var(--color-madder-deep) }
+  /* NO LINK RULE HERE ANY MORE. This restated the base inline-link treatment
+     from base/elements.css declaration for declaration, so the phone and email
+     in the NAP block now simply inherit it and pick up the engage on hover, the
+     visited tint and the focus ticks for free.
+
+     The reason it was scoped to this page still holds and still matters: the
+     assembled email link used to be styled through a bare `.cs-email a`, which
+     leaks, because the same component renders inside the ink colophon where
+     madder measures 1.99:1 and fails AA badly. The colophon overrides the base
+     rule with paper (colophon.css), which is what keeps that safe. Never style
+     .cs-email by itself; style the context it sits in. */
 
   .cs-contact__note {
     margin: 0;

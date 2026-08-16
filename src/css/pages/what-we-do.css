@@ -215,16 +215,12 @@
     color: var(--text-muted);
     max-width: none;
   }
-  /* Inline body link, per the two named link patterns: a permanent madder
-     underline that darkens on hover. Not the ghost draw-in, which is reserved
-     for standalone CTAs. */
-  .cs-service__desc a {
-    color: var(--color-madder);
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 3px;
-  }
-  .cs-service__desc a:hover { color: var(--color-madder-deep) }
+  /* The Yelp Hub link in the Yelp Ads description is an inline body link and
+     takes the base treatment from base/elements.css, which now engages its rule
+     on hover rather than only darkening. The rule that stood here restated that
+     base declaration for declaration and has been removed; a duplicate of the
+     base is how one of the two named link patterns quietly stops matching the
+     other. */
 
   /* TRELLIS BAND: the built framework growth climbs. Tallest figure on the
      site, carrying this page's argument the way the graft does on Who We Are. */
