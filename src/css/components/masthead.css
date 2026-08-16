@@ -1,111 +1,166 @@
-/* The masthead: one composition that condenses into itself, from the Header
-   Condense comp (option C, derived offset). Plus the mobile bar below 1120.
+/* The masthead: the original composition, which condenses into itself.
 
-   190px expanded, 62px condensed. Past 96px of scroll the four nav items part,
-   two left and two right, the row rises, and the mark settles into the gap
-   between What We Do and Results, staying centred throughout. Back above 48px
-   it plays in reverse.
+   TWO STATES, CHOSEN INDEPENDENTLY. That is the whole structure of this file
+   and it was got wrong once, so it is worth stating flatly.
 
-   TRIGGERED, NOT LINKED. Crossing the threshold starts one transition and the
-   scroll position has no further say, so there is no frame at forty percent
-   that nobody designed. The two thresholds sit apart on purpose, which is what
-   stops it flickering when someone rests on the boundary. A single sentinel
-   could not express that, which is why the IntersectionObserver went.
+   The EXPANDED state is the editorial rail exactly as it was before the Header
+   Condense comp landed: a three-column grid with the labels centred against the
+   full lockup, then the nav in its own band below a rule with 14px of air above
+   and below it. It is normal flow, it is sized by its content, and NOTHING
+   about the condensed state reaches back into it.
 
-   EVERY MOVING PART IS A TRANSFORM. Only the header's own height animates, and
-   a fixed-height spacer holds the page still, so nothing below the header moves
-   while it plays.
+   The CONDENSED state is a 62px bar with the nav row and the mark centred in it.
 
-   THIS REPLACED TWO ELEMENTS WITH ONE above 1120: a static rail plus a fixed
-   sticky bar plus a sentinel became a single fixed header. The sticky bar
-   survives below 1120 as the mobile bar and is display:none above it, which
-   also means the site now exposes ONE nav list per viewport instead of two.
+   THE TRAVEL BETWEEN THEM IS MEASURED, NEVER CHOSEN. main.js reads where each
+   piece sits expanded, computes where it needs to sit condensed, and writes the
+   difference to a custom property. The first version of this file did the
+   opposite: it took the comp's condensed coordinates as given and positioned
+   the expanded state 144px above them. That pulled the whole composition upward
+   — the flanking labels lost 45.7px and landed on the top edge, the nav band
+   collapsed from 59.6px of air to a bare 1px rule, and the header read as a
+   navigation bar rather than a masthead. Deriving one state from the other is
+   what caused it. Do not reintroduce a hardcoded offset here.
 
    The 40px gutter, 11px/12px label sizes and .12em nav tracking are the
-   design's own values and are not on any token scale. Heights 190 and 62, the
-   96/48 thresholds, the 44px nav split, the 0.579 mark scale and the 2px
-   optical lift are the comp's and are not on a scale either. The two heights
-   and the condensed mark size are worth tokenising, since every page needs
-   them; recorded here rather than invented into the token file. */
+   design's own values and are not on any token scale. The condensed height, the
+   44px condensed mark and the 2px optical lift are the comp's, also not on a
+   scale, and are named in main.js where the derivation can see them. */
 @layer components {
   :root {
     --cs-masthead-gutter: 40px;
-    --cs-masthead-h: 190px;
     --cs-masthead-h-cond: 62px;
   }
 
-  /* ---- the header ---- */
-
+  /* Fixed so the condensed state can hold the top of the viewport. The expanded
+     height is MEASURED from the natural content rather than declared, because
+     the lockup sizes off font metrics and a literal would drift the moment the
+     face changed. The fallback is the measured value at the time of writing and
+     is only ever seen before the first measurement lands. */
   .cs-masthead {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: var(--z-nav);
-    height: var(--cs-masthead-h);
+    height: var(--cs-h-exp, 217px);
     overflow: hidden;
-    background: var(--surface-page);
     border-bottom: 1px solid var(--border-hairline);
+    background: var(--surface-page);
     transition:
       height var(--dur-long) var(--ease-out),
       background-color var(--dur-fast) var(--ease-out);
   }
-  /* Never changes. The header condenses over the top of it. */
-  .cs-masthead__spacer { height: var(--cs-masthead-h) }
+  .cs-masthead__spacer { height: var(--cs-h-exp, 217px) }
 
+  /* ---- expanded: unchanged from the original ---- */
+
+  /* Labels are centred against the full wordmark block (icon, CIRCULATION and
+     STUDIO together), not aligned to its baseline. The grid row is sized by the
+     lockup, so centring here means centring on the lockup. They flank the
+     wordmark, which is what makes this read as a masthead rather than a
+     utility bar. */
+  .cs-masthead__rail {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: var(--space-24);
+    align-items: center;
+    padding: 28px var(--cs-masthead-gutter) 22px;
+  }
+
+  /* margin:0 matters. The location is a <p> and inherited margin-bottom 16px
+     from base/elements.css, while the booking note is an <a> with none, so the
+     two flanking labels sat 16px apart from each other. A label is not prose. */
   .cs-masthead__label {
-    position: absolute;
-    top: 26px;
-    margin: 0;
     font-family: var(--font-display);
     font-weight: var(--weight-medium);
     font-size: 11px;
     letter-spacing: var(--tracking-wide);
     text-transform: uppercase;
+    margin: 0;
+    max-width: none;
   }
   .cs-masthead__location {
-    left: var(--cs-masthead-gutter);
     color: var(--text-faint);
     transition: opacity var(--dur-fast) var(--ease-out);
   }
-  /* Booking stays through the condense and does not move: it is already inside
-     the 62px the header keeps. It sits right while the nav stays centred, which
-     is not a break in the symmetry, because the nav is centred on the viewport
-     independently of it. */
+
   .cs-masthead__booking {
-    right: var(--cs-masthead-gutter);
+    justify-self: end;
     font-weight: var(--weight-display);
     color: var(--color-madder);
     text-decoration: none;
-    transition: color var(--dur-fast) var(--ease-out);
+    transition:
+      color var(--dur-fast) var(--ease-out),
+      transform var(--dur-long) var(--ease-out);
   }
   .cs-masthead__booking:hover { color: var(--color-madder-deep) }
-
-  /* ---- the lockup ---- */
-
-  .cs-masthead__logo {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 44px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-decoration: none;
-    color: var(--color-ink);
-    /* the column is full width so it can centre; only its children are hit */
-    pointer-events: none;
+  .cs-masthead__booking:focus-visible,
+  .cs-masthead__nav a:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 3px;
   }
-  .cs-masthead__logo > * { pointer-events: auto }
 
-  /* Two elements, two transitions, and the DELAY is the point. The descent runs
-     immediately and the scale starts --dur-lead later, so the mark is already
-     travelling before it begins to shrink. Without that offset the two resolve
-     together and it reads as a zoom-out rather than a move.
+  /* Nav is centred as a block, then justified within a fixed measure, so the
+     four items keep their rhythm instead of spreading with the viewport. */
+  .cs-masthead__nav {
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid var(--border-hairline);
+    padding: 14px var(--cs-masthead-gutter);
+    transition: border-top-color var(--dur-fast) var(--ease-out);
+  }
+  .cs-masthead__navlist {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-24);
+    width: 440px;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    transition: transform var(--dur-long) var(--ease-out);
+  }
+  .cs-masthead__navlist > li { transition: transform var(--dur-long) var(--ease-out) }
 
-     The mark also runs longer than the nav row: it covers 37px of descent AND a
-     scale change while the items cover 44px of slide and nothing else, so at a
-     shared duration the mark reads hurried and the text reads fine. */
+  /* Nav hover borrows the plain link-draw language (.cs-link), NOT the button
+     states. The button is the signature interaction: a bar crosses the face, the
+     plate presses, registration marks appear. Nav is utility, so it stays
+     deliberately quieter: a hairline that draws in from the left at --dur-fast
+     with a plain ease-out, and the label shifting to madder on the same timing.
+
+     Two things it must never do. No tracking or weight change, which would move
+     the layout box and is the bug the whole button rewrite exists to kill. And
+     the madder stays a line-weight accent: a 1px gradient sized 0 to 100
+     percent, never a background fill or a pane behind the item. */
+  .cs-masthead__nav a,
+  .cs-stickybar__nav a {
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 12px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+    text-decoration: none;
+    padding: 4px 0;
+    background-image: linear-gradient(var(--color-madder), var(--color-madder));
+    background-repeat: no-repeat;
+    background-position: left bottom;
+    background-size: 0% 1px;
+    transition:
+      background-size var(--dur-fast) var(--ease-out),
+      color var(--dur-fast) var(--ease-out);
+  }
+  .cs-masthead__nav a:hover,
+  .cs-stickybar__nav a:hover {
+    color: var(--color-madder);
+    background-size: 100% 1px;
+  }
+
+  /* The mark's two wrappers. Position and scale are separate elements so the
+     descent can start before the shrink does: without the lead the two resolve
+     together and it reads as a zoom-out rather than a move. The mark also runs
+     longer than the nav row, because it covers a descent AND a scale change
+     while the row covers a slide and nothing else. */
   .cs-masthead__markpos {
     display: block;
     transition: transform var(--dur-longer) var(--ease-out);
@@ -116,124 +171,37 @@
     transition: transform var(--dur-longer) var(--ease-out);
     transition-delay: var(--dur-lead);
   }
-  .cs-masthead__mark {
-    display: block;
-    width: 76px;
-    height: 76px;
-  }
 
   /* The wordmark leaves. Only the isotype survives the condense, so the brand
-     name is absent from the condensed bar. That is deliberate and it is a
-     wordmark decision rather than a header one: design.md section 9 lists
-     lockups but does not name a mark-only condensed state, so it should be
-     added there rather than assumed here. */
-  .cs-masthead__word {
-    margin-top: -2px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+     name is absent from the condensed bar. Deliberate, and a wordmark decision
+     rather than a header one: design.md section 9 lists lockups but does not
+     name a mark-only condensed state, so it should be added there. */
+  .cs-masthead .cs-wordmark__name,
+  .cs-masthead .cs-wordmark__studio {
     transition: opacity var(--dur-fast) var(--ease-out);
   }
-  .cs-masthead__word .cs-wordmark__name {
-    font-family: var(--font-display);
-    font-weight: var(--weight-display);
-    font-size: 22px;
-    line-height: 1;
-    letter-spacing: .05em;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-  .cs-masthead__word .cs-wordmark__studio {
-    margin-top: 4px;
-    font-family: var(--font-display);
-    font-weight: var(--weight-medium);
-    font-size: 12px;
-    line-height: 1;
-    letter-spacing: .42em;
-    text-indent: .42em;
-    text-transform: uppercase;
-  }
 
-  /* ---- the nav ---- */
+  /* ---- condensed ----
 
-  .cs-masthead__navrule {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 160px;
-    border-top: 1px solid var(--border-hairline);
-    transition: opacity var(--dur-fast) var(--ease-out);
-  }
-  .cs-masthead__navwrap {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 160px;
-  }
-  .cs-masthead__nav { display: block }
-  .cs-masthead__navlist {
-    width: 440px;
-    height: 30px;
-    margin: 0 auto;
-    padding: 0;
-    list-style: none;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    transition: transform var(--dur-long) var(--ease-out);
-  }
-  .cs-masthead__navlist > li {
-    transition: transform var(--dur-long) var(--ease-out);
-  }
-  .cs-masthead__nav a {
-    font-family: var(--font-display);
-    font-weight: var(--weight-medium);
-    font-size: 12px;
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    color: var(--color-ink);
-    text-decoration: none;
-    padding: 4px 0;
-    background: linear-gradient(currentColor, currentColor) no-repeat left bottom / 0% 1px;
-    transition:
-      background-size var(--dur-snap) var(--ease-out),
-      color var(--dur-fast) var(--ease-out);
-  }
-  .cs-masthead__nav a:hover {
-    background-size: 100% 1px;
-    color: var(--color-madder);
-  }
-  .cs-masthead__nav a:focus-visible {
-    outline: 2px solid var(--focus-ring);
-    outline-offset: 3px;
-  }
-
-  /* ---- the condensed state ----
-
-     THE MARK HOLDS THE AXIS IT HAD EXPANDED and the run moves instead. Who We
-     Are and What We Do measure wider together than Results and Contact, so
-     equal gaps put the middle gap's centre right of the viewport axis. Centring
-     the assembly would have been simpler and self-maintaining, and it would
-     have slid the composition's one fixed point off the axis on the way down,
-     which is the one thing this header is not allowed to do. What it pays
-     instead is the outer edges, against empty space with nothing to measure
-     them against.
-
-     The ±44px here is the FALLBACK, used until main.js has measured the labels.
-     It is wrong by the same amount a hand-tuned value would be, but it is a
-     designed position rather than an accident. See main.js for why the
-     measurement is repeated on every font event. */
+     Every offset here is a custom property written by main.js from the
+     difference between the two measured positions. The fallbacks are only ever
+     seen before the first measurement lands, and they are deliberately
+     conservative rather than tuned: a wrong fallback should look unfinished,
+     not plausible. */
   .cs-masthead[data-cond="true"] {
     height: var(--cs-masthead-h-cond);
     background: color-mix(in srgb, var(--color-paper) 92%, transparent);
     backdrop-filter: blur(8px);
   }
   .cs-masthead[data-cond="true"] .cs-masthead__location,
-  .cs-masthead[data-cond="true"] .cs-masthead__word,
-  .cs-masthead[data-cond="true"] .cs-masthead__navrule { opacity: 0 }
-  .cs-masthead[data-cond="true"] .cs-masthead__markpos { transform: translateY(-37px) }
-  .cs-masthead[data-cond="true"] .cs-masthead__markscale { transform: scale(.579) }
-  .cs-masthead[data-cond="true"] .cs-masthead__navlist { transform: translateY(-144px) }
+  .cs-masthead[data-cond="true"] .cs-wordmark__name,
+  .cs-masthead[data-cond="true"] .cs-wordmark__studio { opacity: 0 }
+  .cs-masthead[data-cond="true"] .cs-masthead__nav { border-top-color: transparent }
+
+  .cs-masthead[data-cond="true"] .cs-masthead__markpos { transform: translateY(var(--cs-ty-mark, -40px)) }
+  .cs-masthead[data-cond="true"] .cs-masthead__markscale { transform: scale(var(--cs-mark-scale, .88)) }
+  .cs-masthead[data-cond="true"] .cs-masthead__booking { transform: translateY(var(--cs-ty-book, -50px)) }
+  .cs-masthead[data-cond="true"] .cs-masthead__navlist { transform: translateY(var(--cs-ty-nav, -155px)) }
   .cs-masthead[data-cond="true"] .cs-masthead__navlist > :nth-child(1) { transform: translateX(var(--cs-tx1, -44px)) }
   .cs-masthead[data-cond="true"] .cs-masthead__navlist > :nth-child(2) { transform: translateX(var(--cs-tx2, -44px)) }
   .cs-masthead[data-cond="true"] .cs-masthead__navlist > :nth-child(3) { transform: translateX(var(--cs-tx3, 44px)) }

@@ -89,6 +89,23 @@ if (masthead || stickybar) {
   const MARK_HALF = 22;
   const GAP_MARK = 28;
   const GAP_PAIR = 40;
+  /* The condensed bar's chosen values. The expanded state has its own chosen
+     values and they live in CSS, in normal flow. Neither is derived from the
+     other; only the TRAVEL between them is. */
+  const COND_H = 62;
+  const COND_MARK = 44;
+  /* Caps carry their optical centre above the line box, so a circle centred by
+     geometry beside them reads low. Both corrections run the same way. */
+  const OPTICAL_LIFT = 2;
+
+  /* offsetTop is relative to the nearest positioned ancestor, so walk up to the
+     header rather than trusting one hop. Untransformed by definition, which is
+     what makes a reading valid in either state. */
+  const topWithin = (el, root) => {
+    let y = 0;
+    for (let n = el; n && n !== root; n = n.offsetParent) y += n.offsetTop;
+    return y;
+  };
 
   let applied = null;
 
@@ -100,20 +117,74 @@ if (masthead || stickybar) {
     const w = items.map((el) => el.offsetWidth);
     if (w.some((x) => !x)) return;
 
+    const rail = masthead.querySelector(".cs-masthead__rail");
+    const nav = masthead.querySelector(".cs-masthead__nav");
+    const mark = masthead.querySelector(".cs-masthead__markpos");
+    const booking = masthead.querySelector(".cs-masthead__booking");
+    if (!rail || !nav || !mark || !booking) return;
+
+    const out = {};
+
+    /* ---- horizontal: the run parts around the mark ---- */
     const axis = masthead.clientWidth / 2;
     const target = [];
     target[1] = axis - MARK_HALF - GAP_MARK - w[1];
     target[0] = target[1] - GAP_PAIR - w[0];
     target[2] = axis + MARK_HALF + GAP_MARK;
     target[3] = target[2] + w[2] + GAP_PAIR;
+    items.forEach((el, k) => {
+      out[`--cs-tx${k + 1}`] = target[k] - el.offsetLeft;
+    });
 
-    const tx = items.map(
-      (el, k) => Math.round((target[k] - el.offsetLeft) * 100) / 100
-    );
-    const key = tx.join(",");
+    /* ---- the expanded height, measured rather than declared ----
+       Natural content height plus the border, so the CSS never has to guess and
+       the transition has two real numbers to run between.
+
+       getBoundingClientRect, not offsetHeight: offsetHeight rounds to whole
+       pixels and the rail and nav are both fractional, which left the header
+       0.7px short and quietly clipped the bottom of the nav band under
+       overflow:hidden. A transformed CHILD does not change its parent's box, so
+       these two readings stay valid while the header is condensed. */
+    const border = masthead.offsetHeight - masthead.clientHeight;
+    out["--cs-h-exp"] =
+      rail.getBoundingClientRect().height +
+      nav.getBoundingClientRect().height +
+      border;
+
+    /* ---- vertical: each piece's own two positions, differenced ----
+       Read where it sits expanded, work out where it belongs in a COND_H bar,
+       and travel the gap. Nothing here offsets from another element's answer. */
+    /* Measure the ICON, not its wrapper. The wrapper's offsetHeight includes
+       the icon's own margin-bottom, which is the gap to CIRCULATION in the
+       stacked lockup, so scaling against it drew the condensed mark at 34.9px
+       instead of 44. Computed height rather than offsetHeight because the
+       lockup sizes off font-metric ratios and lands on fractions, and
+       offsetHeight rounds. */
+    const icon = mark.querySelector("img");
+    if (!icon) return;
+    const markH = parseFloat(getComputedStyle(icon).height);
+    if (!markH) return;
+    out["--cs-mark-scale"] = COND_MARK / markH;
+    // transform-origin is top center, so the translate places the scaled top
+    out["--cs-ty-mark"] =
+      (COND_H - COND_MARK) / 2 - OPTICAL_LIFT - topWithin(mark, masthead);
+    out["--cs-ty-nav"] =
+      (COND_H - navlist.offsetHeight) / 2 - topWithin(navlist, masthead);
+    out["--cs-ty-book"] =
+      (COND_H - booking.offsetHeight) / 2 - topWithin(booking, masthead);
+
+    const key = JSON.stringify(out);
     if (key === applied) return;
     applied = key;
-    tx.forEach((v, k) => navlist.style.setProperty(`--cs-tx${k + 1}`, `${v}px`));
+    for (const [prop, value] of Object.entries(out)) {
+      const rounded = Math.round(value * 100) / 100;
+      const target_ = prop === "--cs-tx1" || prop === "--cs-tx2" ||
+        prop === "--cs-tx3" || prop === "--cs-tx4" ? navlist : masthead;
+      target_.style.setProperty(
+        prop,
+        prop === "--cs-mark-scale" ? String(rounded) : `${rounded}px`
+      );
+    }
   };
 
   measure();
