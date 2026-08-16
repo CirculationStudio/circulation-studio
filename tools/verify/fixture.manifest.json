@@ -767,8 +767,9 @@
         },
         {
           "name": "cta button",
-          "selector": ".cs-cta__action .cs-btn",
-          "source": "Component Reference: --on-accent-primary, absent from design.md's variant list",
+          "_note": "SELECTOR MOVED TO __face ON 2026-08-15, and the check earned its keep doing it. The button became two layers when the Button States comp landed: .cs-btn is the plate and carries only position and the radius, .cs-btn__face is the printed surface and carries every painted property. This signature still pointed at the plate and caught four of the five values going wrong at once. The fifth, color, passed by accident: .cs-btn no longer sets it, so it was inheriting madder from the pane behind it.",
+          "selector": ".cs-cta__action .cs-btn__face",
+          "source": "Component Reference: --on-accent-primary, named in design.md section 6 and carried by components.css",
           "expect": {
             "backgroundColor": "rgb(244, 245, 244)",
             "borderColor": "rgb(244, 245, 244)",

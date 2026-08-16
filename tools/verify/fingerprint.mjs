@@ -78,17 +78,26 @@ const MIN_ELEMENTS = {
      cause, same shape, all twelve hashes moved at once and every floor rose by
      exactly two. A frame change that moved SOME of them would be the
      interesting result. */
-  home: 137,
-  who: 155,
-  /* WHAT ROSE ALONE, 153 -> 159, and that is the shape of a content change
-     rather than a frame change: two services were added to the three-outcome
-     section, Brand DNA Development under Get Built and Workflows and
-     Automation under Stay Ahead, and a service is an li plus two p on the one
-     page that has them. The other five floors did not move, which is what
-     says this was the page and not the frame. */
-  what: 159,
-  results: 153,
-  contact: 121,
+  /* EVERY FLOOR ROSE BY TWO PER BUTTON ON 2026-08-15, and the arithmetic is the
+     check: the Button States comp made .cs-btn two layers, a plate holding a
+     .cs-btn__face holding a .cs-btn__label, because a press has to move the bar
+     and the label as one printed surface. Each button on a page adds exactly
+     two elements and nothing else does.
+
+     home rose 6 for its three buttons; who, what, results, contact and yelphub
+     rose 2 each for their one. A page that rose by an odd number, or by two
+     without gaining a button, would be the interesting result.
+
+     All twelve hashes moved together, which is correct here and is the opposite
+     of the split this file usually watches for: a component every page renders
+     changed, not one page's content. */
+  home: 143,
+  who: 157,
+  /* what carries both: 153 -> 159 for the two services added the same day, then
+     159 -> 161 for its one button. */
+  what: 161,
+  results: 155,
+  contact: 123,
   /* The hub is DATA-DRIVEN and this floor will rise. Every article added to
      src/yelp/ adds elements to the coverage map, so a run that drops below the
      floor means the page stopped rendering rather than that content was
@@ -103,7 +112,7 @@ const MIN_ELEMENTS = {
      rendered for the first time since it was built, and two more clusters
      traded a pending line for a full entry. Each time the five marketing
      hashes did not move, which is the split this file exists for. */
-  yelphub: 234
+  yelphub: 236
 };
 
 const browser = await chromium.launch();
