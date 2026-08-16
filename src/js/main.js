@@ -74,9 +74,10 @@ if (masthead || stickybar) {
      split, which is wrong by the same amount but is a designed position rather
      than an accident.
 
-     Measurement comes from offsetLeft and offsetWidth, which report
-     UNTRANSFORMED layout, so a reading stays valid whichever state the header
-     is in.
+     Measurement is taken by summing offsets up to the header rather than
+     reading one hop, because offsetParent itself changes between the two
+     states. See the note on within() below; getting that wrong is what put the
+     whole nav run to the right of the mark.
 
      NOTE FOR ANYONE CHANGING THE NAV: this assumes the mark is the middle item
      of five, so four labels. A fifth destination needs the derivation rewritten
@@ -98,14 +99,29 @@ if (masthead || stickybar) {
      geometry beside them reads low. Both corrections run the same way. */
   const OPTICAL_LIFT = 2;
 
-  /* offsetTop is relative to the nearest positioned ancestor, so walk up to the
-     header rather than trusting one hop. Untransformed by definition, which is
-     what makes a reading valid in either state. */
-  const topWithin = (el, root) => {
+  /* ALWAYS WALK THE CHAIN. offsetTop and offsetLeft are relative to
+     offsetParent, and offsetParent MOVES between the two states: a transformed
+     element becomes a containing block, so once the nav list carries its
+     translate the items report against the list instead of against the header.
+
+       expanded    li.offsetParent = .cs-masthead        offsetLeft 514 648 782 885
+       condensed   li.offsetParent = .cs-masthead__navlist   offsetLeft 0 134 268 371
+
+     Reading one hop is therefore only correct while expanded, and a re-measure
+     taken while condensed came out ~514px wrong and threw the whole run to the
+     right of the mark. Summing to the header is the same number in both states,
+     which is what "state-independent" actually requires. The VALUES are
+     untransformed either way; it is the ORIGIN that moves. */
+  const within = (el, root) => {
+    let x = 0;
     let y = 0;
-    for (let n = el; n && n !== root; n = n.offsetParent) y += n.offsetTop;
-    return y;
+    for (let n = el; n && n !== root; n = n.offsetParent) {
+      x += n.offsetLeft;
+      y += n.offsetTop;
+    }
+    return { x, y };
   };
+  const topWithin = (el, root) => within(el, root).y;
 
   let applied = null;
 
@@ -133,7 +149,7 @@ if (masthead || stickybar) {
     target[2] = axis + MARK_HALF + GAP_MARK;
     target[3] = target[2] + w[2] + GAP_PAIR;
     items.forEach((el, k) => {
-      out[`--cs-tx${k + 1}`] = target[k] - el.offsetLeft;
+      out[`--cs-tx${k + 1}`] = target[k] - within(el, masthead).x;
     });
 
     /* ---- the expanded height, measured rather than declared ----
@@ -193,6 +209,34 @@ if (masthead || stickybar) {
     document.fonts.addEventListener("loadingdone", measure);
   }
   window.addEventListener("resize", measure);
+
+  /* WATCH THE LAYOUT ITSELF, not just the events we guessed would change it.
+     The font hooks and the resize listener only cover the causes we thought of,
+     and they missed a real one: a stylesheet replaced in place. During
+     development Vite swaps CSS over an open page with no reload and no resize,
+     so the nav's resting positions moved while the offsets stayed as measured
+     against the old layout. The items scattered and nothing recomputed them,
+     which looked like a condense that had not finished.
+
+     Reproduced by injecting a rule that changes the resting layout: the four
+     items went from [456,590,784,889] to [366,560,814,979] while tx sat
+     unchanged at [-58,-58,2,4].
+
+     A ResizeObserver makes the trigger the thing we actually care about, so it
+     also covers zoom, a late font the loadingdone event did not fire for, and
+     anything else that moves the row.
+
+     It observes the RAIL and the LIST, deliberately not the header. The
+     header's height animates through the condense, which would fire this on
+     every frame of the transition for a measurement that cannot have changed;
+     these two keep their size throughout and only move when the layout really
+     does. */
+  if ("ResizeObserver" in window) {
+    const ro = new ResizeObserver(() => measure());
+    const rail = masthead && masthead.querySelector(".cs-masthead__rail");
+    if (rail) ro.observe(rail);
+    if (navlist) ro.observe(navlist);
+  }
 }
 
 /* Mobile menu: the full-pane ink overlay behind the bar's rule icon.
