@@ -4,8 +4,8 @@
 @layer components {
   /* OPENING: proposition left, figure right. The figure breaks the container
      and runs to the right edge of the viewport, it starts a step below the
-     text so the two columns no longer square off at the top, and a madder
-     hairline crosses out of the text column into it.
+     text so the two columns no longer square off at the top, and a dashed
+     survey rule crosses out of the text column into it.
 
      The second track stays 440px. It is not the figure's width any more, it is
      the figure's LEFT EDGE and the text column's measure, both of which the
@@ -113,27 +113,47 @@
     border-left: 1px solid var(--border-hairline);
   }
 
-  /* THE MADDER HAIRLINE. Runs from the text column's left edge, across the
-     gap, and into the image.
+  /* THE SURVEY RULE. Runs from the text column's left edge, across the gap,
+     and 160px into the image.
+
+     IT USED TO BE SOLID MADDER AND THAT WAS WRONG. Read against the other five
+     pages: every horizontal survey rule on the site is 1px hairline ink at 14
+     percent, and none of them is coloured. --espalier, --hero-h, --trellis,
+     --fruit and --sowing are dashed; --graft on Who We Are is the one solid
+     exception. A solid madder rule sat outside that family entirely and read as
+     a designed rule under a paragraph rather than as an annotation line in the
+     same register as the survey marks inside the photographs.
+
+     Dashed hairline now, matching the five.
+
+     160px is the crossing, and it is the length every one of those rules runs.
+     It was 64px, which is 8 percent of this line's length and read as a stop
+     rather than a continuation. Stated as --space-96 + --space-64 because both
+     are scale steps and 160 is not.
 
      In flow, inside the text block and after the lede, rather than absolutely
-     positioned like the survey rules. That is what makes "below the paragraph"
-     a real relationship instead of a top offset measured off one screenshot:
-     the paragraph reflows at every width and the hairline follows it.
+     positioned like the others. That is what makes "below the paragraph" a real
+     relationship rather than a top offset measured off one screenshot: the
+     paragraph reflows at every width and the rule follows it. It lands at about
+     47 percent down the figure, which is where the bee photograph carries its
+     own band of annotation marks, so it meets something. That is fortunate
+     rather than enforced, and it moves if the copy does.
 
-     Every length is a scale step. --space-96 clears the column gap exactly,
-     because it IS the column gap, and --space-64 is how far it then reaches
-     into the image. z-index because the figure is positioned and would
-     otherwise paint over a line that is meant to cross it.
+     z-index because the figure is positioned and would otherwise paint over a
+     line that is meant to cross it.
 
-     Madder, not the hairline grey the survey rules use. It is the page's one
-     accent in the opening and it answers the red bar inside the photograph. */
-  .cs-intro__accent {
+     Note it runs the opposite way to every other rule on the site: those go
+     from an image edge outward to the page edge, this one comes from the text
+     and enters the image. It is the only rule that crosses an image boundary at
+     all; the other six stop dead at one. */
+  .cs-intro__rule {
+    /* the 160px run every other survey rule on the site uses */
+    --cs-intro-crossing: calc(var(--space-96) + var(--space-64));
     position: relative;
     z-index: 1;
-    width: calc(100% + var(--space-96) + var(--space-64));
+    width: calc(100% + var(--space-96) + var(--cs-intro-crossing));
     margin-top: var(--space-40);
-    border-top: 1px solid var(--accent);
+    border-top: 1px dashed var(--border-hairline);
   }
 
   /* THREE OUTCOME GROUPS
@@ -264,14 +284,14 @@
        image, competing with the 40px the grid already sets. So it goes, and
        the grid gap does the separating.
 
-       The hairline stays and re-aims: it can no longer run INTO the image, so
+       The rule stays and re-aims: it can no longer run INTO the image, so
        it runs to the same page edge the image below it runs to, and the two
        right edges line up. */
     .cs-intro__figure {
       width: calc(100% + var(--space-40));
       margin-top: 0;
     }
-    .cs-intro__accent { width: calc(100% + var(--space-40)) }
+    .cs-intro__rule { width: calc(100% + var(--space-40)) }
 
     .cs-outcomes { grid-template-columns: 1fr; gap: var(--space-64) }
     .cs-trellis__figure { height: 400px }
