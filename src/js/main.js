@@ -87,14 +87,20 @@ if (masthead || stickybar) {
      The comp this came from queried an attribute its own markup did not carry,
      so its measurement never ran and it always used the fallback. The
      data-masthead-nav hook exists so that cannot happen here silently. */
-  const MARK_HALF = 22;
   const GAP_MARK = 28;
   const GAP_PAIR = 40;
   /* The condensed bar's chosen values. The expanded state has its own chosen
      values and they live in CSS, in normal flow. Neither is derived from the
      other; only the TRAVEL between them is. */
   const COND_H = 62;
-  const COND_MARK = 44;
+  /* A RATIO OF THE EXPANDED MARK, not a pixel target. The comp condensed a 76px
+     mark to 44px, which is a real shrink; this lockup's mark is 49.8px, so
+     carrying the 44 across gave a 12 percent reduction that read as no change
+     at all. A ratio is also the thing that survives the lockup being resized,
+     which a pixel target does not: wordmark.css derives every size in the
+     stacked lockup from --cs-wordmark-size and font-metric ratios, so a literal
+     here would silently stop meaning "smaller" the moment that moved. */
+  const COND_MARK_RATIO = 0.6;
   /* Caps carry their optical centre above the line box, so a circle centred by
      geometry beside them reads low. Both corrections run the same way. */
   const OPTICAL_LIFT = 2;
@@ -137,16 +143,27 @@ if (masthead || stickybar) {
     const nav = masthead.querySelector(".cs-masthead__nav");
     const mark = masthead.querySelector(".cs-masthead__markpos");
     const booking = masthead.querySelector(".cs-masthead__booking");
-    if (!rail || !nav || !mark || !booking) return;
+    const icon = mark && mark.querySelector("img");
+    if (!rail || !nav || !mark || !booking || !icon) return;
+    /* Computed, not offsetWidth/Height: the lockup sizes off font-metric ratios
+       and lands on fractions, and offset* rounds to whole pixels. */
+    const markH = parseFloat(getComputedStyle(icon).height);
+    const markW = parseFloat(getComputedStyle(icon).width);
+    if (!markH || !markW) return;
 
     const out = {};
 
     /* ---- horizontal: the run parts around the mark ---- */
+    /* The gap either side of the mark is measured from the mark's CONDENSED
+       width, not a constant. A fixed half-width would leave the run sitting at
+       the old distance the moment the mark's size changed, which is how a 28px
+       gap quietly becomes 35. */
     const axis = masthead.clientWidth / 2;
+    const markHalf = (markW * COND_MARK_RATIO) / 2;
     const target = [];
-    target[1] = axis - MARK_HALF - GAP_MARK - w[1];
+    target[1] = axis - markHalf - GAP_MARK - w[1];
     target[0] = target[1] - GAP_PAIR - w[0];
-    target[2] = axis + MARK_HALF + GAP_MARK;
+    target[2] = axis + markHalf + GAP_MARK;
     target[3] = target[2] + w[2] + GAP_PAIR;
     items.forEach((el, k) => {
       out[`--cs-tx${k + 1}`] = target[k] - within(el, masthead).x;
@@ -170,20 +187,14 @@ if (masthead || stickybar) {
     /* ---- vertical: each piece's own two positions, differenced ----
        Read where it sits expanded, work out where it belongs in a COND_H bar,
        and travel the gap. Nothing here offsets from another element's answer. */
-    /* Measure the ICON, not its wrapper. The wrapper's offsetHeight includes
-       the icon's own margin-bottom, which is the gap to CIRCULATION in the
-       stacked lockup, so scaling against it drew the condensed mark at 34.9px
-       instead of 44. Computed height rather than offsetHeight because the
-       lockup sizes off font-metric ratios and lands on fractions, and
-       offsetHeight rounds. */
-    const icon = mark.querySelector("img");
-    if (!icon) return;
-    const markH = parseFloat(getComputedStyle(icon).height);
-    if (!markH) return;
-    out["--cs-mark-scale"] = COND_MARK / markH;
+    /* Measure the ICON, not its wrapper: the wrapper's height includes the
+       icon's own margin-bottom, the gap to CIRCULATION in the stacked lockup,
+       and scaling against that drew the mark far too small. */
+    const condMark = markH * COND_MARK_RATIO;
+    out["--cs-mark-scale"] = COND_MARK_RATIO;
     // transform-origin is top center, so the translate places the scaled top
     out["--cs-ty-mark"] =
-      (COND_H - COND_MARK) / 2 - OPTICAL_LIFT - topWithin(mark, masthead);
+      (COND_H - condMark) / 2 - OPTICAL_LIFT - topWithin(mark, masthead);
     out["--cs-ty-nav"] =
       (COND_H - navlist.offsetHeight) / 2 - topWithin(navlist, masthead);
     out["--cs-ty-book"] =

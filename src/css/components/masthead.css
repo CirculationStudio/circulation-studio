@@ -199,7 +199,7 @@
   .cs-masthead[data-cond="true"] .cs-masthead__nav { border-top-color: transparent }
 
   .cs-masthead[data-cond="true"] .cs-masthead__markpos { transform: translateY(var(--cs-ty-mark, -40px)) }
-  .cs-masthead[data-cond="true"] .cs-masthead__markscale { transform: scale(var(--cs-mark-scale, .88)) }
+  .cs-masthead[data-cond="true"] .cs-masthead__markscale { transform: scale(var(--cs-mark-scale, .6)) }
   .cs-masthead[data-cond="true"] .cs-masthead__booking { transform: translateY(var(--cs-ty-book, -50px)) }
   .cs-masthead[data-cond="true"] .cs-masthead__navlist { transform: translateY(var(--cs-ty-nav, -155px)) }
   .cs-masthead[data-cond="true"] .cs-masthead__navlist > :nth-child(1) { transform: translateX(var(--cs-tx1, -44px)) }
