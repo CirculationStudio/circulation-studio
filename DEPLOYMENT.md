@@ -24,12 +24,28 @@ Two origins serve this site. The preview host is publicly reachable and stays
 that way after cutover, because every preview deploy gets its own subdomain.
 Only the production host may be indexed.
 
-**Decided by the build, from `CF_PAGES_BRANCH`, not by a switch anyone flips.**
-A deploy of `main` on Cloudflare Pages is production. Everything else, preview
-branches and local builds alike, carries a `noindex` meta tag on every page.
-Both `robots.txt` and the meta tag read one value, `deploy.indexable`, so they
-cannot disagree about which deploy this is. The logic and the reasoning are in
-`src/_data/deploy.js`.
+**Two conditions, both required: the branch is `main` AND `SITE_LIVE=1`.**
+Everything else, preview branches and local builds alike, carries a `noindex`
+meta tag on every page. Both `robots.txt` and the meta tag read one value,
+`deploy.indexable`, so they cannot disagree about which deploy this is. The
+logic and the reasoning are in `src/_data/deploy.js`.
+
+**`SITE_LIVE` is unset today, so nothing is indexable, including `main`.** Set
+it to `1` in the Cloudflare Pages dashboard, production environment, at DNS
+cutover. That is the one manual step, and it is deliberate: the branch answers
+"is this the production build", not "is there a production host yet", and until
+cutover those have different answers. Measured 2026-08-16, before the flag
+existed: `www.circulationstudio.com` still served the old Brizy site, while
+`circulation-studio.pages.dev` served this build fully crawlable with no
+`noindex` at all. A value that is neither `1` nor `0` fails the build rather
+than being coerced, because `SITE_LIVE=true` quietly reading as false at cutover
+is an invisible failure.
+
+**Before flipping it, the pre-cutover checklist has to be clear**, because
+`SITE_LIVE=1` is the moment this site becomes indexable: the migration map in
+`src/_redirects` is still marked NOT YET COLLECTED, there is no `sitemap.xml`,
+and every unknown path currently returns 200 with the home page rather than a
+404.
 
 **The meta tag does the work, and `robots.txt` allows crawling everywhere,
 including on the preview.** That is deliberate and it is the stronger of the two
@@ -42,12 +58,16 @@ listing, so it is correct in both states. Whether the preview host is currently
 indexed has not been confirmed, which is exactly why the option that works
 either way is the one in place. Recorded in `src/robots.njk`.
 
-**On the production host, nothing is restricted.** No robots meta tag is emitted
-at all and `robots.txt` allows everything. The decision is recomputed from the
-branch name on every build, so there is no state that can get stuck. A
-production build where the branch is unreadable fails the deploy rather than
-falling through to noindex, because a failed deploy is visible and a live site
-quietly carrying noindex is not.
+**Once `SITE_LIVE=1`, nothing is restricted on the production host.** No robots
+meta tag is emitted at all and `robots.txt` allows everything. A production build
+where the branch is unreadable fails the deploy rather than falling through to
+noindex, because a failed deploy is visible and a live site quietly carrying
+noindex is not.
+
+**The article audit strip follows `deploy.indexable` too**, so it now renders on
+`circulation-studio.pages.dev` until cutover. That is consistent rather than a
+side effect: until `SITE_LIVE=1` that host is a preview, which is what the strip
+is for. It disappears the moment the flag is set.
 
 Every build prints which mode it chose, so the Cloudflare build log is the
 record. **After cutover, confirm on the live domain**: view source on

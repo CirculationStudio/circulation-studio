@@ -78,11 +78,49 @@ const MIN_ELEMENTS = {
      cause, same shape, all twelve hashes moved at once and every floor rose by
      exactly two. A frame change that moved SOME of them would be the
      interesting result. */
-  home: 137,
-  who: 155,
-  what: 153,
-  results: 153,
-  contact: 121,
+  /* EVERY FLOOR ROSE BY TWO PER BUTTON ON 2026-08-15, and the arithmetic is the
+     check: the Button States comp made .cs-btn two layers, a plate holding a
+     .cs-btn__face holding a .cs-btn__label, because a press has to move the bar
+     and the label as one printed surface. Each button on a page adds exactly
+     two elements and nothing else does.
+
+     home rose 6 for its three buttons; who, what, results, contact and yelphub
+     rose 2 each for their one. A page that rose by an odd number, or by two
+     without gaining a button, would be the interesting result.
+
+     All twelve hashes moved together, which is correct here and is the opposite
+     of the split this file usually watches for: a component every page renders
+     changed, not one page's content. */
+  /* AND AGAIN BY 2 ON 2026-08-15, all six, when the Header Condense comp
+     replaced a static rail plus a fixed sticky bar plus a sentinel with one
+     header that condenses into itself. Net +2 per page: the mark gained two
+     nesting spans for its two-speed descent, a spacer replaced the sentinel,
+     and the rail element stayed.
+
+     IT WAS BRIEFLY +4. The first cut of that header rebuilt the expanded state
+     from the comp's absolute coordinates and needed a nav wrapper and a
+     separate rule element to do it. That version also regressed the expanded
+     composition, pulling the flanking labels 45.7px up onto the top edge and
+     collapsing the nav band from 59.6px of air to a bare 1px rule. Restoring
+     the original rail removed both extra elements, so this floor came back
+     down by two. Lowered deliberately, with the count re-taken in the same
+     commit, which is what this file asks for.
+
+     Uniform across all six is the signature of a frame change, the same shape
+     as the two footer-link rises above. A page that moved by a different amount
+     would be the interesting result. */
+  home: 145,
+  who: 159,
+  /* what carries both: 153 -> 159 for the two services added the same day, then
+     159 -> 161 for its one button. */
+  what: 163,
+  results: 157,
+  /* CONTACT ALONE ROSE 127 -> 150 ON 2026-08-15, and alone is the point: the
+     prompt group is one page's content, not the frame, so the other five did
+     not move. +23 is the group's wrapper, its line and its list, plus five
+     elements for each of four rows. The listing field replaced Company /
+     business one for one and contributed nothing. */
+  contact: 148,
   /* The hub is DATA-DRIVEN and this floor will rise. Every article added to
      src/yelp/ adds elements to the coverage map, so a run that drops below the
      floor means the page stopped rendering rather than that content was
@@ -97,7 +135,7 @@ const MIN_ELEMENTS = {
      rendered for the first time since it was built, and two more clusters
      traded a pending line for a full entry. Each time the five marketing
      hashes did not move, which is the split this file exists for. */
-  yelphub: 234
+  yelphub: 238
 };
 
 const browser = await chromium.launch();

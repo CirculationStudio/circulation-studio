@@ -138,13 +138,28 @@
     text-decoration-color: var(--color-paper);
   }
 
-  /* The focus ring is madder-based and vanishes on both surfaces. Paper, the
-     same answer the colophon reached on ink. */
-  .cs-pane--ink a:focus-visible,
-  .cs-pane--madder a:focus-visible {
-    outline: 2px solid var(--color-paper);
-    outline-offset: 3px;
-  }
+  /* VISITED, held to the surface. The base rule tints the rule to 40 percent
+     madder, which is a paper-ground answer: on ink madder is 1.99:1 and on
+     madder it cannot accent itself. Both surfaces keep their own resting tint
+     instead, so a visited link here is simply not distinguished rather than
+     distinguished in a colour that fails. Flagged as a real gap: there is no
+     third value available on either ground that is not already carrying a
+     meaning, and inventing one is a section 1 decision, not a CSS one. */
+  .cs-pane--ink a:not(.cs-btn):visited { text-decoration-color: var(--color-madder-lift) }
+  .cs-pane--madder a:not(.cs-btn):visited { text-decoration-color: var(--border-on-accent-strong) }
+
+  /* FOCUS. The base treatment is two madder ticks flanking the word, and madder
+     vanishes on both of these surfaces, so the ticks go paper. Same move the
+     buttons make, where the registration marks invert to paper on deep grounds,
+     and the same answer the colophon reached on ink.
+
+     The outline that stood here is gone rather than kept alongside: the base
+     rule now sets outline:none and draws ticks, so keeping an outline too would
+     have drawn both, one of them in a colour that fails. */
+  .cs-pane--ink a:focus-visible::before,
+  .cs-pane--ink a:focus-visible::after,
+  .cs-pane--madder a:focus-visible::before,
+  .cs-pane--madder a:focus-visible::after { background: var(--color-paper) }
 
   /* List markers take the surface's text colour through currentColor, so they
      need no rule. Stated because their absence looks like an omission. */

@@ -3,6 +3,23 @@ layout: layouts/base.njk
 title: "The Library: notes, essays and whitepapers"
 description: "Writing from Circulation Studio on search, local visibility and the platforms our clients depend on."
 permalink: /library/index.html
+
+# THE HERO IMAGE IS A PLACEHOLDER. Two other candidates are in play and the
+# choice is not made, so swapping it is these four lines and nothing else.
+#
+# ONE FILENAME, DELIBERATELY. `preloadImage` is what base.njk preloads AND
+# what the <img> takes as its src, so the two cannot drift apart. A preload
+# pointing at a file the page does not use is a wasted download and a missed
+# LCP, and it is the failure that happens when a swap edits one and not the
+# other.
+#
+# The dimensions are the file's true intrinsic size and MUST be re-read from
+# the replacement. The frame sets no height, so this pair is what reserves the
+# space, and a stale pair reintroduces layout shift on the page's LCP element.
+preloadImage: cs-img-leaves-landscape.webp
+heroWidth: 1400
+heroHeight: 784
+heroAlt: Leaves ranged in a row, one subject studied specimen by specimen
 ---
 {% from "components/container.njk" import container %}
 
@@ -33,4 +50,23 @@ permalink: /library/index.html
     carries everything we have published on Yelp advertising.
   </p>
   <p><a class="cs-link" href="/yelp/">Visit the Yelp Hub <span class="cs-link__arrow" aria-hidden="true">&rarr;</span></a></p>
+
+  {#- THE PLATE. Under the copy rather than over it, and holding nothing but
+      the picture.
+
+      NOT THE NETWORK PATTERN, and not by omission. That hero puts type on the
+      photograph because the photograph reserves a column of paper beside the
+      subject. This one reserves its paper ABOVE a row of leaves, so the same
+      move would drop the type onto the leaves themselves.
+
+      It also would not survive the swap. Two other candidates are in play, and
+      any layout that positions type against a particular part of the frame has
+      to be re-measured when the frame changes. The rule this follows is that
+      nothing here knows what is in the picture: full measure, natural ratio,
+      no crop and no fixed height. Whatever lands next draws correctly. -#}
+  <img class="cs-doc__hero"
+       src="{{ site.cdn }}{{ preloadImage }}"
+       alt="{{ heroAlt }}"
+       width="{{ heroWidth }}" height="{{ heroHeight }}"
+       loading="eager" fetchpriority="high" decoding="async">
 {% endcall %}

@@ -65,10 +65,13 @@
         {% endfor %}
         {# One list item, two anchors, and the separator belongs to neither.
            See nav.js, footerPolicy. #}
+        {#- Whitespace stripped between the anchors: they are inline here, so a
+            newline in the template would collapse to a real space and sit
+            alongside the separator's own margins. -#}
         <li class="cs-colophon__pair">
-          {% for item in nav.footerPolicy %}
+          {%- for item in nav.footerPolicy -%}
             <a href="{{ item.url }}">{{ item.label }}</a>
-          {% endfor %}
+          {%- endfor -%}
         </li>
       </ul>
     </nav>

@@ -97,6 +97,30 @@
   .cs-doc--stub .cs-doc__lede { max-width: var(--container-measure) }
   .cs-doc--stub .cs-link { margin-top: var(--space-24); display: inline-flex }
 
+  /* The hero plate. Placeholder image, see the note in library.njk.
+   *
+   * Four declarations, and the restraint is the point: this has to draw a file
+   * nobody has chosen yet. width 100% takes the container measure, height auto
+   * takes the file's own ratio, and the width/height attributes reserve the
+   * space. No object-fit, no aspect-ratio and no fixed height, because all
+   * three are decisions about a composition, and the composition is not
+   * settled. A cover crop sized to this file would cut the next one.
+   *
+   * It sits at the container measure and NOT at the 66ch reading column that
+   * .cs-doc__body imposes on prose. A picture is not read left to right at a
+   * comfortable line length, and 66ch would have drawn it at roughly half the
+   * page with the copy beside nothing.
+   *
+   * --space-64 sets it off from the link above without reading as a new
+   * section, which --space-96 would; 96 is section-level on this scale and
+   * this is still one page block. */
+  .cs-doc__hero {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-top: var(--space-64);
+  }
+
   @media (max-width: 1120px) {
     .cs-doc { padding-top: var(--space-40); padding-bottom: var(--space-64) }
     .cs-doc__body h2 { margin-top: var(--space-40) }

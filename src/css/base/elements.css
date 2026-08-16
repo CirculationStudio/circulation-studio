@@ -39,16 +39,190 @@
 
   p { margin: 0 0 var(--space-16); max-width: var(--container-measure) }
 
-  /* Inline body links keep a permanent madder underline and darken on hover.
-     This is distinct from the ghost/CTA link, which is .cs-link. */
+  /* ============================================================
+     INLINE LINKS. THE RULE IS ALREADY THE BAR, SO IT ENGAGES RATHER THAN
+     ARRIVES.
+     ============================================================
+
+     From the Link States comp, which tested a sweeping bar here (the button's
+     gesture, moved inline) and rejected it for three reasons that arrived
+     independently: it fires on links a pointer only grazes, because a link is
+     passed over where a button is approached deliberately; it restarts at a
+     line break, because a sweep has to be a painted background; and a painted
+     background cannot respond to :visited, which forfeits the state entirely.
+
+     What ships instead is the same mark doing a different verb. The button's
+     bar travels because a button has no bar at rest. The link's bar is already
+     there, so it activates in place: same colour, same 1px, moving toward the
+     word it belongs to. One idea at two scales, not two ideas.
+
+     NOTHING HERE TOUCHES THE LINE BOX. text-underline-offset and
+     text-decoration-color are painted, not laid out, so a paragraph does not
+     reflow when a pointer crosses it. That is the same constraint the buttons
+     are now built on.
+
+     This is distinct from .cs-link, the standalone text CTA, which keeps its
+     underline-draw and arrow-slide. design.md section 8 item 3 asks for the two
+     patterns to be confirmed as a deliberate pair and documented; that is what
+     this is, and the pair is now "inline engages, discrete sweeps". */
   a {
     color: var(--link);
     text-decoration: underline;
+    text-decoration-color: var(--link);
     text-decoration-thickness: 1px;
-    text-underline-offset: 3px;
-    transition: color var(--dur-fast) var(--ease-out);
+    text-underline-offset: 4px;
+    transition:
+      color var(--dur-fast) var(--ease-out),
+      text-decoration-color var(--dur-fast) var(--ease-out),
+      text-underline-offset var(--dur-fast) var(--ease-out);
   }
-  a:hover { color: var(--link-hover) }
+  a:hover {
+    color: var(--link-hover);
+    text-decoration-color: var(--link-hover);
+    text-underline-offset: 2px;
+  }
+
+  /* VISITED: the rule fades, the text holds. New to the system, and a derived
+     alpha tint of a named colour, which section 1 permits.
+
+     Deliberately not "both go slate". Slate is the muted-text colour, so a
+     visited link would stop looking clickable, and on an index where most
+     things have been read the page would render as mostly disabled. The link
+     stays a link and the row of them reads as a record of where you have been.
+
+     Colour is all a browser will let :visited change, which is the other reason
+     the rule above is text-decoration and not a painted background. */
+  a:visited { text-decoration-color: color-mix(in srgb, var(--link) 40%, transparent) }
+  a:visited:hover { color: var(--link-hover); text-decoration-color: var(--link-hover) }
+
+  /* FOCUS: the button's four corner brackets, reduced to their vertical arms.
+     An inline link has no corners to put them on, so it takes two 2px madder
+     ticks flanking the word with the rule thickening to 2px. Same weight, same
+     colour, same idea that focus means targeted rather than lit up.
+
+     position is set HERE rather than on every anchor, so the site does not gain
+     thousands of containing blocks to support a state almost none of them are
+     in. It carries no offsets, so it changes no layout.
+
+     Ticks are absolutely positioned and the thickening is painted, so nothing
+     in the line box moves. One caveat: on a link that wraps across a line break
+     the ticks land at the start and end of the whole inline box, which puts the
+     closing tick on the second line. Acceptable, and worth knowing before it
+     appears in a long link. */
+  a:focus-visible {
+    position: relative;
+    outline: none;
+    text-decoration-thickness: 2px;
+  }
+  a:focus-visible::before,
+  a:focus-visible::after {
+    content: "";
+    position: absolute;
+    top: -2px;
+    bottom: -4px;
+    width: 2px;
+    background: var(--link);
+  }
+  a:focus-visible::before { left: -6px }
+  a:focus-visible::after { right: -6px }
+
+  /* THE TICKS ARE FOR INLINE PROSE LINKS AND NOTHING ELSE.
+     `a` is a global selector, so without this the treatment lands on every
+     anchor on the site: nav rows, breadcrumbs, the wordmark, block-wrapper
+     cards, .cs-link. Those are not inline links, they already answer focus
+     their own way, and two indicators on one element is noise. On the ink menu
+     and colophon it is worse than noise, because madder measures 1.99:1 there,
+     so the ticks would be an invisible decoration sitting on top of the paper
+     outline actually doing the work.
+
+     Two exclusions cover it. `a[class]` catches every anchor that is itself a
+     component: .cs-link, a.cs-card, .cs-browse__card, .cs-yp-cost__cta and the
+     rest. The named scopes catch the CLASSLESS ones, where the class sits on an
+     ancestor and the anchor is bare.
+
+     THAT SECOND LIST IS THE MAINTENANCE COST OF THIS APPROACH, and it is worth
+     stating plainly: it has to grow whenever a new standalone link is built
+     with a bare anchor inside a classed parent. There is no CSS way to ask
+     "does this link still carry the base underline", which is the property that
+     actually distinguishes the two families. The failure mode if it is missed
+     is mild and visible rather than silent: a standalone link picks up ticks it
+     should not have, on paper, where they still measure 8.06:1.
+
+     They get the standard ring back rather than nothing. Their own scoped rules
+     still outrank this where they set something better, which is how the menu
+     and colophon keep their paper outlines on ink. */
+  a[class]:not(.cs-link-ext):focus-visible,
+  .cs-masthead a:focus-visible,
+  .cs-stickybar a:focus-visible,
+  .cs-menu a:focus-visible,
+  .cs-colophon a:focus-visible,
+  .cs-net-crumbs__list a:focus-visible,
+  .cs-hub-crumbs__list a:focus-visible,
+  .cs-net-band__go a:focus-visible,
+  .cs-yp-source a:focus-visible,
+  .cs-rt-meta a:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+    text-decoration-thickness: 1px;
+  }
+  a[class]:not(.cs-link-ext):focus-visible::before,
+  a[class]:not(.cs-link-ext):focus-visible::after,
+  .cs-masthead a:focus-visible::before,
+  .cs-masthead a:focus-visible::after,
+  .cs-stickybar a:focus-visible::before,
+  .cs-stickybar a:focus-visible::after,
+  .cs-menu a:focus-visible::before,
+  .cs-menu a:focus-visible::after,
+  .cs-colophon a:focus-visible::before,
+  .cs-colophon a:focus-visible::after,
+  .cs-net-crumbs__list a:focus-visible::before,
+  .cs-net-crumbs__list a:focus-visible::after,
+  .cs-hub-crumbs__list a:focus-visible::before,
+  .cs-hub-crumbs__list a:focus-visible::after,
+  .cs-net-band__go a:focus-visible::before,
+  .cs-net-band__go a:focus-visible::after,
+  .cs-yp-source a:focus-visible::before,
+  .cs-yp-source a:focus-visible::after,
+  .cs-rt-meta a:focus-visible::before,
+  .cs-rt-meta a:focus-visible::after { content: none }
+
+  /* EXTERNAL. At rest the arrow is a small glyph rather than an icon demanding
+     attention, and it is the only thing distinguishing the two kinds of link.
+     On hover it travels, which makes the distinction legible exactly when
+     someone is deciding whether to click.
+
+     The glyph needs a non-breaking space in front of it in the markup, because
+     it is a text character inside the link and will wrap onto the next line on
+     its own if the break falls badly. */
+  .cs-link-ext__arrow {
+    display: inline-block;
+    transition: transform var(--dur-snap) var(--ease-snap);
+  }
+  a:hover .cs-link-ext__arrow { transform: translateX(3px) }
+
+  /* .cs-link-ext is the ONE classed anchor that keeps the inline treatment,
+     which is why it is carved out of the exclusion list below: it is an inline
+     prose link that happens to also be external, not a component. Without the
+     carve-out the class would silently cost it its ticks and its engage.
+
+     STILL TO WIRE: article prose links come from markdown and carry no class,
+     so nothing applies this automatically yet. Doing that means a markdown-it
+     link_open/link_close rule under amendLibrary, which is article-system
+     machinery and its own change. Until then this works on any hand-authored
+     link, and the several external links already in src/yelp/*.md do not have
+     the arrow. Flagged rather than half-wired. */
+
+  /* Reduced motion: the offset pull and the arrow travel both stop, and colour
+     still moves at 140ms. Every state stays distinguishable without a single
+     thing travelling. Some browsers apply text-underline-offset without
+     animating it anyway, which degrades to exactly this and to the behaviour
+     the site had before, so nothing breaks either way. */
+  @media (prefers-reduced-motion: reduce) {
+    a { transition: color var(--dur-fast) var(--ease-out), text-decoration-color var(--dur-fast) var(--ease-out) }
+    a:hover { text-underline-offset: 4px }
+    .cs-link-ext__arrow { transition: none }
+    a:hover .cs-link-ext__arrow { transform: none }
+  }
 
   /* color-mix keeps this tied to the palette token instead of restating the
      madder hex at 14 percent. */

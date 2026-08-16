@@ -779,6 +779,11 @@
     color: var(--text-muted);
     max-width: 78ch;
   }
+  /* Multi-paragraph answers need air between paragraphs, and margin:0 above
+     butted them into one block. Only the SECOND and later paragraph takes it,
+     so every single-paragraph answer renders exactly as it did before. This is
+     the one layout line the copy pass needed; see the note in the template. */
+  .cs-yp-faq__a p + p { margin-top: var(--space-16) }
 
   /* ---- 11 closing ---- */
 

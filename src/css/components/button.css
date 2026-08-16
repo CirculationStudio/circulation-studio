@@ -1,15 +1,81 @@
-/* Button and CTA link, rewritten from the design system's components.css.
-   Token names translated to this repo's namespaced ones.
+/* Button and CTA link, from the design system's components.css and the
+   "Button States" comp. Token names translated to this repo's namespaced ones.
 
-   The snap physics lives HERE, in the component, never re-described per page:
-   tracked-out caps pull TIGHT on hover (220ms, slight overshoot), weight jumps
-   400 to 600, secondary fills outline to solid ink. Fast and decisive, never a
-   linear fade. Alt glyphs are never used on buttons, and labels name the
-   destination ("Book a consultation"), never "Learn more".
+   THREE STATES, THREE SEPARATE LANGUAGES, NOTHING REPEATED.
+     hover   a madder bar crosses the face and parks at the right edge
+     active  the printed face drops 3px and reveals a plate behind it
+     focus   four registration marks fade in inside the frame
+
+   NOTHING IN ANY STATE MAY AFFECT THE LAYOUT BOX. Not padding, not
+   border-width, not font-size, weight or tracking, not width or margin. Colour,
+   opacity, or a transform. That rule is why the tracking snap is gone (see
+   below) and it is the reason the flicker cannot come back one variant at a
+   time.
+
+   TWO LAYERS, AND THE STRUCTURE IS LOAD-BEARING.
+
+     .cs-btn          the PLATE. Holds nothing but position and the radius.
+       .cs-btn__face  the PRINTED SURFACE. Carries every visible property:
+                      padding, border, fill, and the two pseudo-elements.
+         ::after      the bar          (z 1)
+         .cs-btn__label  label + arrow (z 2)
+         ::before     registration marks (z 3)
+
+   The bar and the label are both PRINTED ON THE FACE, and :active transforms
+   the face. So a press carries the whole printed surface down as one object:
+   the bar does not detach, is not interrupted mid-travel, and is still parked
+   when the press releases. Laying the bar over the button instead would break
+   all three. This is one of the two fixes the comp carries and it is structural
+   rather than a value, which is why the markup has two spans in it.
+
+   THE TRACKING SNAP IS GONE, and this is what replaced it. Caps used to pull
+   from .22em to .1em on hover and the weight jumped 400 to 600. All three
+   resize the label, which resized the button, which fed back against the cursor
+   at the edge: measured at 263.56px wide at rest and 233.77px hovered, an
+   unstable 29.79px band along the right edge, eleven hover flips in 1.2
+   seconds, on every button on the site. design.md section 5 still describes
+   that snap as the button's physics and needs amending.
+
+   SO DOES "OUTLINE FILLS TO SOLID", which section 5 also still describes.
+   --secondary, --deep and --on-accent used to fill to a solid ground on hover
+   and no longer do: the bar IS the hover now, on every variant. Two competing
+   hover languages is how the ghost ended up in two places at once.
 
    @layer components so Tailwind utilities can still override at the call site. */
 @layer components {
+
+  /* ---- the plate ---- */
+
   .cs-btn {
+    /* Per-variant paint, set once here and overridden by the variant blocks
+       below, so the bar, plate and mark geometry are each written exactly once
+       rather than restated eight times per variant. */
+    --cs-btn-bar: var(--accent);
+    --cs-btn-plate: var(--color-ink);
+    --cs-btn-mark: var(--accent);
+
+    position: relative;
+    display: inline-flex;
+    align-items: stretch;
+    padding: 0;
+    border: 0;
+    background: none;
+    border-radius: var(--radius-control);
+    cursor: pointer;
+    text-decoration: none;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  /* Pages set width or min-height on .cs-btn at phone widths (yelp-hub,
+     yelp-partners, yelp-rank-tracking). The face has to inherit that or the
+     plate would grow and the printed surface would not. */
+  .cs-btn__face { flex: 1 1 auto }
+
+  /* ---- the printed face ---- */
+
+  .cs-btn__face {
+    position: relative;
+    overflow: hidden;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -18,124 +84,291 @@
     font-weight: var(--weight-body);
     font-size: var(--text-caption);
     letter-spacing: var(--tracking-btn);
-    /* text-indent cancels the trailing letter-space so the label stays
-       optically centred while the tracking animates */
+    /* cancels the trailing letter-space so the label stays optically centred */
     text-indent: var(--tracking-btn);
     text-transform: uppercase;
     white-space: nowrap;
     padding: 13px 28px;
     border-radius: var(--radius-control);
     border: 1px solid var(--color-ink);
-    background: transparent;
+    background-color: transparent;
     color: var(--color-ink);
-    cursor: pointer;
-    text-decoration: none;
     /* enumerated, never transition: all, which wrecks INP */
     transition:
-      letter-spacing var(--dur-snap) var(--ease-snap),
-      text-indent var(--dur-snap) var(--ease-snap),
-      background var(--dur-fast) var(--ease-out),
+      transform var(--dur-snap) var(--ease-out),
+      box-shadow var(--dur-snap) var(--ease-out),
+      background-color var(--dur-fast) var(--ease-out),
       border-color var(--dur-fast) var(--ease-out),
       color var(--dur-fast) var(--ease-out);
   }
-  .cs-btn:hover {
-    letter-spacing: var(--tracking-btn-tight);
-    text-indent: var(--tracking-btn-tight);
-    font-weight: var(--weight-display);
+  .cs-btn__label {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-8);
   }
-  .cs-btn:active { transform: translateY(1px) }
+
+  /* ---- HOVER: the bar arrives ----
+
+     An 8px flat bar crosses behind the label in 220ms and parks at the right
+     edge. It is the madder bar from the photographs (design.md section 10: one
+     flat vertical bar, the only colour in the frame), which is why it crosses
+     the face rather than growing out of the border: a bar that thickens out of
+     an edge is a border animation, not the brand device.
+
+     IT STARTS AT -101%, NOT -100%. That is the second fix the comp carries. At
+     -100% subpixel rounding can leave a sliver of red visible at the left edge
+     at some zoom levels, because the translate resolves to a fractional pixel
+     and the gradient's hard stop lands just inside the box. The extra 1% puts
+     the whole bar outside the frame at every zoom and costs nothing. */
+  .cs-btn__face::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background-image: linear-gradient(
+      90deg,
+      transparent calc(100% - 8px),
+      var(--cs-btn-bar) calc(100% - 8px)
+    );
+    transform: translateX(-101%);
+    transition: transform var(--dur-snap) var(--ease-out);
+  }
+  .cs-btn:hover .cs-btn__face::after { transform: translateX(0) }
+
+  /* ---- ACTIVE: the plate press ----
+
+     The face drops 3px and the plate is revealed behind it. Drops in 140ms and
+     returns over 220ms: the asymmetry is the whole trick, because a face that
+     falls fast and comes back slowly has weight, and both durations are already
+     in the system so no third value was invented to get it.
+
+     A transform and a shadow, neither of which reflows. */
+  .cs-btn:active .cs-btn__face {
+    transform: translateY(3px);
+    box-shadow: 0 -3px 0 var(--cs-btn-plate);
+    transition-duration: var(--dur-fast);
+  }
+
+  /* ---- FOCUS: registration marks ----
+
+     Four 2px brackets with 12px arms fade in 5px inside the frame. Eight
+     gradients, four corners, two arms each. Opacity only, so nothing moves at
+     all, and a shape appearing rather than a colour changing means the state is
+     not carried by colour alone and survives being seen in greyscale.
+
+     Contrast against the ground each variant sits on: madder marks on paper
+     8.07:1, paper marks on madder 8.03:1, paper marks on ink 15.9:1. The
+     requirement for a focus indicator is 3:1, so the lowest is more than double.
+
+     This REPLACES the shared --focus-ring outline on buttons, which composites
+     to 2.37:1 on paper and does not clear 3:1. .cs-link still carries that ring.
+
+     One caveat, recorded rather than solved: four brackets total about 176
+     square px against roughly 1,000 for a 2px perimeter on a button this size,
+     so the marks pass on contrast and fall short on AREA. That threshold is the
+     enhanced level, not the AA the site is held to. */
+  .cs-btn__face::before {
+    content: "";
+    position: absolute;
+    inset: 5px;
+    z-index: 3;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--dur-fast) var(--ease-out);
+    background-repeat: no-repeat;
+    background-image:
+      linear-gradient(var(--cs-btn-mark), var(--cs-btn-mark)),
+      linear-gradient(var(--cs-btn-mark), var(--cs-btn-mark)),
+      linear-gradient(var(--cs-btn-mark), var(--cs-btn-mark)),
+      linear-gradient(var(--cs-btn-mark), var(--cs-btn-mark)),
+      linear-gradient(var(--cs-btn-mark), var(--cs-btn-mark)),
+      linear-gradient(var(--cs-btn-mark), var(--cs-btn-mark)),
+      linear-gradient(var(--cs-btn-mark), var(--cs-btn-mark)),
+      linear-gradient(var(--cs-btn-mark), var(--cs-btn-mark));
+    background-size:
+      12px 2px, 2px 12px,
+      12px 2px, 2px 12px,
+      12px 2px, 2px 12px,
+      12px 2px, 2px 12px;
+    background-position:
+      left top, left top,
+      right top, right top,
+      left bottom, left bottom,
+      right bottom, right bottom;
+  }
+  .cs-btn:focus-visible { outline: none }
+  .cs-btn:focus-visible .cs-btn__face::before { opacity: 1 }
+
+  /* ============================================================
+     VARIANTS. design.md section 6 names seven and they are all here.
+     ============================================================ */
 
   /* primary carries the madder accent as a solid fill. White-on-madder is
-     reserved for this and equivalent single-CTA moments, nothing else. */
-  .cs-btn--primary {
-    background: var(--accent);
+     reserved for this and equivalent single-CTA moments, nothing else. The bar
+     inverts to paper, the same way the imagery reverses its one colour out of a
+     dark field. */
+  .cs-btn--primary { --cs-btn-bar: var(--color-paper); --cs-btn-mark: var(--color-paper) }
+  .cs-btn--primary .cs-btn__face {
+    background-color: var(--accent);
     border-color: var(--accent);
     color: var(--text-on-accent);
   }
-  .cs-btn--primary:hover {
-    background: var(--accent-hover);
+  .cs-btn--primary:hover .cs-btn__face {
+    background-color: var(--accent-hover);
     border-color: var(--accent-hover);
-    color: var(--text-on-accent);
   }
 
-  .cs-btn--secondary { border-color: var(--border-strong); color: var(--color-ink) }
-  .cs-btn--secondary:hover {
-    border-color: var(--color-ink);
-    background: var(--color-ink);
-    color: var(--text-on-deep);
+  /* THE BORDER JOINS, and only this variant needs it.
+     The bar parks against the frame, so a frame in a different colour reads as
+     a second vertical rule sliding under a first. The answer is not to hide the
+     border but to convert it: by the time the bar arrives the frame is already
+     the same red, and the two land as one mark. Colour only, no width change,
+     no compensating inset.
+
+     140ms against the bar's 220ms, deliberately, so the frame has finished
+     before the bar gets there rather than the two resolving together.
+
+     The other variants need nothing: primary's border is its own fill colour,
+     ghost has no visible border, and deep / on-accent already carry a paper
+     border with a paper bar. */
+  .cs-btn--secondary .cs-btn__face {
+    border-color: var(--border-strong);
+    color: var(--color-ink);
   }
+  .cs-btn--secondary:hover .cs-btn__face { border-color: var(--accent) }
 
   /* deep is the variant for use ON an ink pane, not a green button.
      Button.prompt.md in the design project calls this "leaf green"; that
      contradicts design.md, which bans green outright. design.md wins. */
-  .cs-btn--deep {
+  .cs-btn--deep { --cs-btn-bar: var(--color-paper); --cs-btn-plate: var(--color-paper); --cs-btn-mark: var(--color-paper) }
+  .cs-btn--deep .cs-btn__face {
     border-color: var(--color-paper);
     color: var(--color-paper);
-    background: transparent;
+    background-color: transparent;
   }
-  .cs-btn--deep:hover { background: var(--color-paper); color: var(--color-ink) }
 
   /* ============================================================
-     ON A MADDER PANE. NAMED IN design.md SECTION 6 AS OF 2026-08-01.
+     ON A DEEP OR ACCENT GROUND. FOUR VARIANTS, ALL NOW IN THE SYSTEM.
      ============================================================
 
-     Read the design system directly on 2026-08-01 rather than trusting a
-     summary of it, and the picture is not what the earlier note here said.
-     design.md section 6 does not merely list four variants, it says "LOCKED
-     SET, nothing else" and "never invent inline". components/components.css,
-     which is the machine-readable component source, carries exactly four:
-     primary, secondary, ghost, deep. Nothing in the design system project
-     carries an on-accent variant of any kind.
+     The note that stood here was stale in three directions and read directly
+     against components.css on 2026-08-15 rather than trusting a summary:
 
-     That was resolved upstream rather than here. design.md section 6 now names
-     seven button variants including these two, and says outright that the
-     shorter list was read as complete and put an ink-pane button on a madder
-     pane.
+     1. It said components/components.css "does not carry" --on-accent and
+        --on-accent-primary "yet". It carries both, and the values match these
+        local copies exactly. A /design-sync WILL deliver them.
+     2. It said --on-deep-primary "has no supplied values and is implemented
+        nowhere". components.css supplies them: paper fill, paper border, ink
+        label, hovering to mist. The guess recorded here was right in shape and
+        wrong on the hover label, which is ink and not ink-press.
+     3. design.md section 6 says of these that "two are open right now". That is
+        now the stale side: components.css closed both.
 
-     THE OTHER HALF IS STILL OPEN. components/components.css does not carry
-     them yet, so a /design-sync will not deliver them and these local copies
-     are what the site runs on. design.md records that gap explicitly. The
-     third variant it names, --on-deep-primary, has no supplied values and is
-     implemented nowhere; by symmetry it would be a paper fill with an ink
-     label hovering to mist with ink-press, but a derived value is not a
-     specified one. See ARTICLE_SYSTEM.md section 8.
+     --on-deep-primary IS IMPLEMENTED HERE FOR THE FIRST TIME. It is in section
+     6's locked set and this repo has never carried it, which made the site six
+     variants against a locked seven.
 
      WHY NOT --deep ON MADDER, which is what the cta shipped with first. deep is
-     documented for an ink pane and its hover carries INK text. On madder the
+     documented for an ink pane and its hover carried INK text. On madder the
      Reference carries madder, which is the accent recognising its own ground
-     rather than borrowing the other deep surface's answer. No contrast pairing
-     changes either way: madder on paper is 8.06:1 and ink on paper is 16.06:1,
-     both verified and both AA.
+     rather than borrowing the other deep surface's answer.
 
-     The secondary is added now rather than when it is first needed, because the
-     moment a madder pane wants two actions is the moment someone reaches for
-     the nearest lookalike, and --deep is the nearest lookalike. */
-  .cs-btn--on-accent-primary {
-    background: var(--color-paper);
+     The two paper-faced variants take madder bars and marks, because their face
+     is paper and madder on paper is 8.06:1. Their plate stays ink: a recess is
+     darker than the surface it is cut into, and on these grounds that reads as
+     the pane showing through. */
+  .cs-btn--on-deep-primary { --cs-btn-bar: var(--accent); --cs-btn-mark: var(--accent) }
+  .cs-btn--on-deep-primary .cs-btn__face {
+    background-color: var(--color-paper);
+    border-color: var(--color-paper);
+    color: var(--color-ink);
+  }
+  .cs-btn--on-deep-primary:hover .cs-btn__face {
+    background-color: var(--color-mist);
+    border-color: var(--color-mist);
+  }
+
+  .cs-btn--on-accent-primary { --cs-btn-bar: var(--accent); --cs-btn-mark: var(--accent) }
+  .cs-btn--on-accent-primary .cs-btn__face {
+    background-color: var(--color-paper);
     border-color: var(--color-paper);
     color: var(--accent);
   }
-  .cs-btn--on-accent-primary:hover {
-    background: var(--color-mist);
+  .cs-btn--on-accent-primary:hover .cs-btn__face {
+    background-color: var(--color-mist);
     border-color: var(--color-mist);
     color: var(--accent-hover);
   }
 
-  .cs-btn--on-accent {
-    background: transparent;
+  .cs-btn--on-accent { --cs-btn-bar: var(--color-paper); --cs-btn-plate: var(--color-paper); --cs-btn-mark: var(--color-paper) }
+  .cs-btn--on-accent .cs-btn__face {
+    background-color: transparent;
     border-color: var(--color-paper);
     color: var(--color-paper);
   }
-  .cs-btn--on-accent:hover {
-    background: var(--color-paper);
+
+  /* ============================================================
+     ACCENT OUTLINE. PROPOSED, AND OUTSIDE THE LOCKED SET. STILL FLAGGED.
+     ============================================================
+
+     Built to answer a question on Contact, where the filled primary is the only
+     heavy rectangle on a page that is otherwise hairlines and space.
+
+     IT IS NOT A DECISION ALREADY TAKEN. design.md section 6 says "LOCKED SET,
+     nothing else" and "never invent inline", and it names seven variants, none
+     of them this. Unlike the on-accent pair, which turned out to be real and
+     upstream, this one is genuinely not in components.css. It either gets
+     proposed into section 6 properly or it comes out.
+
+     Its border is already the bar's colour, so it needs no join. */
+  .cs-btn--accent-outline .cs-btn__face {
+    background-color: transparent;
+    border-color: var(--accent);
     color: var(--accent);
   }
 
-  /* Ghost / CTA text link. Distinct from inline body-copy links, which keep a
-     permanent madder underline (see base/elements.css). Here the underline
-     draws in from the left and the arrow slides right. */
-  .cs-link,
-  .cs-btn--ghost {
+  /* ============================================================
+     GHOST. NOW A BUTTON, AND NO LONGER SHARING WITH .cs-link.
+     ============================================================
+
+     These two carried one rule set, which made them the same object with two
+     names. Two comps from the same session then pulled them apart: Button
+     States gives the ghost the bar, plate and marks, and Link States keeps the
+     sweep on the discrete CTA links, calling the pair deliberate.
+
+     Both are right about different things, so they are now different things.
+     .cs-btn--ghost is a button with no frame; .cs-link below is a text CTA and
+     keeps its underline draw and arrow slide, untouched.
+
+     The ghost has no frame for the marks to sit inside, so they inset 2px top
+     and bottom and sit flush left and right of the label. It also carries a
+     10px left padding at rest, which the others do not need, purely so the left
+     bracket clears the first letter. That is a REST-state value and not a state
+     change, so the layout box still never moves; it is the one place the
+     variants are not drawn identically. */
+  .cs-btn--ghost .cs-btn__face {
+    border-color: transparent;
+    background-color: transparent;
+    padding-left: 10px;
+    padding-right: 16px;
+    font-weight: var(--weight-medium);
+    letter-spacing: var(--tracking-caps);
+    text-indent: var(--tracking-caps);
+  }
+  .cs-btn--ghost .cs-btn__face::before { inset: 2px 0 }
+
+  /* ============================================================
+     .cs-link — the text CTA. Distinct from inline body-copy links, which
+     engage their own rule in place (see base/elements.css), and now distinct
+     from the ghost button above too.
+     ============================================================
+     The underline draws in from the left and the arrow slides right. This is
+     the treatment Link States explicitly preserves: a discrete link sitting on
+     its own can afford a sweep, an inline link inside a sentence cannot,
+     because a pointer crossing a line grazes links it never aimed at. */
+  .cs-link {
     display: inline-flex;
     align-items: center;
     gap: var(--space-8);
@@ -155,30 +388,41 @@
       background-size var(--dur-snap) var(--ease-out),
       color var(--dur-fast) var(--ease-out);
   }
-  .cs-link:hover,
-  .cs-btn--ghost:hover { background-size: 100% 1px }
+  .cs-link:hover { background-size: 100% 1px }
 
-  .cs-link .cs-link__arrow,
-  .cs-btn--ghost .cs-link__arrow { transition: transform var(--dur-snap) var(--ease-snap) }
-  .cs-link:hover .cs-link__arrow,
-  .cs-btn--ghost:hover .cs-link__arrow { transform: translateX(5px) }
+  .cs-link .cs-link__arrow { transition: transform var(--dur-snap) var(--ease-snap) }
+  .cs-link:hover .cs-link__arrow { transform: translateX(5px) }
 
   .cs-link--madder { color: var(--color-madder) }
   .cs-link--madder:hover { color: var(--color-madder-deep) }
 
-  .cs-btn:focus-visible,
+  /* The ring stays on .cs-link only. It measures 2.37:1 on paper against
+     1.4.11's 3:1 and is a live failure; the buttons no longer use it. Raising
+     it is its own commit, because every other consumer on the site shares it. */
   .cs-link:focus-visible {
     outline: 2px solid var(--focus-ring);
     outline-offset: 2px;
   }
 
-  /* The snap is motion. Respect the user's preference, per WCAG and CLAUDE.md. */
+  /* ---- reduced motion ----
+     Every end state survives and nothing travels. The bar is already parked
+     with no crossing, the border still converts because a colour change is not
+     motion, and the press falls back to nothing because a plate only makes
+     sense as the space the face vacated. Focus is IDENTICAL either way: the
+     marks were never motion, only opacity, which is the right property for the
+     state keyboard users depend on. */
   @media (prefers-reduced-motion: reduce) {
-    .cs-btn,
+    .cs-btn__face {
+      transition-property: background-color, border-color, color;
+      transition-duration: var(--dur-fast);
+    }
+    .cs-btn__face::after { transition-duration: 0ms }
+    .cs-btn:active .cs-btn__face {
+      transform: none;
+      box-shadow: none;
+    }
     .cs-link,
-    .cs-btn--ghost,
-    .cs-link .cs-link__arrow,
-    .cs-btn--ghost .cs-link__arrow { transition: none }
-    .cs-btn:active { transform: none }
+    .cs-link .cs-link__arrow { transition: none }
+    .cs-link:hover .cs-link__arrow { transform: none }
   }
 }

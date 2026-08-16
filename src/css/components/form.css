@@ -5,20 +5,34 @@
    already reserves a Forms section, so this is the shape being proposed rather
    than an addition made unilaterally.
 
-   Controls take the system's engraved-plate corners (2px, never a pill), a
-   hairline border on the card surface, and the same focus ring as every other
-   interactive element. Labels are display caps at caption scale so they read
-   as labels rather than as prose. */
+   UNDERLINE ONLY. Label above, one rule below, nothing enclosed and nothing
+   filled. The controls used to be white cards with a hairline border and
+   engraved-plate corners, which was the one place on the site that reverted to
+   something like default browser chrome: white is a different material from
+   paper and it announces itself, and a bordered rectangle on a page built from
+   hairlines and space reads as a form pasted on rather than set into it.
+
+   NOTHING HERE IS WHITE ANY MORE. The resting fill is transparent, so a field
+   is the paper ground with a rule under it. --surface-card is gone from this
+   file. The one place a fill survives is the autofill override at the bottom,
+   and it paints --color-paper, which is the ground itself.
+
+   THE RULE COLOUR IS THE ONE THING THAT COULD NOT COME FROM THE RULE TOKENS.
+   See the long note on .cs-input. */
 @layer components {
   .cs-form {
     display: flex;
     flex-direction: column;
-    gap: var(--space-24);
+    /* 40, not 24. Boxes used to do the separating and there are no boxes now,
+       so air does it: 8px binds a label to its field, 40px sets each field
+       apart from the next. Same 5:1 the service list on What We Do uses to
+       group without drawing a line. */
+    gap: var(--space-40);
   }
   .cs-form__row {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-24);
+    gap: var(--space-40);
   }
   .cs-field {
     display: flex;
@@ -38,28 +52,213 @@
     letter-spacing: .1em;
   }
 
+  /* THE FIELD.
+   *
+   * No border but the bottom one, no radius, no horizontal padding, so the
+   * value starts on the same left edge as the label above it and the field
+   * has no edges of its own.
+   *
+   * ============================================================
+   * THE RULE COLOUR IS --color-slate AND NOT A RULE TOKEN. FLAGGED.
+   * ============================================================
+   * The brief asked for the same weight and colour as the rules used
+   * elsewhere. The weight is the same, 1px. The colour could not be, and the
+   * reason is measured rather than aesthetic.
+   *
+   * Composited over --color-paper and measured against it:
+   *
+   *   --border-hairline  rgba(33,21,35,.14)   1.33:1
+   *   --border-strong    rgba(33,21,35,.34)   2.13:1
+   *   --color-slate      #6B6470              5.22:1
+   *
+   * WCAG 2.1 SC 1.4.11 wants 3:1 for the visual information that identifies a
+   * control. Both existing rule tokens are decorative separators next to type
+   * that carries its own contrast, which is why 1.33:1 has never been a
+   * problem for them; here the rule is the ONLY thing saying a field exists
+   * and where it can be clicked, so it inherits the requirement and neither
+   * token clears it. --color-slate is a palette value rather than an invented
+   * one, and it is the darkest thing that still reads as a rule rather than
+   * as a line of type.
+   *
+   * If the hairline is wanted anyway, that is a decision to take knowing it
+   * lands at 1.33:1 on the site's only form. */
   .cs-input {
-    background: var(--surface-card);
-    border: 1px solid var(--border-hairline);
-    border-radius: var(--radius-control);
-    padding: 12px 14px;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--color-slate);
+    border-radius: 0;
+    padding: var(--space-8) 0 var(--space-16);
     font-family: var(--font-body);
     font-size: 15px;
     line-height: var(--leading-body);
     color: var(--color-ink);
     width: 100%;
     /* enumerated, never transition: all */
-    transition: border-color var(--dur-fast) var(--ease-out);
+    transition:
+      border-bottom-color var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-fast) var(--ease-out);
   }
-  .cs-input:hover { border-color: var(--border-strong) }
+  .cs-input:hover { border-bottom-color: var(--color-ink) }
+
+  /* FOCUS. Two channels, because removing the box removed the affordance and
+   * colour alone is not an indicator.
+   *
+   *   WEIGHT   the rule doubles, 1px to 2px
+   *   COLOUR   slate to madder
+   *
+   * NO OUTLINE, because an outline on a control with no box draws the
+   * rectangle back. The doubling is a box-shadow rather than a border-width
+   * change so that nothing reflows: a field that grows a pixel on focus nudges
+   * every field under it. inset rather than outset, because an outset shadow
+   * behind a transparent background paints its whole rectangle, which is
+   * exactly the box being removed.
+   *
+   * Madder measures 8.06:1 on paper, so the focused state clears 1.4.11's 3:1
+   * with room. The shared --focus-ring used to be the counter-example here: at
+   * rgba(143,29,46,.45) it measured 2.368:1 on paper and did NOT clear 3:1.
+   * That was corrected to .7 on 2026-08-15 and now measures 4.23:1, so the
+   * remark that stood here about it failing is no longer true. Focus is still
+   * drawn locally on this control, for the reason above rather than that one:
+   * an outline on a field with no box redraws the box. */
   .cs-input:focus-visible {
-    border-color: var(--border-strong);
-    outline: 2px solid var(--focus-ring);
-    outline-offset: 2px;
+    border-bottom-color: var(--accent);
+    box-shadow: inset 0 -1px 0 var(--accent);
+    outline: none;
   }
-  textarea.cs-input { resize: vertical }
+
+  /* Forced colours throw author colours away, and the underline goes with
+     them. Hand the ring back to the system, which is the one context where a
+     box is the right answer. */
+  @media (forced-colors: active) {
+    .cs-input:focus-visible {
+      outline: 2px solid Highlight;
+      outline-offset: 2px;
+    }
+  }
+
+  /* The message field. Fewer rows is set on the element; what belongs here is
+     killing the resize grip, which is a piece of browser chrome that draws a
+     corner onto a control that has no corners any more. */
+  textarea.cs-input {
+    resize: none;
+    display: block;
+  }
+
+  /* AUTOFILL, where the white comes back if nobody stops it. Chrome and Safari
+     paint their own fill and their own text colour over the control, and on
+     this form that would restore the exact white box the redesign removed.
+     The override paints --color-paper, which is the page ground, so an
+     autofilled field looks like an empty one with a value in it.
+
+     100px inset spread rather than a background, because the UA style wins
+     against background and loses against box-shadow. The accent line is listed
+     FIRST on the focused variant: inset shadows paint in order and a 100px
+     spread would bury anything after it. */
+  .cs-input:-webkit-autofill,
+  .cs-input:-webkit-autofill:hover,
+  .cs-input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--color-ink);
+    -webkit-box-shadow: inset 0 0 0 100px var(--color-paper);
+    caret-color: var(--color-ink);
+  }
+  .cs-input:-webkit-autofill:focus {
+    -webkit-box-shadow:
+      inset 0 -1px 0 var(--accent),
+      inset 0 0 0 100px var(--color-paper);
+  }
+
+  /* ============================================================
+     THE PROMPTS. Four topics that light as the message is written.
+     ============================================================
+
+     Not a progress meter and not a gate. Each unlit row is a specific
+     answerable thing rather than a gap in a bar, there is no fifth state to
+     chase, no congratulation at four, and the submit never changes. That is the
+     whole reason the pattern is tolerable: it costs nothing to ignore.
+
+     The group's one line does the work a form would normally spend on "all
+     fields required", and it is placed where that line would go, so it is the
+     first thing read when the eye reaches the group rather than the last. */
+  .cs-prompts { display: flex; flex-direction: column; gap: var(--space-8) }
+  .cs-prompts__intro {
+    margin: 0;
+    max-width: none;
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 11px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  .cs-prompts__list { margin: 0; padding: 0; list-style: none }
+
+  .cs-prompt {
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
+    padding: 10px 0;
+    border-top: 1px solid var(--border-hairline);
+  }
+  /* An engraved-plate box, 2px corners like everything else, with the check
+     drawn as two borders rotated rather than a glyph, so it inherits no font. */
+  .cs-prompt__mark {
+    position: relative;
+    width: 18px;
+    height: 18px;
+    margin-top: 3px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-control);
+    transition:
+      border-color var(--dur-fast) var(--ease-out),
+      background-color var(--dur-fast) var(--ease-out);
+  }
+  .cs-prompt__mark::after {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 7px;
+    width: 8px;
+    height: 4px;
+    border-left: 1.5px solid var(--color-paper);
+    border-bottom: 1.5px solid var(--color-paper);
+    transform: rotate(-45deg);
+    opacity: 0;
+    transition: opacity var(--dur-fast) var(--ease-out);
+  }
+  .cs-prompt__label {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 12px;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--text-faint);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .cs-prompt__hint {
+    display: block;
+    margin-top: 2px;
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+
+  /* Lit. Colour and a check appearing, so the state is not carried by colour
+     alone. Nothing here changes a layout box: the box is 18px in both states
+     and the check is an opacity. */
+  .cs-prompt[data-on="true"] .cs-prompt__mark {
+    background-color: var(--accent);
+    border-color: var(--accent);
+  }
+  .cs-prompt[data-on="true"] .cs-prompt__mark::after { opacity: 1 }
+  .cs-prompt[data-on="true"] .cs-prompt__label { color: var(--color-ink) }
 
   @media (prefers-reduced-motion: reduce) {
-    .cs-input { transition: none }
+    .cs-input,
+    .cs-prompt__mark,
+    .cs-prompt__mark::after,
+    .cs-prompt__label { transition: none }
   }
 }

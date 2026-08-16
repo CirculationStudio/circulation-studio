@@ -2,32 +2,76 @@
   Editorial masthead: shared frame, included by the base layout rather than
   composed per page. Content comes from _data/site.js and _data/nav.js.
 
-  Three-column rail (location, stacked lockup, booking status) with the nav
-  justified beneath, then a sentinel and the collapsed sticky bar.
+  ONE COMPOSITION THAT CONDENSES INTO ITSELF, from the Header Condense comp,
+  option C. The editorial rail expanded, a 62px bar condensed. Past 96px of
+  scroll the four nav items part (two left, two right), the row rises, and the
+  mark settles into the gap between What We Do and Results. Back above 48px it
+  plays in reverse. The two thresholds are deliberately apart so it cannot
+  flicker when someone rests on the boundary.
+
+  THE TWO STATES ARE CHOSEN INDEPENDENTLY. The expanded rail is the original
+  composition, untouched, sized by its own content. The condensed bar is its own
+  62px arrangement. The travel between them is measured at runtime, never
+  written down. Deriving either from the other is what regressed this once.
+
+  This REPLACED a masthead plus a separate sticky bar plus a sentinel. Above
+  1120 there is now one header and one nav list rather than two of each, which
+  is also why the "one nav per viewport" note below got simpler rather than
+  harder. Below 1120 the sticky bar survives as the mobile bar, unchanged.
+
+  Everything that moves is a transform. Only the header's own height animates,
+  and a fixed-height spacer holds the page still so nothing below it shifts.
+
+  data-masthead-nav IS LOAD-BEARING. main.js measures the four labels through it
+  to derive the condensed offsets. The comp's own version queried an attribute
+  that did not exist in its markup, so its measurement never ran and it silently
+  fell back to a symmetric split. If this attribute is dropped, the same happens
+  here and nothing errors.
 
   The wordmark A carries the crossbar-less alt-glyph, scoped to that single
   character. Never word-level font-feature-settings: ss01 also carries D, E, H,
   J, O and R, which the lockup has retired. The isotype is alt="" because the
   adjacent text already names the link.
 
-  Below 1120px the rail does not render at all and the sticky bar becomes the
-  masthead: always present, compacting on scroll rather than appearing. The
-  four nav items move into the ink menu pane at the foot of this file, and the
-  location and booking lines move into that pane's foot. See masthead.css for
-  why the collapsed bar was reused rather than a second mobile header built.
+  Below 1120px the composition does not survive and is replaced rather than
+  squeezed: four items plus a mark cannot be centred in a 390px bar without the
+  items becoming unreadable, and a logo descending into a row that does not
+  exist is a logo that just moves. THE STICKY BAR IS THAT MOBILE BAR, always
+  present and compacting on scroll rather than appearing. The four nav items
+  move into the ink menu pane at the foot of this file.
 
-  ONE nav list per viewport is exposed to assistive tech: above 1120 the rail
-  nav and the condensed bar nav, below it only the menu's. The hidden ones are
-  display:none, so no width shows two copies of the same four destinations.
+  ONE nav list per viewport is exposed to assistive tech: above 1120 this
+  header's, below it only the menu's. The hidden ones are display:none.
+
+  The location line goes on condense and the booking line stays. Booking is the
+  only call to action in the header and the condensed bar is the state a reader
+  spends most time in, so removing it would take the CTA away exactly when it is
+  most likely to be wanted. It DOES travel, unlike in the comp: the comp parked
+  it at the top edge where it was already inside the condensed bar, but this
+  header centres it against the lockup at 71.7px, which is outside a 62px bar.
+  So it gets the same treatment as everything else, a measured translate between
+  its two chosen positions.
 #}
 {% from "components/icon.njk" import icon %}
 
-<header class="cs-masthead">
+{#- THE EXPANDED STATE IS THE ORIGINAL COMPOSITION, UNCHANGED. Three-column
+    rail with the labels centred against the full lockup, then the nav in its
+    own band below a rule with real space above and below it. Nothing about the
+    condense reaches back into it: the two states are chosen independently and
+    the travel between them is MEASURED. See masthead.css. -#}
+<header class="cs-masthead" data-masthead data-cond="false">
   <div class="cs-masthead__rail">
     <p class="cs-masthead__label cs-masthead__location">{{ site.location }}</p>
 
+    {#- Two spans around the icon and nothing else. The descent and the shrink
+        are two transitions on two elements, so the mark starts travelling
+        before it begins to scale; without that offset the two resolve together
+        and read as a zoom-out rather than a move. The lockup is otherwise
+        untouched: .cs-wordmark--stacked still owns every size in it. -#}
     <a class="cs-wordmark cs-wordmark--stacked" href="/" aria-label="{{ site.name }}, home">
-      <img class="cs-wordmark__icon" src="/brand/Circulation-Studio-icon.svg" alt="" width="117" height="117">
+      <span class="cs-masthead__markpos"><span class="cs-masthead__markscale">
+        <img class="cs-wordmark__icon" src="/brand/Circulation-Studio-icon.svg" alt="" width="117" height="117">
+      </span></span>
       <span class="cs-wordmark__name">Circul<span class="alt-soft">a</span>tion</span>
       <span class="cs-wordmark__studio">Studio</span>
     </a>
@@ -38,7 +82,7 @@
   </div>
 
   <nav class="cs-masthead__nav" aria-label="Primary">
-    <ul class="cs-masthead__navlist">
+    <ul class="cs-masthead__navlist" data-masthead-nav>
       {% for item in nav.primary %}
         <li><a href="{{ item.url }}">{{ item.label }}</a></li>
       {% endfor %}
@@ -46,9 +90,10 @@
   </nav>
 </header>
 
-{# Watched by the observer in main.js. Once this leaves the viewport the
-   masthead has scrolled away and the sticky bar reveals. #}
-<div class="cs-masthead__sentinel" data-masthead-sentinel aria-hidden="true"></div>
+{# Fixed height, and it never changes. The header is fixed and condenses over
+   the top of it, so the page below does not move at all while it plays. Below
+   1120 it becomes the mobile bar's spacer instead. #}
+<div class="cs-masthead__spacer" aria-hidden="true"></div>
 
 <div class="cs-stickybar" data-sticky-masthead>
   <a class="cs-wordmark cs-wordmark--inline" href="/" aria-label="{{ site.name }}, home">

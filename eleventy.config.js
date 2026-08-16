@@ -1823,7 +1823,15 @@ export default function (eleventyConfig) {
         `<h2 class="cs-cta__headline">${escapeHtml(headline)}</h2>` +
         body +
         `<div class="cs-cta__action">` +
-        `<a class="cs-btn cs-btn--on-accent-primary" href="${escapeHtml(url)}">${escapeHtml(label)}</a>` +
+        /* THE SECOND EMITTER OF cs-btn, and the only one outside the macro in
+           components/button.njk. The two-layer structure is required: .cs-btn
+           is the plate and .cs-btn__face is the printed surface that carries
+           the bar, the press and the focus marks. Flattening this to a bare
+           label silently drops all three states on every article CTA.
+           Keep it in step with button.njk. */
+        `<a class="cs-btn cs-btn--on-accent-primary" href="${escapeHtml(url)}">` +
+        `<span class="cs-btn__face"><span class="cs-btn__label">${escapeHtml(label)}</span></span>` +
+        `</a>` +
         `</div>\n</div>\n</div>`
     );
   });

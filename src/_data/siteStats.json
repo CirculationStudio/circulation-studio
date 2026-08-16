@@ -1,30 +1,30 @@
 {
-  "measuredAt": "2026-08-08",
+  "measuredAt": "2026-08-15",
   "how": "Built with npx eleventy, served from _site by a static server with no compression, and loaded in headless Chromium at 1440 by 900 with no throttling. Bytes are what the browser received. The figures describe the build they were taken from, which is the one before the build you are reading, because writing them is what changed it.",
   "build": {
-    "ms": 870,
+    "ms": 580,
     "pagesWritten": 18
   },
   "weight": {
-    "medianBytes": 356262,
-    "medianGzipBytes": 224841,
-    "medianKb": 347.9,
-    "medianGzipKb": 219.6,
+    "medianBytes": 383867,
+    "medianGzipBytes": 245016,
+    "medianKb": 374.9,
+    "medianGzipKb": 239.3,
     "medianRequests": 8,
     "heaviest": {
       "url": "/yelp/",
-      "kb": 748.8,
-      "gzipKb": 617.2
+      "kb": 763.7,
+      "gzipKb": 620.5
     },
     "lightest": {
-      "url": "/library/",
-      "kb": 228,
-      "gzipKb": 111.2
+      "url": "/accessibility-statement/",
+      "kb": 245.5,
+      "gzipKb": 115.4
     }
   },
   "js": {
-    "bytes": 2520,
-    "gzipBytes": 1033,
+    "bytes": 5528,
+    "gzipBytes": 2600,
     "sameOnEveryPage": true
   },
   "thirdParty": {
@@ -46,9 +46,9 @@
   },
   "vitals": {
     "lcpMedianMs": 144,
-    "lcpWorstMs": 184,
-    "clsWorst": 0.0143,
-    "pagesAtZeroCls": 0,
+    "lcpWorstMs": 188,
+    "clsWorst": 0.015,
+    "pagesAtZeroCls": 4,
     "note": "Lab figures from headless Chromium on localhost, not field data. INP is not listed because it requires a real interaction to exist."
   },
   "pagesMeasured": 18

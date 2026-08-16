@@ -31,8 +31,27 @@
     gap: var(--space-96);
     align-items: start;
   }
+  /* NO RULE ON THESE, AND THAT IS THE POINT.
+   *
+   * Both columns used to open with a 1px --border-strong rule. It was drawn to
+   * separate the intro from a form made of boxed fields; once the fields became
+   * underlines, the top of this section had hairlines doing three different
+   * jobs within a hundred pixels of each other, structure and input reading the
+   * same weight.
+   *
+   * The right-hand one was the worse of the two. It sat directly above THE
+   * STUDIO with the same weight and offset the field rules use, so it read as
+   * an underline belonging to a field that does not exist.
+   *
+   * The padding stays and the whitespace does the separating: 64px from the
+   * intro's own bottom padding plus this 40px is 104px of air above both
+   * columns, which is more than the rule was contributing.
+   *
+   * IF A DIVIDER IS EVER WANTED BACK it goes on .cs-contact__grid as one
+   * full-width rule spanning both columns, never two column-width ones. A rule
+   * that stops at a column edge reads as belonging to that column, which is
+   * exactly how the right-hand one turned into a stray field underline. */
   .cs-contact__panel {
-    border-top: 1px solid var(--border-strong);
     padding-top: var(--space-40);
   }
   .cs-contact__aside {
@@ -51,20 +70,17 @@
     margin: 0;
     max-width: none;
   }
-  /* Scoped to this page's NAP block on purpose. The assembled email link used
-     to be styled through a bare `.cs-email a`, which leaks: the same component
-     now renders inside the ink colophon, where madder measures 1.99:1 against
-     ink and fails AA badly. The email span sits inside .cs-contact__nap here,
-     so this selector already covers it, and in the colophon the link inherits
-     paper from .cs-colophon__address at 16.06:1. Never style .cs-email by
-     itself; style the context it sits in. */
-  .cs-contact__nap a {
-    color: var(--color-madder);
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 3px;
-  }
-  .cs-contact__nap a:hover { color: var(--color-madder-deep) }
+  /* NO LINK RULE HERE ANY MORE. This restated the base inline-link treatment
+     from base/elements.css declaration for declaration, so the phone and email
+     in the NAP block now simply inherit it and pick up the engage on hover, the
+     visited tint and the focus ticks for free.
+
+     The reason it was scoped to this page still holds and still matters: the
+     assembled email link used to be styled through a bare `.cs-email a`, which
+     leaks, because the same component renders inside the ink colophon where
+     madder measures 1.99:1 and fails AA badly. The colophon overrides the base
+     rule with paper (colophon.css), which is what keeps that safe. Never style
+     .cs-email by itself; style the context it sits in. */
 
   .cs-contact__note {
     margin: 0;

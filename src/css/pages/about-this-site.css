@@ -204,7 +204,10 @@
     line-height: 1.6;
     color: var(--text-body);
   }
-  .cs-about__label a { color: var(--color-madder) }
+  /* Links in a stat label take the base inline treatment. The colour-only rule
+     that stood here is now the base rule's job, and removing it means these
+     pick up the engage, the visited tint and the focus ticks with everything
+     else. */
 
   .cs-about__src {
     margin: var(--space-8) 0 0;

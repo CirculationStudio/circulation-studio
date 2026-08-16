@@ -4,6 +4,10 @@ title: "The Circulation Network: four practices, four markets"
 description: "Four independent marketing practices working under one set of standards, each owning a single market and a single discipline."
 permalink: /network/index.html
 
+# The hero image is the LCP element, so base.njk preloads it from here. Keep
+# this in step with the src in the hero band below.
+preloadImage: cs-img-web-landscape-wide.webp
+
 hero:
   eyebrow: Four practices, four markets
   title: The Circulation Network
@@ -172,12 +176,33 @@ pages:
   </nav>
 {% endcall %}
 
-{#- 1 HERO -#}
-{% call container(class="cs-net-section cs-net-section--first") %}
-  <p class="cs-eyebrow">{{ hero.eyebrow }}</p>
-  <h1 class="cs-net-hero__title">{{ hero.title }}</h1>
-  <p class="cs-net-hero__lede">{{ hero.lede }}</p>
-{% endcall %}
+{#- 1 HERO. Full bleed, so it and the ink pane are the two bands that leave
+    the container.
+
+    THE MIRROR. What We Do is text left, image right, bleeding off the right
+    edge. This is the inversion: image left, bleeding off the LEFT edge, type
+    right. The difference is that the type STRADDLES the picture's right edge
+    rather than sitting beside it: 20% of the column falls on the paper inside
+    the photograph, 80% on the page's own ground.
+
+    The column's right edge lands on the container's right edge, so the type
+    still ends where every other line on the page ends.
+
+    Below 1120 the overlay is abandoned and this stacks, image over type. See
+    the page CSS for what was measured to place the type where it is. -#}
+<div class="cs-net-hero cs-net-section--first">
+  <div class="cs-net-hero__frame">
+    <img class="cs-net-hero__figure"
+         src="{{ site.cdn }}cs-img-web-landscape-wide.webp"
+         alt="Web spun between two branches, the network as one structure"
+         width="1200" height="672" loading="eager" fetchpriority="high" decoding="async">
+    <div class="cs-net-hero__copy">
+      <p class="cs-eyebrow">{{ hero.eyebrow }}</p>
+      <h1 class="cs-net-hero__title">{{ hero.title }}</h1>
+      <p class="cs-net-hero__lede">{{ hero.lede }}</p>
+    </div>
+  </div>
+</div>
 
 {#- 2 THE FOUR PRACTICES -#}
 {% call container(class="cs-net-section") %}

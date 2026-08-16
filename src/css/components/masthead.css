@@ -1,30 +1,58 @@
-/* Editorial masthead and its collapsed sticky state, from the locked
-   Header + Footer design.
+/* The masthead: the original composition, which condenses into itself.
 
-   Structure: a three-column rail (location, centred stacked lockup, booking
-   status) with the four-item nav justified beneath it. The rail is full-bleed
-   with a 40px gutter rather than held to the 1120px container, so the side
-   items pin to the edges and the lockup stays optically centred. That is what
-   makes it read as a masthead rather than a header bar.
+   TWO STATES, CHOSEN INDEPENDENTLY. That is the whole structure of this file
+   and it was got wrong once, so it is worth stating flatly.
+
+   The EXPANDED state is the editorial rail exactly as it was before the Header
+   Condense comp landed: a three-column grid with the labels centred against the
+   full lockup, then the nav in its own band below a rule with 14px of air above
+   and below it. It is normal flow, it is sized by its content, and NOTHING
+   about the condensed state reaches back into it.
+
+   The CONDENSED state is a 62px bar with the nav row and the mark centred in it.
+
+   THE TRAVEL BETWEEN THEM IS MEASURED, NEVER CHOSEN. main.js reads where each
+   piece sits expanded, computes where it needs to sit condensed, and writes the
+   difference to a custom property. The first version of this file did the
+   opposite: it took the comp's condensed coordinates as given and positioned
+   the expanded state 144px above them. That pulled the whole composition upward
+   — the flanking labels lost 45.7px and landed on the top edge, the nav band
+   collapsed from 59.6px of air to a bare 1px rule, and the header read as a
+   navigation bar rather than a masthead. Deriving one state from the other is
+   what caused it. Do not reintroduce a hardcoded offset here.
 
    The 40px gutter, 11px/12px label sizes and .12em nav tracking are the
-   design's own values and are not on any token scale. They are stated once
-   here and never repeated at a call site. */
+   design's own values and are not on any token scale. The condensed height, the
+   44px condensed mark and the 2px optical lift are the comp's, also not on a
+   scale, and are named in main.js where the derivation can see them. */
 @layer components {
-  /* Declared at the root, NOT on .cs-masthead, because .cs-stickybar is a
-     SIBLING of the header rather than a descendant. Custom properties inherit
-     down the tree only, so scoping this to .cs-masthead left the sticky bar
-     resolving var(--cs-masthead-gutter) to nothing. That made its padding
-     shorthand invalid, CSS dropped the whole declaration, and the collapsed
-     bar rendered with the wordmark and nav flush against the viewport edges. */
   :root {
     --cs-masthead-gutter: 40px;
+    --cs-masthead-h-cond: 62px;
   }
 
+  /* Fixed so the condensed state can hold the top of the viewport. The expanded
+     height is MEASURED from the natural content rather than declared, because
+     the lockup sizes off font metrics and a literal would drift the moment the
+     face changed. The fallback is the measured value at the time of writing and
+     is only ever seen before the first measurement lands. */
   .cs-masthead {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--z-nav);
+    height: var(--cs-h-exp, 217px);
+    overflow: hidden;
     border-bottom: 1px solid var(--border-hairline);
     background: var(--surface-page);
+    transition:
+      height var(--dur-long) var(--ease-out),
+      background-color var(--dur-fast) var(--ease-out);
   }
+  .cs-masthead__spacer { height: var(--cs-h-exp, 217px) }
+
+  /* ---- expanded: unchanged from the original ---- */
 
   /* Labels are centred against the full wordmark block (icon, CIRCULATION and
      STUDIO together), not aligned to its baseline. The grid row is sized by the
@@ -39,8 +67,6 @@
     padding: 28px var(--cs-masthead-gutter) 22px;
   }
 
-  /* Both rail labels sit on the display face at caption scale. The location is
-     faint and inert; the booking note is madder and is a link. */
   /* margin:0 matters. The location is a <p> and inherited margin-bottom 16px
      from base/elements.css, while the booking note is an <a> with none, so the
      two flanking labels sat 16px apart from each other. A label is not prose. */
@@ -53,14 +79,19 @@
     margin: 0;
     max-width: none;
   }
-  .cs-masthead__location { color: var(--text-faint) }
+  .cs-masthead__location {
+    color: var(--text-faint);
+    transition: opacity var(--dur-fast) var(--ease-out);
+  }
 
   .cs-masthead__booking {
     justify-self: end;
     font-weight: var(--weight-display);
     color: var(--color-madder);
     text-decoration: none;
-    transition: color var(--dur-fast) var(--ease-out);
+    transition:
+      color var(--dur-fast) var(--ease-out),
+      transform var(--dur-long) var(--ease-out);
   }
   .cs-masthead__booking:hover { color: var(--color-madder-deep) }
   .cs-masthead__booking:focus-visible,
@@ -76,6 +107,7 @@
     justify-content: center;
     border-top: 1px solid var(--border-hairline);
     padding: 14px var(--cs-masthead-gutter);
+    transition: border-top-color var(--dur-fast) var(--ease-out);
   }
   .cs-masthead__navlist {
     display: flex;
@@ -86,18 +118,20 @@
     margin: 0;
     padding: 0;
     list-style: none;
+    transition: transform var(--dur-long) var(--ease-out);
   }
-  /* Nav hover borrows the plain link-draw language (.cs-link), NOT the button
-     snap. The button is the one signature interaction in the system: tracking
-     tightens, weight jumps, outline fills, 220ms with overshoot. Nav is
-     utility, so it stays deliberately quieter: a hairline that draws in from
-     the left at --dur-fast with a plain ease-out, no overshoot, and the label
-     shifting to madder on the same timing.
+  .cs-masthead__navlist > li { transition: transform var(--dur-long) var(--ease-out) }
 
-     Two things it must never do. No tracking or weight change, which would
-     read as a weak imitation of the button and muddy the signature. And the
-     madder stays a line-weight accent: this is a 1px gradient sized from 0 to
-     100 percent, never a background fill or a pane behind the item. */
+  /* Nav hover borrows the plain link-draw language (.cs-link), NOT the button
+     states. The button is the signature interaction: a bar crosses the face, the
+     plate presses, registration marks appear. Nav is utility, so it stays
+     deliberately quieter: a hairline that draws in from the left at --dur-fast
+     with a plain ease-out, and the label shifting to madder on the same timing.
+
+     Two things it must never do. No tracking or weight change, which would move
+     the layout box and is the bug the whole button rewrite exists to kill. And
+     the madder stays a line-weight accent: a 1px gradient sized 0 to 100
+     percent, never a background fill or a pane behind the item. */
   .cs-masthead__nav a,
   .cs-stickybar__nav a {
     font-family: var(--font-display);
@@ -122,43 +156,77 @@
     background-size: 100% 1px;
   }
 
-  /* Collapsed sticky state: compact horizontal lockup at the locked 3.0x icon
-     ratio, on paper at 92 percent with a blur behind it.
+  /* The mark's two wrappers. Position and scale are separate elements so the
+     descent can start before the shrink does: without the lead the two resolve
+     together and it reads as a zoom-out rather than a move. The mark also runs
+     longer than the nav row, because it covers a descent AND a scale change
+     while the row covers a slide and nothing else. */
+  .cs-masthead__markpos {
+    display: block;
+    transition: transform var(--dur-longer) var(--ease-out);
+  }
+  .cs-masthead__markscale {
+    display: block;
+    transform-origin: top center;
+    transition: transform var(--dur-longer) var(--ease-out);
+    transition-delay: var(--dur-lead);
+  }
 
-     Hidden with visibility rather than opacity alone, which keeps it out of
-     the accessibility tree AND out of the tab order while collapsed. Revealing
-     it is driven by an IntersectionObserver on a sentinel (see main.js), not a
-     scroll handler, so there is no per-frame main-thread work. */
-  .cs-stickybar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: var(--z-nav);
-    display: flex;
-    align-items: center;
-    height: 56px;
-    padding: 0 var(--cs-masthead-gutter);
-    background: color-mix(in srgb, var(--color-paper) 92%, transparent);
+  /* The wordmark leaves. Only the isotype survives the condense, so the brand
+     name is absent from the condensed bar. Deliberate, and a wordmark decision
+     rather than a header one: design.md section 9 lists lockups but does not
+     name a mark-only condensed state, so it should be added there. */
+  .cs-masthead .cs-wordmark__name,
+  .cs-masthead .cs-wordmark__studio {
+    transition: opacity var(--dur-fast) var(--ease-out);
+  }
+
+  /* ---- condensed ----
+
+     Every offset here is a custom property written by main.js from the
+     difference between the two measured positions. The fallbacks are only ever
+     seen before the first measurement lands, and they are deliberately
+     conservative rather than tuned: a wrong fallback should look unfinished,
+     not plausible. */
+  /* 98 PERCENT, NOT THE COMP'S 92. At 92 the page behind the bar was legible
+     through it: measured 1.091:1 against the paper ground in the empty left
+     third of the condensed row, which on Contact meant reading that page's own
+     headline and availability line as ghosts inside the header. The blur softens
+     it but does not stop it being words.
+
+     Measured across candidates against the ground: 92 gives 1.091:1, 95 gives
+     1.055, 97 gives 1.036, 98 gives 1.027 and 100 gives 1.000. 98 is where it
+     stops being perceptible.
+
+     WORTH KNOWING: this all but retires the frosted-glass quality the comp asked
+     for. Two percent of translucency and an 8px blur is functionally an opaque
+     bar. That is a deliberate trade, because a header you can read the page
+     through is a header with dirt on it, and it was reported twice as a bug. If
+     the frost is wanted back it needs a different answer than opacity, most
+     likely a much heavier blur, and the ghost would still be there as a wash. */
+  .cs-masthead[data-cond="true"] {
+    height: var(--cs-masthead-h-cond);
+    background: color-mix(in srgb, var(--color-paper) 98%, transparent);
     backdrop-filter: blur(8px);
-    border-bottom: 1px solid var(--border-hairline);
-    visibility: hidden;
-    opacity: 0;
-    transform: translateY(-100%);
-    transition:
-      opacity var(--dur-fast) var(--ease-out),
-      transform var(--dur-snap) var(--ease-out),
-      visibility 0s linear var(--dur-snap);
   }
-  .cs-stickybar.is-visible {
-    visibility: visible;
-    opacity: 1;
-    transform: translateY(0);
-    transition:
-      opacity var(--dur-fast) var(--ease-out),
-      transform var(--dur-snap) var(--ease-out),
-      visibility 0s;
-  }
+  .cs-masthead[data-cond="true"] .cs-masthead__location,
+  .cs-masthead[data-cond="true"] .cs-wordmark__name,
+  .cs-masthead[data-cond="true"] .cs-wordmark__studio { opacity: 0 }
+  .cs-masthead[data-cond="true"] .cs-masthead__nav { border-top-color: transparent }
+
+  .cs-masthead[data-cond="true"] .cs-masthead__markpos { transform: translateY(var(--cs-ty-mark, -40px)) }
+  .cs-masthead[data-cond="true"] .cs-masthead__markscale { transform: scale(var(--cs-mark-scale, .38)) }
+  .cs-masthead[data-cond="true"] .cs-masthead__booking { transform: translateY(var(--cs-ty-book, -50px)) }
+  .cs-masthead[data-cond="true"] .cs-masthead__navlist { transform: translateY(var(--cs-ty-nav, -155px)) }
+  .cs-masthead[data-cond="true"] .cs-masthead__navlist > :nth-child(1) { transform: translateX(var(--cs-tx1, -44px)) }
+  .cs-masthead[data-cond="true"] .cs-masthead__navlist > :nth-child(2) { transform: translateX(var(--cs-tx2, -44px)) }
+  .cs-masthead[data-cond="true"] .cs-masthead__navlist > :nth-child(3) { transform: translateX(var(--cs-tx3, 44px)) }
+  .cs-masthead[data-cond="true"] .cs-masthead__navlist > :nth-child(4) { transform: translateX(var(--cs-tx4, 44px)) }
+
+  /* ---- the mobile bar ----
+     Hidden above 1120, where the header above carries everything. */
+
+  .cs-stickybar { display: none }
 
   .cs-stickybar__nav {
     display: flex;
@@ -166,20 +234,9 @@
     gap: 36px;
     margin-left: auto;
   }
-  /* Sticky nav links share the hover rule with the masthead nav above.
-     Deliberately not restated here: a later duplicate at equal specificity
-     would win the cascade and silently drop the underline. */
   .cs-stickybar a:focus-visible {
     outline: 2px solid var(--focus-ring);
     outline-offset: 3px;
-  }
-
-  /* Zero-height marker the observer watches. Once it leaves the viewport the
-     masthead has scrolled away and the sticky bar earns its place. */
-  .cs-masthead__sentinel {
-    height: 1px;
-    margin-top: -1px;
-    pointer-events: none;
   }
 
   /* Skip link. Fixed and lifted off-screen by a transform rather than
@@ -287,45 +344,46 @@
       --cs-bar-height-compact: 60px;
     }
 
-    .cs-masthead { display: none }
+    /* The condensing composition does not survive here and is not meant to.
+       Four items plus a mark cannot be centred in a 390px bar without the items
+       becoming unreadable, and a logo descending into a row that does not exist
+       is a logo that just moves.
 
-    /* The sentinel does double duty below 1120. It is still the observer's
-       marker, and at bar height it is also the spacer that keeps the first
-       line of content out from under the fixed bar. That makes the compact
-       state trigger exactly when the bar's own depth has been scrolled past,
-       which is the honest equivalent of "the masthead has scrolled away". */
-    .cs-masthead__sentinel {
-      height: var(--cs-bar-height);
-      margin-top: 0;
-    }
+       The comp swapped at 960px, derived from a hard 880px minimum where the
+       condensed nav's right edge collides with the booking line. This repo
+       swaps at 1120 instead: it satisfies that minimum with more room than the
+       comp's own 80px of clearance, and it keeps masthead, menu.css and
+       colophon.css on ONE breakpoint rather than three. */
+    .cs-masthead { display: none }
+    .cs-masthead__spacer { height: var(--cs-bar-height) }
 
     /* The skip link's target sits under the fixed bar without this. */
     main { scroll-margin-top: var(--cs-bar-height) }
 
-    /* Always present, so every rule that hid the bar is unwound. Height and
-       background carry the compact state instead. */
+    /* The bar becomes the masthead: always present, compacting rather than
+       appearing. Driven by the same scroll state the desktop header uses, so
+       there is one threshold pair for the whole site. */
     .cs-stickybar {
+      display: flex;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: var(--z-nav);
+      align-items: center;
+      border-bottom: 1px solid var(--border-hairline);
       height: var(--cs-bar-height);
       padding: 0 20px 0 32px;
       background: var(--surface-page);
       backdrop-filter: none;
-      visibility: visible;
-      opacity: 1;
-      transform: none;
       transition:
         height var(--dur-snap) var(--ease-out),
         background-color var(--dur-fast) var(--ease-out);
     }
     .cs-stickybar.is-visible {
       height: var(--cs-bar-height-compact);
-      background: color-mix(in srgb, var(--color-paper) 92%, transparent);
+      background: color-mix(in srgb, var(--color-paper) 98%, transparent);
       backdrop-filter: blur(8px);
-      visibility: visible;
-      opacity: 1;
-      transform: none;
-      transition:
-        height var(--dur-snap) var(--ease-out),
-        background-color var(--dur-fast) var(--ease-out);
     }
 
     /* The lockup fills the bar's depth, which makes the home link a full-height
@@ -368,12 +426,45 @@
      the left, which leaves a plain colour-plus-underline state rather than
      removing the affordance. Same for the sticky bar, which snaps into place
      rather than sliding. */
+  /* REDUCED MOTION: condensed is the RESTING STATE and nothing animates into
+     it. The header is 62px from the first paint, the mark is already in the
+     row, and scrolling changes nothing. That is the right default rather than a
+     degraded one: the condensed lockup is complete on its own, and someone who
+     never sees the expanded state loses no navigation and no brand. */
   @media (prefers-reduced-motion: reduce) {
+    .cs-masthead,
+    .cs-masthead__location,
+    .cs-masthead__word,
+    .cs-masthead__navrule,
+    .cs-masthead__markpos,
+    .cs-masthead__markscale,
+    .cs-masthead__navlist,
+    .cs-masthead__navlist > li,
     .cs-stickybar,
     .cs-stickybar.is-visible,
     .cs-masthead__booking,
     .cs-masthead__nav a,
     .cs-stickybar__nav a,
-    .cs-stickybar__booking { transition: none }
+    .cs-stickybar__booking { transition: none !important }
+
+    .cs-masthead {
+      height: var(--cs-masthead-h-cond);
+      background: color-mix(in srgb, var(--color-paper) 98%, transparent);
+      backdrop-filter: blur(8px);
+    }
+    .cs-masthead__location,
+    .cs-masthead__word,
+    .cs-masthead__navrule { opacity: 0 }
+    .cs-masthead__markpos { transform: translateY(-37px) }
+    .cs-masthead__markscale { transform: scale(.579) }
+    .cs-masthead__navlist { transform: translateY(-144px) }
+    .cs-masthead__navlist > :nth-child(1) { transform: translateX(var(--cs-tx1, -44px)) }
+    .cs-masthead__navlist > :nth-child(2) { transform: translateX(var(--cs-tx2, -44px)) }
+    .cs-masthead__navlist > :nth-child(3) { transform: translateX(var(--cs-tx3, 44px)) }
+    .cs-masthead__navlist > :nth-child(4) { transform: translateX(var(--cs-tx4, 44px)) }
+    @media (max-width: 1120px) {
+      .cs-masthead { display: none }
+      .cs-stickybar { height: var(--cs-bar-height-compact) }
+    }
   }
 }

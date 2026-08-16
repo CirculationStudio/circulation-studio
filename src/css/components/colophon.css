@@ -113,15 +113,23 @@
      anchor reading "Privacy /" is exactly what this avoids.
 
      12px is the gap .cs-colophon__nav already sets between its rows, reused
-     here between inline items rather than introducing a second value. */
-  .cs-colophon__pair {
-    display: flex;
-    align-items: baseline;
-    gap: 12px;
-  }
+     here between inline items rather than introducing a second value.
+
+     A PLAIN LIST ITEM, NOT A FLEX CONTAINER, and that is the whole fix for a
+     rhythm bug. This carried display:flex so the two anchors could take a gap,
+     and a flex container HAS NO STRUT: its height collapsed to the 11px
+     anchor's own line box at 18.7px, while the three list items above it are
+     30.6px, the strut from the inherited 18px at line-height 1.7. Same 12px gap
+     on the same list, two different box heights, and the last row sat 11.9px
+     out of rhythm with the three above it.
+
+     So the anchors go back to being inline, where they share a baseline for
+     free and need no gap, and the separator carries the spacing on both sides
+     itself. One rule sets the rhythm now, which is what it looked like from the
+     markup all along. */
   .cs-colophon__pair a + a::before {
     content: "/";
-    margin-right: 12px;
+    margin: 0 12px;
     color: color-mix(in srgb, var(--color-paper) 45%, transparent);
   }
 
@@ -209,10 +217,15 @@
        a 52px bordered row here, which would give this item two stacked rows
        and a rule through the middle of one link pair. So the ROW moves to the
        list item and the anchors go back to being inline inside it. */
+    /* Flex HERE, and only here. The desktop pair is a plain list item so it
+       keeps the strut the rhythm depends on; this row genuinely wants a flex
+       box, because align-items is what centres the two links in the 52px touch
+       row. */
     .cs-colophon__pair {
+      display: flex;
+      align-items: center;
       min-height: 52px;
       border-bottom: 1px solid var(--border-on-deep);
-      align-items: center;
     }
     .cs-colophon__pair a {
       display: inline;

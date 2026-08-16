@@ -2,26 +2,260 @@
 // and extract it to a hashed <link> at build time. Keeps CSS on one pipeline.
 import "/src/css/main.css";
 
-/* Collapsed sticky masthead.
+/* ============================================================
+   THE MASTHEAD CONDENSE.
+   ============================================================
 
-   Driven by an IntersectionObserver on a zero-height sentinel sitting just
-   below the masthead, not by a scroll handler. The observer fires twice per
-   scroll pass (out, then back in) instead of on every frame, so there is no
-   per-frame main-thread work and nothing here reads layout. That matters for
-   the INP budget in CLAUDE.md.
+   Two jobs: flip the condensed state on scroll, and derive where the four nav
+   items have to land once they part around the mark.
 
-   Visibility is a class toggle; all the motion and the removal from the
-   accessibility tree live in CSS. */
+   WHY THIS REPLACED AN IntersectionObserver. The observer watched a sentinel
+   and could express exactly one threshold, so it flipped on the same line it
+   flipped back. The design wants HYSTERESIS: condense past 96px, expand back
+   above 48px, deliberately apart so it cannot flicker when someone rests on the
+   boundary. That needs two numbers, which a single sentinel cannot carry.
+
+   The listener is passive and does nothing but compare a number until the
+   threshold is actually crossed, so the per-frame cost is a read of scrollY and
+   a comparison. Nothing here reads layout on scroll. */
+const masthead = document.querySelector("[data-masthead]");
 const stickybar = document.querySelector("[data-sticky-masthead]");
-const sentinel = document.querySelector("[data-masthead-sentinel]");
+const navlist = document.querySelector("[data-masthead-nav]");
 
-if (stickybar && sentinel && "IntersectionObserver" in window) {
-  new IntersectionObserver(
-    ([entry]) => {
-      stickybar.classList.toggle("is-visible", !entry.isIntersecting);
-    },
-    { threshold: 0 }
-  ).observe(sentinel);
+const CONDENSE_AT = 96;
+const EXPAND_AT = 48;
+
+if (masthead || stickybar) {
+  let condensed = null;
+
+  const setCondensed = (next) => {
+    if (next === condensed) return;
+    condensed = next;
+    if (masthead) masthead.setAttribute("data-cond", next ? "true" : "false");
+    // The mobile bar takes the same state, so the site has ONE threshold pair.
+    if (stickybar) stickybar.classList.toggle("is-visible", next);
+  };
+
+  const onScroll = () => {
+    const y = window.scrollY || document.documentElement.scrollTop;
+    if (!condensed && y > CONDENSE_AT) setCondensed(true);
+    else if (condensed && y < EXPAND_AT) setCondensed(false);
+  };
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+  setCondensed(false);
+  onScroll();
+
+  /* ----------------------------------------------------------
+     THE DERIVED OFFSET, AND THE FONT-LOAD TRAP.
+     ----------------------------------------------------------
+
+     Who We Are and What We Do are wider together than Results and Contact, so
+     equal gaps around the mark put the middle gap's centre right of the
+     viewport axis. The mark holds the axis it had expanded and the RUN carries
+     the difference instead, because the alternative slides the composition's
+     one fixed point off the axis on the way down.
+
+     Hand-tuned gaps were the other option and they are worse than a cost, they
+     are a liability: rename Results to Case Studies and the right pair becomes
+     the wider one, so a tuned correction does not go stale, it INVERTS, and
+     nothing in the code would say so. This measures instead.
+
+     THE TRAP THIS CLOSES. A measurement taken against a fallback face is wrong
+     for the life of the page and silently so: Dual and the fallback set the
+     same ten characters to different widths, so the run would settle at a
+     plausible but incorrect position and nothing would ever recompute it. Dual
+     is self-hosted with font-display:swap, so the fallback IS what paints
+     first. Three hooks close it: once on mount, again when document.fonts.ready
+     resolves, and again on every loadingdone event, which is what catches a
+     late or cached-cold Dual. Plus resize.
+
+     Until the first measurement lands the CSS falls back to a symmetric 44px
+     split, which is wrong by the same amount but is a designed position rather
+     than an accident.
+
+     Measurement is taken by summing offsets up to the header rather than
+     reading one hop, because offsetParent itself changes between the two
+     states. See the note on within() below; getting that wrong is what put the
+     whole nav run to the right of the mark.
+
+     NOTE FOR ANYONE CHANGING THE NAV: this assumes the mark is the middle item
+     of five, so four labels. A fifth destination needs the derivation rewritten
+     rather than retuned, which is the right kind of fragility: it fails at the
+     length check below rather than quietly at a rename.
+
+     The comp this came from queried an attribute its own markup did not carry,
+     so its measurement never ran and it always used the fallback. The
+     data-masthead-nav hook exists so that cannot happen here silently. */
+  const GAP_MARK = 28;
+  const GAP_PAIR = 40;
+  /* The condensed bar's chosen values. The expanded state has its own chosen
+     values and they live in CSS, in normal flow. Neither is derived from the
+     other; only the TRAVEL between them is. */
+  const COND_H = 62;
+  /* A RATIO OF THE EXPANDED MARK, not a pixel target. The comp condensed a 76px
+     mark to 44px, which is a real shrink; this lockup's mark is 49.8px, so
+     carrying the 44 across gave a 12 percent reduction that read as no change
+     at all. A ratio is also the thing that survives the lockup being resized,
+     which a pixel target does not: wordmark.css derives every size in the
+     stacked lockup from --cs-wordmark-size and font-metric ratios, so a literal
+     here would silently stop meaning "smaller" the moment that moved.
+
+     .38 puts the mark at 18.9px against a 9.3px cap height and a 20px label
+     line box, so it sits as a PEER of the nav labels rather than as the tallest
+     thing in the row. Deliberately a shade under a geometric match to the line
+     box, because a solid circular mark carries more visual mass than caps of
+     the same height and reads larger than it measures. Chosen by rendering the
+     row at .60, .48, .42, .38, .34 and .30 and looking, not by arithmetic. */
+  const COND_MARK_RATIO = 0.38;
+
+  /* ALWAYS WALK THE CHAIN. offsetTop and offsetLeft are relative to
+     offsetParent, and offsetParent MOVES between the two states: a transformed
+     element becomes a containing block, so once the nav list carries its
+     translate the items report against the list instead of against the header.
+
+       expanded    li.offsetParent = .cs-masthead        offsetLeft 514 648 782 885
+       condensed   li.offsetParent = .cs-masthead__navlist   offsetLeft 0 134 268 371
+
+     Reading one hop is therefore only correct while expanded, and a re-measure
+     taken while condensed came out ~514px wrong and threw the whole run to the
+     right of the mark. Summing to the header is the same number in both states,
+     which is what "state-independent" actually requires. The VALUES are
+     untransformed either way; it is the ORIGIN that moves. */
+  const within = (el, root) => {
+    let x = 0;
+    let y = 0;
+    for (let n = el; n && n !== root; n = n.offsetParent) {
+      x += n.offsetLeft;
+      y += n.offsetTop;
+    }
+    return { x, y };
+  };
+  const topWithin = (el, root) => within(el, root).y;
+
+  let applied = null;
+
+  const measure = () => {
+    if (!navlist || !masthead) return;
+    if (!masthead.clientWidth) return;
+    const items = Array.prototype.slice.call(navlist.children);
+    if (items.length !== 4) return;
+    const w = items.map((el) => el.offsetWidth);
+    if (w.some((x) => !x)) return;
+
+    const rail = masthead.querySelector(".cs-masthead__rail");
+    const nav = masthead.querySelector(".cs-masthead__nav");
+    const mark = masthead.querySelector(".cs-masthead__markpos");
+    const booking = masthead.querySelector(".cs-masthead__booking");
+    const icon = mark && mark.querySelector("img");
+    if (!rail || !nav || !mark || !booking || !icon) return;
+    /* Computed, not offsetWidth/Height: the lockup sizes off font-metric ratios
+       and lands on fractions, and offset* rounds to whole pixels. */
+    const markH = parseFloat(getComputedStyle(icon).height);
+    const markW = parseFloat(getComputedStyle(icon).width);
+    if (!markH || !markW) return;
+
+    const out = {};
+
+    /* ---- horizontal: the run parts around the mark ---- */
+    /* The gap either side of the mark is measured from the mark's CONDENSED
+       width, not a constant. A fixed half-width would leave the run sitting at
+       the old distance the moment the mark's size changed, which is how a 28px
+       gap quietly becomes 35. */
+    const axis = masthead.clientWidth / 2;
+    const markHalf = (markW * COND_MARK_RATIO) / 2;
+    const target = [];
+    target[1] = axis - markHalf - GAP_MARK - w[1];
+    target[0] = target[1] - GAP_PAIR - w[0];
+    target[2] = axis + markHalf + GAP_MARK;
+    target[3] = target[2] + w[2] + GAP_PAIR;
+    items.forEach((el, k) => {
+      out[`--cs-tx${k + 1}`] = target[k] - within(el, masthead).x;
+    });
+
+    /* ---- the expanded height, measured rather than declared ----
+       Natural content height plus the border, so the CSS never has to guess and
+       the transition has two real numbers to run between.
+
+       getBoundingClientRect, not offsetHeight: offsetHeight rounds to whole
+       pixels and the rail and nav are both fractional, which left the header
+       0.7px short and quietly clipped the bottom of the nav band under
+       overflow:hidden. A transformed CHILD does not change its parent's box, so
+       these two readings stay valid while the header is condensed. */
+    const border = masthead.offsetHeight - masthead.clientHeight;
+    out["--cs-h-exp"] =
+      rail.getBoundingClientRect().height +
+      nav.getBoundingClientRect().height +
+      border;
+
+    /* ---- vertical: each piece's own two positions, differenced ----
+       Read where it sits expanded, work out where it belongs in a COND_H bar,
+       and travel the gap. Nothing here offsets from another element's answer. */
+    /* Measure the ICON, not its wrapper: the wrapper's height includes the
+       icon's own margin-bottom, the gap to CIRCULATION in the stacked lockup,
+       and scaling against that drew the mark far too small. */
+    const condMark = markH * COND_MARK_RATIO;
+    out["--cs-mark-scale"] = COND_MARK_RATIO;
+    // transform-origin is top center, so the translate places the scaled top
+    /* Equal air above and below. The 2px optical lift carried over from the
+       comp is gone: it was written for a mark that dominated the row, where
+       nudging it up read as levelling it against the caps. At a size that is
+       already a peer of the labels it only made the row look off-centre, 14.1
+       above against 18.0 below. */
+    out["--cs-ty-mark"] = (COND_H - condMark) / 2 - topWithin(mark, masthead);
+    out["--cs-ty-nav"] =
+      (COND_H - navlist.offsetHeight) / 2 - topWithin(navlist, masthead);
+    out["--cs-ty-book"] =
+      (COND_H - booking.offsetHeight) / 2 - topWithin(booking, masthead);
+
+    const key = JSON.stringify(out);
+    if (key === applied) return;
+    applied = key;
+    for (const [prop, value] of Object.entries(out)) {
+      const rounded = Math.round(value * 100) / 100;
+      const target_ = prop === "--cs-tx1" || prop === "--cs-tx2" ||
+        prop === "--cs-tx3" || prop === "--cs-tx4" ? navlist : masthead;
+      target_.style.setProperty(
+        prop,
+        prop === "--cs-mark-scale" ? String(rounded) : `${rounded}px`
+      );
+    }
+  };
+
+  measure();
+  if (document.fonts) {
+    document.fonts.ready.then(measure);
+    document.fonts.addEventListener("loadingdone", measure);
+  }
+  window.addEventListener("resize", measure);
+
+  /* WATCH THE LAYOUT ITSELF, not just the events we guessed would change it.
+     The font hooks and the resize listener only cover the causes we thought of,
+     and they missed a real one: a stylesheet replaced in place. During
+     development Vite swaps CSS over an open page with no reload and no resize,
+     so the nav's resting positions moved while the offsets stayed as measured
+     against the old layout. The items scattered and nothing recomputed them,
+     which looked like a condense that had not finished.
+
+     Reproduced by injecting a rule that changes the resting layout: the four
+     items went from [456,590,784,889] to [366,560,814,979] while tx sat
+     unchanged at [-58,-58,2,4].
+
+     A ResizeObserver makes the trigger the thing we actually care about, so it
+     also covers zoom, a late font the loadingdone event did not fire for, and
+     anything else that moves the row.
+
+     It observes the RAIL and the LIST, deliberately not the header. The
+     header's height animates through the condense, which would fire this on
+     every frame of the transition for a measurement that cannot have changed;
+     these two keep their size throughout and only move when the layout really
+     does. */
+  if ("ResizeObserver" in window) {
+    const ro = new ResizeObserver(() => measure());
+    const rail = masthead && masthead.querySelector(".cs-masthead__rail");
+    if (rail) ro.observe(rail);
+    if (navlist) ro.observe(navlist);
+  }
 }
 
 /* Mobile menu: the full-pane ink overlay behind the bar's rule icon.
@@ -146,4 +380,66 @@ for (const node of document.querySelectorAll("[data-email-user][data-email-domai
    actually wired. */
 for (const form of document.querySelectorAll("[data-form-mockup]")) {
   form.addEventListener("submit", (event) => event.preventDefault());
+}
+
+/* ============================================================
+   CONTACT PROMPTS. Four topics that light as the message is written.
+   ============================================================
+
+   ENTIRELY CLIENT SIDE. No request is made, nothing is sent before submit, and
+   nothing about this touches the network. That matters beyond privacy: the
+   third-party request count published on /about-this-site/ is measured from a
+   real page load, and adding a call here would move a number the site publishes
+   about itself.
+
+   THE SUBMIT IS NEVER GATED. No disabled state, no count, no threshold. Send it
+   with all four unlit and the form behaves identically. The rows are guidance,
+   not a form control, which is also why they are list items rather than
+   checkboxes: a checkbox implies something is being submitted.
+
+   TEMPLATE SHAPES ONLY EVER SUPPRESS, and are never named on screen. If the
+   message reads like a cold outreach template, no row lights, and nothing tells
+   the sender why. Saying so would teach anyone sending them how to get past it.
+
+   THE LOCATION MATCH IS A WEAK HEURISTIC and is known to be. A place name not
+   on the list leaves the row unlit on a perfectly complete message. That is
+   survivable precisely because nothing is gated: a wrong guess costs a grey
+   tick, not a blocked form. */
+const promptGroup = document.querySelector("[data-prompts]");
+const promptSource = document.querySelector("[data-prompts-source]");
+
+if (promptGroup && promptSource) {
+  const BIZ = ["dentist","dental","orthodont","plumb","hvac","heating","air conditioning","roof","electrician","electrical","landscap","law firm","attorney","lawyer","med spa","medspa","salon","restaurant","contractor","remodel","veterinar","chiroprac","clinic","practice","dealership","auto repair","body shop","pest control","movers","moving company","flooring","pool service","garage door","locksmith","optometr","dermatolog","physical therapy","urgent care","accounting","bookkeeping","insurance agency","real estate","realtor","bakery","brewery","cafe","gym","boutique","hotel","property management","cleaning service","junk removal","solar","window","fencing","paving","septic","tree service","catering","photograph","daycare","tutoring","storage","franchise","dispensary","barber","tattoo","florist"];
+  const GEO = ["california","orange county","los angeles","san diego","laguna","irvine","newport","costa mesa","anaheim","long beach","san francisco","sacramento","riverside","san bernardino","ventura","pasadena","texas","arizona","nevada","florida","oregon","washington","colorado","utah","new york","chicago","phoenix","seattle","portland","denver","austin","dallas","houston","atlanta","boston","miami","nashville","charlotte"];
+  const WANT = ["seo","yelp","google ads","ppc","paid search","ads","website","web design","redesign","new site","reviews","reputation","ranking","rank","leads","calls","phone","traffic","visibility","map pack","conversion","bookings","appointments","more customers","more clients","grow","found"];
+  const MONEY = ["budget","per month","a month","monthly spend","retainer","price range","ballpark","what do you charge","how much","invest","spend"];
+  const TEMPLATE = ["hope this email finds you well","came across your website","came across your site","increase your traffic","first page of google","guest post","link building","dear sir","to whom it may concern","we are a leading","affordable seo","white label","free audit","no obligation","i am reaching out to offer","dofollow"];
+
+  const rows = new Map();
+  for (const row of promptGroup.querySelectorAll("[data-prompt]")) {
+    rows.set(row.getAttribute("data-prompt"), row);
+  }
+
+  const update = () => {
+    const t = (promptSource.value || "").toLowerCase();
+    const any = (list) => list.some((k) => t.indexOf(k) !== -1);
+    const suppressed = any(TEMPLATE);
+
+    const on = {
+      what: any(BIZ),
+      where:
+        any(GEO) ||
+        /\b[a-z]+,\s?(ca|ny|tx|fl|az|nv|or|wa|co|ut|il|ga|ma|nc|tn)\b/.test(t) ||
+        /\b\d{5}\b/.test(t),
+      want: any(WANT),
+      money: any(MONEY) || /\$\s?\d/.test(t)
+    };
+
+    for (const [id, row] of rows) {
+      row.setAttribute("data-on", on[id] && !suppressed ? "true" : "false");
+    }
+  };
+
+  promptSource.addEventListener("input", update);
+  update();
 }

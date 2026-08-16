@@ -32,11 +32,21 @@
     {{ button("Book a discovery call", href="/contact/") }}
     {{ button("View case study", variant="ghost", href="/work/", arrow=true) }}{% endraw %}
 #}
+{#
+  TWO SPANS, AND THEY ARE NOT DECORATION.
+
+  .cs-btn is the plate and .cs-btn__face is the printed surface. The bar and the
+  label both live on the face, and a press transforms the face, so the whole
+  printed surface moves as one object and the bar is not interrupted mid-travel.
+  Flattening this back to a bare label breaks the press and the bar together.
+  The reasoning is in components/button.css; do not simplify it away from here.
+#}
 {% macro button(label, href="", variant="primary", arrow=false, class="", type="button", ariaLabel="") %}
 {%- set classes = "cs-btn cs-btn--" + variant + (" " + class if class else "") -%}
+{%- set face %}<span class="cs-btn__face"><span class="cs-btn__label">{{ label }}{% if arrow %}<span class="cs-link__arrow" aria-hidden="true">&rarr;</span>{% endif %}</span></span>{% endset -%}
 {%- if href -%}
-<a class="{{ classes }}" href="{{ href }}"{% if ariaLabel %} aria-label="{{ ariaLabel }}"{% endif %}>{{ label }}{% if arrow %}<span class="cs-link__arrow" aria-hidden="true">&rarr;</span>{% endif %}</a>
+<a class="{{ classes }}" href="{{ href }}"{% if ariaLabel %} aria-label="{{ ariaLabel }}"{% endif %}>{{ face | safe }}</a>
 {%- else -%}
-<button class="{{ classes }}" type="{{ type }}"{% if ariaLabel %} aria-label="{{ ariaLabel }}"{% endif %}>{{ label }}{% if arrow %}<span class="cs-link__arrow" aria-hidden="true">&rarr;</span>{% endif %}</button>
+<button class="{{ classes }}" type="{{ type }}"{% if ariaLabel %} aria-label="{{ ariaLabel }}"{% endif %}>{{ face | safe }}</button>
 {%- endif -%}
 {% endmacro %}
