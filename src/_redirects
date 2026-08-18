@@ -18,68 +18,216 @@
 #
 # Rules are evaluated top to bottom and the FIRST match wins, so the specific
 # ones go above the wildcards. A trailing /* rule placed too high swallows every
-# specific rule underneath it.
+# specific rule underneath it. There are no wildcards in this file today.
 
 
 # ============================================================
-# MIGRATION MAP, NOT YET COLLECTED. Nothing below this line is live.
+# THE MIGRATION MAP. COLLECTED 2026-08-17. This is now live.
 # ============================================================
 #
-# This is a rebuild of an existing indexed site, so the old URLs already have
-# links and rankings pointing at them. Every one that does not land somewhere
-# deliberate becomes a 404 that used to be a page.
+# SOURCE: the live sitemap at https://www.circulationstudio.com/sitemap.xml,
+# fetched 2026-08-17. 41 URLs, none carrying a trailing slash. Nothing in this
+# file was reconstructed from memory or derived from the new build, because a
+# wrong rule looks exactly like a right one and nothing here can tell the
+# difference.
 #
-# THE OLD URLS HAVE TO BE COLLECTED FROM THE LIVE SITE FIRST, and none are
-# written here because inventing them would be worse than leaving it empty: a
-# wrong rule looks exactly like a right one and nothing in the build can tell
-# the difference. Collect them from the live circulationstudio.com, from Search
-# Console's indexed pages, from the existing sitemap.xml, and from analytics for
-# anything still receiving traffic. Then map each one by hand.
+# The Search Console backlink export is still outstanding and will add rows that
+# the sitemap does not carry. This file is sectioned so those append underneath
+# without disturbing anything above them.
 #
-# THIS MUST BE DONE BEFORE THE DNS CUTOVER described in DEPLOYMENT.md, not
-# after. Between cutover and the map landing, every old URL is a 404 being
-# served to real visitors and to crawlers that will act on it.
+# WHY EVERY DESTINATION CARRIES A TRAILING SLASH. The build canonicalises to the
+# slash form and Cloudflare 308s a bare path to it. A destination without the
+# slash would make every one of these a two-hop redirect, which loses a fraction
+# of the signal at every hop and is entirely avoidable.
 #
-# The new structure the map points into is two tiers, one flat segment each:
+# ONE HOP, CHECKED. No destination in this file appears as a source in it.
 #
-#   /yelp/<slug>/      Yelp Hub spokes
-#   /library/<slug>/   everything else
+# 41 live URLs account for as follows:
+#   32  rules below
+#    8  no rule, because this build publishes the same path. Listed at the
+#       bottom so the accounting is visible rather than implied.
+#    1  no rule, deliberately allowed to 404. Also listed at the bottom.
 #
-# Worked example, in the form the real rules will take. Commented out because it
-# is illustrative and the real slug is not known yet:
-#
-#   /blog/yelp-ads-cost  /yelp/what-yelp-ads-cost/  301
-#
-# reading: the old post at /blog/yelp-ads-cost moved permanently to the Yelp Hub
-# spoke at /yelp/what-yelp-ads-cost/.
-#
-# A subtree whose pieces have no individual destination goes to the tier it
-# belonged to rather than to the home page, because a reader who asked for one
-# article is better served by the shelf it sat on than by the front door:
-#
-#   /blog/*  /library/  301
-#
-# That rule goes LAST once real rules exist, or it will swallow them.
+# NO SOURCE PATH COLLIDES WITH A PAGE THIS BUILD PUBLISHES, and that is enforced
+# rather than promised: eleventy.config.js fails the build on any rule whose
+# source is a built URL. Cloudflare evaluates this file before serving a static
+# file, so such a rule would make its own page unreachable with nothing in the
+# output to show for it. See the eleventy.after hook.
 
 
 # ============================================================
-# LIVE RULES. Everything above this line is still commentary.
+# ACCESSIBILITY CLUSTER
 # ============================================================
 #
-# Both sources are live and indexed on the current site, confirmed against its
-# sitemap.xml. Both destinations carry a trailing slash, because the build
-# canonicalises to the slash form and Cloudflare 308s to it: a non-slash
-# destination would make every one of these a two-hop redirect.
+# Four live URLs, one destination for three of them. /accessibility was already
+# live before the map was collected: the new statement kept the footer's URL
+# rather than the live site's, so it is a rename.
 #
-# The rank tracking rule is required rather than optional. The old site serves
-# BOTH /yelp-rank-tracking-tool and /yelp-rank-tracking-landing-page, each
-# self-canonicalising to itself, so the two have been splitting signals. The
-# tool URL is the one that survives: its title is a real title, the other reads
-# "Yelp Rank Tracking Landing Page", which is an internal label that leaked into
-# a public one, and its copy is a launch announcement rather than a service
-# page.
+# /brizy-cloud-ada-accessibility goes to What We Do rather than to the statement,
+# because it was a service page selling accessibility work on a platform this
+# studio no longer builds on. Accessibility remediation is not a service here and
+# does not appear in any services list, so the page has no successor and the
+# services page is the honest landing.
+/accessibility                    /accessibility-statement/  301
+/ada                              /accessibility-statement/  301
+/wcag-ada-compliance              /accessibility-statement/  301
+/brizy-cloud-ada-accessibility    /what-we-do/               301
+
+
+# ============================================================
+# RETIRED SERVICE PAGES
+# ============================================================
+#
+# Eleven individual service pages collapse into one What We Do page. None is
+# being rebuilt, so each goes to the page that describes the work now rather than
+# to the home page: a reader who asked for a service is better served by the
+# services page than by the front door.
+#
+# /google-business-profile-management-optimization averages position 47.8 and is
+# not being rebuilt. Confirmed present in the live sitemap.
+/google-business-profile-management-optimization  /what-we-do/  301
+/seo                                              /what-we-do/  301
+/seo-audit                                        /what-we-do/  301
+/content-development                              /what-we-do/  301
+/web-design                                       /what-we-do/  301
+/google-ads                                       /what-we-do/  301
+/pay-per-click                                    /what-we-do/  301
+/social-media-management                          /what-we-do/  301
+/reputation-management                            /what-we-do/  301
+/data-analytics-reporting                         /what-we-do/  301
+/press-releases                                   /what-we-do/  301
+
+
+# ============================================================
+# YELP CLUSTER. ALL 302, AND THE STATUS IS THE POINT.
+# ============================================================
+#
+# THESE ARE TEMPORARY AND THE ARTICLES ARE COMING BACK TO THESE EXACT PATHS.
+# Four of the five slugs are members of ROOT_URL_SLUGS in
+# tools/eleventy/article-directory-data.js, which is the closed set of migrated
+# pieces that publish at root rather than under /yelp/. When those articles land
+# they land here, at the same URL that is redirecting away today.
+#
+# 301 WOULD BE THE WRONG INSTRUMENT AND WOULD OUTLIVE ITS USEFULNESS. A browser
+# caches a permanent redirect and keeps honouring it after the rule is gone from
+# this file, so a returning reader would be sent away from an article that exists.
+# The build assertion cannot reach a cache. 302 keeps the URL in the index,
+# preserves the signal that /is-yelp-advertising-worth-it alone carries at
+# roughly 35,000 impressions, and costs nothing to unwind.
+#
+# THE BUILD REMOVES THE NEED TO REMEMBER. The day any of these articles
+# publishes, its rule becomes a rule whose source is a built page, and
+# eleventy.config.js fails the build naming both. That is the guard; nothing here
+# depends on a human noticing months from now.
+#
+# /yelp-faqs is the one that is not a ROOT_URL_SLUGS member, because the FAQ is
+# a directory of many files rather than one article returning to one path. It is
+# still 302: src/yelp/faq/ does not exist yet, a fifty question FAQ is planned,
+# and that path is a plausible home for it.
+/is-yelp-advertising-worth-it   /yelp/  302
+/why-does-yelp-filter-reviews   /yelp/  302
+/yelp-enhanced-profile          /yelp/  302
+/yelp-portfolios-optimization   /yelp/  302
+/yelp-faqs                      /yelp/  302
+
+# The old site serves BOTH /yelp-rank-tracking-tool and
+# /yelp-rank-tracking-landing-page, each self-canonicalising to itself, so the
+# two have been splitting signals. The tool URL is the one that survives: its
+# title is a real title, the other reads "Yelp Rank Tracking Landing Page", which
+# is an internal label that leaked into a public one, and its copy is a launch
+# announcement rather than a service page. 301 because nothing is coming back to
+# the landing page path.
 /yelp-rank-tracking-landing-page  /yelp-rank-tracking-tool/  301
 
-# The accessibility statement kept the footer's URL rather than the live site's,
-# so this is a rename. /accessibility is live and indexed today.
-/accessibility  /accessibility-statement/  301
+
+# ============================================================
+# FORMER MARKETING PAGES
+# ============================================================
+#
+# /30 is the old 30 minute consultation booking page. Verified 2026-08-17 as
+# HTTP 200 with a self-referencing canonical and no robots directive, so it is
+# indexed and holding whatever it has accumulated. Contact is the closest thing
+# this build has to a booking page.
+#
+# /giving-back and /free-websites-animal-rights-organizations have no successor
+# anywhere in the new build. Who We Are is where the studio describes itself,
+# which is the nearest honest home for a reader who arrived on either.
+/about                                      /who-we-are/  301
+/giving-back                                /who-we-are/  301
+/free-websites-animal-rights-organizations  /who-we-are/  301
+/30                                         /contact/     301
+
+# TEMPORARY, AND SCHEDULED TO BE UNDONE. /blog goes to the Yelp Hub rather than
+# to /library/ because /library/ is a coming soon placeholder carrying noindex,
+# and pointing an indexed blog index at a noindexed page throws the signal away
+# instead of moving it. The Yelp Hub is the only real content tier today.
+#
+# 302 for the same reason as the Yelp cluster above: this is a move that is
+# already scheduled to change. Repointing it to /library/ is step 4 of the flip
+# checklist in .claude/CLAUDE.md and in src/library.njk.
+/blog                                       /yelp/        302
+
+
+# ============================================================
+# FORMER CASE STUDIES AND VERTICALS
+# ============================================================
+#
+# Three client pieces go to Results, which is where the work is shown now.
+# Three vertical funnel pages go to What We Do; they were landing pages for a
+# therapist practice offer that has no successor, and the services page describes
+# what is actually on offer today.
+/izakaya-genbe-visibility-report  /results/     301
+/tajima-maui-visibility-report    /results/     301
+/dilettante-studios-branding      /results/     301
+/counseling-cornerstone           /what-we-do/  301
+/therapists                       /what-we-do/  301
+/therapists-foundational-boost    /what-we-do/  301
+
+
+# ============================================================
+# RESERVED. Search Console backlink rows land here.
+# ============================================================
+#
+# The export is outstanding. Rows derived from it go below this line, in their
+# own section, so the sitemap-derived map above stays reviewable as one unit and
+# a later addition never has to be untangled from it.
+#
+# Anything appearing in the backlink export but not in the sitemap above is a URL
+# that was linked and then dropped from the sitemap, which usually means it was
+# deleted rather than moved. Those still want a destination: an inbound link to a
+# 404 is worth nothing, and the link is the asset regardless of what the sitemap
+# says.
+
+
+# ============================================================
+# ACCOUNTING. The nine live URLs with no rule, and why.
+# ============================================================
+#
+# Recorded so the map can be audited against the live sitemap without anyone
+# having to work out whether an absence was a decision or an oversight.
+#
+# EIGHT PUBLISH AT THE SAME PATH IN THIS BUILD, so a rule would shadow the page.
+# Cloudflare 308s the bare path to the slash form and serves the real page.
+#
+#   /                                                 -> /
+#   /contact                                          -> /contact/
+#   /privacy-policy                                   -> /privacy-policy/
+#   /yelp                                             -> /yelp/
+#   /yelp-partners                                    -> /yelp-partners/
+#   /yelp-rank-tracking-tool                          -> /yelp-rank-tracking-tool/
+#   /difference-between-yelp-personal-business-account -> same, a ROOT_URL_SLUGS piece
+#   /thank-you                                        -> /thank-you/
+#
+# /thank-you is built by the contact form work as the no-JavaScript success
+# destination. Until that lands it is a 404, which is a known and accepted gap of
+# one commit. If that work stalls, add a temporary rule to /contact/ as a 302
+# rather than leaving it 404ing.
+#
+# ONE IS ALLOWED TO 404 DELIBERATELY:
+#
+#   /ada-test
+#
+# Verified 2026-08-17 as HTTP 200 and indexable, contrary to a planning document
+# that recorded it as noindexed. It is a staging page whose own title says so,
+# and it leaked into the sitemap. It drops out of the index once the 404 page is
+# serving. Nothing is being preserved because there is nothing worth preserving.

@@ -46,7 +46,7 @@
 import pageNoindex from "./page-noindex.js";
 
 // Migrated articles that keep their live root-level URL.
-// CLOSED SET. These four pages rank at root today and the URL is the
+// CLOSED SET. These five pages rank at root today and the URL is the
 // asset. New spokes get nested URLs. Do not add to this list for
 // convenience; that is how the no-frontmatter-permalink guard is
 // lost by accretion.
@@ -57,11 +57,21 @@ import pageNoindex from "./page-noindex.js";
 // still looks like a content decision. Membership is the only thing declarable
 // here and the destination is derived, so there is no second value to get
 // wrong. Include or exclude, nothing else.
+//
+// yelp-portfolios-optimization ADDED 2026-08-18, and it is a correction rather
+// than an accretion. Its absence was an oversight: the URL is live and
+// high-ranking on the current site, its Pass 1 is approved, and the article
+// publishes back to that exact path, which is the same fact that put the other
+// four here. It was found while collecting the migration map, because it is one
+// of the 41 live URLs and the only Yelp one with no explanation for why it was
+// out. The "do not add for convenience" rule above is intact: this is not a
+// convenience, it is a page whose URL is already an asset.
 const ROOT_URL_SLUGS = new Set([
   "difference-between-yelp-personal-business-account",
   "why-does-yelp-filter-reviews",
   "is-yelp-advertising-worth-it",
-  "yelp-enhanced-profile"
+  "yelp-enhanced-profile",
+  "yelp-portfolios-optimization"
 ]);
 
 /* THE FRONTMATTER HALF OF THE AUDIT STRIP.
