@@ -374,12 +374,167 @@ for (const node of document.querySelectorAll("[data-email-user][data-email-domai
   node.replaceChildren(link);
 }
 
-/* Contact form is a static mockup this pass, with no action and no backend.
-   Blocking submit keeps a click from reloading the page, which would read as a
-   broken form rather than an unwired one. Remove this when the form is
-   actually wired. */
+/* STILL A MOCKUP: the second form, on /yelp-rank-tracking-tool/. It has no
+   action and no backend, so blocking submit keeps a click from reloading the
+   page and reading as a broken form rather than an unwired one.
+
+   THE CONTACT FORM IS NO LONGER IN THIS SET. It posts to /api/contact and is
+   handled below. The attribute was on both; removing it from only one is the
+   whole change, and the selector is unchanged so this keeps guarding the one
+   that is still a mockup. */
 for (const form of document.querySelectorAll("[data-form-mockup]")) {
   form.addEventListener("submit", (event) => event.preventDefault());
+}
+
+/* ============================================================
+   CONTACT FORM. Progressive enhancement over a form that already works.
+   ============================================================
+
+   THE FORM WORKS WITHOUT THIS. It carries a real action and method, so with no
+   JavaScript it posts natively and the Function answers with a 303 to
+   /thank-you/. Everything here is an upgrade of a working path, not the path
+   itself, which is why every step below degrades to that rather than to
+   nothing.
+
+   WHAT THE UPGRADE BUYS: the visitor does not leave the page, the reply is
+   announced in place, and a validation failure marks the field it belongs to
+   instead of returning a separate error document.
+
+   WHAT IT DOES NOT DO IS DECIDE WHETHER THE MESSAGE ARRIVED. The Function
+   records the submission before it attempts delivery and answers on the record,
+   so a delivery failure is never surfaced here. The only error this can show is
+   one the visitor can act on: a field they need to correct, or a request that
+   never reached us at all. */
+const contactForm = document.querySelector("[data-contact-form]");
+
+if (contactForm) {
+  /* Stamped on load and read by the Function as a soft signal. A submission
+     faster than a human could type is refused, but ONLY when this is present,
+     so a no-JavaScript visitor is never penalised for its absence. */
+  const stamp = contactForm.querySelector("[data-rendered]");
+  if (stamp) stamp.value = String(Date.now());
+
+  const status = contactForm.querySelector("[data-form-status]");
+
+  const setStatus = (message, tone) => {
+    if (!status) return;
+    status.textContent = message;
+    status.dataset.tone = tone;
+  };
+
+  /* aria-invalid rather than a class, because the field's validity is
+     information a screen reader needs, not a colour. The description is tied to
+     the field with aria-describedby so the message is reachable from the
+     control rather than only from reading order. */
+  const clearFieldErrors = () => {
+    for (const field of contactForm.querySelectorAll("[aria-invalid]")) {
+      field.removeAttribute("aria-invalid");
+      const described = field.getAttribute("aria-describedby") || "";
+      const kept = described
+        .split(/\s+/)
+        .filter((id) => id && !id.endsWith("-error"))
+        .join(" ");
+      if (kept) field.setAttribute("aria-describedby", kept);
+      else field.removeAttribute("aria-describedby");
+    }
+    for (const node of contactForm.querySelectorAll("[data-field-error]")) node.remove();
+  };
+
+  const markField = (name, message) => {
+    const field = contactForm.querySelector(`[name="${name}"]`);
+    if (!field) return null;
+
+    field.setAttribute("aria-invalid", "true");
+
+    const id = `${field.id}-error`;
+    const note = document.createElement("span");
+    note.className = "cs-field__error";
+    note.id = id;
+    note.dataset.fieldError = "";
+    note.textContent = message;
+    field.insertAdjacentElement("afterend", note);
+
+    const described = field.getAttribute("aria-describedby");
+    field.setAttribute("aria-describedby", described ? `${described} ${id}` : id);
+
+    return field;
+  };
+
+  contactForm.addEventListener("submit", async (event) => {
+    /* Let the browser's own validation run first. If it fails, this handler
+       never fires, and the visitor gets native field messages in their own
+       language, which is better than anything reimplemented here. */
+    event.preventDefault();
+    clearFieldErrors();
+
+    const button = contactForm.querySelector("[type=submit]");
+
+    /* Disabled only for the duration of the request, and only once the request
+       is definitely being made. A submit disabled any earlier is the pattern
+       that strands people whose first click was swallowed. */
+    if (button) button.setAttribute("aria-disabled", "true");
+    setStatus("Sending.", "pending");
+
+    try {
+      const response = await fetch(contactForm.action, {
+        method: "POST",
+        headers: { Accept: "application/json" },
+        body: new FormData(contactForm)
+      });
+
+      const payload = await response.json().catch(() => null);
+
+      if (response.ok && payload && payload.ok) {
+        /* The panel is replaced rather than reset, because a form still sitting
+           there after a successful send invites a second one. */
+        const heading = document.createElement("p");
+        heading.className = "cs-form__sent";
+        heading.textContent =
+          "Message received. One of us will read it rather than a queue, and you can expect a reply within two working days.";
+        contactForm.replaceChildren(heading);
+        heading.setAttribute("tabindex", "-1");
+        heading.focus();
+        return;
+      }
+
+      const errors = (payload && payload.errors) || {};
+      const names = Object.keys(errors);
+
+      if (names.length) {
+        let first = null;
+        for (const name of names) {
+          const field = markField(name, errors[name]);
+          if (field && !first) first = field;
+        }
+        setStatus("That did not send. Check the fields marked below.", "error");
+        /* Focus the first offending field, so a keyboard or screen reader user
+           lands on the thing to fix rather than having to hunt for it. */
+        if (first) first.focus();
+        else setStatus(errors[names[0]], "error");
+      } else {
+        /* The Function answered with a message rather than a field map: a rate
+           limit, a missing binding, a KV write that failed. Its text is written
+           for a person and already names the phone number and address where one
+           is needed, so it is shown as sent rather than replaced with something
+           vaguer here. */
+        setStatus(
+          (payload && payload.errors && payload.errors.message) ||
+            "That did not send. Please try again, or use the phone number and address beside this form.",
+          "error"
+        );
+      }
+    } catch {
+      /* The request never reached us, so nothing was recorded and this is the
+         one failure the visitor genuinely needs to act on. Everything else is
+         ours to deal with and is invisible to them. */
+      setStatus(
+        "That message did not reach us, so nothing was recorded. Please check your connection and try again, or use the phone number and address beside this form.",
+        "error"
+      );
+    } finally {
+      if (button) button.removeAttribute("aria-disabled");
+    }
+  });
 }
 
 /* ============================================================

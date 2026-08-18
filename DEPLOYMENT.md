@@ -97,7 +97,61 @@ Node version: 24
 
 ```
 NODE_VERSION=24
+SITE_LIVE=1            Production only, set at DNS cutover. See src/_data/deploy.js
+RESEND_API_KEY=...     Secret. Production and Preview. See the contact form below
+RESEND_FROM=...        Optional. Overrides the default From address
 ```
+
+### KV Bindings
+
+```
+SUBMISSIONS  ->  circulation-studio-submissions   Production and Preview
+```
+
+## The contact form
+
+`functions/api/contact.js` handles `POST /api/contact`. It is a Cloudflare Pages
+Function, read from `functions/` at the repository root rather than from `_site`,
+so the Vite pass never sees it.
+
+**The submission is written to KV before delivery is attempted**, and the write
+is not conditional on the send. The visitor is told it worked as soon as the
+record exists. At roughly two inquiries a quarter, one silently dropped message
+is a meaningful share of the year, so the store is the system of record and the
+email is a notification about it.
+
+The recipient is read from `site.nap.email` in `src/_data/site.js`, never typed
+into the Function. Worth knowing why: the Resend account is registered under
+`studio@circulationstudio.com`, which is **not** where inquiries go.
+
+### Finding submissions that were never delivered
+
+Nothing pushes a notification. Being told rather than having to look would need
+a scheduled Worker reading the prefix below, which is deliberately not built.
+
+```
+wrangler kv key list --binding SUBMISSIONS --prefix failed:
+wrangler kv key get --binding SUBMISSIONS "submission:<timestamp>:<id>"
+```
+
+Every record also carries its own `delivered` boolean, so a record read directly
+answers the question without the marker. `console.error` output appears in the
+Pages dashboard under Functions real-time logs, and persists if Workers Logs is
+enabled.
+
+### Retention
+
+24 months, enforced as the KV `expirationTtl` in the Function rather than stated
+only in prose. The privacy policy claims that period and reads it off this
+mechanism. It governs the **form store only**: the delivered email sits in the
+inbox and nothing here governs that, which is why the policy scopes its claim.
+
+### Spam handling
+
+Same-origin check, a honeypot field, a per-IP rate limit in KV, and an unsigned
+client timestamp used as a soft signal. No Turnstile and no third-party script,
+because `src/about-this-site.njk` states in visible copy that the site loads
+none. If spam becomes real, tighten the rate limit rather than adding a script.
 
 ## Cloudflare Performance Settings
 
@@ -139,10 +193,21 @@ minimum:
 
 ## Redirects
 
-`src/_redirects` exists and reaches `_site/_redirects` by the same passthrough,
-but carries no rules yet. This is a rebuild of an existing
-indexed site (circulationstudio.com), not a greenfield build. Build the
-old-URL-to-new-URL redirect map before the DNS cutover above, not after.
+`src/_redirects` reaches `_site/_redirects` by the passthrough through `public/`.
+**The migration map is collected and live**: 32 rules, written 2026-08-18 against
+the live sitemap fetched the day before, covering all 41 indexed URLs. The
+reasoning behind each call is in `LAUNCH_HANDOFF.md`; the file itself carries
+short comments and a full accounting of the nine URLs with no rule.
+
+Six rules are 302 rather than 301, and that is deliberate. Five Yelp paths and
+`/blog` are temporary, and a 301 is cached by the browser after the rule is
+deleted, where no build check can reach it.
+
+**A build assertion guards collisions.** Every build reads `src/_redirects`,
+normalizes each source path and fails if any matches a URL the build published.
+Cloudflare evaluates `_redirects` before serving a static file, so such a rule
+would make its own page unreachable with nothing in the output to show for it.
+See the `eleventy.after` hook in `eleventy.config.js`.
 
 ## Performance Budget
 

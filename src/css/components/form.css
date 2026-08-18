@@ -261,4 +261,86 @@
     .cs-prompt__mark::after,
     .cs-prompt__label { transition: none }
   }
+
+  /* THE HONEYPOT.
+   *
+   * OFF SCREEN, NOT display:none AND NOT visibility:hidden. Both of those are
+   * readable from a computed style, so a bot worth the name skips the field and
+   * the control catches nothing. Some clients also decline to submit a field
+   * that was never rendered, which would break it in the other direction.
+   *
+   * Positioned out of the viewport instead: rendered, submitted, and invisible.
+   * The markup carries aria-hidden and tabindex="-1", so it is absent from the
+   * accessibility tree and from the tab order. Nobody using this site can reach
+   * it by any means, including a screen reader, which is the bar this has to
+   * clear rather than merely looking hidden.
+   *
+   * left rather than a transform, because a transformed element still occupies
+   * its box in flow and this one must not.
+   */
+  .cs-honeypot {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  /* THE REPLY LINE. Empty and inert until the form has been answered.
+   *
+   * It carries role="status" in the markup, so it is present in the
+   * accessibility tree from first paint. A live region created at the moment
+   * its content changes is not announced, which is the usual way this is built
+   * wrong. Empty here means no box: no margin, no min-height, nothing
+   * reserving space for a message that may never come.
+   */
+  .cs-form__status {
+    margin: 0;
+    /* 15px and --leading-body, matching .cs-input and .cs-contact__note. This
+       is prose addressed to the reader, so it takes the reading size rather
+       than the 11px display size the labels use. */
+    font-size: 15px;
+    line-height: var(--leading-body);
+    color: var(--text-muted);
+  }
+  .cs-form__status:empty { display: none }
+  .cs-form__status[data-tone="error"] { color: var(--color-madder) }
+
+  /* THE FIELD-LEVEL MESSAGE, under the rule it belongs to.
+   *
+   * Tied to its field with aria-describedby by main.js, so it is reachable from
+   * the control rather than only from reading order.
+   *
+   * NOT COLOUR ALONE. The field also takes aria-invalid, which assistive tech
+   * announces, and the rule under it goes madder, so the state is carried by
+   * the text of the message, by a programmatic attribute and by colour. Any one
+   * of the three is enough on its own.
+   */
+  .cs-field__error {
+    margin-top: var(--space-8);
+    font-family: var(--font-display);
+    font-size: 11px;
+    letter-spacing: var(--tracking-wide);
+    color: var(--color-madder);
+  }
+  .cs-input[aria-invalid="true"] { border-bottom-color: var(--color-madder) }
+
+  /* WHAT REPLACES THE FORM ON SUCCESS.
+   *
+   * The form is replaced rather than reset, because a blank form still sitting
+   * there after a send reads as though nothing happened and invites a second
+   * one. main.js gives this tabindex="-1" and focuses it, so a keyboard or
+   * screen reader user is moved to the confirmation rather than left on a
+   * submit button that no longer has a form under it.
+   */
+  .cs-form__sent {
+    margin: 0;
+    /* Reading size and ink rather than muted. It is the only thing left in the
+       panel once the form is gone, so it carries the panel rather than sitting
+       quietly under something. */
+    font-size: 15px;
+    line-height: var(--leading-body);
+    color: var(--color-ink);
+  }
+  .cs-form__sent:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 4px }
 }

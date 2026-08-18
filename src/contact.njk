@@ -55,10 +55,25 @@ prompts:
   EMAIL is obfuscated: no contiguous address and no mailto: in the markup. See
   components/email.njk for how, and the note below on the remaining exposure.
 
-  FORM is a static mockup this pass. No action, no backend. main.js blocks the
-  submit so a click cannot silently reload the page and look like a failure.
-  Labels are explicit with for/id rather than wrapping, which is better for
-  assistive tech than the implicit labels in the handoff.
+  FORM IS WIRED. It posts to /api/contact, a Pages Function that records the
+  submission in KV before attempting delivery. Labels are explicit with for/id
+  rather than wrapping, which is better for assistive tech than the implicit
+  labels in the handoff.
+
+  IT WORKS WITHOUT JAVASCRIPT, and that is not a courtesy. The action and method
+  are real, so a submit with no JavaScript posts natively and the Function
+  answers with a 303 to /thank-you/, a real page. main.js upgrades that to an
+  in-place swap when it can. Neither path is the fallback for the other in the
+  sense of being worse: both end with the visitor told their message arrived.
+
+  `required` ON THE THREE FIELDS THE SERVER REQUIRES, and no more. Browser
+  validation is the only feedback a no-JavaScript visitor gets before the
+  request, so the client rule and the server rule have to be the same three
+  fields or one of them is lying. The listing stays optional in both.
+
+  NONE OF THIS GATES THE PROMPTS. The four completeness prompts below are
+  unchanged: still client side, still ungated, still no threshold. They advise
+  what to write; `required` only asserts that something was written.
 
   One deep ink pane per view: the colophon is it. Nothing on this page adds a
   second.
@@ -76,12 +91,36 @@ prompts:
 
 {% call container(class="pb-24") %}
   <div class="cs-contact__grid">
-    <form class="cs-form cs-contact__panel" data-form-mockup>
+    <form class="cs-form cs-contact__panel" action="/api/contact" method="POST" data-contact-form>
+      {#- THE HONEYPOT. Off screen rather than display:none, because a bot can
+          read a computed style and skip a hidden field, and because a field
+          that is not rendered at all is not submitted by some clients.
+
+          NAMED `reference` DELIBERATELY. A honeypot called `company`, `phone`
+          or `url` gets filled by a browser's autofill on a real person's form,
+          which turns the control into a false positive generator aimed at the
+          most convenient visitors. `reference` matches no autofill heuristic,
+          and autocomplete="off" says so twice.
+
+          aria-hidden and tabindex="-1" keep it out of the accessibility tree
+          and out of the tab order, so it does not exist for a screen reader or
+          a keyboard user. It exists only for something filling every input it
+          can find. -#}
+      <p class="cs-honeypot" aria-hidden="true">
+        <label for="field-reference">Do not fill this in</label>
+        <input type="text" id="field-reference" name="reference" tabindex="-1" autocomplete="off">
+      </p>
+
+      {#- Stamped by main.js on load and read as a soft signal only. Absent is
+          the no-JavaScript case and is never held against anyone, which is why
+          it carries no value here. -#}
+      <input type="hidden" name="rendered" value="" data-rendered>
+
       <div class="cs-form__row">
         {% for field in fields %}
           <p class="cs-field m-0">
             <label class="cs-field__label" for="field-{{ field.id }}">{{ field.label }}</label>
-            <input class="cs-input" type="{{ field.type }}" id="field-{{ field.id }}" name="{{ field.id }}" autocomplete="{{ "name" if field.id == "name" else "email" }}">
+            <input class="cs-input" type="{{ field.type }}" id="field-{{ field.id }}" name="{{ field.id }}" autocomplete="{{ "name" if field.id == "name" else "email" }}" required>
           </p>
         {% endfor %}
       </div>
@@ -105,7 +144,7 @@ prompts:
             once the box was gone, because the empty space was the loudest
             thing in the form. The grip is killed in form.css. -#}
         <textarea class="cs-input" id="field-message" name="message" rows="3"
-                  aria-describedby="prompts-intro" data-prompts-source></textarea>
+                  aria-describedby="prompts-intro" data-prompts-source required></textarea>
       </p>
 
       {#- THE PROMPTS. Four rows that light as the message is typed, matched
@@ -137,6 +176,19 @@ prompts:
           {%- endfor %}
         </ul>
       </div>
+
+      {#- WHERE ERRORS AND CONFIRMATION LAND, for the JavaScript path.
+
+          role="status" rather than role="alert": polite, so it is announced
+          when the reader reaches a pause rather than interrupting whatever they
+          are in the middle of. The submission has already succeeded or failed
+          by the time anything is written here, so nothing is urgent.
+
+          Present in the markup from the start rather than created on demand.
+          A live region has to exist before its content changes or the change is
+          not announced, which is the single most common way this pattern is
+          built wrong. -#}
+      <p class="cs-form__status" role="status" aria-live="polite" data-form-status></p>
 
       <div>{{ button("Start the conversation", type="submit") }}</div>
     </form>

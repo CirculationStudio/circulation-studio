@@ -1,0 +1,75 @@
+---
+layout: layouts/base.njk
+title: "Message received"
+description: "Your message reached Circulation Studio. Here is what happens next."
+permalink: /thank-you/index.html
+
+# NOINDEX, AND IT IS A REAL PAGE ANYWAY.
+#
+# A confirmation page has nothing to rank for and should not compete with
+# /contact/ for anything, so it carries the directive. It reaches base.njk
+# through pageNoindex, the same computed value /library/ and the fixtures use,
+# so it is out of sitemap.xml by the same mechanism rather than a second one.
+#
+# NOT eleventyExcludeFromCollections, unlike /yelp-map/ and 404.njk. Those two
+# are excluded because nothing should ever list them. This page is a normal
+# page that happens to be noindexed, and being in collections.all is how the
+# build's dead-link check knows the URL exists. The Function redirects here, and
+# a confirmation page that 404s is worse than no confirmation at all.
+noindex: true
+---
+{% from "components/container.njk" import container %}
+{% from "components/email.njk" import email %}
+
+{#
+  THE CONFIRMATION PAGE, AND WHY IT IS A PAGE RATHER THAN A QUERY STRING.
+
+  The first design for this was a 303 to /contact/?sent=1 with the message
+  swapped in. That does not work on this host and the reason is worth recording
+  next to the thing it caused: Cloudflare Pages serves static HTML, so
+  /contact/?sent=1 returns bytes identical to /contact/. Nothing on the server
+  reads the query string and nothing in the file reacts to it. A visitor with
+  JavaScript off would land back on an empty form with no confirmation and no
+  way to know their message had sent, which is the exact failure the four
+  completeness prompts exist to avoid at the other end of the same form.
+
+  So the no-JavaScript path gets a real URL with real bytes.
+
+  IT COSTS NOTHING, WHICH IS WHY THIS IS EASY. /thank-you is already a live
+  indexed URL on the current site: verified 2026-08-17 as HTTP 200 with a
+  self-referencing canonical. Building it keeps the path warm through cutover
+  instead of redirecting it away and back.
+
+  WITH JAVASCRIPT ON, NOBODY SEES THIS. main.js intercepts the submit and swaps
+  the panel in place, so the visitor never leaves /contact/. This is the
+  fallback, and it has to read as a finished page rather than as one.
+
+  THE RESPONSE WINDOW IS STATED ONCE, HERE. Not in the form, not in the email.
+  A promise repeated in three places is a promise that will disagree with itself.
+#}
+
+{% call container(class="cs-doc") %}
+  <p class="cs-eyebrow">Contact</p>
+  <h1 class="cs-doc__title">Message received</h1>
+
+  <p class="cs-doc__lede">
+    It is with us, and one of us will read it rather than a queue. Expect a
+    reply within two working days.
+  </p>
+
+  <div class="cs-doc__body">
+    <p>
+      If it is quicker to talk, the studio number is
+      <a href="{{ site.nap.telephoneHref }}">{{ site.nap.telephone }}</a>, and
+      you can reach us directly at {{ email(site.nap.emailUser, site.nap.emailDomain) }}.
+    </p>
+
+    {#- The Yelp Hub rather than the home page. Somebody who has just written in
+        about their listing is closer to wanting the writing than to wanting the
+        front door, and /library/ is a placeholder until the library opens. -#}
+    <p>
+      In the meantime, the <a class="cs-link" href="/yelp/">Yelp Hub</a> carries
+      everything we have published on Yelp advertising.
+    </p>
+  </div>
+{% endcall %}
