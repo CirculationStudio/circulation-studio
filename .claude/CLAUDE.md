@@ -138,12 +138,37 @@ Key principles:
 ## Build Workflow
 
 1. Read all relevant documentation before making changes:
+   - **LAUNCH_HANDOFF.md first, and HANDOFF.md with it.** See below for why
    - ARCHITECTURE.md for technical structure
    - DESIGN_SYSTEM.md for brand constraints
    - SITE_ARCHITECTURE.md for content strategy
    - SCHEMA.md for structured data requirements
    - VOICE_ARTICLES.md for the register articles are written in
    - SHORTCODES.md and ARTICLE_SYSTEM.md before touching the article system
+
+## The two handoff documents, and read them before anything else
+
+Neither is derivable from the code, and both exist because a decision that
+stays in a conversation is a decision a fresh session cannot see.
+
+**LAUNCH_HANDOFF.md is the launch sequence and the state of everything outside
+the repo.** Infrastructure that is configured and how (Resend, Cloudflare KV,
+DNS, the four mail records), the cutover steps, what is still waiting on a
+person and who, and every decision made in conversation: positioning, pricing,
+the rebate disclosure, the network's structure, imagery provenance, and the
+reasoning behind every redirect call in `src/_redirects`.
+
+Read it before touching the redirect map, the contact form, or anything to do
+with cutover. The map's rules carry short comments; the argument for each one is
+in that document.
+
+**HANDOFF.md is the hazards document.** Decisions and traps inside the repo:
+`design.md` living in a third project, the `_site` clobbering hazard, the two
+emitters of `cs-btn`, the derived header offset that must stay computed.
+
+**Both are append-first.** A decision made in a session goes into the relevant
+one before the session ends, or it is lost. This is the same failure the mirror
+rule below exists for, in the other direction.
 
 ## The shared documents travel in both directions
 
