@@ -1,0 +1,98 @@
+---
+permalink: /public/sitemap.xml
+eleventyExcludeFromCollections: true
+---
+{#-
+  sitemap.xml, written by the build.
+
+  THE PERMALINK GOES THROUGH public/ ON PURPOSE, and /public/ is not part of the
+  served path. The Vite plugin renames Eleventy's output to a temp folder and
+  rebuilds with emptyOutDir, discarding anything it does not reference, and a
+  plain sitemap.xml sitting in the output root is exactly that. Vite copies its
+  publicDir verbatim to the output root, so this lands at /sitemap.xml. Same
+  route robots.txt, _headers, _redirects and site.webmanifest take, and the same
+  reason: passthrough alone silently lost all of them. See src/robots.njk, which
+  records this being learned the hard way.
+
+  eleventyExcludeFromCollections keeps this file out of collections.all, which
+  is the set it iterates. Without it the sitemap lists itself.
+
+  ============================================================
+  WHAT IS IN IT, AND WHERE THAT DECISION LIVES.
+  ============================================================
+
+  collections.all, filtered by pageNoindex. Not a hand-maintained list, and not
+  a purpose-built collection either. eleventy.config.js already recorded the
+  reasoning for whoever wrote this file: the sitemap wants every URL on the
+  site, which is not the union of the two article collections, and Eleventy
+  already maintains exactly that set. A third collection would be a narrower
+  answer to this template's question and a second thing to keep in step.
+
+  THE EXCLUSION IS NOT DECIDED HERE. It is decided by pageNoindex, which is the
+  same value base.njk uses to emit the robots meta tag. That is deliberate and it
+  is the point of the whole arrangement: a page cannot be noindexed and in the
+  sitemap at the same time, because both facts come from one boolean. Adding a
+  reason to hold a page back is one edit in tools/eleventy/page-noindex.js and it
+  covers both. There is no list to maintain in this file and nothing here to
+  forget.
+
+  /yelp-map/ is excluded twice over, which is belt and braces rather than
+  duplication: it carries noindex: true, which pageNoindex reads, AND
+  eleventyExcludeFromCollections, which keeps it out of the set below entirely.
+  Its front matter calls those ways one and two of four.
+
+  ============================================================
+  NO lastmod. DELIBERATE, NOT AN OMISSION.
+  ============================================================
+
+  The protocol makes it optional and Google states it ignores the value unless
+  it is consistently accurate. This build cannot be consistently accurate: only
+  articles carry a date in front matter, the ten marketing pages carry none, and
+  Eleventy's page.date falls back to file mtime, which a fresh clone resets to
+  checkout time. So the honest options were a real date on a third of the URLs
+  and a checkout timestamp on the rest, or nothing. Nothing is better than a
+  field that lies on every deploy.
+
+  changefreq and priority are absent for the same reason and a stronger one:
+  Google has said publicly it ignores both entirely.
+
+  ============================================================
+  WHY IT EMPTIES RATHER THAN DISAPPEARING ON A NON-LIVE DEPLOY.
+  ============================================================
+
+  When deploy.indexable is false, every page on the deploy carries
+  noindex, nofollow. A populated sitemap would then contradict every single URL
+  it lists, and it would be submitting a preview host's copies of pages that
+  compete with production. So the URLs are withheld.
+
+  The FILE still exists, at the same path, on every deploy. Emitting nothing
+  would make /sitemap.xml a 404 on preview and a 200 on production, and a path
+  that flaps between the two is a worse thing to hand a monitor or a crawler
+  than one that consistently answers "nothing here yet" with a reason attached.
+-#}
+<?xml version="1.0" encoding="UTF-8"?>
+{% if deploy.indexable -%}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{%- for entry in collections.all %}
+{%- if not entry.data.pageNoindex %}
+  <url>
+    <loc>{{ entry.url | absoluteUrl | escape }}</loc>
+  </url>
+{%- endif %}
+{%- endfor %}
+</urlset>
+{%- else -%}
+<!--
+  NOT the production deploy ({{ deploy.branch or "local build" }}).
+
+  Deliberately empty. Every page on this deploy carries a noindex meta tag, so
+  listing any of them here would contradict the page itself and submit a host
+  that must not compete with production. The file is present at the same path on
+  every deploy so this URL never flaps between 200 and 404.
+
+  Populated on a Cloudflare Pages deploy of the production branch with
+  SITE_LIVE=1, and on nothing else. See src/_data/deploy.js.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+</urlset>
+{%- endif %}

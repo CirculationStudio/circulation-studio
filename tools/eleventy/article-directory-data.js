@@ -43,6 +43,8 @@
  * everywhere, `summary` means the map line, and no page reads both.
  */
 
+import pageNoindex from "./page-noindex.js";
+
 // Migrated articles that keep their live root-level URL.
 // CLOSED SET. These four pages rank at root today and the URL is the
 // asset. New spokes get nested URLs. Do not add to this list for
@@ -133,7 +135,20 @@ export default function articleDirectory(segment) {
          indexable. Computed unconditionally all the same: it is a small array
          either way, and a value that exists only on some deploys is a value
          nobody can reason about. */
-      auditFrontmatter
+      auditFrontmatter,
+
+      /* THE SECOND REGISTRATION, AND IT IS NOT REDUNDANT. The same predicate is
+         registered globally in src/_data/eleventyComputed.js, which would cover
+         this directory too IF a global eleventyComputed merges with a directory
+         one rather than being replaced by it. That is a framework default this
+         repo never pins with setDataDeepMerge, and the failure if it goes the
+         other way is silent: `fixture` stops working in exactly the directory it
+         was written for, and both fixtures ship indexed and in the sitemap with
+         nothing in the build saying so.
+
+         Registered in both places, importing one function, so the merge
+         behaviour stops mattering. See tools/eleventy/page-noindex.js. */
+      pageNoindex
     },
 
     /* A function rather than a template string, so the tier comes from the
