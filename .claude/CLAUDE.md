@@ -213,6 +213,54 @@ Confirmed 2026-07-27.
   Organization template. It was stale bleed-over and it was wrong. If a task
   appears to call for it, the task is working from stale source material
 
+## The /library/ coming soon flag
+
+**The flag is `comingSoon` in `src/library.njk`.** It is `true` at launch.
+
+While it is true, `/library/` carries a `noindex` meta tag and is absent from
+`sitemap.xml`. Both facts come from one computed value, `pageNoindex`, defined in
+`tools/eleventy/page-noindex.js` and read by `src/_includes/layouts/base.njk` and
+`src/sitemap.njk`. Do not add a second switch. Two independent switches is how a
+page ends up listed in a sitemap while still carrying noindex.
+
+**`/library/` is NOT disallowed in `robots.txt`, and must not be.** Blocking it
+there stops a crawler fetching the page, and a directive that is never fetched is
+never read. Meta noindex needs the page crawlable. The same reasoning is written
+out at length in `src/robots.njk`.
+
+### The flip checklist, when articles start publishing there
+
+1. Set `comingSoon` to `false` in `src/library.njk`.
+2. Replace the placeholder copy and the placeholder hero image.
+3. Confirm `/library/` is linked from nav or footer. It already is, in
+   `src/_data/nav.js` under `footer`.
+4. **Repoint `/blog` in `src/_redirects` from `/yelp/` to `/library/`.** It is a
+   302 today specifically so this stays cheap.
+5. Submit `https://www.circulationstudio.com/library/` in Search Console.
+
+**The build will not let this go stale.** A file in `src/library/` without
+`fixture: true` while `comingSoon` is still true fails the build, naming the flag
+and the files. The check is in `eleventy.config.js`, in the `library` collection.
+
+### The two fixtures
+
+`src/library/pipeline-test.md` and `src/library/whitepaper-test.md` carry
+`fixture: true`. They are noindexed and out of the sitemap by the same mechanism,
+and they still build at real URLs because `tools/verify/` drives a browser
+against those URLs. Do not delete them without also fixing `sweep.mjs`,
+`contrast.mjs` and `fixture.manifest.json`. Never set `fixture` on real writing:
+it ships the piece invisible to search and nothing else will say so.
+
+## When Lora is self-hosted
+
+Lora is served by Google Fonts today, and the privacy policy names Google Fonts
+in its third parties list because that is accurate and it is the only request
+that leaves our own infrastructure for a visitor who never submits the form.
+
+**When Lora moves to self-hosted, remove Google Fonts from the third parties list
+in `src/privacy-policy.njk` in the same commit.** A disclosure that outlives its
+dependency is as wrong as one that was never made, and it is harder to notice.
+
 ## Language
 
 **This site is English only. Decided 2026-07-27. Settled, not pending.**

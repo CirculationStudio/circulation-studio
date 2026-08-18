@@ -7,6 +7,10 @@ author: steve
 updated: 2026-07-31
 readingtime: 18
 reviewed: 2026-07
+# A fixture, not writing. See the note in pipeline-test.md and
+# tools/eleventy/page-noindex.js. This one is what exercises the cover
+# treatment, which is why it cannot be folded into the other fixture.
+fixture: true
 ---
 
 This fixture exists to exercise the cover treatment, which the essay fixture

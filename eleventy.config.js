@@ -1,5 +1,5 @@
 import path from "node:path";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import EleventyVitePlugin from "@11ty/eleventy-plugin-vite";
 import tailwindcss from "@tailwindcss/vite";
 import icons from "./src/_data/icons.js";
@@ -2496,9 +2496,55 @@ export default function (eleventyConfig) {
     };
   });
 
-  eleventyConfig.addCollection("library", (collectionApi) =>
-    collectionApi.getFilteredByGlob("src/library/*.md")
-  );
+  /* THE LIBRARY TIER, AND THE GUARD THAT KEEPS ITS PLACEHOLDER HONEST.
+     ============================================================
+
+     Validated in the collection rather than in eleventy.after, the same way
+     the yelp collection above validates its own frontmatter, and for the same
+     reason: this needs the resolved data cascade, which is what a collection
+     callback has and an after hook does not.
+
+     WHAT IT CATCHES. /library/ ships as a placeholder carrying comingSoon,
+     which noindexes it and holds it out of sitemap.xml. That is correct while
+     the tier is empty and wrong the moment it is not. A real article published
+     under a page still telling crawlers to ignore it is invisible writing, and
+     the only symptom is traffic that never arrives, months later, with nothing
+     in the build having said a word.
+
+     A WARNING WOULD NOT DO. A line in a build log that already runs to
+     hundreds of lines gets read once and never again. A failed build gets
+     fixed in the commit that caused it, by the person who has the context to
+     fix it, which is the only moment this is cheap.
+
+     FIXTURES ARE NOT ARTICLES. The two disposable files in src/library/ carry
+     `fixture` and are skipped here, because they are the verify suite's
+     measuring stock rather than writing. Without that carve-out this would
+     fail on the first build and be deleted by whoever hit it, which is how a
+     guard becomes a commented-out guard. */
+  eleventyConfig.addCollection("library", (collectionApi) => {
+    const entries = collectionApi.getFilteredByGlob("src/library/*.md");
+
+    const index = collectionApi.getAll().find((item) => item.url === "/library/");
+    if (index && index.data.comingSoon) {
+      const published = entries.filter((entry) => !entry.data.fixture);
+      if (published.length) {
+        throw new Error(
+          `[library] ${published.length} article(s) publish under a /library/ ` +
+            `index that is still marked coming soon:\n` +
+            published
+              .map((entry) => `    ${entry.inputPath.replace(/^\.\//, "")}  ->  ${entry.url}`)
+              .join("\n") +
+            `\n  The flag is \`comingSoon\` in src/library.njk. While it is true, ` +
+            `/library/ carries a noindex meta tag and is absent from ` +
+            `sitemap.xml, so this writing is published and invisible. Set it to ` +
+            `false and work the flip checklist beside it, or mark these files ` +
+            `\`fixture: true\` if they are test stock rather than writing.`
+        );
+      }
+    }
+
+    return entries;
+  });
 
   /* DEAD INTERNAL LINKS FAIL THE BUILD.
      ============================================================
@@ -2586,6 +2632,65 @@ export default function (eleventyConfig) {
           `one. Either the target is not written yet, in which case do not link ` +
           `it, or the permalink moved and the link did not follow.`
       );
+    }
+
+    /* A REDIRECT THAT SHADOWS A REAL PAGE FAILS THE BUILD.
+       ============================================================
+
+       WHY THIS EXISTS, AND IT IS ABOUT THE MIGRATION MAP. Cloudflare evaluates
+       _redirects BEFORE it serves a static file, so a rule whose source path is
+       also a page this build publishes wins, permanently, and the page becomes
+       unreachable at its own URL. Nothing about that is visible in the output:
+       the page is built, it is in the sitemap, it looks right in _site, and it
+       is dead in production.
+
+       THE CASE THIS WAS BUILT FOR is the Yelp cluster. Five old URLs redirect to
+       /yelp/ as 302s because their articles are coming back to those exact
+       paths, three of them being members of ROOT_URL_SLUGS which guarantees it.
+       On the day one of those articles lands, its rule would silently shadow it.
+       This is what makes writing those rules safe: the build fails, names the
+       rule and the page, and the rule comes out in the same commit that lands
+       the article. Nobody has to remember, which is the only guarantee worth
+       having across months.
+
+       CHECKED AGAINST THE BUILT OUTPUT, like the link check above, because a
+       permalink comes from directory data or a filter and no amount of reading
+       source tells you what URL exists.
+
+       WILDCARD AND PLACEHOLDER SOURCES ARE SKIPPED. Deciding whether /blog/*
+       overlaps a built page is a prefix problem rather than an equality one and
+       wants its own rules. There are none in the file today; if one is added,
+       this is the note saying it is not covered. */
+    const redirectsPath = new URL("./src/_redirects", import.meta.url);
+    if (existsSync(redirectsPath)) {
+      const shadowed = [];
+
+      for (const raw of readFileSync(redirectsPath, "utf8").split("\n")) {
+        const line = raw.trim();
+        if (!line || line.startsWith("#")) continue;
+
+        const [from, to] = line.split(/\s+/);
+        if (!from || !from.startsWith("/")) continue;
+        if (from.includes("*") || from.includes(":")) continue;
+
+        const normalised = from.endsWith("/") ? from : `${from}/`;
+        if (built.has(normalised)) {
+          shadowed.push(`${from}  ->  ${to}   shadows the page built at ${normalised}`);
+        }
+      }
+
+      if (shadowed.length) {
+        throw new Error(
+          `[redirects] ${shadowed.length} rule(s) whose source is a page this ` +
+            `build publishes:\n` +
+            shadowed.map((s) => `    ${s}`).join("\n") +
+            `\n  Cloudflare evaluates _redirects before serving a static file, ` +
+            `so each of these makes its own page unreachable at its own URL, ` +
+            `with nothing in the output to show for it. Either the page has ` +
+            `landed and the rule has done its job and should be deleted, or the ` +
+            `rule was written against the wrong path.`
+        );
+      }
     }
   });
 

@@ -164,6 +164,7 @@ reviewed: 2026-07
 cluster: cost-and-pricing   # src/yelp/ only, required, one of the seven below
 summary: What a dollar buys across nine trades, method shown.   # src/yelp/ only, required
 shelf: 1                # src/yelp/ only, optional, 1 to 5, see The browse shelf
+fixture: true           # src/library/ only, optional, a disposable test file
 image: cs-img-field-1-landscape.webp      # bare filename, resolved through site.cdn
 imagealt: Field rows, repeatable growth at scale
 dropcap: true           # PLANNED, once per piece, at the open only
@@ -179,6 +180,10 @@ changelog: /library/.../changes/   # PLANNED
 **It was called `description` until 2026-08-01 and the rename is the whole point.** `description` means the meta description on the five marketing pages and meant the map line on an article, so the same key name held two different strings depending on where the file sat. Two near-synonyms holding a thirty-word tag and an eight-word label is a wart that costs someone an hour per article, forever, and it was renamed while exactly one article carried it. `description` now means one thing everywhere: the meta description, on a page with no `deck`.
 
 **`cluster` and `summary` are REQUIRED on every piece in `src/yelp/`**, and the build fails without them. Neither is required in `src/library/`, which has no coverage map. A missing cluster is not a cosmetic problem: the piece publishes and never appears on the one page that exists to list it.
+
+**`fixture` marks a file that builds but is not writing, and the authoring project never sets it.** It is for the disposable test files in `src/library/` that exercise the block vocabulary so the verify suite has something to measure. A fixture still renders at a real URL, because that is the only way to measure it, but it carries a noindex meta tag and is held out of `sitemap.xml`. Both facts come from one value, `pageNoindex`, so a fixture cannot be noindexed and listed at the same time. See `tools/eleventy/page-noindex.js`.
+
+It is documented here rather than hidden in the build because `verify:contract` reads the frontmatter of every file in `src/library/` and `src/yelp/` and fails on any key this block does not carry. A key the build understands and the contract does not is exactly the drift that check exists to catch. **Do not set it on real writing.** A published article carrying `fixture` ships invisible to search, and nothing else in the build will say so.
 
 ### The browse shelf
 

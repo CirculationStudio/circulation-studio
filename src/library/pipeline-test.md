@@ -4,6 +4,12 @@ deck: A test fixture for the markdown pipeline, written about the thing it is te
 kind: essay
 author: steve
 updated: 2026-07-30
+# A fixture, not writing. Carries a noindex meta tag and is held out of
+# sitemap.xml, both from the same value. It still builds at a real URL because
+# tools/verify drives a browser against that URL: sweep.mjs measures this file's
+# left edge, contrast.mjs scans it, and fixture.manifest.json is keyed to it.
+# See tools/eleventy/page-noindex.js and SHORTCODES.md.
+fixture: true
 # A bracketed frontmatter value, so the audit strip's fourth section has
 # something to report. This one renders nowhere: the standard header does not
 # show `reviewed` and only the cover treatment does, which is exactly why the

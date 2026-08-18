@@ -4,6 +4,38 @@ title: "The Library: notes, essays and whitepapers"
 description: "Writing from Circulation Studio on search, local visibility and the platforms our clients depend on."
 permalink: /library/index.html
 
+# ============================================================
+# THE COMING SOON FLAG. One value, two readers, one edit to reverse.
+# ============================================================
+#
+# This page ships at launch as a placeholder, so it must not be indexed and
+# must not appear in sitemap.xml. Both come from this one boolean: base.njk
+# reads it through `pageNoindex` to emit the robots meta tag, and sitemap.njk
+# filters on the same computed value. Two independent switches is how a page
+# ends up listed in a sitemap while still carrying noindex, which is a
+# contradiction handed to a crawler.
+#
+# NOT A robots.txt Disallow, deliberately. Blocking /library/ there would stop
+# a crawler ever fetching the page, and a directive that is never fetched is
+# never read. Meta noindex needs the page crawlable. src/robots.njk argues the
+# same case at length for the preview host and it transfers exactly.
+#
+# THE FLIP CHECKLIST, when articles start publishing here:
+#
+#   1. Set this to false.
+#   2. Replace the placeholder copy below, and the placeholder hero.
+#   3. Confirm /library/ is linked. It already is, src/_data/nav.js footer.
+#   4. Repoint /blog in src/_redirects from /yelp/ to /library/. It is a 302
+#      today precisely so this is cheap.
+#   5. Submit https://www.circulationstudio.com/library/ in Search Console.
+#
+# The same checklist is in .claude/CLAUDE.md, because a checklist that lives
+# only in the file being changed is one nobody reads before deciding to change
+# it. The build also refuses to let this go stale: a real article in
+# src/library/ while this is still true fails the build. See eleventy.config.js,
+# the eleventy.after hook.
+comingSoon: true
+
 # THE HERO IMAGE IS A PLACEHOLDER. Two other candidates are in play and the
 # choice is not made, so swapping it is these four lines and nothing else.
 #
