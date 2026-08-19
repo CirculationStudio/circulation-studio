@@ -44,7 +44,7 @@ permalink: /about-this-site/index.html
   token that already exists.
 #}
 
-{% call container(class="cs-about") %}
+{% call container(class="cs-about", orient="Colophon") %}
 
   {#- ---- 1. THE ESSAY ---- -#}
   {#- ss01, THE CROSSBAR-LESS A.
@@ -158,7 +158,7 @@ permalink: /about-this-site/index.html
   </div>
 
   {#- ---- 2. THE COLOPHON. Facts, no adjectives. ---- -#}
-  <section class="cs-about__section">
+  <section class="cs-about__section" data-orient="Built with">
     <h2 class="cs-about__h2">Built with</h2>
 
     <dl class="cs-about__colophon">
@@ -245,7 +245,7 @@ permalink: /about-this-site/index.html
   </section>
 
   {#- ---- 3. THE SCOREBOARD ---- -#}
-  <section class="cs-about__section">
+  <section class="cs-about__section" data-orient="Scoreboard">
     {#- ss10, THE O TARGET, AND THE ONE PLACE ON THIS PAGE IT IS LEGAL.
 
         DESIGN_SYSTEM.md retires the O device in any headline sharing a visual

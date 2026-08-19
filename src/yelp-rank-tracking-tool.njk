@@ -239,7 +239,7 @@ form:
 #}
 
 {#- 1 HERO -#}
-{% call container(class="cs-rt-section cs-rt-section--first") %}
+{% call container(class="cs-rt-section cs-rt-section--first", orient="Yelp rank tracking") %}
   <div class="cs-rt-hero">
     <div>
       <p class="cs-rt-hero__eyebrow">
@@ -289,7 +289,7 @@ form:
 {% endcall %}
 
 {#- 2 HOW IT WORKS -#}
-{% call container(class="cs-rt-section") %}
+{% call container(class="cs-rt-section", orient="How it works") %}
   <div class="cs-rt-head">
     <h2 class="cs-rt-h2">{{ how.title }}</h2>
     <p class="cs-rt-meta">{{ how.note }}</p>
@@ -308,7 +308,7 @@ form:
 {% endcall %}
 
 {#- 3 WHAT THE REPORT SHOWS -#}
-{% call container(class="cs-rt-section") %}
+{% call container(class="cs-rt-section", orient="What the report shows") %}
   <h2 class="cs-rt-h2 cs-rt-h2--rule">{{ shows.title }}</h2>
   <div class="cs-rt-cols">
     {%- for c in shows.cols %}
@@ -323,7 +323,7 @@ form:
 {% endcall %}
 
 {#- image band -#}
-{% call container(class="cs-rt-section") %}
+{% call container(class="cs-rt-section", orient="Checked by hand") %}
   <figure class="cs-rt-band">
     <img src="{{ site.cdn }}{{ band.image }}" alt="{{ band.alt }}"
          width="1120" height="280" loading="lazy" decoding="async">
@@ -336,7 +336,7 @@ form:
 
 {#- 4 YELP VS GOOGLE, THE ONE INK PANE -#}
 <div class="cs-rt-vs">
-  {% call container(class="cs-rt-vs__inner") %}
+  {% call container(class="cs-rt-vs__inner", orient="Rankings by location") %}
     <p class="cs-rt-vs__eyebrow">{{ vs.eyebrow }}</p>
     <h2 class="cs-rt-vs__title">{{ vs.title }}</h2>
     <p class="cs-rt-vs__lede">{{ vs.lede }}</p>
@@ -355,7 +355,7 @@ form:
 {#- 5 WHAT THIS DOES NOT DO. The comp links two of these to spoke pages that
     do not exist, so those links are stripped rather than shipped dead. The
     third points at the form on this page and stays. -#}
-{% call container(class="cs-rt-section") %}
+{% call container(class="cs-rt-section", orient="What this does not do") %}
   <div class="cs-rt-head">
     <h2 class="cs-rt-h2">{{ limits.title }}</h2>
     <p class="cs-rt-meta">{{ limits.note }}</p>
@@ -374,7 +374,7 @@ form:
 {% endcall %}
 
 {#- 6 FAQ -#}
-{% call container(class="cs-rt-section") %}
+{% call container(class="cs-rt-section", orient="Common questions") %}
   <div class="cs-rt-head">
     <h2 class="cs-rt-h2">{{ faqTitle }}</h2>
     <p class="cs-rt-meta"><a href="/yelp/">{{ faqLink }} <span aria-hidden="true">&rarr;</span></a></p>
@@ -390,7 +390,7 @@ form:
 {% endcall %}
 
 {#- 7 FORM, THE ONE MADDER PANE -#}
-{% call container(class="cs-rt-section") %}
+{% call container(class="cs-rt-section", orient="Request a report") %}
   <div class="cs-rt-form" id="request">
     <div class="cs-rt-form__intro">
       <p class="cs-rt-flag cs-rt-flag--on-accent">{{ form.flag }}</p>

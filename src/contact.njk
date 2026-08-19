@@ -83,13 +83,13 @@ prompts:
 {% from "components/button.njk" import button %}
 {% from "components/email.njk" import email %}
 
-{% call container(class="pt-22 pb-16") %}
+{% call container(class="pt-22 pb-16", orient="Get in touch") %}
   <h1 class="cs-contact__headline">{{ headline }}</h1>
   <p class="cs-contact__lede">{{ lede }}</p>
   <p class="cs-contact__availability">{{ site.booking.label }}</p>
 {% endcall %}
 
-{% call container(class="pb-22") %}
+{% call container(class="pb-22", orient="Send a message") %}
   <div class="cs-contact__grid">
     <form class="cs-form cs-contact__panel" action="/api/contact" method="POST" data-contact-form>
       {#- THE HONEYPOT. Off screen rather than display:none, because a bot can

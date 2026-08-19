@@ -92,7 +92,7 @@ close: If any of this is what your business needs next, booking for Q3 is open.
 {% from "components/button.njk" import button %}
 {% from "components/icon.njk" import icon %}
 
-{% call section(class="cs-intro-band", containerClass="cs-intro") %}
+{% call section(class="cs-intro-band", containerClass="cs-intro", orient="Search everywhere") %}
   <div>
     <h1 class="cs-intro__headline">{{ intro.headline }}</h1>
     <p class="cs-intro__lede">{{ intro.lede }}</p>
@@ -106,7 +106,7 @@ close: If any of this is what your business needs next, booking for Q3 is open.
   </div>
 {% endcall %}
 
-{% call container(class="pb-22") %}
+{% call container(class="pb-22", orient="What you get") %}
   <ul class="cs-outcomes">
     {% for outcome in outcomes %}
       <li class="cs-outcome">
@@ -147,7 +147,7 @@ close: If any of this is what your business needs next, booking for Q3 is open.
   {% endcall %}
 </div>
 
-{% call container(narrow=true, class="cs-statement py-22") %}
+{% call container(narrow=true, class="cs-statement py-22", orient="The approach") %}
   <p>{{ statement }}</p>
 {% endcall %}
 

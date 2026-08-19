@@ -398,7 +398,7 @@ closing:
 #}
 
 {#- 1 HERO. 1fr 320px, the badge is the right column at full width. -#}
-{% call container(class="cs-yp-hero cs-yp-section cs-yp-section--first") %}
+{% call container(class="cs-yp-hero cs-yp-section cs-yp-section--first", orient="Yelp Advertising Partner") %}
   <div>
     <h1 class="cs-yp-hero__head">
       {{ hero.headBefore }} <span class="cs-yp-accent">{{ hero.headAccent }}</span> {{ hero.headAfter }}
@@ -419,7 +419,7 @@ closing:
 
 {#- 2 DIRECT ANSWER. One bordered mist panel, with the four requirements as a
     four-column grid inside it. -#}
-{% call container(class="cs-yp-section") %}
+{% call container(class="cs-yp-section", orient="What is a Partner?") %}
   <div class="cs-yp-answer">
     <h2 class="cs-yp-h2">{{ answer.title }}</h2>
     <p class="cs-yp-answer__body">{{ answer.body }}</p>
@@ -431,7 +431,7 @@ closing:
 {% endcall %}
 
 {#- 2b IN PLAIN TERMS. 280px label column, then prose, then a three-up. -#}
-{% call container(class="cs-yp-section") %}
+{% call container(class="cs-yp-section", orient="In plain terms") %}
   <div class="cs-yp-plain">
     <div>
       <h2 class="cs-yp-h2">{{ plain.title }}</h2>
@@ -452,7 +452,7 @@ closing:
 {% endcall %}
 
 {#- 3 WHAT PARTNERS GET. Four columns, Dual 200 at 40px, rule dividers. -#}
-{% call container(class="cs-yp-section") %}
+{% call container(class="cs-yp-section", orient="What partners get") %}
   <div class="cs-yp-head cs-yp-head--strong">
     <h2 class="cs-yp-h2">{{ partnersGet.title }}</h2>
     <p class="cs-yp-source">{{ partnersGet.source }}</p>
@@ -471,7 +471,7 @@ closing:
 {#- 4 WHAT IT MEANS FOR THE CLIENT. Three-column rows, and the partner cell is
     a mist chip. A dl rather than a table: it is seven label/value/value rows
     read top to bottom, not a grid anyone scans by column header. -#}
-{% call container(class="cs-yp-section") %}
+{% call container(class="cs-yp-section", orient="What that means") %}
   <h2 class="cs-yp-h2">{{ compare.title }}</h2>
   <p class="cs-yp-lede">{{ compare.lede }}</p>
   <div class="cs-yp-cmp">
@@ -493,7 +493,7 @@ closing:
 {% endcall %}
 
 {#- 4b THE ONE MADDER PANE. 1.15fr 1fr. -#}
-{% call container(class="cs-yp-section") %}
+{% call container(class="cs-yp-section", orient="Why clients call") %}
   <div class="cs-yp-route">
     <div>
       <p class="cs-yp-route__eyebrow">{{ route.eyebrow }}</p>
@@ -513,7 +513,7 @@ closing:
 
 {#- 4c WHO YOU GET AT YELP. Three party cards with connectors between them, and
     the middle one is ink because it is us. Then the two-column comparison. -#}
-{% call container(class="cs-yp-section") %}
+{% call container(class="cs-yp-section", orient="Who you get at Yelp") %}
   <h2 class="cs-yp-h2">{{ whoTitle }}</h2>
   <p class="cs-yp-lede">{{ whoLede }}</p>
   <div class="cs-yp-parties">
@@ -540,7 +540,7 @@ closing:
 {% endcall %}
 
 {#- 5 COST, THE ONE INK PANE. Three facts across. -#}
-{% call container(class="cs-yp-section") %}
+{% call container(class="cs-yp-section", orient="Does it cost more?") %}
   <div class="cs-yp-cost" id="cost">
     <p class="cs-yp-cost__eyebrow">{{ cost.eyebrow }}</p>
     <h2 class="cs-yp-cost__title">{{ cost.title }}</h2>
@@ -560,7 +560,7 @@ closing:
 {% endcall %}
 
 {#- 6 CREDENTIALS. Each badge sits in a white chip. -#}
-{% call container(class="cs-yp-section") %}
+{% call container(class="cs-yp-section", orient="Credentials") %}
   <h2 class="cs-yp-h2 cs-yp-h2--rule">{{ credentials.title }}</h2>
   <div class="cs-yp-creds">
     {%- for c in credentials.items %}
@@ -579,7 +579,7 @@ closing:
 {% endcall %}
 
 {#- 7 PROOF. Four across. -#}
-{% call container(class="cs-yp-section") %}
+{% call container(class="cs-yp-section", orient="Why Yelp is worth it") %}
   <div class="cs-yp-head">
     <h2 class="cs-yp-h2">{{ proof.title }}</h2>
     <p class="cs-yp-source">{{ proof.lede }}</p>
@@ -596,7 +596,7 @@ closing:
 {% endcall %}
 
 {#- 8 WHAT WE DO. Three across. -#}
-{% call container(class="cs-yp-section") %}
+{% call container(class="cs-yp-section", orient="On a managed account") %}
   <h2 class="cs-yp-h2 cs-yp-h2--rule">{{ managed.title }}</h2>
   <div class="cs-yp-grid">
     {%- for item in managed.items %}
@@ -627,7 +627,7 @@ closing:
     two read identically; it is hand-numbered rather than transform-numbered
     because the transform matches `data-fn` markers only and there is no
     document order to discover here, the tier's own index is the number. -#}
-{% call container(class="cs-yp-section") %}
+{% call container(class="cs-yp-section", orient="What we charge") %}
   <div class="cs-yp-head" id="pricing">
     <h2 class="cs-yp-h2">{{ pricing.title }}</h2>
     <p class="cs-yp-source">{{ pricing.note }}</p>
@@ -652,7 +652,7 @@ closing:
 {% endcall %}
 
 {#- 10 FAQ -#}
-{% call container(class="cs-yp-section") %}
+{% call container(class="cs-yp-section", orient="Common questions") %}
   <div class="cs-yp-head">
     <h2 class="cs-yp-h2">{{ faqTitle }}</h2>
     <p class="cs-yp-source"><a href="/yelp/">{{ faqLink }} <span aria-hidden="true">&rarr;</span></a></p>

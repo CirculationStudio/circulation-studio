@@ -207,7 +207,7 @@ pages:
 </div>
 
 {#- 2 THE FOUR PRACTICES -#}
-{% call container(class="cs-net-section") %}
+{% call container(class="cs-net-section", orient="The practices") %}
   <div class="cs-net-head cs-net-head--strong">
     <h2 class="cs-net-h2">{{ practicesTitle }}</h2>
     <p class="cs-net-meta">{{ practicesNote }}</p>
@@ -238,7 +238,7 @@ pages:
 {% endcall %}
 
 {#- 2b PLATFORM PARTNERSHIPS -#}
-{% call container(class="cs-net-section") %}
+{% call container(class="cs-net-section", orient="Platform partnerships") %}
   <div class="cs-net-head">
     <h2 class="cs-net-h2">{{ partnersTitle }}</h2>
     <p class="cs-net-meta">{{ partnersNote }}</p>
@@ -267,7 +267,7 @@ pages:
 {#- 3 WHY, THE ONE INK PANE. Full bleed, so it is the only band that leaves
     the container. -#}
 <div class="cs-net-why">
-  {% call container(class="cs-net-why__inner") %}
+  {% call container(class="cs-net-why__inner", orient="Why this structure") %}
     <p class="cs-net-why__eyebrow">{{ why.eyebrow }}</p>
     <h2 class="cs-net-why__title">{{ why.title }}</h2>
     <div class="cs-net-why__grid">
@@ -286,7 +286,7 @@ pages:
 </div>
 
 {#- 4 WHAT THIS MEANS -#}
-{% call container(class="cs-net-section") %}
+{% call container(class="cs-net-section", orient="What this means for you") %}
   <div class="cs-net-head cs-net-head--stack">
     <h2 class="cs-net-h2">{{ means.title }}</h2>
     <p class="cs-net-lede cs-net-lede--tight">{{ means.lede }}</p>
@@ -302,7 +302,7 @@ pages:
 {% endcall %}
 
 {#- 5 ELUVIA PAGES -#}
-{% call container(class="cs-net-section") %}
+{% call container(class="cs-net-section", orient="Elūvia Pages") %}
   <div class="cs-net-pages">
     <div>
       <p class="cs-net-pages__name">{{ pages.name }}</p>

@@ -141,7 +141,7 @@ closing:
   </nav>
 {% endcall %}
 
-{% call container(class="cs-hub-intro cs-hub-section cs-hub-section--first") %}
+{% call container(class="cs-hub-intro cs-hub-section cs-hub-section--first", orient="About the program") %}
   <div>
 
     <h1 class="cs-hub-intro__headline">
@@ -190,7 +190,7 @@ closing:
     a placeholder row would read as a real recommendation. See YELP_STARTHERE
     in eleventy.config.js. -#}
 {%- for entry in collections.yelpStartHere %}
-{% call container(class="cs-hub-section") %}
+{% call container(class="cs-hub-section", orient="Start here") %}
   <a class="cs-starthere" href="{{ entry.url }}">
     <span class="cs-starthere__label">{{ starthere.label }}</span>
     <span>
@@ -208,7 +208,7 @@ closing:
 {%- set side = collections.yelpShelf | shelfSlice(2, 3) %}
 {%- set row = collections.yelpShelf | shelfSlice(4, 5) %}
 {%- if feature %}
-{% call container(class="cs-hub-section") %}
+{% call container(class="cs-hub-section", orient="Worth reading") %}
   <div class="cs-browse__head">
     <p class="cs-browse__note">{{ browse.note }}</p>
   </div>
@@ -271,7 +271,7 @@ closing:
     published under them. The map's claim is that this is the whole subject,
     so dropping an empty cluster would shrink the subject to whatever happens
     to be written. See the yelpMap collection. -#}
-{% call container(class="cs-hub-section") %}
+{% call container(class="cs-hub-section", orient="The full index") %}
   <div class="cs-map__head">
     <div>
       <h2 class="cs-map__title">{{ map.title }}</h2>
@@ -324,7 +324,7 @@ closing:
 {#- RANK TRACKING. The one service offer on the page. The report card holds
     SAMPLE rows, said so in the note beneath them, because a real client's
     positions are not ours to publish. -#}
-{% call container(class="cs-hub-section") %}
+{% call container(class="cs-hub-section", orient="Yelp Rank Tracking") %}
   <div class="cs-rank">
     <div>
       <p class="cs-rank__eyebrow">{{ rank.eyebrow }}</p>

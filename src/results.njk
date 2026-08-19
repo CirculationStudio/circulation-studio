@@ -85,7 +85,7 @@ close: >-
 {% from "components/section.njk" import section %}
 {% from "components/button.njk" import button %}
 
-{% call section(containerClass="cs-lead") %}
+{% call section(containerClass="cs-lead", orient="Chosen results") %}
   <div class="cs-lead__figure">
     <img src="{{ site.cdn }}cs-img-shears-landscape.webp"
          alt="Shears, strategic subtraction"
@@ -99,7 +99,12 @@ close: >-
 {% endcall %}
 
 {% for case in cases %}
-  {% call container(class="pb-16") %}
+  {#- ONE NAME FOR ALL THREE CASES, and the per-case quote deliberately carries
+      none. Both of these blocks are inside the loop over cases, so an orient on
+      the quote would render between cases and the header would read
+      Selected work, In a client's words, Selected work as you scrolled one
+      list. A case and the quote inside it are the same place. -#}
+  {% call container(class="pb-16", orient="Selected work") %}
     <div class="cs-case">
       <div>
         <p class="cs-eyebrow">{{ case.meta }}</p>

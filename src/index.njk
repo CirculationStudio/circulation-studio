@@ -38,7 +38,7 @@ services:
 {% from "components/button.njk" import button %}
 {% from "components/icon.njk" import icon %}
 
-{% call container(class="cs-hero") %}
+{% call container(class="cs-hero", orient="Introduction") %}
   <div class="cs-rule cs-rule--hero-h" aria-hidden="true"></div>
   <div class="cs-rule cs-rule--hero-v" aria-hidden="true"></div>
 
@@ -67,7 +67,7 @@ services:
   <p class="cs-hero__tagline">Get Built. Get F<span class="alt-dot">o</span>und.</p>
 {% endcall %}
 
-{% call container() %}
+{% call container(orient="Credentials") %}
   <ul class="cs-proofband">
     {% for item in proof %}
       <li class="cs-proofband__item">
@@ -78,7 +78,7 @@ services:
   </ul>
 {% endcall %}
 
-{% call section() %}
+{% call section(orient="What we do") %}
   <div class="cs-duo">
     {% for service in services %}
       <div class="cs-duo__item">
@@ -103,7 +103,7 @@ services:
   {% endcall %}
 </div>
 
-{% call container(narrow=true, class="py-22") %}
+{% call container(narrow=true, class="py-22", orient="In a client’s words") %}
   <blockquote class="cs-pullquote m-0">
     Steve and Connor don’t upsell you. They aligned perfectly with our objective to
     create an enduring online presence.
