@@ -94,7 +94,14 @@ heroAlt: >-
           and this vocabulary has one weight. It registers with it rather than
           imitating it. See the page CSS for why the offset is 88.375% and not
           76.75%. -#}
-      <div class="cs-rule cs-rule--pigeon" aria-hidden="true"></div>
+      <div class="cs-rule cs-rule--pigeon-v" aria-hidden="true"></div>
+
+      {#- AND THE HORIZONTAL, out of the picture's right edge into the gutter.
+          The line crossing the middle of the picture at 48.55% is the only
+          horizontal in the file that reaches an edge, so it is the only one
+          there is anything to continue. It runs right, into empty margin,
+          because left would cross the confirmation. -#}
+      <div class="cs-rule cs-rule--pigeon-h" aria-hidden="true"></div>
 
       {#- WHAT OVERLAPS IS THE CONFIRMATION AND NOTHING ELSE. The copy crosses
           the picture's left edge by --copy-on-image, so only that strip sits on

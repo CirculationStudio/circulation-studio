@@ -17,6 +17,10 @@
     padding-top: var(--space-64);
   }
 
+  /* clip, not hidden: clip is the one value that leaves the other axis
+     genuinely visible, so .cs-rule--pigeon-v still rises out of the top. It
+     exists to trim the scrollbar overshoot off .cs-rule--pigeon-h. */
+  .cs-thanks { overflow-x: clip }
   .cs-thanks__frame { position: relative }
 
   /* Half the frame, flush right. The width and height attributes on the element
@@ -62,11 +66,44 @@
    * of .cs-rule--intro-v on What We Do. 96px into 281px of headroom.
    *
    * Solid, because every vertical in this vocabulary is solid. */
-  .cs-rule--pigeon {
+  .cs-rule--pigeon-v {
     bottom: 100%;
     left: 88.375%;
     height: var(--space-96);
     border-left: 1px solid var(--border-hairline);
+  }
+
+  /* THE SECOND RULE, out of the picture's right edge into the gutter.
+   *
+   * WHICH LINE. The horizontal at 48.55% of the file, row 519 of 1069, which is
+   * the one crossing the middle of the picture and the only horizontal in the
+   * file that reaches an edge: it runs to x=799 of 800. The two above it, at
+   * 2.7% and 5.1%, stop well inside the frame and have nothing to continue into.
+   *
+   * RIGHT, NOT LEFT. The picture's right edge is also the container's, so this
+   * runs into empty margin. Left would put a dashed line through the
+   * confirmation, and the drawn line does not reach its own left edge anyway,
+   * stopping 3.5% in.
+   *
+   * top is a percentage inside the frame, so it tracks the picture's rendered
+   * height at every width instead of needing an offset per breakpoint.
+   *
+   * THE WIDTH IS THE GUTTER, clamped the way .cs-rule--sowing clamps it: 160px
+   * at 1440, the run the rest of the survey rules use, holding at a 40px floor
+   * by 1200 rather than inverting.
+   *
+   * 50vw COUNTS THE SCROLLBAR AND THE GUTTER DOES NOT, so on a platform with a
+   * classic scrollbar this overshoots the viewport edge by half its width. The
+   * overflow-x: clip on .cs-thanks trims it. Same trade and same fix as
+   * .cs-intro-band on What We Do, which records it at ~7px.
+   *
+   * Dashed, because every horizontal in this vocabulary is dashed and every
+   * vertical is solid. The page now carries one of each. */
+  .cs-rule--pigeon-h {
+    top: 48.55%;
+    left: 100%;
+    width: max(calc(50vw - var(--container-main) / 2), var(--space-40));
+    border-top: 1px dashed var(--border-hairline);
   }
 
   .cs-thanks__title {
@@ -115,9 +152,11 @@
      Here the sentence is: somebody who has just pressed send needs to read that
      it arrived before they look at anything. */
   @media (max-width: 1120px) {
-    /* The rule describes a composition that no longer exists once this stacks,
-       which is the condition rule.css says to expect it to be dropped at. */
-    .cs-rule--pigeon { display: none }
+    /* Both rules describe a composition that no longer exists once this
+       stacks, which is the condition rule.css says to expect them to be
+       dropped at. */
+    .cs-rule--pigeon-v,
+    .cs-rule--pigeon-h { display: none }
     .cs-thanks__frame { display: flex; flex-direction: column-reverse }
     .cs-thanks__figure {
       width: 100%;
