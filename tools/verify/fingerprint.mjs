@@ -131,7 +131,19 @@ const MIN_ELEMENTS = {
      not move. +23 is the group's wrapper, its line and its list, plus five
      elements for each of four rows. The listing field replaced Company /
      business one for one and contributed nothing. */
-  contact: 148,
+  /* AND 148 -> 153 ON 2026-08-18, when the form was wired to a real handler.
+     Five elements, and the arithmetic is the check: the honeypot paragraph, its
+     label and its input, the hidden render stamp, and the status region that
+     carries the reply. Nothing else on the page moved.
+
+     CORRECTED LATE, ON 2026-08-19, AND THAT IS THE POINT OF THIS NOTE. The
+     baseline was re-taken in that commit and this floor was not raised with it,
+     so for a day the guard sat five below the real count. A floor under the
+     count still catches a page that fails to render, but it stops catching a
+     partial render that loses fewer than five elements, which is the case it
+     exists for. Re-take the baseline and raise the floor in the same commit, or
+     the check quietly weakens instead of failing. */
+  contact: 153,
   /* The hub is DATA-DRIVEN and this floor will rise. Every article added to
      src/yelp/ adds elements to the coverage map, so a run that drops below the
      floor means the page stopped rendering rather than that content was
