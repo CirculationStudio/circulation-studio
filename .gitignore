@@ -6,6 +6,12 @@ yarn-error.log*
 
 # Build output
 _site/
+
+# Build outputs owned by the checks rather than by the build. They exist so a
+# running `npm start`, which rewrites _site on every edit, cannot overwrite the
+# artifact a measurement is reading. See tools/verify/run.mjs.
+_check/
+_measure/
 dist/
 public/
 .cache/

@@ -151,12 +151,31 @@ repeated `readiness.mjs` failures reading *"Lora: 21 faces registered, none
 loaded"*, which were dismissed three times as Google Fonts flakes. **They were
 probably not flakes**: a build clobbered mid-run has no `@font-face`.
 
-Before trusting any measurement: `ps aux | grep "[e]leventy --serve"` must be
-empty, then `npm run build`, then confirm
-`grep -c 'assets/main-.*css' _site/contact/index.html` returns 1.
+Before trusting any measurement: this is now only true of `npm run build` and
+anything reading `_site` by hand. `verify` and `measure:stats` are safe with a
+watcher running. If you are measuring `_site` yourself, still confirm
+`grep -c 'assets/main-.*css' _site/contact/index.html` returns 1 first, because
+the watcher's own output has no stylesheet link and is indistinguishable from a
+real build at a glance.
 
-Worth fixing properly: `verify` and `build` writing to the same `_site` as the
-watcher is the hazard. A separate output directory for checks removes it.
+**FIXED 2026-08-19, and this section is kept as the record of why.** The checks
+no longer share a directory with the watcher. `npm run verify` builds and serves
+`_check`, `npm run measure:stats` builds and measures `_measure`, and the
+watcher keeps `_site` to itself. Both take Eleventy's `--output` flag, which the
+Vite pipeline honours: the separated builds carry their stylesheet link and all
+three deploy files.
+
+Proved rather than assumed. `npm run verify` was run with `eleventy --serve`
+alive and passed all five, then run again with `_site` deliberately replaced by
+a one-line stub, and still passed all five. Neither is possible under the old
+arrangement.
+
+It bit three more times before it was fixed, each time producing numbers that
+looked real: twelve fingerprint hashes that all differed at once, a page
+reporting its image at natural size with every survey rule at height 0, and a
+round of section-rhythm measurements that came back empty and had to be thrown
+away. The failure never announces itself, which is what made it worth the fix
+rather than the discipline of remembering.
 
 ### The header's derived offset is computed, and must stay computed
 

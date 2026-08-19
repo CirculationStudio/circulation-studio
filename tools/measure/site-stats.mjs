@@ -53,7 +53,7 @@
  *
  * Usage:
  *   node tools/measure/site-stats.mjs          build, measure, write
- *   node tools/measure/site-stats.mjs --keep   measure the current _site
+ *   node tools/measure/site-stats.mjs --keep   measure the existing _measure build
  *
  * Needs no running server. It starts one, the same static server the verify
  * runner uses and for the same reason: measuring the dev server would measure
@@ -68,7 +68,12 @@ import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 import site from "../../src/_data/site.js";
 
-const ROOT = fileURLToPath(new URL("../../_site/", import.meta.url));
+/* Same separation as tools/verify/run.mjs: this writes its own directory so a
+   running `npm start` cannot rewrite the build underneath the measurement. It
+   used to build into _site with `npx eleventy`, which both clobbered a
+   production build and left an unstyled one behind for whatever ran next. */
+const OUT_DIR = "_measure";
+const ROOT = fileURLToPath(new URL(`../../${OUT_DIR}/`, import.meta.url));
 const OUT = fileURLToPath(new URL("../../src/_data/siteStats.json", import.meta.url));
 const PORT = Number(process.env.MEASURE_PORT || 8901);
 const KEEP = process.argv.includes("--keep");
@@ -153,7 +158,7 @@ if (!KEEP) {
      should describe the artifact that ships. Both halves of deploy.js are set
      because it throws when it is on Pages with no branch, which is correct and
      would otherwise fail here. */
-  await run("npx", ["eleventy"], { CF_PAGES: "1", CF_PAGES_BRANCH: "main" });
+  await run("npx", ["eleventy", `--output=${OUT_DIR}`], { CF_PAGES: "1", CF_PAGES_BRANCH: "main" });
   buildMs = Date.now() - started;
   console.log(`\n[measure] build ${buildMs} ms`);
 } else {
@@ -305,7 +310,7 @@ const stats = {
     day: "2-digit"
   }).format(new Date()),
   how:
-    "Built with npx eleventy, served from _site by a static server with no " +
+    "Built with npx eleventy, served from _measure by a static server with no " +
     "compression, and loaded in headless Chromium at 1440 by 900 with no " +
     "throttling. Bytes are what the browser received. The figures describe the " +
     "build they were taken from, which is the one before the build you are " +

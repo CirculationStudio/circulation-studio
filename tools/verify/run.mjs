@@ -28,6 +28,9 @@
  * Usage:
  *   npm run verify                 contract, then build, serve, run the four
  *                                  browser checks, tear down
+ *
+ * It builds into _check rather than _site, so a running `npm start` cannot
+ * overwrite the artifact being measured. See the note on OUT below.
  *   VERIFY_PORT=9001 npm run verify
  *
  * The browser scripts remain runnable on their own against a server you are
@@ -42,7 +45,28 @@ import path from "node:path";
 
 const PORT = Number(process.env.VERIFY_PORT || 8899);
 const BASE = `http://localhost:${PORT}`;
-const ROOT = fileURLToPath(new URL("../../_site/", import.meta.url));
+
+/* CHECKS BUILD TO THEIR OWN DIRECTORY, NOT TO _site.
+   ============================================================
+
+   `npm start` runs `eleventy --serve`, which watches the tree and rewrites
+   _site on every edit. When verify built into _site as well, a dev server
+   running anywhere, including in another terminal, could overwrite the build
+   underneath a measurement that was already in progress. The result is an
+   unstyled page with no stylesheet link, which does not fail: it measures, and
+   returns numbers that look real.
+
+   That cost real time repeatedly. It produced twelve fingerprint hashes that
+   all differed for no reason, a page reporting its image at natural size with
+   every rule at height 0, and at least one round of conclusions that had to be
+   thrown away and re-measured. HANDOFF.md records it and recommends exactly
+   this fix.
+
+   So the two writers no longer share a directory. The watcher owns _site; the
+   checks own _check. A dev server can run through an entire verify run now and
+   neither notices the other. */
+const OUT = "_check";
+const ROOT = fileURLToPath(new URL(`../../${OUT}/`, import.meta.url));
 
 /* Static checks read files and need neither a build nor a server, so they run
    first and a mismatch fails the run before a browser is started. */
@@ -148,7 +172,7 @@ for (const check of STATIC_CHECKS) {
    to know which of the two happened and nothing else. */
 try {
   console.log(`\n[verify] building`);
-  await run("npm", ["run", "build"]);
+  await run("npm", ["run", "build", "--", `--output=${OUT}`]);
   await listen();
 } catch (err) {
   console.error(`\n[verify] FAILED before any browser check ran: ${err.message}`);
