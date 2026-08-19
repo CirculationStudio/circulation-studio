@@ -260,9 +260,20 @@
 
   /* ---- platform partnerships ---- */
 
+  /* THE COLUMN COUNT COMES FROM THE DATA, via --cs-partner-count set inline on
+     the element by network.njk.
+
+     It was repeat(5), which was right only while there were five partnerships.
+     Three were removed on 2026-08-18 and a literal 5 would have packed the
+     remaining two into the first two fifths under a rule spanning the whole
+     width: not an obviously broken layout, just a wrong one, which is the kind
+     that survives review. Same failure shape as a hardcoded header offset.
+
+     The fallback of 2 is the count today, so a missing property degrades to
+     correct rather than to a single column. */
   .cs-net-partners {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(var(--cs-partner-count, 2), minmax(0, 1fr));
     margin-top: 32px;
     border-top: 1px solid var(--border-hairline);
   }

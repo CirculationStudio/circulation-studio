@@ -84,12 +84,6 @@ partners:
     body: Search and performance campaigns, with Google's partner support behind the account.
   - name: Yelp Advertising Partner
     body: Certified to buy and manage Yelp advertising, with partner tools and client promotions.
-  - name: Brizy Partner
-    body: The build platform behind client sites, with partner level access and support.
-  - name: Shopify Partner
-    body: Storefront builds and maintenance for clients selling online.
-  - name: UserWay Authorized Affiliate
-    body: Accessibility tooling on client sites, licensed rather than bolted on.
 
 why:
   eyebrow: Reference
@@ -242,7 +236,17 @@ pages:
     <p class="cs-net-meta">{{ partnersNote }}</p>
   </div>
   <p class="cs-net-lede">{{ partnersLede }}</p>
-  <div class="cs-net-partners">
+  {#- THE COLUMN COUNT IS DERIVED, NOT TYPED. The grid used to be repeat(5),
+      which was correct only for as long as there were five partnerships. Three
+      came off on 2026-08-18 and the literal would have left two items in the
+      first two fifths of a full-width rule, which reads as a broken row rather
+      than as a shorter one.
+
+      A count in CSS that has to be kept in step with a list in frontmatter is
+      the same class of problem as the header's derived offset: it does not go
+      stale loudly, it goes stale looking almost right. So the data states the
+      count and the grid reads it. -#}
+  <div class="cs-net-partners" style="--cs-partner-count: {{ partners | length }}">
     {%- for p in partners %}
     <div class="cs-net-partners__item">
       <p class="cs-net-partners__name">{{ p.name }}</p>
