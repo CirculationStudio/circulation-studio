@@ -81,7 +81,12 @@ import site from "../../src/_data/site.js";
 
    It governs the FORM STORE only. The delivered email sits in the inbox and
    nothing here governs that, which is why the policy scopes its claim rather
-   than stating one period for both. */
+   than stating one period for both.
+
+   CHANGING THIS NUMBER MAKES src/privacy-policy.njk WRONG THE SAME DAY. That
+   page states 24 months and reads it off this constant. Change both or
+   neither. Cloudflare documents a 60 second minimum for expirationTtl and no
+   maximum, so there is headroom in either direction. */
 const RETENTION_SECONDS = 60 * 60 * 24 * 730;
 
 /* Deliberately generous. Two inquiries a quarter is the expected volume, so

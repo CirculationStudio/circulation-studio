@@ -1,59 +1,102 @@
 ---
 layout: layouts/base.njk
 title: "Accessibility Statement"
-description: "Circulation Studio's accessibility statement, migrated from the previous site and pending review."
+description: "What Circulation Studio targets for accessibility on this site, what we have measured, what we have not, and how to report a barrier."
 permalink: /accessibility-statement/index.html
+
+# The review date, as a value rather than as a sentence in the body, so
+# updating it is one edit and cannot disagree with itself. Rendered below.
+reviewed: 2026-08-18
 ---
 {% from "components/container.njk" import container %}
 
 {#
-  Transcribed verbatim from https://circulationstudio.com/accessibility on
-  2026-08-01. Not rewritten: CLAUDE.md forbids generating or editing legal and
-  policy language without explicit instruction.
+  THE ACCESSIBILITY STATEMENT. Rewritten 2026-08-18, replacing the text
+  transcribed from the previous site on 2026-08-01.
 
-  ONE THING IN IT IS ALREADY FALSE ON THIS SITE and the banner says so. The
-  statement describes UserWay's accessibility widget and scanner. This build
-  ships no overlay, and CLAUDE.md bans them outright on the grounds that they
-  raise legal risk rather than lower it. So the migrated text claims a
-  mechanism that is not here, which is exactly the kind of unreviewed statement
-  that needs to be replaced rather than carried. It is transcribed rather than
-  edited because editing it is the review, not the migration.
+  WHY IT WAS REPLACED RATHER THAN EDITED. The migrated version described
+  UserWay's widget and scanner, and this build ships no overlay: CLAUDE.md bans
+  them on the grounds that they raise legal risk rather than lower it. Worse
+  than merely stale, it told a visitor to click an accessibility menu icon "that
+  appears on the corner of the page", which is an instruction to a control that
+  does not exist, on the one page a person who has hit a barrier is most likely
+  to open. A statement that misdirects the reader it exists to help is worse
+  than no statement.
 
-  The contact block reads from site.nap. The live page types the phone and
-  email inline; CLAUDE.md says never re-type the NAP, so it is read from the
-  one source instead. That is a transcription decision, not a policy edit: the
-  values are identical.
+  It also carried the migrated-content banner, which stops being true the moment
+  the text is ours, so that is gone too.
+
+  FOUR THINGS AND NOTHING MORE: the standard targeted, an honest account of
+  conformance including the gaps, how to report a barrier, and what we will do
+  about one. The migrated version's General and Disclaimer sections said nothing
+  a reader could act on, and the Disclaimer used a word on the house banned list.
+
+  ============================================================
+  EVERY CLAIM BELOW IS SUBSTANTIATED IN THE REPO. Checked 2026-08-18.
+  ============================================================
+
+    contrast measured        tools/verify/contrast.mjs, the declared token
+                             matrix plus a live scan of every text-carrying
+                             element on the built pages
+    focus indicator          HANDOFF.md, measured on paper, mist and white when
+                             --focus-ring moved from .45 to .70
+    skip link                base.njk, first element in the body
+    reduced motion           prefers-reduced-motion in 10 files under src/css/
+    explicit labels          contact.njk, for/id rather than wrapping
+    errors not color alone   form.css, aria-invalid plus a text message in a
+                             live region, added when the form was wired
+
+  THREE CLAIMS FROM THE APPROVED DRAFT WERE CUT FOR BEING UNTRUE OR UNTESTED,
+  and this note exists so nobody restores them from that draft:
+
+  1. "checked on every build, and the build fails". FALSE. contrast.mjs runs
+     under `npm run verify`, and Cloudflare's build command is `npm run build`.
+     A contrast regression does not fail a deploy. The text now says it runs
+     before a release, which is what actually happens.
+  2. "every page is keyboard reachable". UNTESTED. Nothing in the repo measures
+     it. It is probably true and it is not ours to assert.
+  3. A single figure for the focus ratio on paper. HANDOFF.md records 4.19:1 in
+     its measurement table and 4.23:1 in its audit answer. Mist is 3.95:1 in
+     both, and mist is the constraint, so the text states the floor that holds
+     under either reading.
 #}
 
 {% call container(class="cs-doc") %}
   <h1 class="cs-doc__title">Accessibility Statement</h1>
-  <p class="cs-doc__date">Last updated November 11th, 2022</p>
+  <p class="cs-doc__date">Last reviewed {{ reviewed | calendarDate }}</p>
 
-  {% include "partials/migrated.njk" %}
+  <p class="cs-doc__lede">
+    Circulation Studio targets WCAG 2.1 Level AA for this site. We have not
+    commissioned an independent audit and we do not claim full conformance.
+    What we can state is what we have measured.
+  </p>
 
   <div class="cs-doc__body">
-    <h2>General</h2>
-    <p>Circulation Studio strives to ensure that its services are accessible to people with disabilities. Circulation Studio has invested a significant amount of resources to help ensure that its website is made easier to use and more accessible for people with disabilities, with the strong belief that website accessibility efforts assist all users and that every person has the right to live with dignity, equality, comfort and independence.</p>
+    <h2>What we have measured</h2>
+    <p>Color contrast is checked automatically, both against every text and surface pairing the design system permits and against every text-carrying element on the built pages. A pairing below the AA threshold fails that check.</p>
+    <p>Every page opens with a skip link. The focus indicator measures 3.95:1 or better on every ground it appears on, where the standard asks for 3:1. Reduced-motion preferences are honored throughout. Form controls carry explicit labels, and form errors are announced to assistive technology and stated in words rather than signaled by color alone.</p>
 
-    <h2>Accessibility on www.circulationstudio.com</h2>
-    <p>www.circulationstudio.com makes UserWay's Web Accessibility Widget available which is powered by a dedicated accessibility server. The software allows www.circulationstudio.com to improve its compliance with the Web Content Accessibility Guidelines (WCAG 2.1).</p>
+    <h2>What we have not done</h2>
+    <p>There has been no independent audit. We have not tested with screen readers across assistive technologies, we have not audited reflow at 320 pixels, and we do not run an automated accessibility scan over the whole site. The contrast check above runs before a release rather than on every deploy.</p>
+    <p>We would rather list these than imply they are covered. Where any of them turns up a failure, it will be described here.</p>
 
-    <h2>Enabling the Accessibility Menu</h2>
-    <p>The www.circulationstudio.com accessibility menu can be enabled by clicking the accessibility menu icon that appears on the corner of the page. After triggering the accessibility menu, please wait a moment for the accessibility menu to load in its entirety.</p>
-
-    <h2>Disclaimer</h2>
-    <p>Circulation Studio continues its efforts to constantly improve the accessibility of its site and services in the belief that it is our collective moral obligation to allow seamless, accessible and unhindered use also for those of us with disabilities.</p>
-    <p>In an ongoing effort to continually improve and remediate accessibility issues, we also regularly scan www.circulationstudio.com with UserWay's Accessibility Scanner to identify and fix every possible accessibility barrier on our site. Despite our efforts to make all pages and content on www.circulationstudio.com fully accessible, some content may not have yet been fully adapted to the strictest accessibility standards. This may be a result of not having found or identified the most appropriate technological solution.</p>
-
-    <h2>Here For You</h2>
-    <p>If you are experiencing difficulty with any content on www.circulationstudio.com or require assistance with any part of our site, please contact us during normal business hours as detailed below and we will be happy to assist.</p>
-
-    <h2>Contact Us</h2>
-    <p>If you wish to report an accessibility issue, have any questions or need assistance, please contact Circulation Studio Customer Support as follows:</p>
+    <h2>Reporting a barrier</h2>
+    <p>If any part of this site is difficult or impossible for you to use, please tell us. You do not need to identify the standard involved or describe the problem in technical terms. What you were trying to do, and what happened instead, is enough.</p>
+    {#- A plain mailto and a plain tel, deliberately, and not the obfuscated
+        email macro the contact page uses. That macro assembles the address in
+        JavaScript to keep a harvestable string out of the markup, which is the
+        right trade on a marketing page and the wrong one here: this is the
+        route for somebody who has already hit a barrier, and it must not depend
+        on JavaScript running or on an address that a screen reader reaches only
+        after a script has assembled it. -#}
     <p class="cs-doc__contact">
       {{ site.nap.name }}<br>
       <a href="{{ site.nap.telephoneHref }}">{{ site.nap.telephone }}</a><br>
       <a href="mailto:{{ site.nap.email }}">{{ site.nap.email }}</a>
     </p>
+
+    <h2>What we will do</h2>
+    <p>We will respond within five business days. Within thirty days of that response we will either have fixed the barrier or given you a dated plan for fixing it.</p>
+    <p>We do not promise a fix inside a fixed window for a problem nobody has seen yet. Some barriers are a one-line change and some are a rebuild of a component, and a deadline set before the work is understood is a deadline that gets quietly missed. A dated plan is a commitment we can keep.</p>
   </div>
 {% endcall %}
