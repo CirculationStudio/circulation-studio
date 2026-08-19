@@ -17,9 +17,6 @@
     padding-top: var(--space-64);
   }
 
-  /* clip, not hidden: clip leaves the vertical axis genuinely visible, and
-     this only exists to trim the scrollbar overshoot off .cs-rule--pigeon. */
-  .cs-thanks { overflow-x: clip }
   .cs-thanks__frame { position: relative }
 
   /* Half the frame, flush right. The width and height attributes on the element
@@ -47,30 +44,29 @@
     width: var(--copy-width);
   }
 
-  /* THE SURVEY RULE, out of the picture's right edge into the gutter.
+  /* THE SURVEY RULE, carried up out of the picture's top edge.
    *
-   * top is 48.55%, which is where the drawn annotation crosses the file: row
-   * 519 of 1069, measured rather than eyeballed. The rule lives inside the
-   * frame so that percentage tracks the picture's rendered height at every
-   * width instead of needing a pixel offset per breakpoint.
+   * WHICH LINE. The vertical at x=614 of 800, 76.75% across, measured off the
+   * file. It is the one that runs through the bird: 83% of that column is
+   * subject-dark, against 35% for its neighbours two pixels either side. It is
+   * also one of only three verticals in the file that reach the top edge at
+   * all, which is what makes continuing it upward legible rather than arbitrary.
    *
-   * THE WIDTH IS THE GUTTER, clamped the way .cs-rule--sowing clamps it. At
-   * 1440 that is 160px, the run the rest of the survey rules use; by 1200 the
-   * container has taken the whole width and it holds at the 40px floor rather
-   * than inverting.
+   * THE PERCENTAGE IS OF THE FRAME, NOT THE PICTURE, and that is the whole
+   * subtlety here. The figure is half the frame and flush right, so it spans
+   * 50% to 100%, and a line 76.75% across the picture lands at
+   * 50% + 76.75% x 50% = 88.375% across the frame. Using 76.75% directly would
+   * put it 96px to the left of the line it is meant to continue.
    *
-   * 50vw COUNTS THE SCROLLBAR AND THE GUTTER DOES NOT, so on a platform with a
-   * classic scrollbar this overshoots the viewport edge by half its width. That
-   * is what the overflow-x: clip on .cs-thanks is for. Same trade, and the same
-   * fix, as .cs-intro-band on What We Do, which records it at ~7px.
+   * bottom: 100% starts it at the frame's top edge and grows upward, the mirror
+   * of .cs-rule--intro-v on What We Do. 96px into 281px of headroom.
    *
-   * Dashed, because every horizontal rule in this vocabulary is dashed and
-   * every vertical one is solid. */
+   * Solid, because every vertical in this vocabulary is solid. */
   .cs-rule--pigeon {
-    top: 48.55%;
-    left: 100%;
-    width: max(calc(50vw - var(--container-main) / 2), var(--space-40));
-    border-top: 1px dashed var(--border-hairline);
+    bottom: 100%;
+    left: 88.375%;
+    height: var(--space-96);
+    border-left: 1px solid var(--border-hairline);
   }
 
   .cs-thanks__title {

@@ -115,22 +115,26 @@
     height: auto;
     display: block;
   }
-  /* THE SURVEY RULE, dropping out of the picture's bottom edge.
+  /* THE SURVEY RULE, carried up out of the picture's top edge.
    *
-   * left is 42.58%, measured off the file: a vertical at x=511 of 1200 runs the
-   * full height and reaches both edges. A percentage rather than a pixel offset
-   * because the figure is width: 100% of the frame, so the line's position
-   * scales with it and the two stay registered at every width.
+   * WHICH LINE. The vertical at x=780 of 1200, 65.00% across, measured off the
+   * file. It is the one bordering the right edge of the red bar, which ends at
+   * exactly x=780, and it is the only vertical in that neighbourhood that
+   * reaches the top edge, so it is the only one there is anything to continue.
    *
-   * top: 100% starts it at the frame's bottom edge, the same construction
-   * .cs-rule--intro-v uses on What We Do. 40px of the 64px available below the
-   * picture, so it stops clear of the next section rather than running into it.
+   * A percentage of the frame is correct here without adjustment, unlike on the
+   * thank you page: the figure is width: 100% of the frame, so picture
+   * percentages and frame percentages are the same number.
+   *
+   * bottom: 100% starts it at the frame's top edge and grows upward, the mirror
+   * of .cs-rule--intro-v. 64px of the 96px between the picture and the
+   * breadcrumb, so it stops clear rather than touching.
    *
    * Solid, because every vertical in this vocabulary is solid. */
   .cs-rule--net-v {
-    top: 100%;
-    left: 42.58%;
-    height: var(--space-40);
+    bottom: 100%;
+    left: 65%;
+    height: var(--space-64);
     border-left: 1px solid var(--border-hairline);
   }
 
@@ -498,7 +502,7 @@
        container measure for the copy without restating container.css's
        formula. */
     /* Dropped with the overlay. The figure is inset 40px from the frame's
-       right below this width, so the line would no longer sit under the
+       right below this width, so the line would no longer sit over the
        vertical it continues. */
     .cs-rule--net-v { display: none }
     .cs-net-hero__frame { width: 100% }
