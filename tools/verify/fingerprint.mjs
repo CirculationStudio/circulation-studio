@@ -109,7 +109,18 @@ const MIN_ELEMENTS = {
      Uniform across all six is the signature of a frame change, the same shape
      as the two footer-link rises above. A page that moved by a different amount
      would be the interesting result. */
-  home: 145,
+  /* EVERY FLOOR ROSE BY EXACTLY 2 ON 2026-08-19, and uniform is the signature.
+     The masthead gained the orientation slot and the mobile bar gained its
+     counterpart, so every page carries two more elements and no page carries a
+     different number. A frame change that moved SOME of them would be the
+     interesting result, the same test the footer-link and button rises above
+     were read against.
+
+     The section names themselves cost nothing: data-orient is emitted onto the
+     container and section elements that already existed, through an argument on
+     those two macros, rather than onto marker divs. A page that names five
+     sections and a page that names none have the same element count. */
+  home: 147,
   /* who FELL 159 -> 157 ON 2026-08-19, and falling alone is the point. The
      above-title was retired and this page carried exactly two: "In a client's
      words" over the testimonial and "Why the name" over the origin list. One
@@ -121,11 +132,11 @@ const MIN_ELEMENTS = {
      not something this file records, so a second page moving here would have
      meant the section() macro's default had been changed rather than passed as
      an argument. It was passed. */
-  who: 157,
+  who: 159,
   /* what carries both: 153 -> 159 for the two services added the same day, then
      159 -> 161 for its one button. */
-  what: 163,
-  results: 157,
+  what: 165,
+  results: 159,
   /* CONTACT ALONE ROSE 127 -> 150 ON 2026-08-15, and alone is the point: the
      prompt group is one page's content, not the frame, so the other five did
      not move. +23 is the group's wrapper, its line and its list, plus five
@@ -143,7 +154,7 @@ const MIN_ELEMENTS = {
      partial render that loses fewer than five elements, which is the case it
      exists for. Re-take the baseline and raise the floor in the same commit, or
      the check quietly weakens instead of failing. */
-  contact: 153,
+  contact: 155,
   /* The hub is DATA-DRIVEN and this floor will rise. Every article added to
      src/yelp/ adds elements to the coverage map, so a run that drops below the
      floor means the page stopped rendering rather than that content was
@@ -158,7 +169,7 @@ const MIN_ELEMENTS = {
      rendered for the first time since it was built, and two more clusters
      traded a pending line for a full entry. Each time the five marketing
      hashes did not move, which is the split this file exists for. */
-  yelphub: 238
+  yelphub: 240
 };
 
 const browser = await chromium.launch();

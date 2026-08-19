@@ -27,8 +27,10 @@
     {% raw %}{% from "components/section.njk" import section %}
     {% call section(deep=true) %}...{% endcall %}{% endraw %}
 #}
-{% macro section(deep=false, class="", containerClass="", id="", label="", pad="py-24") %}
-<section{% if id %} id="{{ id }}"{% endif %}{% if label %} aria-label="{{ label }}"{% endif %} class="{{ pad }}{{ " bg-ink text-paper" if deep }}{{ " " + class if class }}">
+{#- `orient` names this section for the masthead's left slot, on the <section>
+    that already exists rather than on a marker element. See container.njk. -#}
+{% macro section(deep=false, class="", containerClass="", id="", label="", pad="py-24", orient="") %}
+<section{% if id %} id="{{ id }}"{% endif %}{% if label %} aria-label="{{ label }}"{% endif %}{% if orient %} data-orient="{{ orient }}"{% endif %} class="{{ pad }}{{ " bg-ink text-paper" if deep }}{{ " " + class if class }}">
   <div class="cs-container{{ " " + containerClass if containerClass }}">
     {{ caller() }}
   </div>

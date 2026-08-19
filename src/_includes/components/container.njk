@@ -12,8 +12,13 @@
     {% raw %}{% from "components/container.njk" import container %}
     {% call container() %}...{% endcall %}{% endraw %}
 #}
-{% macro container(class="", narrow=false) %}
-<div class="cs-container{{ " cs-container--narrow" if narrow }}{{ " " + class if class }}">
+{#- `orient` names this block for the masthead's left slot. It emits a
+    data-orient attribute on the container that already exists, so naming a
+    section costs no element and no wrapper. main.js caches each one's top and
+    writes the name of whichever is under the bar. Omit it and the block is not
+    a section as far as the header is concerned. -#}
+{% macro container(class="", narrow=false, orient="") %}
+<div class="cs-container{{ " cs-container--narrow" if narrow }}{{ " " + class if class }}"{% if orient %} data-orient="{{ orient }}"{% endif %}>
   {{ caller() }}
 </div>
 {% endmacro %}

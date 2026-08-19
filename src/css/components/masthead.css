@@ -81,7 +81,55 @@
   }
   .cs-masthead__location {
     color: var(--text-faint);
+    grid-column: 1;
+    grid-row: 1;
     transition: opacity var(--dur-fast) var(--ease-out);
+  }
+
+  /* THE ORIENTATION LABEL, in the location's cell and in its place.
+     ============================================================
+
+     Same grid cell, so the two occupy one position and cross-fade rather than
+     one moving aside for the other. The rail is 1fr auto 1fr and the lockup has
+     to stay centred on the middle track, so a fourth column was never an
+     option.
+
+     IT INHERITS .cs-masthead__label, which is font-display, medium, 11px,
+     tracking-wide and uppercase. That is the same declaration list as
+     .cs-eyebrow, the thing being retired, and --text-faint matches its colour.
+     So "same position, face, size and colour" is not reproduced here, it is the
+     same rule doing the work.
+
+     Hidden by default. It only ever appears on a page that declares sections;
+     see the data-orient-on guard below. */
+  .cs-masthead__orient {
+    grid-column: 1;
+    grid-row: 1;
+    color: var(--text-faint);
+    opacity: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: opacity var(--dur-fast) var(--ease-out);
+  }
+
+  /* THE TICK, and it is the only thing distinguishing the two states.
+     18px long, 2px thick, madder. Horizontal, matching the survey rules the
+     rest of the site draws, and the one place the accent appears in the header
+     besides the booking line.
+
+     2px rather than 1: at 11px type a hairline reads as a rendering artefact
+     rather than a mark. --color-madder is 8.06:1 on paper, comfortably past the
+     3:1 that 1.4.11 asks of a non-text mark that carries meaning.
+
+     A pseudo-element, so the state costs no node and the accessibility tree is
+     identical in both states. */
+  .cs-masthead__orient::before {
+    content: "";
+    flex: none;
+    width: 18px;
+    height: 2px;
+    background: var(--color-madder);
   }
 
   .cs-masthead__booking {
@@ -212,6 +260,47 @@
   .cs-masthead[data-cond="true"] .cs-masthead__location,
   .cs-masthead[data-cond="true"] .cs-wordmark__name,
   .cs-masthead[data-cond="true"] .cs-wordmark__studio { opacity: 0 }
+
+  /* THE SWAP. Only on a page that declared sections.
+     ============================================================
+
+     Without data-orient-on nothing below applies, so every page that names no
+     sections keeps the behaviour it has always had: the location fades out on
+     condense and the slot empties. That is what lets the header ship to the
+     whole site while one page uses it.
+
+     THE LEFT SLOT NOW TRAVELS. --cs-ty-loc is derived in main.js by the same
+     formula as the booking line's. The location never needed it before, because
+     it faded before it would have had to land anywhere. */
+  [data-orient-on] .cs-masthead[data-cond="true"] .cs-masthead__location,
+  [data-orient-on] .cs-masthead[data-cond="true"] .cs-masthead__orient {
+    transform: translateY(var(--cs-ty-loc, -50px));
+  }
+  [data-orient-on] .cs-masthead[data-cond="true"] .cs-masthead__orient { opacity: 1 }
+
+  /* THE MOBILE BAR. The wordmark's TEXT is replaced, never the link.
+     The anchor keeps its href and its aria-label, and the isotype stays, so
+     home is still one tap away and the link's accessible name is unchanged. */
+  [data-orient-on] .cs-stickybar.is-visible .cs-wordmark__name { display: none }
+  .cs-stickybar__orient {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-display);
+    font-weight: var(--weight-medium);
+    font-size: 11px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  .cs-stickybar__orient::before {
+    content: "";
+    flex: none;
+    width: 18px;
+    height: 2px;
+    background: var(--color-madder);
+  }
+  [data-orient-on] .cs-stickybar.is-visible .cs-stickybar__orient { display: flex }
   .cs-masthead[data-cond="true"] .cs-masthead__nav { border-top-color: transparent }
 
   .cs-masthead[data-cond="true"] .cs-masthead__markpos { transform: translateY(var(--cs-ty-mark, -40px)) }
@@ -434,6 +523,12 @@
   @media (prefers-reduced-motion: reduce) {
     .cs-masthead,
     .cs-masthead__location,
+    /* The orientation labels join this list, and they have to: the cross-fade
+       between the location and the section name is motion, and reduced motion
+       gets the state change without it. Measured before this line existed, the
+       label was still easing over 0.14s here. */
+    .cs-masthead__orient,
+    .cs-stickybar__orient,
     .cs-masthead__word,
     .cs-masthead__navrule,
     .cs-masthead__markpos,
@@ -455,6 +550,34 @@
     .cs-masthead__location,
     .cs-masthead__word,
     .cs-masthead__navrule { opacity: 0 }
+
+    /* ORIENTATION UNDER REDUCED MOTION: the state change happens, the movement
+       does not.
+       ============================================================
+
+       This block makes condensed the RESTING state, so there is no travel to
+       ride and no transition to run. That is deliberate and stays. What it must
+       not do is swallow the state change with it: reduced motion is a request
+       about movement, not a request for less information, and these readers
+       have just lost the above-title along with everyone else.
+
+       So on a page with sections the left slot is live here too. Below the
+       threshold it carries the location, above it the section, and the change
+       is instantaneous because every transition in this block is already
+       none !important. Nothing animates; the label is simply one thing and then
+       the other.
+
+       THE TRANSFORM IS NOT APPLIED. The rail is already laid out at its
+       condensed height in this mode, so the labels are where they belong and
+       --cs-ty-loc would move them out of the bar. The non-reduced rules above
+       are overridden back to none rather than left to inherit. */
+    [data-orient-on] .cs-masthead .cs-masthead__location { opacity: 1 }
+    [data-orient-on] .cs-masthead[data-cond="true"] .cs-masthead__location { opacity: 0 }
+    [data-orient-on] .cs-masthead[data-cond="true"] .cs-masthead__orient { opacity: 1 }
+    [data-orient-on] .cs-masthead[data-cond="true"] .cs-masthead__location,
+    [data-orient-on] .cs-masthead[data-cond="true"] .cs-masthead__orient {
+      transform: none;
+    }
     .cs-masthead__markpos { transform: translateY(-37px) }
     .cs-masthead__markscale { transform: scale(.579) }
     .cs-masthead__navlist { transform: translateY(-144px) }

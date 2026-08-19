@@ -116,12 +116,26 @@ close: >-
     every section step here is 22 on Tailwind's scale, which is 88px, rather than
     24, which is 96. section() takes it as an argument because the macro is
     shared by five pages and the other four have not moved yet. -#}
-{% call section(pad="py-22") %}
+{#- THE SECTIONS, NAMED FOR THE HEADER'S LEFT SLOT.
+    ============================================================
+
+    data-orient is read by main.js, which caches each one's top and writes the
+    name of whichever is under the bar into the masthead. Declared rather than
+    discovered: three of these five blocks have no heading to read a name from,
+    so scraping the DOM would have named two sections and shrugged at the rest.
+
+    THESE ARE THE ABOVE-TITLES, AND THAT IS THE POINT OF THE WHOLE CHANGE.
+    "In a client's words" and "Why the name" were the labels removed from this
+    page in the previous commit. They are not gone from the site; they moved to
+    the one place that can carry orientation without repeating it beside the
+    thing it describes. The page reads without them and the header answers where
+    you are. -#}
+{% call section(pad="py-22", orient="Who We Are") %}
   <h1 class="cs-opening__headline">{{ opening.headline }}</h1>
   <p class="cs-opening__lede">{{ opening.lede }}</p>
 {% endcall %}
 
-{% call container(class="pb-22") %}
+{% call container(class="pb-22", orient="The Team") %}
   <h2 class="cs-teamhead">The Team</h2>
   <ul class="cs-teamgrid">
     {% for member in team %}
@@ -164,7 +178,7 @@ close: >-
     testimonial's own top margin went with it: that margin existed to hold the
     label off the quote, and with no label above it the quote sits on the
     container's padding instead. See who-we-are.css. -#}
-{% call container(narrow=true, class="pt-22") %}
+{% call container(narrow=true, class="pt-22", orient="In a client’s words") %}
   <blockquote class="cs-testimonial">
     <p>{{ testimonial.body }}</p>
     <cite>{{ testimonial.cite }}</cite>
@@ -175,7 +189,7 @@ close: >-
     two terms are Circulation and Studio, which is the answer to the question the
     label was asking. The list's top margin went with it, for the same reason as
     the testimonial above. -#}
-{% call container(narrow=true, class="py-22") %}
+{% call container(narrow=true, class="py-22", orient="Why the name") %}
   <dl class="cs-origin">
     {% for entry in origin %}
       <div class="cs-origin__group">
@@ -196,6 +210,13 @@ close: >-
     --space-96 and it is shared with Results, so it is overridden here rather
     than changed there. Both move to the token in the commit that resets the
     remaining pages, and this class comes out then. -#}
+{#- NOT A NAMED SECTION. The close is a call to action, not a place the reader
+    is in, and naming it would have the label answer "Start a conversation" to
+    the question "where am I". It is also the last block on the page, and a
+    final block shorter than the viewport can never pass under the bar: measured
+    here, it begins at 3434 while the page stops scrolling at 3120. The clamp in
+    main.js means the last NAMED section is always reachable; this one is simply
+    not one. -#}
 {% call container(class="cs-close cs-who-close") %}
   <p class="cs-close__note">{{ close }}</p>
   {{ button("Start a conversation", href="/contact/") }}

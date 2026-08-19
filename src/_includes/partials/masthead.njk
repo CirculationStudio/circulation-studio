@@ -63,6 +63,26 @@
   <div class="cs-masthead__rail">
     <p class="cs-masthead__label cs-masthead__location">{{ site.location }}</p>
 
+    {#- THE ORIENTATION SLOT. Empty in the markup; main.js fills it with the
+        name of the section under the bar, and only on a page that declares
+        sections with data-orient. Pages that declare none never light it and
+        keep exactly the behaviour they had.
+
+        IT SHARES THE LOCATION'S GRID CELL rather than taking a fourth column.
+        The rail is 1fr auto 1fr and the lockup has to stay centred on the
+        middle track, so both labels are placed in column 1 row 1 and cross-fade
+        in place. That is what makes this the same position rather than a
+        position near it.
+
+        aria-hidden, AND THAT IS THE WHOLE ACCESSIBILITY DESIGN. This duplicates
+        the heading the reader is already inside, and its content changes on
+        scroll. Exposed, it would either be announced on every threshold
+        crossing or sit in the tree going stale. The location beside it is
+        untouched and still read. Nothing is added to or removed from the
+        accessibility tree while scrolling: both elements are always present and
+        only their opacity changes. -#}
+    <p class="cs-masthead__label cs-masthead__orient" aria-hidden="true" data-orient-slot></p>
+
     {#- Two spans around the icon and nothing else. The descent and the shrink
         are two transitions on two elements, so the mark starts travelling
         before it begins to scale; without that offset the two resolve together
@@ -99,6 +119,14 @@
   <a class="cs-wordmark cs-wordmark--inline" href="/" aria-label="{{ site.name }}, home">
     <img class="cs-wordmark__icon" src="/brand/Circulation-Studio-icon.svg" alt="" width="117" height="117">
     <span class="cs-wordmark__name">Circul<span class="alt-soft">a</span>tion Studio</span>
+
+    {#- THE MOBILE SLOT. Past the threshold this replaces the wordmark's TEXT,
+        not the link. The isotype stays, the href stays, and the anchor's
+        aria-label still reads "Circulation Studio, home", so the accessible
+        name of this link never changes and home is still one tap away. A screen
+        reader sees the same link before and after; only the printed word
+        changes, and that word is aria-hidden. -#}
+    <span class="cs-stickybar__orient" aria-hidden="true" data-orient-slot></span>
   </a>
 
   <nav class="cs-stickybar__nav" aria-label="Primary, condensed">
