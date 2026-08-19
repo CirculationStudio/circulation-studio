@@ -100,7 +100,15 @@
   .cs-net-hero {
     /* the copy column, and how it is split by the picture's right edge */
     --copy-width: 440px;
-    --copy-on-image: calc(var(--copy-width) * 0.2);
+    /* 0.1, halved from 0.2 on 2026-08-18. The copy crosses the picture by 44px
+       rather than 88px: enough to read as overlapping, little enough that the
+       type sits almost entirely on paper.
+
+       THE COPY DOES NOT MOVE WHEN THIS CHANGES, WHICH IS THE POINT OF DERIVING
+       --copy-on-page FROM IT. The frame's width subtracts --copy-on-page, so
+       halving the overlap narrows the picture by 44px and leaves the column's
+       right edge exactly on the container's, where it has to stay. */
+    --copy-on-image: calc(var(--copy-width) * 0.1);
     --copy-on-page: calc(var(--copy-width) - var(--copy-on-image));
   }
 
@@ -127,14 +135,22 @@
    * percentages and frame percentages are the same number.
    *
    * bottom: 100% starts it at the frame's top edge and grows upward, the mirror
-   * of .cs-rule--intro-v. 64px of the 96px between the picture and the
-   * breadcrumb, so it stops clear rather than touching.
+   * of .cs-rule--intro-v. It runs the full 96px to the horizontal rule under
+   * the breadcrumb and meets it, rather than stopping short of it.
    *
    * Solid, because every vertical in this vocabulary is solid. */
   .cs-rule--net-v {
     bottom: 100%;
-    left: 65%;
-    height: var(--space-64);
+    /* 65% is where the drawn vertical sits; the 1px back off it is deliberate.
+       A 1px border straddles the subpixel boundary differently from the drawn
+       line's own antialiasing, and reading them side by side the extension sat
+       a hair right of what it continues. */
+    left: calc(65% - 1px);
+    /* Up to the horizontal rule under the breadcrumb, which is exactly
+       --space-96 above the picture because that is .cs-net-section--first's
+       top padding. Same token, so the two describe one gap rather than one
+       being a measurement of the other. */
+    height: var(--space-96);
     border-left: 1px solid var(--border-hairline);
   }
 
