@@ -115,6 +115,25 @@
     height: auto;
     display: block;
   }
+  /* THE SURVEY RULE, dropping out of the picture's bottom edge.
+   *
+   * left is 42.58%, measured off the file: a vertical at x=511 of 1200 runs the
+   * full height and reaches both edges. A percentage rather than a pixel offset
+   * because the figure is width: 100% of the frame, so the line's position
+   * scales with it and the two stay registered at every width.
+   *
+   * top: 100% starts it at the frame's bottom edge, the same construction
+   * .cs-rule--intro-v uses on What We Do. 40px of the 64px available below the
+   * picture, so it stops clear of the next section rather than running into it.
+   *
+   * Solid, because every vertical in this vocabulary is solid. */
+  .cs-rule--net-v {
+    top: 100%;
+    left: 42.58%;
+    height: var(--space-40);
+    border-left: 1px solid var(--border-hairline);
+  }
+
   .cs-net-hero__copy {
     position: absolute;
     top: 50%;
@@ -478,6 +497,10 @@
        container's right edge, and margin-inline of 40px reproduces the
        container measure for the copy without restating container.css's
        formula. */
+    /* Dropped with the overlay. The figure is inset 40px from the frame's
+       right below this width, so the line would no longer sit under the
+       vertical it continues. */
+    .cs-rule--net-v { display: none }
     .cs-net-hero__frame { width: 100% }
     .cs-net-hero__figure { width: calc(100% - var(--space-40)) }
     .cs-net-hero__copy {

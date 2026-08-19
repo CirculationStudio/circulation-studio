@@ -85,6 +85,23 @@ heroAlt: >-
            width="{{ heroWidth }}" height="{{ heroHeight }}"
            loading="eager" fetchpriority="high" decoding="async">
 
+      {#- THE SURVEY RULE, CARRIED OUT OF THE PICTURE. The illustration's own
+          dashed annotation crosses at 48.55% of its height and runs to the
+          picture's right edge, which is also the container's right edge. This
+          continues it into the gutter, so the annotation reads as belonging to
+          the page rather than stopping at a frame.
+
+          It runs RIGHT, into empty margin, and not left into the copy. Left
+          would put a dashed line through the confirmation, and the picture's
+          line does not reach its own left edge anyway: it stops 3.5% in.
+
+          The site's hairline, not the picture's line. Measured, the drawn one
+          is ink at .32 and --border-hairline is .14. Matching it would put a
+          second, heavier dashed weight on the site for one page. This is the
+          same treatment the other six survey rules use, and they all run from
+          an image edge outward, which is exactly what this does. -#}
+      <div class="cs-rule cs-rule--pigeon" aria-hidden="true"></div>
+
       {#- WHAT OVERLAPS IS THE CONFIRMATION AND NOTHING ELSE. The copy crosses
           the picture's left edge by --copy-on-image, so only that strip sits on
           the illustration. Measured over x 0 to 25% of the file, the picture is

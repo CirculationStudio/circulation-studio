@@ -17,6 +17,9 @@
     padding-top: var(--space-64);
   }
 
+  /* clip, not hidden: clip leaves the vertical axis genuinely visible, and
+     this only exists to trim the scrollbar overshoot off .cs-rule--pigeon. */
+  .cs-thanks { overflow-x: clip }
   .cs-thanks__frame { position: relative }
 
   /* Half the frame, flush right. The width and height attributes on the element
@@ -42,6 +45,32 @@
     top: 12%;
     left: calc(50% + var(--copy-on-image) - var(--copy-width));
     width: var(--copy-width);
+  }
+
+  /* THE SURVEY RULE, out of the picture's right edge into the gutter.
+   *
+   * top is 48.55%, which is where the drawn annotation crosses the file: row
+   * 519 of 1069, measured rather than eyeballed. The rule lives inside the
+   * frame so that percentage tracks the picture's rendered height at every
+   * width instead of needing a pixel offset per breakpoint.
+   *
+   * THE WIDTH IS THE GUTTER, clamped the way .cs-rule--sowing clamps it. At
+   * 1440 that is 160px, the run the rest of the survey rules use; by 1200 the
+   * container has taken the whole width and it holds at the 40px floor rather
+   * than inverting.
+   *
+   * 50vw COUNTS THE SCROLLBAR AND THE GUTTER DOES NOT, so on a platform with a
+   * classic scrollbar this overshoots the viewport edge by half its width. That
+   * is what the overflow-x: clip on .cs-thanks is for. Same trade, and the same
+   * fix, as .cs-intro-band on What We Do, which records it at ~7px.
+   *
+   * Dashed, because every horizontal rule in this vocabulary is dashed and
+   * every vertical one is solid. */
+  .cs-rule--pigeon {
+    top: 48.55%;
+    left: 100%;
+    width: max(calc(50vw - var(--container-main) / 2), var(--space-40));
+    border-top: 1px dashed var(--border-hairline);
   }
 
   .cs-thanks__title {
@@ -90,6 +119,9 @@
      Here the sentence is: somebody who has just pressed send needs to read that
      it arrived before they look at anything. */
   @media (max-width: 1120px) {
+    /* The rule describes a composition that no longer exists once this stacks,
+       which is the condition rule.css says to expect it to be dropped at. */
+    .cs-rule--pigeon { display: none }
     .cs-thanks__frame { display: flex; flex-direction: column-reverse }
     .cs-thanks__figure {
       width: 100%;
