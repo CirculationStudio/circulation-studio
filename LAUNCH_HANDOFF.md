@@ -295,9 +295,25 @@ failure they see is a validation failure.
 
 **No Turnstile.** It is a third-party script, and
 `src/about-this-site.njk` states in visible copy that the site loads
-none. Spam handling is a honeypot, an HMAC-signed render timestamp, and
-a per-IP rate limit in KV. None adds a request or a cookie. If spam ever
+none. Nothing that shipped adds a request or a cookie. If spam ever
 becomes real, the answer is a tighter rate limit rather than a script.
+
+**What shipped is four controls, three of them server side:** a
+same-origin check that refuses a POST whose `Origin` is not this host, a
+honeypot field answered with success rather than an error so the author
+learns nothing, a per-IP rate limit in KV at five an hour, and an
+unsigned client timestamp read as a soft signal only when it is present.
+The rate limit is the real control; the rest are cheap.
+
+**The HMAC-signed render timestamp was planned and could not be built.**
+Signing a render timestamp needs a render moment, and Pages serves
+static HTML: every visitor gets byte-identical bytes for `/contact/`, so
+a token baked into that page is the same for everyone and replayable.
+Fetching a per-session token at runtime would work but excludes anyone
+without JavaScript, who then needs a path that accepts no token, which a
+bot claims by not sending one. The timestamp is therefore unsigned and
+is never held against a submission that omits it, because omitting it is
+the no-JavaScript case.
 
 **`/thank-you/` is built as a real page carrying `noindex`.** Cloudflare
 Pages serves static HTML, so `/contact/?sent=1` returns bytes identical
