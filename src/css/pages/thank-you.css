@@ -1,0 +1,114 @@
+/* The confirmation page: copy left, illustration right, the copy's right edge
+   crossing onto the picture.
+
+   THE OVERLAY MECHANISM IS .cs-net-hero's, mirrored. A relative frame, the copy
+   absolutely positioned across the picture's edge by a fraction of its own
+   width, and the overlay abandoned at 1120 in favour of stacking. The only
+   difference is which side the picture sits on. */
+@layer components {
+  .cs-thanks {
+    /* The copy column, and how much of it lies over the picture. 20% of a 520px
+       column is 104px, which is 19% of the half-width picture. The grey panel
+       inside the illustration starts at 49.5% of its width, so the type stops
+       well short of it. */
+    --copy-width: 520px;
+    --copy-on-image: calc(var(--copy-width) * 0.20);
+
+    padding-top: var(--space-64);
+  }
+
+  .cs-thanks__frame { position: relative }
+
+  /* Half the frame, flush right. The width and height attributes on the element
+     carry the file's intrinsic 800x1069, so the box is reserved before the bytes
+     land and the copy over it never jumps. */
+  .cs-thanks__figure {
+    display: block;
+    width: 50%;
+    height: auto;
+    margin-left: auto;
+  }
+
+  /* ANCHORED TO THE PICTURE'S EDGE, NOT THE FRAME'S. The picture begins at 50%
+     of the frame, so the column's right edge belongs at 50% plus the overlap and
+     its left edge follows from its own width.
+
+     top is set rather than centred. Over the strip the copy actually crosses,
+     x 0 to 25% of the file, the illustration is clear of dark content between
+     10% and 45% of its height; below that the annotation line crosses and the
+     bird's wing enters. Centring would drift into that as the copy grows. */
+  .cs-thanks__copy {
+    position: absolute;
+    top: 12%;
+    left: calc(50% + var(--copy-on-image) - var(--copy-width));
+    width: var(--copy-width);
+  }
+
+  .cs-thanks__title {
+    margin: var(--space-16) 0 0;
+    font-size: var(--text-h2);
+    line-height: var(--leading-heading);
+    letter-spacing: var(--tracking-caps);
+    color: var(--color-ink);
+  }
+
+  /* No measure cap while the overlay is on: a cap would hold the text short of
+     the picture and leave nothing overlapping but empty column. The column is
+     the measure here. 520px at --text-base, where 1ch measures 11.19px in Lora,
+     is 46 characters, which is short of the comfortable range rather than over
+     it. That is the right side to err on for three lines of confirmation. */
+  .cs-thanks__lede {
+    margin: var(--space-24) 0 0;
+    font-size: var(--text-base);
+    line-height: var(--leading-body);
+    color: var(--color-ink);
+  }
+
+  /* The follow-ups, in the same column and deliberately shorter than it.
+     The column runs past the picture's left edge by --copy-on-image so the lede
+     can cross; these must not, because they sit lower, over the annotation line
+     and the wing. Capping them at the column width minus that overlap, less a
+     little air, keeps them on paper for their whole length. */
+  .cs-thanks__after {
+    margin-top: var(--space-40);
+    max-width: calc(var(--copy-width) - var(--copy-on-image) - var(--space-24));
+  }
+  .cs-thanks__after > p {
+    margin: 0 0 var(--space-16);
+    font-size: var(--text-base);
+    line-height: var(--leading-body);
+  }
+  .cs-thanks__after > p:last-child { margin-bottom: 0 }
+
+  /* STACK RATHER THAN SHRINK, at the breakpoint .cs-net-hero uses. Below 1120
+     the column and the picture cannot both hold their width, and shrinking is
+     the failure that matters: the type would keep sliding right, across the
+     illustration's grey panel and onto the bird.
+
+     THE COPY GOES FIRST, which is where this parts company with .cs-net-hero.
+     That hero stacks image over type because the photograph is the statement.
+     Here the sentence is: somebody who has just pressed send needs to read that
+     it arrived before they look at anything. */
+  @media (max-width: 1120px) {
+    .cs-thanks__frame { display: flex; flex-direction: column-reverse }
+    .cs-thanks__figure {
+      width: 100%;
+      max-width: 420px;
+      margin: var(--space-40) auto 0;
+    }
+    .cs-thanks__copy {
+      position: static;
+      width: auto;
+    }
+    .cs-thanks__lede,
+    .cs-thanks__after { max-width: var(--container-measure) }
+  }
+
+  .cs-thanks { padding-bottom: var(--space-96) }
+
+  @media (max-width: 640px) {
+    .cs-thanks { padding-top: var(--space-24) }
+    .cs-thanks__title { font-size: var(--text-h3) }
+    .cs-thanks { padding-bottom: var(--space-64) }
+  }
+}

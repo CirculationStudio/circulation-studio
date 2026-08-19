@@ -17,6 +17,18 @@ permalink: /thank-you/index.html
 # build's dead-link check knows the URL exists. The Function redirects here, and
 # a confirmation page that 404s is worse than no confirmation at all.
 noindex: true
+
+# THE ILLUSTRATION. Above the fold and the only visual on the page, so it is
+# eager and preloaded rather than lazy. preloadImage is what base.njk preloads
+# AND what the <img> takes as its src, so the two cannot drift; the dimensions
+# are the file's true intrinsic size, measured from the file, and they are what
+# reserves the space.
+preloadImage: cs-img-homing-pigeon-portrait.webp
+heroWidth: 800
+heroHeight: 1069
+heroAlt: >-
+  A homing pigeon in flight over a pale paper field, with survey annotation
+  lines and a single red bar marking its course
 ---
 {% from "components/container.njk" import container %}
 {% from "components/email.njk" import email %}
@@ -46,30 +58,78 @@ noindex: true
 
   THE RESPONSE WINDOW IS STATED ONCE, HERE. Not in the form, not in the email.
   A promise repeated in three places is a promise that will disagree with itself.
+
+  THE OVERLAP FOLLOWS .cs-net-hero, mirrored. Same mechanism, not a second one:
+  a relative frame, the copy absolutely positioned across the picture's edge by
+  a fraction of its own width, and the whole overlay abandoned at 1120 in favour
+  of stacking. The difference is only which side the picture sits on.
+
+  NO PLATE AND NO EXTENDED RULE. The illustration's ground is cream and the
+  page's is not, so the copy does cross a change of paper on its way onto the
+  picture. Backing the composition with a matched cream plate was tried and
+  rejected: it turns a small tonal step inside one sentence into a large panel
+  across the page. The picture also carries a dashed annotation at 48.55% of its
+  height, measured at ink .32 against --border-hairline's .14, and continuing it
+  would put a second, heavier dashed treatment on the site for one page.
 #}
 
-{% call container(class="cs-doc") %}
-  <p class="cs-eyebrow">Contact</p>
-  <h1 class="cs-doc__title">Message received</h1>
+<div class="cs-thanks">
+  {% call container() %}
+    <div class="cs-thanks__frame">
+      {#- Eager and fetchpriority high: it is the LCP element. Explicit width and
+          height are the file's intrinsic size, so the box is reserved before the
+          bytes arrive and the copy over it does not jump. -#}
+      <img class="cs-thanks__figure"
+           src="{{ site.cdn }}{{ preloadImage }}"
+           alt="{{ heroAlt }}"
+           width="{{ heroWidth }}" height="{{ heroHeight }}"
+           loading="eager" fetchpriority="high" decoding="async">
 
-  <p class="cs-doc__lede">
-    It is with us, and one of us will read it rather than a queue. Expect a
-    reply within two working days.
-  </p>
+      {#- WHAT OVERLAPS IS THE CONFIRMATION AND NOTHING ELSE. The copy crosses
+          the picture's left edge by --copy-on-image, so only that strip sits on
+          the illustration. Measured over x 0 to 25% of the file, the picture is
+          entirely clear of dark content from 10% to 45% of its height, which is
+          the band this block is positioned into. The two follow-up lines are
+          below the plate rather than in it: they would have pushed the block
+          past 48% of the height, which is where the annotation line crosses,
+          and type over a dashed rule is unreadable. -#}
+      <div class="cs-thanks__copy">
+        <p class="cs-eyebrow">Contact</p>
+        <h1 class="cs-thanks__title">Message received</h1>
+        <p class="cs-thanks__lede">
+          It is with us, and one of us will read it rather than a queue. Expect
+          a reply within two working days.
+        </p>
 
-  <div class="cs-doc__body">
-    <p>
-      If it is quicker to talk, the studio number is
-      <a href="{{ site.nap.telephoneHref }}">{{ site.nap.telephone }}</a>, and
-      you can reach us directly at {{ email(site.nap.emailUser, site.nap.emailDomain) }}.
-    </p>
+        {#- THE FOLLOW-UPS SIT IN THE SAME COLUMN, and they are narrower on
+            purpose. They were briefly their own container below the picture,
+            which produced two defects at once: 590px of empty page under the
+            copy, and a second left edge, because a container-aligned block does
+            not line up with a column inset to reach the picture. One column
+            with one left edge fixes both.
 
-    {#- The Yelp Hub rather than the home page. Somebody who has just written in
-        about their listing is closer to wanting the writing than to wanting the
-        front door, and /library/ is a placeholder until the library opens. -#}
-    <p>
-      In the meantime, the <a class="cs-link" href="/yelp/">Yelp Hub</a> carries
-      everything we have published on Yelp advertising.
-    </p>
-  </div>
-{% endcall %}
+            THE NARROW CAP IS WHAT KEEPS THEM OFF THE PICTURE. Only the lede
+            above needs to reach across; these do not, and they sit lower, where
+            the annotation line and the bird's wing are. Capped short of the
+            picture's left edge, they stay on paper for their whole length. -#}
+        <div class="cs-thanks__after">
+          <p>
+            If it is quicker to talk, the studio number is
+            <a href="{{ site.nap.telephoneHref }}">{{ site.nap.telephone }}</a>,
+            and you can reach us directly at
+            {{ email(site.nap.emailUser, site.nap.emailDomain) }}.
+          </p>
+
+          {#- The Yelp Hub rather than the home page. Somebody who has just
+              written in about their listing is closer to wanting the writing
+              than to wanting the front door, and /library/ is a placeholder
+              until the library opens. -#}
+          <p>
+            In the meantime, the <a class="cs-link" href="/yelp/">Yelp Hub</a>
+            carries everything we have published on Yelp advertising.
+          </p>
+        </div>
+      </div>
+    </div>
+  {% endcall %}
+</div>
