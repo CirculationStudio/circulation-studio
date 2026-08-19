@@ -1,11 +1,100 @@
 # Circulation Studio: launch handoff
 
-Written 2026-08-16, end of Website Redesign #3. Revised 2026-08-18.
+Written 2026-08-16, end of Website Redesign #3. Revised 2026-08-19.
 Read this, then the repo and `HANDOFF.md`. This document is the launch
 sequence and the state of everything that lives outside the repo.
 
-The site is built. What remains is finishing the launch blocker session,
-the article migration, and cutting over.
+The site is built and the launch blockers are done. What remains is the
+article migration and cutting over.
+
+---
+
+## What changed on 2026-08-19
+
+**The launch blocker session finished**, all six tasks, and the
+above-title was retired in a second session on top of it.
+
+### The above-title is gone from the site
+
+Twenty-six instances existed. Two came off Who We Are, twelve more came
+off the other ten templates, and twelve stayed because they were never
+above-titles: a figcaption, a deck sitting below its own h2, the booking
+label, the labels that tell one card or pricing tier or report column
+from the next, two reply-time commitments, and the "internal tool, not
+for publication" warning on the map page. Each was classified against
+one test, the one the Results discipline tag passed: a decorative label
+introducing a block goes, real data or content stays.
+
+**Nothing was a heading.** All twenty-six were `<p>`, `<span>` or
+`<figcaption>`, so no document outline changed on any page about to be
+indexed for the first time.
+
+**Section rhythm moved 96px to 88px**, and it lived in three places, not
+one: a `--space-96` token used 36 times, Tailwind `py-24` utilities in
+six templates, and `section.njk`'s own default. `--rhythm-section` is a
+new semantic token for the between-sections step only; `--space-96`
+still means 96px and still serves component padding and grid gaps.
+
+**Orientation moved into the masthead's left slot.** Past 96px of scroll
+the slot answers which section you are in rather than where the studio
+is, with an 18px madder tick as the only distinguishing mark. It rides
+the existing scroll listener, so there is still exactly one on the site
+and no observer that can disagree with it. On mobile the wordmark's text
+is replaced while its link, isotype and accessible name stay identical.
+Both slots are `aria-hidden`: the label duplicates the heading the
+reader is already inside and its content changes on scroll.
+
+Forty-six section names across nine pages, plus four on Who We Are.
+Five are the retired labels word for word.
+
+**Commit four of the original brief was dropped.** It asked for
+everything still wearing the small-caps letterspaced treatment to be
+retired alongside the above-title. That treatment is `h1, h2, h3`
+themselves in `base/elements.css`, and 125 selectors including the
+wordmark, every button, the nav and the colophon. It is the display
+voice of the whole site, not a decoration sitting beside its
+replacement. Retiring it is a redesign and wants `design.md` open.
+
+### The `_site` clobbering hazard is fixed
+
+`npm run verify` now builds and serves `_check`, `npm run measure:stats`
+builds `_measure`, and `eleventy --serve` keeps `_site`. They no longer
+share a directory, so a dev server running in another terminal cannot
+overwrite the artifact a measurement is reading.
+
+It cost real time before it was fixed, three more times in these two
+sessions, and never once by failing: a clobbered build has no stylesheet
+link and measures fine, returning numbers that look real. Verified by
+running the full suite with a watcher alive, then again with `_site`
+deliberately replaced by a one-line stub. Both passed.
+
+`HANDOFF.md` keeps the original section as the record, marked fixed.
+
+### Two things found by measuring that nobody had recorded
+
+**The fingerprint hashes an element's first class name**, not only its
+typography. Its own header does not say so. Renaming a class moves the
+hash with nothing about the rendering having changed, which is what
+`py-24` becoming `py-22` did on two pages that lost no element. Worth
+knowing before reading a hash-moved-count-held result as a regression.
+Documented in that file now.
+
+**No page is at zero CLS, and it is not the orientation label.**
+`/thank-you/` declares no sections, so that label never renders there,
+and it has the worst shift on the site. The cause is `--cs-h-exp`: the
+masthead and its spacer both read it with a `217px` fallback while the
+measured value is `216.67px`, so the spacer shrinks by a third of a
+pixel after first paint and everything below it moves. That arrived with
+the Header Condense work on 2026-08-15 and had not been measured since.
+
+Everything is inside budget, worst CLS 0.0143 against 0.1 and worst LCP
+472ms against 2500, so this is a defect rather than a failure. The fix
+is one value and it wants its own commit and its own measurement.
+
+**JavaScript is up 71%**, 5528 to 9433 bytes, 2600 to 4089 gzipped, for
+the contact handler and the orientation machinery. CLAUDE.md asks for
+minimal scripts, so it is stated rather than buried. Still one file,
+still identical on every page.
 
 ---
 
@@ -44,8 +133,10 @@ page to open when you lose track of where anything is.
 **Interaction systems, all shipped:** buttons carry the red bar on
 hover, a plate press on active, registration marks on focus. Links have
 their own family. The header condenses into a split nav with a derived
-offset. The contact form has four completeness prompts, client-side
-only.
+offset, and past the same threshold its left slot names the section you
+are in. The contact form has four completeness prompts, client-side and
+ungated, and posts to a real handler that records every submission
+before it attempts delivery.
 
 **Article system:** 20 LIVE shortcodes plus `image` and `screenshot`.
 The audit strip renders on every article on the preview host, listing
@@ -58,16 +149,15 @@ at cutover.
 
 ## The launch sequence
 
-### 1. The launch blocker session, in progress
+### 1. The launch blocker session, DONE 2026-08-19
 
-Six tasks in Claude Code, one commit each. Sitemap generation, the
-`/library/` coming soon flag, the redirect map, the contact form
-handler, the two policy pages, and the credential audit.
+Six tasks, one commit each: sitemap generation, the `/library/` coming
+soon flag, the redirect map, the contact form handler, the two policy
+pages, and the credential audit. All six landed, plus the above-title
+retirement in a session after them.
 
-Task 3 and Task 4 have an ordering consequence worth knowing: `/thank-you`
-404s between those two commits, because Task 3 stops writing a rule for
-it and Task 4 builds the real page. If Task 4 stalls, add a temporary
-`/thank-you /contact/ 302` and remove it when `src/thank-you.njk` lands.
+The `/thank-you` ordering gap closed as planned: it 404d between the
+redirect commit and the contact commit and has been a real page since.
 
 ### 2. Still needs a person
 
