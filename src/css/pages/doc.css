@@ -13,8 +13,8 @@
  */
 @layer components {
   .cs-doc {
-    padding-top: var(--space-96);
-    padding-bottom: var(--space-96);
+    padding-top: var(--rhythm-section);
+    padding-bottom: var(--rhythm-section);
   }
   .cs-doc__title {
     margin: 0;

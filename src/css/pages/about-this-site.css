@@ -21,7 +21,7 @@
  */
 @layer components {
   .cs-about {
-    padding-block: var(--space-96);
+    padding-block: var(--rhythm-section);
   }
 
   /* ---- 1. the essay ---- */
@@ -39,7 +39,7 @@
      one a marketing page uses to sit beside a figure. */
   .cs-about__essay {
     max-width: var(--container-measure);
-    margin-bottom: var(--space-96);
+    margin-bottom: var(--rhythm-section);
   }
   .cs-about__essay p {
     margin: 0 0 var(--space-24);
@@ -81,7 +81,7 @@
 
   /* ---- shared section furniture ---- */
 
-  .cs-about__section { margin-bottom: var(--space-96) }
+  .cs-about__section { margin-bottom: var(--rhythm-section) }
   .cs-about__section:last-child { margin-bottom: 0 }
 
   .cs-about__h2 {

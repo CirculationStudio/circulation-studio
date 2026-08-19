@@ -29,14 +29,14 @@
 
   /* One 96px step between sections. Declared here so the page has a rhythm
      rather than each section carrying its own padding. */
-  .cs-hub-section { padding-bottom: var(--space-96) }
+  .cs-hub-section { padding-bottom: var(--rhythm-section) }
 
   /* The first section opens against the breadcrumb rather than the masthead,
      so it takes the top step too. The comp closes the intro at 56px, tighter
      than the 96 between later sections, because the figure's caption already
      reads as a closing edge. 56 is not on the spacing scale; it is the one
      value on this page that is not, and it is the comp's. */
-  .cs-hub-section--first { padding-top: var(--space-96); padding-bottom: 56px }
+  .cs-hub-section--first { padding-top: var(--rhythm-section); padding-bottom: 56px }
 
   /* ---- breadcrumb ---- */
 

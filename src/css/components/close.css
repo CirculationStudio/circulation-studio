@@ -13,7 +13,7 @@
     align-items: center;
     gap: var(--space-40);
     text-align: center;
-    padding-bottom: var(--space-96);
+    padding-bottom: var(--rhythm-section);
   }
   .cs-close__note {
     margin: 0;

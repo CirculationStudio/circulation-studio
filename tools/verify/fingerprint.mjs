@@ -120,6 +120,35 @@ const MIN_ELEMENTS = {
      container and section elements that already existed, through an argument on
      those two macros, rather than onto marker divs. A page that names five
      sections and a page that names none have the same element count. */
+  /* THREE FELL ON 2026-08-19, AND THREE DID NOT, which is the whole reading.
+     The above-title came off the remaining pages, so only pages that carried
+     one moved: results -2, contact -1, yelphub -2. home, who and what held
+     exactly, home and what because they never had one and who because its two
+     came off in an earlier commit.
+
+     RESULTS FELL BY TWO FROM ONE TEMPLATE LINE, and that is the arithmetic
+     worth keeping. "Work sample" sits inside the loop over cases, guarded by
+     `if case.sample`, and two of the three cases carry a sample. One line
+     removed, two elements gone. A page that fell by one there would have meant
+     the guard had changed rather than the label.
+
+     TWO PAGES MOVED THEIR HASH WITHOUT MOVING THEIR COUNT, and that is not the
+     alarming case it looks like. home and what carried no above-title and lost
+     no element, but both hashes moved anyway.
+
+     THE RECORD INCLUDES THE ELEMENT'S FIRST CLASS NAME, which the header of
+     this file does not say and which is worth knowing before reading a result
+     like that. The row is tag, first class, then the type and colour fields, so
+     renaming a class moves the hash with nothing about the rendering having
+     changed. The section rhythm went from py-24 to py-22, that class is first
+     on the <section> the macro emits, and exactly one element per page carries
+     it. Padding itself is still not recorded: 96px to 88px on its own would
+     have moved nothing.
+
+     A hash moving with a count that holds is either this, a real typography
+     change, or an element swapped for another. It is worth telling those apart
+     by diffing the built HTML rather than assuming, which is how this one was
+     resolved. */
   home: 147,
   /* who FELL 159 -> 157 ON 2026-08-19, and falling alone is the point. The
      above-title was retired and this page carried exactly two: "In a client's
@@ -136,7 +165,7 @@ const MIN_ELEMENTS = {
   /* what carries both: 153 -> 159 for the two services added the same day, then
      159 -> 161 for its one button. */
   what: 165,
-  results: 159,
+  results: 157,
   /* CONTACT ALONE ROSE 127 -> 150 ON 2026-08-15, and alone is the point: the
      prompt group is one page's content, not the frame, so the other five did
      not move. +23 is the group's wrapper, its line and its list, plus five
@@ -154,7 +183,7 @@ const MIN_ELEMENTS = {
      partial render that loses fewer than five elements, which is the case it
      exists for. Re-take the baseline and raise the floor in the same commit, or
      the check quietly weakens instead of failing. */
-  contact: 155,
+  contact: 154,
   /* The hub is DATA-DRIVEN and this floor will rise. Every article added to
      src/yelp/ adds elements to the coverage map, so a run that drops below the
      floor means the page stopped rendering rather than that content was
@@ -169,7 +198,7 @@ const MIN_ELEMENTS = {
      rendered for the first time since it was built, and two more clusters
      traded a pending line for a full entry. Each time the five marketing
      hashes did not move, which is the split this file exists for. */
-  yelphub: 240
+  yelphub: 238
 };
 
 const browser = await chromium.launch();

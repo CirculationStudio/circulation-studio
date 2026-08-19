@@ -2,23 +2,6 @@
    component set, so patterns stay here until a second page earns them a
    promotion. */
 @layer components {
-  /* THE 88px STEP, ON THIS PAGE ONLY, FOR ONE COMPONENT.
-     ============================================================
-
-     .cs-close sets padding-bottom: var(--space-96) and is shared with Results,
-     which has not been reset yet. Overriding it here keeps this page internally
-     consistent without moving a page that is not in this commit.
-
-     This works where a page override of section()'s py-24 would not: .cs-close
-     is a component class in this same layer and pages/ is imported after
-     components/, so equal specificity resolves in this file's favour. A Tailwind
-     utility sits in a later layer and would win regardless, which is why the
-     macro takes an argument instead.
-
-     BOTH HALVES COME OUT TOGETHER. When the remaining pages move, .cs-close
-     reads --rhythm-section directly and this rule and its class are deleted. */
-  .cs-who-close { padding-bottom: var(--rhythm-section) }
-
   /* OPENING */
   .cs-opening__headline {
     margin: 0;

@@ -9,8 +9,8 @@
    maintain one. */
 @layer components {
   .cs-notfound {
-    padding-top: var(--space-96);
-    padding-bottom: var(--space-96);
+    padding-top: var(--rhythm-section);
+    padding-bottom: var(--rhythm-section);
     max-width: 60ch;
   }
 

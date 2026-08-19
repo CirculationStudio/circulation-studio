@@ -9,8 +9,8 @@
  */
 @layer components {
 
-  .cs-rt-section { padding-bottom: var(--space-96) }
-  .cs-rt-section--first { padding-top: var(--space-96) }
+  .cs-rt-section { padding-bottom: var(--rhythm-section) }
+  .cs-rt-section--first { padding-top: var(--rhythm-section) }
 
   /* ---- shared ---- */
 
@@ -308,7 +308,7 @@
   .cs-rt-vs {
     background: var(--surface-deep);
     color: var(--text-on-deep);
-    margin-bottom: var(--space-96);
+    margin-bottom: var(--rhythm-section);
   }
   .cs-rt-vs__inner { padding: 80px 0 }
   .cs-rt-vs__eyebrow {

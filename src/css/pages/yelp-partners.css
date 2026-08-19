@@ -20,8 +20,8 @@
 
   /* ---- rhythm ---- */
 
-  .cs-yp-section { padding-bottom: var(--space-96) }
-  .cs-yp-section--first { padding-top: var(--space-96); padding-bottom: var(--space-64) }
+  .cs-yp-section { padding-bottom: var(--rhythm-section) }
+  .cs-yp-section--first { padding-top: var(--rhythm-section); padding-bottom: var(--space-64) }
 
   /* ---- shared type ---- */
 

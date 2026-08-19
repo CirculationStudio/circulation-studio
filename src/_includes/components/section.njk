@@ -3,21 +3,20 @@
   the spacing scale, and the ONLY place that step is allowed, never
   component-internal) plus the 1120px container, both applied automatically.
 
-  py-24 is Tailwind's 96px step. The container it wraps is .cs-container, not
+  py-22 is Tailwind's 88px step, the section rhythm this site was reset to when
+  the above-title was retired. The container it wraps is .cs-container, not
   max-w-main plus px-8; see components/container.css for why.
 
-  `pad` EXISTS BECAUSE THE RHYTHM IS MOVING TO 88px AND THIS MACRO IS SHARED.
-  Five pages call it, so flipping the default would move every one of them in a
-  commit meant to touch one. A page that has been reset to the new rhythm passes
-  pad="py-22"; everything else keeps the 96px default untouched.
+  IT WAS py-24, 96px, UNTIL 2026-08-19, and it moved through a temporary `pad`
+  argument rather than in one edit. Five pages call this macro, so flipping the
+  default is a five-page change, and the first page was reset on its own so a
+  mistake would have been one page's mistake. Every caller has now moved and the
+  argument is gone, which is what it was there to allow.
 
-  IT IS AN ARGUMENT RATHER THAN A CSS OVERRIDE ON PURPOSE. py-24 is a Tailwind
-  utility, and utilities sit in a later cascade layer than @layer components, so
-  a page stylesheet cannot beat it. Overriding from CSS looks like it works
-  until someone checks the computed value.
-
-  The default goes to py-22 and this parameter is removed once every page has
-  moved. If you are reading this and no caller passes pad, that is the signal.
+  It had to be an argument rather than a page-level CSS override: this is a
+  Tailwind utility, and utilities sit in a later cascade layer than
+  @layer components, so a page stylesheet cannot beat it. That override looks
+  like it works until someone reads the computed value.
 
   `deep` paints the one ink pane. design.md section 1: MAX ONE deep pane per
   view. Buttons inside a deep section must use variant="deep", and the wordmark
@@ -29,8 +28,8 @@
 #}
 {#- `orient` names this section for the masthead's left slot, on the <section>
     that already exists rather than on a marker element. See container.njk. -#}
-{% macro section(deep=false, class="", containerClass="", id="", label="", pad="py-24", orient="") %}
-<section{% if id %} id="{{ id }}"{% endif %}{% if label %} aria-label="{{ label }}"{% endif %}{% if orient %} data-orient="{{ orient }}"{% endif %} class="{{ pad }}{{ " bg-ink text-paper" if deep }}{{ " " + class if class }}">
+{% macro section(deep=false, class="", containerClass="", id="", label="", orient="") %}
+<section{% if id %} id="{{ id }}"{% endif %}{% if label %} aria-label="{{ label }}"{% endif %}{% if orient %} data-orient="{{ orient }}"{% endif %} class="py-22{{ " bg-ink text-paper" if deep }}{{ " " + class if class }}">
   <div class="cs-container{{ " " + containerClass if containerClass }}">
     {{ caller() }}
   </div>

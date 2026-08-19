@@ -9,7 +9,7 @@
      pulled up across both so it overlaps the image. */
   .cs-hero {
     position: relative;
-    padding: 80px 0 var(--space-96);
+    padding: 80px 0 var(--rhythm-section);
   }
   .cs-hero__grid {
     display: grid;

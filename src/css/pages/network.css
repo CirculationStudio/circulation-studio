@@ -10,8 +10,8 @@
  */
 @layer components {
 
-  .cs-net-section { padding-bottom: var(--space-96) }
-  .cs-net-section--first { padding-top: var(--space-96); padding-bottom: var(--space-64) }
+  .cs-net-section { padding-bottom: var(--rhythm-section) }
+  .cs-net-section--first { padding-top: var(--rhythm-section); padding-bottom: var(--space-64) }
 
   /* ---- breadcrumb ---- */
 
@@ -135,8 +135,14 @@
    * percentages and frame percentages are the same number.
    *
    * bottom: 100% starts it at the frame's top edge and grows upward, the mirror
-   * of .cs-rule--intro-v. It runs the full 96px to the horizontal rule under
-   * the breadcrumb and meets it, rather than stopping short of it.
+   * of .cs-rule--intro-v. It runs the full gap to the horizontal rule under the
+   * breadcrumb and meets it, rather than stopping short of it.
+   *
+   * THE HEIGHT IS THE SECTION STEP, NOT A LENGTH THAT HAPPENS TO MATCH IT. The
+   * gap it crosses IS .cs-net-section--first's top padding, so the two read the
+   * same token and cannot drift. They very nearly did: the rhythm moved from
+   * 96px to 88px and a literal --space-96 here would have overshot the crumb
+   * line by exactly the 8px the rhythm changed by.
    *
    * Solid, because every vertical in this vocabulary is solid. */
   .cs-rule--net-v {
@@ -147,10 +153,10 @@
        a hair right of what it continues. */
     left: calc(65% - 1px);
     /* Up to the horizontal rule under the breadcrumb, which is exactly
-       --space-96 above the picture because that is .cs-net-section--first's
+       --rhythm-section above the picture because that is .cs-net-section--first's
        top padding. Same token, so the two describe one gap rather than one
        being a measurement of the other. */
-    height: var(--space-96);
+    height: var(--rhythm-section);
     border-left: 1px solid var(--border-hairline);
   }
 
@@ -346,7 +352,7 @@
   .cs-net-why {
     background: var(--surface-deep);
     color: var(--text-on-deep);
-    margin-bottom: var(--space-96);
+    margin-bottom: var(--rhythm-section);
   }
   .cs-net-why__inner { padding: 80px 0 }
   .cs-net-why__eyebrow {

@@ -83,13 +83,13 @@ prompts:
 {% from "components/button.njk" import button %}
 {% from "components/email.njk" import email %}
 
-{% call container(class="pt-24 pb-16") %}
+{% call container(class="pt-22 pb-16") %}
   <h1 class="cs-contact__headline">{{ headline }}</h1>
   <p class="cs-contact__lede">{{ lede }}</p>
   <p class="cs-contact__availability">{{ site.booking.label }}</p>
 {% endcall %}
 
-{% call container(class="pb-24") %}
+{% call container(class="pb-22") %}
   <div class="cs-contact__grid">
     <form class="cs-form cs-contact__panel" action="/api/contact" method="POST" data-contact-form>
       {#- THE HONEYPOT. Off screen rather than display:none, because a bot can
@@ -194,7 +194,6 @@ prompts:
     </form>
 
     <div class="cs-contact__panel cs-contact__aside">
-      <p class="cs-eyebrow">The studio</p>
       {# Single NAP source. Matches the colophon exactly; never retyped. #}
       <address class="cs-contact__nap">
         {{ site.nap.streetAddress }}<br>
@@ -218,4 +217,4 @@ prompts:
   {% endcall %}
 </div>
 
-<div class="pb-24" aria-hidden="true"></div>
+<div class="pb-22" aria-hidden="true"></div>

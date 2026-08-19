@@ -116,7 +116,6 @@ close: >-
 
     {% if case.sample %}
       <div class="mt-16">
-        <p class="cs-eyebrow mb-4">Work sample</p>
         {% if case.sample.kind == "browser" %}
           <figure class="cs-sample m-0">
             <div class="cs-sample__chrome">
@@ -165,7 +164,7 @@ close: >-
   {% endcall %}
 </div>
 
-{% call container(class="cs-close pt-24") %}
+{% call container(class="cs-close pt-22") %}
   <p class="cs-close__note">{{ close }}</p>
   {{ button("Start a conversation", href="/contact/") }}
 {% endcall %}

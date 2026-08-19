@@ -114,8 +114,8 @@ close: >-
 
 {#- THE 88px RHYTHM. This page has been reset around the retired above-title, so
     every section step here is 22 on Tailwind's scale, which is 88px, rather than
-    24, which is 96. section() takes it as an argument because the macro is
-    shared by five pages and the other four have not moved yet. -#}
+    24, which is 96. section() now defaults to it, so the argument this page used
+    to pass while it was the only one reset is gone. -#}
 {#- THE SECTIONS, NAMED FOR THE HEADER'S LEFT SLOT.
     ============================================================
 
@@ -130,7 +130,7 @@ close: >-
     the one place that can carry orientation without repeating it beside the
     thing it describes. The page reads without them and the header answers where
     you are. -#}
-{% call section(pad="py-22", orient="Who We Are") %}
+{% call section(orient="Who We Are") %}
   <h1 class="cs-opening__headline">{{ opening.headline }}</h1>
   <p class="cs-opening__lede">{{ opening.lede }}</p>
 {% endcall %}
@@ -206,18 +206,7 @@ close: >-
   </dl>
 {% endcall %}
 
-{#- cs-who-close carries this page's 88px step. .cs-close's own padding is
-    --space-96 and it is shared with Results, so it is overridden here rather
-    than changed there. Both move to the token in the commit that resets the
-    remaining pages, and this class comes out then. -#}
-{#- NOT A NAMED SECTION. The close is a call to action, not a place the reader
-    is in, and naming it would have the label answer "Start a conversation" to
-    the question "where am I". It is also the last block on the page, and a
-    final block shorter than the viewport can never pass under the bar: measured
-    here, it begins at 3434 while the page stops scrolling at 3120. The clamp in
-    main.js means the last NAMED section is always reachable; this one is simply
-    not one. -#}
-{% call container(class="cs-close cs-who-close") %}
+{% call container(class="cs-close") %}
   <p class="cs-close__note">{{ close }}</p>
   {{ button("Start a conversation", href="/contact/") }}
 {% endcall %}

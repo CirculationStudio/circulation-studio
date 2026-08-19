@@ -171,7 +171,7 @@
     .cs-thanks__after { max-width: var(--container-measure) }
   }
 
-  .cs-thanks { padding-bottom: var(--space-96) }
+  .cs-thanks { padding-bottom: var(--rhythm-section) }
 
   @media (max-width: 640px) {
     .cs-thanks { padding-top: var(--space-24) }
