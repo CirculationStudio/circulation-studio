@@ -112,12 +112,16 @@ close: >-
 {% from "components/section.njk" import section %}
 {% from "components/button.njk" import button %}
 
-{% call section() %}
+{#- THE 88px RHYTHM. This page has been reset around the retired above-title, so
+    every section step here is 22 on Tailwind's scale, which is 88px, rather than
+    24, which is 96. section() takes it as an argument because the macro is
+    shared by five pages and the other four have not moved yet. -#}
+{% call section(pad="py-22") %}
   <h1 class="cs-opening__headline">{{ opening.headline }}</h1>
   <p class="cs-opening__lede">{{ opening.lede }}</p>
 {% endcall %}
 
-{% call container(class="pb-24") %}
+{% call container(class="pb-22") %}
   <h2 class="cs-teamhead">The Team</h2>
   <ul class="cs-teamgrid">
     {% for member in team %}
@@ -155,16 +159,23 @@ close: >-
   {% endcall %}
 </div>
 
-{% call container(narrow=true, class="pt-24") %}
-  <p class="cs-eyebrow">In a client’s words</p>
+{#- ABOVE-TITLE RETIRED. This block opened with "In a client's words", which
+    told the reader what a blockquote with a cite in it already tells them. The
+    testimonial's own top margin went with it: that margin existed to hold the
+    label off the quote, and with no label above it the quote sits on the
+    container's padding instead. See who-we-are.css. -#}
+{% call container(narrow=true, class="pt-22") %}
   <blockquote class="cs-testimonial">
     <p>{{ testimonial.body }}</p>
     <cite>{{ testimonial.cite }}</cite>
   </blockquote>
 {% endcall %}
 
-{% call container(narrow=true, class="py-24") %}
-  <p class="cs-eyebrow cs-eyebrow--center">Why the name</p>
+{#- ABOVE-TITLE RETIRED. "Why the name" sat centred over a definition list whose
+    two terms are Circulation and Studio, which is the answer to the question the
+    label was asking. The list's top margin went with it, for the same reason as
+    the testimonial above. -#}
+{% call container(narrow=true, class="py-22") %}
   <dl class="cs-origin">
     {% for entry in origin %}
       <div class="cs-origin__group">
@@ -181,7 +192,11 @@ close: >-
   </dl>
 {% endcall %}
 
-{% call container(class="cs-close") %}
+{#- cs-who-close carries this page's 88px step. .cs-close's own padding is
+    --space-96 and it is shared with Results, so it is overridden here rather
+    than changed there. Both move to the token in the commit that resets the
+    remaining pages, and this class comes out then. -#}
+{% call container(class="cs-close cs-who-close") %}
   <p class="cs-close__note">{{ close }}</p>
   {{ button("Start a conversation", href="/contact/") }}
 {% endcall %}

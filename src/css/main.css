@@ -300,6 +300,30 @@
   --space-64: 64px;
   --space-96: 96px;
 
+  /* SECTION RHYTHM, and it is deliberately not on the scale above.
+     ============================================================
+
+     The step between major sections is 88px, moved down from 96 when the
+     above-title was retired: the page no longer carries that element, so the
+     vertical system was reset around its absence rather than left with the gap
+     it used to fill.
+
+     A SEPARATE, SEMANTIC TOKEN RATHER THAN AN EDIT TO --space-96. Every name on
+     the scale above states its own value, so setting --space-96 to 88px would
+     make one of six names a lie while the rest stayed honest, which is how a
+     token gets misused later by someone reading the name. It would also move 36
+     uses across 15 files, most of them component padding that is not section
+     rhythm and is not in scope.
+
+     So --space-96 keeps meaning 96px and keeps its component uses. This is the
+     between-sections step and nothing else.
+
+     THE MARKUP HALF LIVES IN TAILWIND. Rhythm on these pages is expressed as
+     py-24 in components/section.njk and as per-page utilities, where 24 x 4px
+     is the same 96. Those move to 22, which is 88 on the same scale. The two
+     halves have to be changed together or a page ends up with both. */
+  --rhythm-section: 88px;
+
   /* Weights. Dual ships 100-600. Headings are 600, Lora body is 400.
      Kept out of @theme because --font-weight-display would collide with the
      --font-display family above, both generate a "font-display" utility.

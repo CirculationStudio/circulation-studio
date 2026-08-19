@@ -2,6 +2,23 @@
    component set, so patterns stay here until a second page earns them a
    promotion. */
 @layer components {
+  /* THE 88px STEP, ON THIS PAGE ONLY, FOR ONE COMPONENT.
+     ============================================================
+
+     .cs-close sets padding-bottom: var(--space-96) and is shared with Results,
+     which has not been reset yet. Overriding it here keeps this page internally
+     consistent without moving a page that is not in this commit.
+
+     This works where a page override of section()'s py-24 would not: .cs-close
+     is a component class in this same layer and pages/ is imported after
+     components/, so equal specificity resolves in this file's favour. A Tailwind
+     utility sits in a later layer and would win regardless, which is why the
+     macro takes an argument instead.
+
+     BOTH HALVES COME OUT TOGETHER. When the remaining pages move, .cs-close
+     reads --rhythm-section directly and this rule and its class are deleted. */
+  .cs-who-close { padding-bottom: var(--rhythm-section) }
+
   /* OPENING */
   .cs-opening__headline {
     margin: 0;
@@ -143,8 +160,14 @@
      rule rather than in the display face, because at this length the display
      face stops being readable. That is why it does not use .cs-pullquote,
      which is the short-form treatment and lives on the home page. */
+  /* margin-top 0, down from --space-24. That 24px was the gap under the "In a
+     client's words" above-title, not a gap under the container's padding. With
+     the label retired the quote is the first thing in the block, so it sits on
+     the 88px step rather than 88 plus 24. Deleting the label and keeping the
+     margin is the failure this avoids: a block that has lost its heading and
+     kept the space the heading needed. */
   .cs-testimonial {
-    margin: var(--space-24) 0 0;
+    margin: 0;
     border: 0;
     border-left: 1px solid var(--border-strong);
     padding: var(--space-8) 0 var(--space-8) var(--space-40);
@@ -169,10 +192,13 @@
      A definition list, because that is what it is. The divider is a border on
      the second group rather than a spacer element, which keeps the markup to
      valid dl children. */
+  /* margin-top 0, down from --space-40, for the same reason as the testimonial
+     above: 40px held the centred "Why the name" label off the list, and the
+     label is gone. The list now opens on the section step. */
   .cs-origin {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    margin: var(--space-40) 0 0;
+    margin: 0;
   }
   .cs-origin__group:first-child { padding-right: 32px }
   .cs-origin__group:last-child {

@@ -110,7 +110,18 @@ const MIN_ELEMENTS = {
      as the two footer-link rises above. A page that moved by a different amount
      would be the interesting result. */
   home: 145,
-  who: 159,
+  /* who FELL 159 -> 157 ON 2026-08-19, and falling alone is the point. The
+     above-title was retired and this page carried exactly two: "In a client's
+     words" over the testimonial and "Why the name" over the origin list. One
+     <p> each, so -2 and nothing else.
+
+     Lowered deliberately, with the baseline re-taken in the same commit, which
+     is what this file asks for. The check is that NO OTHER FLOOR MOVED: the
+     rhythm went from 96px to 88px on this page at the same time, and padding is
+     not something this file records, so a second page moving here would have
+     meant the section() macro's default had been changed rather than passed as
+     an argument. It was passed. */
+  who: 157,
   /* what carries both: 153 -> 159 for the two services added the same day, then
      159 -> 161 for its one button. */
   what: 163,
