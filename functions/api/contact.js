@@ -111,6 +111,44 @@ const text = (value) => (typeof value === "string" ? value.trim() : "");
    expensive than accepting one that bounces. */
 const looksLikeEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
+/* THE LISTING'S SCHEME IS ADDED HERE, AND THIS IS NOT VALIDATION.
+   Nothing rejects anything below. The only thing that happens is that a value
+   which is unambiguously a bare hostname gets https:// in front of it, so the
+   line in the notification email is a link that opens rather than plain text
+   somebody has to retype.
+
+   IT EXISTS BECAUSE THE FIELD STOPPED BEING type=url. That control was doing
+   two jobs at once: it guaranteed a scheme, and it refused the entry without
+   one. The refusal was the defect (an optional field blocking `nhl.com` with
+   "Please enter a URL"), so the field is type=text now, which means the
+   guarantee left with it. This is the guarantee, moved to the side that can
+   keep it without telling anyone they are wrong.
+
+   ANYTHING NOT CLEARLY A HOSTNAME IS PASSED THROUGH UNTOUCHED. The field is
+   optional and free text, so somebody will write "we don't have one" in it,
+   and "https://we don't have one" is worse than the sentence they wrote. The
+   test is deliberately narrow: no whitespace, a dot, and a letters-only tail.
+
+   A VALUE THAT ALREADY CARRIES A SCHEME IS LEFT ALONE, any scheme and not just
+   http(s), because rewriting one we did not anticipate is the same mistake as
+   mangling the sentence. The email body is text/plain and every HTML path
+   escapes, so an odd scheme reaching the inbox is a string, never a link.
+
+   THE SCHEME TEST FORBIDS A DOT, which RFC 3986 allows and which is the one
+   place this got interesting. With a dot permitted, `yelp.com:8080/biz/x`
+   parses as the scheme `yelp.com` and is passed through unchanged, so a
+   listing on a non-default port is the single input that silently keeps
+   missing its scheme. No scheme anyone will paste here has a dot in it, and
+   `mailto:` and the rest still match, so dropping it costs nothing and fixes
+   that case. */
+const HAS_SCHEME = /^[a-z][a-z0-9+-]*:/i;
+const BARE_HOST = /^[^\s/?#]+\.[a-z]{2,}(?:[:/?#]\S*)?$/i;
+
+function normalizeListing(value) {
+  if (!value || HAS_SCHEME.test(value)) return value;
+  return BARE_HOST.test(value) ? `https://${value}` : value;
+}
+
 function validate(fields) {
   const errors = {};
 
@@ -126,7 +164,10 @@ function validate(fields) {
 
   /* The listing is checked for length and nothing else, matching the decision
      recorded on the field itself in src/contact.njk: people paste these, and a
-     failed format check on a correct paste is worse than no check at all. */
+     failed format check on a correct paste is worse than no check at all. No
+     scheme is required and none ever was; normalizeListing above adds one when
+     it can, and that runs before this so the limit applies to what is actually
+     stored rather than to what was typed. */
   if (fields.listing && fields.listing.length > LIMITS.listing) {
     errors.listing = "That address is too long.";
   }
@@ -278,7 +319,7 @@ export async function onRequest(context) {
     name: text(form.get("name")),
     email: text(form.get("email")),
     message: text(form.get("message")),
-    listing: text(form.get("listing"))
+    listing: normalizeListing(text(form.get("listing")))
   };
 
   const errors = validate(fields);

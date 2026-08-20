@@ -127,14 +127,29 @@ prompts:
 
       {#- The listing REPLACED Company / business, per direction B. People paste
           these, and it is the fastest thing anyone can give us: we can read the
-          listing before replying. Deliberately not validated beyond type=url's
-          own check, because a failed check on a correct paste is worse than no
-          check at all. -#}
+          listing before replying. Deliberately not format-checked, because a
+          failed check on a correct paste is worse than no check at all.
+
+          TYPE=TEXT, NOT TYPE=URL, AND THAT IS THE RULE ABOVE APPLIED RATHER
+          THAN AN EXCEPTION TO IT. type=url is a format check, and it is one
+          that rejects the entry the placeholder asks for: nobody types the
+          scheme, so `nhl.com` fails browser validation with "Please enter a
+          URL" and an OPTIONAL field blocks a correct answer. That is exactly
+          the trade the note above refuses.
+
+          inputmode=url keeps what type=url was actually worth here, which is
+          the keyboard: a touch keyboard with a slash and a .com key, and no
+          autocapitalise. It hints the input method and validates nothing.
+
+          THE SCHEME IS ADDED SERVER SIDE, in functions/api/contact.js, so what
+          lands in the inbox is still a link that opens. See the note on
+          normalizeListing there. The browser is no longer the thing that
+          guarantees it, so something had to be. -#}
       <p class="cs-field m-0">
         <label class="cs-field__label" for="field-listing">
           Website or Yelp listing <span class="cs-field__optional">· Optional</span>
         </label>
-        <input class="cs-input" type="url" id="field-listing" name="listing"
+        <input class="cs-input" type="text" inputmode="url" id="field-listing" name="listing"
                autocomplete="url" placeholder="yourbusiness.com, or the Yelp page">
       </p>
 
