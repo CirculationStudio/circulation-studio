@@ -287,3 +287,30 @@ the site is held to.
   it carries `data-form-mockup`, which is the only thing blocking submission.
 - **`about-this-site.njk:35`** still says three third-party requests in a
   Nunjucks comment. The measured figure is two.
+
+### A raw control byte made `src/js/main.js` invisible to grep
+
+Fixed 2026-08-20, recorded because the failure mode is silent and the next
+person to hit it will lose the same time.
+
+`main.js` joined the orient labels on a **literal NUL byte** for its
+change-detection key. It worked. It also meant `file` reported 35KB of
+JavaScript as `data`, and **grep then returns nothing for every match in the
+whole file** rather than saying why. Searching for `data-contact-form` printed
+no results while it sat on line 533. Not an error, not a warning, an empty
+result that reads exactly like "this string is not here". That is how a
+contact-form investigation started by concluding the client had no submit
+handler at all.
+
+`grep -a` was the workaround. The fix is that the separator is now `"\n"`.
+
+**It is not U+001F, and that is the part worth keeping.** The unit separator is
+the tidier answer and it is wrong here: escaping it keeps the source clean, but
+Vite's minifier re-emits it as a raw byte inside a template literal, so
+`_site/assets/main-*.js` comes out as `data` and the hazard simply moves into
+the artifact that ships. A newline is an ordinary text byte escaped or raw, so
+both ends stay greppable. Verified with `file` on the source and on the build.
+
+Anything that cannot occur in a `data-orient` label works as a separator. The
+rule is only that it must not be a control character. Check
+`file _site/assets/main-*.js` before deciding otherwise.
