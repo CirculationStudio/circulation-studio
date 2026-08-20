@@ -101,7 +101,25 @@ const MIN_FILL_MS = 2000;
 const LIMITS = { name: 200, email: 254, message: 5000, listing: 500 };
 const MAX_BODY_BYTES = 32 * 1024;
 
-const FROM_FALLBACK = "Circulation Studio <contact@send.circulationstudio.com>";
+/* THE APEX, NOT THE SEND SUBDOMAIN, AND THE DISTINCTION IS THE WHOLE NOTE.
+   `send.circulationstudio.com` was here until 2026-08-20 and every delivery
+   failed with a Resend 403: "This API key is not authorized to send emails
+   from send.circulationstudio.com". Nothing was lost, because the record is
+   written before the send is attempted, but two submissions sat undelivered
+   and only the `failed:` prefix said so.
+
+   THE SUBDOMAIN IS NOT A SENDING IDENTITY. Resend's four DNS records put the
+   MX and the SPF TXT on `send` because that is the return path, where bounces
+   and complaints go. That is infrastructure the receiving side reads; it is
+   not what the From header may claim. Resend authorises From against a DOMAIN
+   OBJECT in the account, and the account has exactly one, the apex
+   `circulationstudio.com`. There is no `send.circulationstudio.com` object, so
+   a key correctly scoped to the one domain that exists refused an address on a
+   domain that does not.
+
+   The key was never the problem, and the DNS was never the problem. Reading
+   the SPF record's location as the sending identity was. */
+const FROM_FALLBACK = "Circulation Studio <contact@circulationstudio.com>";
 
 const text = (value) => (typeof value === "string" ? value.trim() : "");
 

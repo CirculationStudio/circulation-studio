@@ -419,8 +419,10 @@ nothing enforces one.
 
 **Recipient is `site.nap.email`,** read from `src/_data/site.js` rather
 than typed into the Function, the same source the footer and contact
-page render from. The `from` address is separate and sits on the
-verified send subdomain.
+page render from. The `from` address is separate and sits on the verified
+apex domain, `contact@circulationstudio.com`. Not the `send` subdomain: that
+carries the MX and SPF records for bounce handling and is not a Resend domain
+object, so a From address on it is refused. See the Resend entry below.
 
 ### Fonts
 
@@ -447,8 +449,24 @@ disclosure does not outlive the dependency.
 ## Infrastructure configured 2026-08-18
 
 **Resend.** Account under studio@circulationstudio.com, domain
-`circulationstudio.com` verified 2026-08-18, region us-east-1. Sending
-happens from the `send.circulationstudio.com` subdomain.
+`circulationstudio.com` verified 2026-08-18, region us-east-1. **Sending
+happens from the apex, `contact@circulationstudio.com`.**
+
+Corrected 2026-08-20. This line read "sending happens from the
+`send.circulationstudio.com` subdomain" and that sentence is what produced
+a 403 on every delivery the form ever attempted: *"This API key is not
+authorized to send emails from send.circulationstudio.com"*.
+
+The account holds exactly ONE domain object, the apex, and Resend
+authorises a From address against a domain object. No
+`send.circulationstudio.com` object exists, so the address was refused.
+The key is scoped correctly to the one domain that does exist and was
+never at fault.
+
+**`send` is the return path, not the sending identity.** The MX and SPF
+TXT records below sit on that subdomain because that is where bounces and
+complaints are handled. Reading their location as the From domain is the
+mistake this paragraph used to encode.
 
 API key named `circulation-studio-site`, sending access only, scoped to
 `circulationstudio.com`. One key for the whole site rather than one per
